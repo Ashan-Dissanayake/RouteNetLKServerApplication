@@ -2,7 +2,9 @@ package lk.ashan.ntcserverapllication.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
@@ -22,6 +24,11 @@ public class Branchtype {
     @JsonIgnore
     @OneToMany(mappedBy = "branchtype")
     private Collection<Branch> branches;
+
+    public Branchtype(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {

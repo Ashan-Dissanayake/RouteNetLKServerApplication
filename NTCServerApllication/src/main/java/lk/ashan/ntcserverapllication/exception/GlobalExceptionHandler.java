@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return APIResponseBuilder.error(
-                ErrorCode.EMPLOYEE_ALREADY_EXISTS,
+                ErrorCode.RESOURCE_ALREADY_EXISTS,
                 e.getMessage(),
                 request
         );
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return APIResponseBuilder.error(
-                ErrorCode.EMPLOYEE_NOT_FOUND,
+                ErrorCode.RESOURCE_NOT_FOUND,
                 e.getMessage(),
                 request
         );

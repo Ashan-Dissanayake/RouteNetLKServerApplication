@@ -8,18 +8,18 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    // Business-Level Error Codes (4xx)
-    EMPLOYEE_ID_MISMATCH("Employee ID mismatch", HttpStatus.BAD_REQUEST, "/errors/employee-id-mismatch"),
-    EMPLOYEE_NOT_FOUND("Employee not found", HttpStatus.NOT_FOUND, "/errors/employee-not-found"),
-    EMPLOYEE_ALREADY_EXISTS("Employee already exists", HttpStatus.CONFLICT, "/errors/employee-already-exists"),
-    INVALID_EMPLOYEE_DATA("Invalid employee data", HttpStatus.BAD_REQUEST, "/errors/invalid-employee-data"),
-    EMPLOYEE_STATUS_INVALID("Invalid employee status", HttpStatus.BAD_REQUEST, "/errors/employee-status-invalid"),
-    EMPLOYEE_CONTACT_INVALID("Invalid contact information", HttpStatus.BAD_REQUEST, "/errors/employee-contact-invalid"),
+    // 4xx: Client Errors (Business-Level)
+    ID_MISMATCH("ID mismatch", HttpStatus.BAD_REQUEST, "/errors/id-mismatch"),
+    RESOURCE_NOT_FOUND("Resource not found", HttpStatus.NOT_FOUND, "/errors/resource-not-found"),
+    RESOURCE_ALREADY_EXISTS("Resource already exists", HttpStatus.CONFLICT, "/errors/resource-already-exists"),
+    INVALID_DATA("Invalid input data", HttpStatus.BAD_REQUEST, "/errors/invalid-data"),
+    STATUS_INVALID("Invalid status", HttpStatus.BAD_REQUEST, "/errors/status-invalid"),
+    CONTACT_INVALID("Invalid contact information", HttpStatus.BAD_REQUEST, "/errors/contact-invalid"),
 
-    // Technical-Level Error Codes (5xx)
-    EMPLOYEE_SERVICE_UNAVAILABLE("Employee service unavailable", HttpStatus.SERVICE_UNAVAILABLE, "/errors/employee-service-unavailable"),
-    EMPLOYEE_DATA_CONFLICT("Employee data conflict", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/employee-data-conflict"),
-    UNKNOWN_ERROR("Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/employee-unknown-error");
+    // 5xx: Server Errors (Technical-Level)
+    SERVICE_UNAVAILABLE("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE, "/errors/service-unavailable"),
+    DATA_CONFLICT("Data conflict", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/data-conflict"),
+    UNKNOWN_ERROR("Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/unknown-error");
 
     private final String title;
     private final HttpStatus status;
