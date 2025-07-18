@@ -1,8 +1,7 @@
 package lk.ashan.ntcserverapllication.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.Collection;
@@ -11,6 +10,9 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -27,7 +27,6 @@ class BranchtypeServiceTest {
     @Test
     void getBranchtypes() {
 
-        // Arrange: prepare mock data
         List<Branchtype> mockBranchtypes = Arrays.asList(
                 new Branchtype(1, "Head"),
                 new Branchtype(2, "Region")
@@ -35,11 +34,10 @@ class BranchtypeServiceTest {
 
         when(branchtypeRepository.findAll()).thenReturn(mockBranchtypes);
 
-        // Act: call service method
         List<Branchtype> result = branchtypeService.getBranchtypes();
 
-        // Assert: verify results
         assertEquals(2, result.size());
+
         assertEquals("Head", result.get(0).getName());
         assertEquals("Region", result.get(1).getName());
 
