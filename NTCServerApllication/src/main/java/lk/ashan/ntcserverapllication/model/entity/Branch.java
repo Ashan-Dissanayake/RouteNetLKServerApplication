@@ -2,6 +2,8 @@ package lk.ashan.ntcserverapllication.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.sql.Date;
 import java.util.Collection;
@@ -13,6 +15,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE branch SET branchstatus_id = 3 WHERE id = ?")
 public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -45,7 +48,7 @@ public class Branch {
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
     private Branchstatus branchstatus;
-    @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Branchcoverage> branchcoverages;
 
     @Override

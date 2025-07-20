@@ -2,14 +2,16 @@ package lk.ashan.ntcserverapllication.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Branchcoverage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -1,8 +1,8 @@
 package lk.ashan.ntcserverapllication.service;
 
-import lk.ashan.ntcserverapllication.model.entity.Branch;
-import lk.ashan.ntcserverapllication.model.entity.Branchstatus;
-import lk.ashan.ntcserverapllication.model.entity.Branchtype;
+import lk.ashan.ntcserverapllication.exception.ResourceExistsException;
+import lk.ashan.ntcserverapllication.exception.ResourceNotFoundException;
+import lk.ashan.ntcserverapllication.model.entity.*;
 import lk.ashan.ntcserverapllication.repository.BranchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,14 +20,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BranchServiceTest {
 
+    private Date fixedDate;
+    private List<Branch> mockBranches;
+
     @Mock
     private BranchRepository branchRepository;
 
     @InjectMocks
     private BranchService branchService;
-
-    private Date fixedDate;
-    private List<Branch> mockBranches;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +35,8 @@ class BranchServiceTest {
         mockBranches = buildMockBranches();
     }
 
+
+    // ────────────── RETRIEVE TESTS ──────────────
 
     @Test
     void getBranches_shouldReturnAllBranches() {
@@ -80,7 +82,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("brachstatusid", "1");
+        params.put("branchstatusid", "1");
 
         List<Branch> result = branchService.searchBranch(params);
 
@@ -93,7 +95,7 @@ class BranchServiceTest {
 
         HashMap<String, String> params = new HashMap<>();
         params.put("branchname", "Colombo");
-        params.put("brachstatusid", "1");
+        params.put("branchstatusid", "1");
 
         List<Branch> result = branchService.searchBranch(params);
 
@@ -102,7 +104,7 @@ class BranchServiceTest {
     }
 
     @Test
-    void searchBranch_shouldReturnAllWhenParamsEmpty() {
+    void searchBranch_shouldReturnMatchingWhenAllFiltersMatch() {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> emptyParams = new HashMap<>();
@@ -111,7 +113,160 @@ class BranchServiceTest {
         assertEquals(2, result.size());
     }
 
-    private void assertBranch(Branch branch, String expectedName, String expectedCode, int expectedStatusId) {
+
+    // ────────────── CREATE TESTS ──────────────
+
+    @Test
+    void createBranch_shouldThrow_whenNameExists() {
+        Branch branch = buildBranch("Colombo Branch", "UNIQUE001", "unique@ntc.gov.lk", "0119998888");
+        when(branchRepository.existsByName(branch.getName())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
+
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void createBranch_shouldThrow_whenCodeExists() {
+        Branch branch = buildBranch("Unique Branch", "CLB0001", "unique@ntc.gov.lk", "0119998888");
+        when(branchRepository.existsByCode(branch.getCode())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
+
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void createBranch_shouldThrow_whenEmailExists() {
+        Branch branch = buildBranch("Unique Branch", "UNIQUE001", "colombo@ntc.gov.lk", "0119998888");
+        when(branchRepository.existsByEmail(branch.getEmail())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
+
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void createBranch_shouldThrow_whenTelephoneExists() {
+        Branch branch = buildBranch("Unique Branch", "UNIQUE001", "unique@ntc.gov.lk", "0112345678");
+        when(branchRepository.existsByTelephone(branch.getTelephone())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
+
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void createBranch_shouldSucceed_whenAllUnique() {
+        Branch branch = buildBranch("Unique Name", "UNI001", "unique@ntc.gov.lk", "0112223344");
+
+        when(branchRepository.existsByName(branch.getName())).thenReturn(false);
+        when(branchRepository.existsByCode(branch.getCode())).thenReturn(false);
+        when(branchRepository.existsByEmail(branch.getEmail())).thenReturn(false);
+        when(branchRepository.existsByTelephone(branch.getTelephone())).thenReturn(false);
+        when(branchRepository.save(branch)).thenReturn(branch);
+
+        Branch created = branchService.createBranch(branch);
+
+        assertNotNull(created);
+        assertEquals("Unique Name", created.getName());
+        assertEquals("UNI001", created.getCode());
+        assertEquals("unique@ntc.gov.lk", created.getEmail());
+        assertEquals("0112223344", created.getTelephone());
+    }
+
+
+    // ────────────── UPDATE TESTS ──────────────
+
+    @Test
+    void updateBranch_shouldThrow_whenNameExists() {
+        Branch branch = buildBranch("Colombo Branch","UNI001","unique@ntc.gov.lk","0112223344");
+        branch.setId(2);
+
+        when(branchRepository.existsByNameAndIdNot(branch.getName(), branch.getId())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.updateBranch(branch));
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void updateBranch_shouldThrow_whenCodeExists() {
+        Branch branch = buildBranch("Unique Name","CLB0001","unique@ntc.gov.lk","0112223344");
+        branch.setId(2);
+
+        when(branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.updateBranch(branch));
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void updateBranch_shouldThrow_whenEmailExists() {
+        Branch branch = buildBranch("Unique Name","UNI001","colombo@ntc.gov.lk","0112223344");
+        branch.setId(2);
+
+        when(branchRepository.existsByEmailAndIdNot(branch.getEmail(), branch.getId())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.updateBranch(branch));
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void updateBranch_shouldThrow_whenTelephoneExists() {
+        Branch branch = buildBranch("Unique Name","UNI001","unique@ntc.gov.lk","0112345678");
+        branch.setId(2);
+
+        when(branchRepository.existsByTelephoneAndIdNot(branch.getTelephone(), branch.getId())).thenReturn(true);
+
+        assertThrows(ResourceExistsException.class, () -> branchService.updateBranch(branch));
+        verify(branchRepository, never()).save(any());
+    }
+
+    @Test
+    void updateBranch_shouldSucceed_whenAllFieldsUnique() {
+        Branch branch = buildBranch("Colombo Branch-Head","CLB0001","0112345678","colombohead@ntc.gov.lk");
+        branch.setId(1);
+
+        when(branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())).thenReturn(false);
+        when(branchRepository.existsByNameAndIdNot(branch.getName(), branch.getId())).thenReturn(false);
+        when(branchRepository.existsByEmailAndIdNot(branch.getEmail(), branch.getId())).thenReturn(false);
+        when(branchRepository.existsByTelephoneAndIdNot(branch.getTelephone(), branch.getId())).thenReturn(false);
+        when(branchRepository.save(branch)).thenReturn(branch);
+
+        Branch result = branchService.updateBranch(branch);
+
+        assertBranch(result, branch.getName(), branch.getCode(), branch.getBranchstatus().getId());
+        verify(branchRepository).save(branch);
+    }
+
+
+    // ────────────── DELETE Test ──────────────
+
+    @Test
+    void deleteBranch_shouldThrow_whenBranchNotFound() {
+        when(branchRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> branchService.deleteBranch(99));
+
+        verify(branchRepository, never()).delete(any());
+    }
+
+    @Test
+    void deleteBranch_shouldMarkStatusAsClosed() {
+        Branch branch = buildBranch("Colombo Branch","CLB0001","colombo@ntc.gov.lk","0112345678");
+        branch.setId(1);
+
+        when(branchRepository.findById(1)).thenReturn(Optional.of(branch));
+
+        branchService.deleteBranch(1);
+
+        verify(branchRepository).delete(branch);
+    }
+
+
+    // ────────────── HELPERS ──────────────
+
+    private void assertBranch(Branch branch, String expectedName, String expectedCode, Integer expectedStatusId) {
         assertEquals(expectedName, branch.getName());
         assertEquals(expectedCode, branch.getCode());
         assertEquals(expectedStatusId, branch.getBranchstatus().getId());
@@ -147,10 +302,27 @@ class BranchServiceTest {
                 .docreated(fixedDate)
                 .remarks("Sabaragamuwa Province branch")
                 .branchtype(new Branchtype(2,"Region"))
-                .branchstatus(new Branchstatus(1,"Active"))
+                .branchstatus(new Branchstatus(2,"Inactive"))
                 .branchcoverages(Collections.emptyList())
                 .build();
 
+
         return List.of(colomboBranch, ratnapuraBranch);
     }
+
+    private Branch buildBranch(String name, String code, String email, String telephone) {
+        return Branch.builder()
+                .name(name)
+                .code(code)
+                .email(email)
+                .telephone(telephone)
+                .address("123 Test Street")
+                .remarks("Test branch")
+                .docreated(fixedDate)
+                .branchtype(new Branchtype(1, "Head"))
+                .branchstatus(new Branchstatus(1, "Active"))
+                .branchcoverages(Collections.emptyList())
+                .build();
+    }
+
 }
