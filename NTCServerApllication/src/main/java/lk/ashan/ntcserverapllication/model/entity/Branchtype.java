@@ -2,10 +2,7 @@ package lk.ashan.ntcserverapllication.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -13,6 +10,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 public class Branchtype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -2,8 +2,7 @@ package lk.ashan.ntcserverapllication.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -11,6 +10,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 public class Branchstatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -22,6 +22,11 @@ public class Branchstatus {
     @JsonIgnore
     @OneToMany(mappedBy = "branchstatus")
     private Collection<Branch> branches;
+
+    public Branchstatus(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {
