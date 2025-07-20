@@ -1,8 +1,8 @@
 package lk.ashan.ntcserverapllication.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.ntcserverapllication.model.response.APIErrorResponse;
-import lk.ashan.ntcserverapllication.model.response.ErrorCode;
+import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
+import lk.ashan.ntcserverapllication.enums.ErrorCode;
 import lk.ashan.ntcserverapllication.util.APIResponseBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

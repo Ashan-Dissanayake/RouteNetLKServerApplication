@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.model.response;
+package lk.ashan.ntcserverapllication.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

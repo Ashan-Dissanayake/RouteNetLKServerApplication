@@ -1,9 +1,9 @@
 package lk.ashan.ntcserverapllication.util;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.ntcserverapllication.model.response.APIErrorResponse;
-import lk.ashan.ntcserverapllication.model.response.APISuccessResponse;
-import lk.ashan.ntcserverapllication.model.response.ErrorCode;
+import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
+import lk.ashan.ntcserverapllication.paylaod.response.APISuccessResponse;
+import lk.ashan.ntcserverapllication.enums.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

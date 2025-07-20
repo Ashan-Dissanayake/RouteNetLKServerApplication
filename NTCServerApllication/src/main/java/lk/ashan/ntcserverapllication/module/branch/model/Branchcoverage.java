@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.model.entity;
+package lk.ashan.ntcserverapllication.module.branch.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

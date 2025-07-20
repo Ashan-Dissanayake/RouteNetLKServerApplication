@@ -1,7 +1,8 @@
 package lk.ashan.ntcserverapllication.service;
 
-import lk.ashan.ntcserverapllication.model.entity.Province;
-import lk.ashan.ntcserverapllication.repository.ProvinceRepository;
+import lk.ashan.ntcserverapllication.module.branch.model.Province;
+import lk.ashan.ntcserverapllication.module.branch.repository.ProvinceRepository;
+import lk.ashan.ntcserverapllication.module.branch.service.ProvinceService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

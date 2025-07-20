@@ -1,8 +1,8 @@
 package lk.ashan.ntcserverapllication.service;
 
-import lk.ashan.ntcserverapllication.model.entity.Branchtype;
-import lk.ashan.ntcserverapllication.repository.BranchtypeRepository;
-import org.junit.jupiter.api.BeforeEach;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchtype;
+import lk.ashan.ntcserverapllication.module.branch.repository.BranchtypeRepository;
+import lk.ashan.ntcserverapllication.module.branch.service.BranchtypeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

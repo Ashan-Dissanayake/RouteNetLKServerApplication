@@ -1,7 +1,7 @@
-package lk.ashan.ntcserverapllication.service;
+package lk.ashan.ntcserverapllication.module.branch.service;
 
-import lk.ashan.ntcserverapllication.model.entity.Branchtype;
-import lk.ashan.ntcserverapllication.repository.BranchtypeRepository;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchtype;
+import lk.ashan.ntcserverapllication.module.branch.repository.BranchtypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

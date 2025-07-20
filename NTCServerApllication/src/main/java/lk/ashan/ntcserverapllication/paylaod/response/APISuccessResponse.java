@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.model.response;
+package lk.ashan.ntcserverapllication.paylaod.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

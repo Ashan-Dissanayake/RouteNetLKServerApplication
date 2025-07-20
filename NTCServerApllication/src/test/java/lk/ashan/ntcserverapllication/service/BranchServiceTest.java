@@ -2,8 +2,11 @@ package lk.ashan.ntcserverapllication.service;
 
 import lk.ashan.ntcserverapllication.exception.ResourceExistsException;
 import lk.ashan.ntcserverapllication.exception.ResourceNotFoundException;
-import lk.ashan.ntcserverapllication.model.entity.*;
-import lk.ashan.ntcserverapllication.repository.BranchRepository;
+import lk.ashan.ntcserverapllication.module.branch.model.Branch;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchtype;
+import lk.ashan.ntcserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.ntcserverapllication.module.branch.service.BranchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

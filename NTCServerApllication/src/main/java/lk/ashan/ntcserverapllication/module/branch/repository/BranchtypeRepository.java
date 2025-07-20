@@ -1,6 +1,6 @@
-package lk.ashan.ntcserverapllication.repository;
+package lk.ashan.ntcserverapllication.module.branch.repository;
 
-import lk.ashan.ntcserverapllication.model.entity.Branchtype;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchtype;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

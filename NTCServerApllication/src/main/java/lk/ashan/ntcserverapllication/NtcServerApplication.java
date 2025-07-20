@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NtcServerApllicationApplication {
+public class NtcServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NtcServerApllicationApplication.class, args);
+		SpringApplication.run(NtcServerApplication.class, args);
 	}
 
 }

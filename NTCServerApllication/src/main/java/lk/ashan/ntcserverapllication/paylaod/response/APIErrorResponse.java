@@ -1,5 +1,6 @@
-package lk.ashan.ntcserverapllication.model.response;
+package lk.ashan.ntcserverapllication.paylaod.response;
 
+import lk.ashan.ntcserverapllication.enums.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

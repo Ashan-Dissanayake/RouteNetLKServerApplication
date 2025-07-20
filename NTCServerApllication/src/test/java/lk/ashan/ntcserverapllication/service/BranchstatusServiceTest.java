@@ -1,7 +1,8 @@
 package lk.ashan.ntcserverapllication.service;
 
-import lk.ashan.ntcserverapllication.model.entity.Branchstatus;
-import lk.ashan.ntcserverapllication.repository.BranchstatusRepository;
+import lk.ashan.ntcserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.ntcserverapllication.module.branch.repository.BranchstatusRepository;
+import lk.ashan.ntcserverapllication.module.branch.service.BranchstatusService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

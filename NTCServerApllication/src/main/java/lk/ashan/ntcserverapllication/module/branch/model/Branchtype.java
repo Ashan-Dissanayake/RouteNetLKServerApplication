@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.model.entity;
+package lk.ashan.ntcserverapllication.module.branch.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Province {
+public class Branchtype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,10 +20,10 @@ public class Province {
     @Column(name = "name")
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "province")
-    private Collection<District> districts;
+    @OneToMany(mappedBy = "branchtype")
+    private Collection<Branch> branches;
 
-    public Province(Integer id, String name) {
+    public Branchtype(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -32,8 +32,8 @@ public class Province {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Province province = (Province) o;
-        return Objects.equals(id, province.id) && Objects.equals(name, province.name);
+        Branchtype that = (Branchtype) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

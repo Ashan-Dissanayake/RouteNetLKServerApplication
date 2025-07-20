@@ -1,10 +1,10 @@
-package lk.ashan.ntcserverapllication.service;
+package lk.ashan.ntcserverapllication.module.branch.service;
 
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.ntcserverapllication.exception.ResourceExistsException;
 import lk.ashan.ntcserverapllication.exception.ResourceNotFoundException;
-import lk.ashan.ntcserverapllication.model.entity.Branch;
-import lk.ashan.ntcserverapllication.repository.BranchRepository;
+import lk.ashan.ntcserverapllication.module.branch.model.Branch;
+import lk.ashan.ntcserverapllication.module.branch.repository.BranchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
