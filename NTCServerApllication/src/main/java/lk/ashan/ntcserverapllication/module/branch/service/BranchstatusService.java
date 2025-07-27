@@ -1,34 +1,23 @@
 package lk.ashan.ntcserverapllication.module.branch.service;
 
-import lk.ashan.ntcserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.ntcserverapllication.module.branch.dto.BranchstatusResponse;
+import lk.ashan.ntcserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.ntcserverapllication.module.branch.repository.BranchstatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BranchstatusService {
 
     private final BranchstatusRepository branchstatusRepository;
+    private final BranchstatusMapper branchstatusMapper;
 
-    @Autowired
-    public BranchstatusService(BranchstatusRepository branchstatusRepository) {
-        this.branchstatusRepository = branchstatusRepository;
+
+    public List<BranchstatusResponse> getBranchstatuses() {
+        return branchstatusMapper.toBranchstatusResponseList(branchstatusRepository.findAll());
     }
 
-    public List<Branchstatus> getBranchstatuss() {
-
-        List<Branchstatus> branchstatuss = this.branchstatusRepository.findAll();
-
-        return branchstatuss.stream().map(
-                branchstatus -> {
-                    Branchstatus d = new Branchstatus();
-                    d.setId(branchstatus.getId());
-                    d.setName(branchstatus.getName());
-                    return d;
-                }
-        ).collect(Collectors.toList());
-    }
 }

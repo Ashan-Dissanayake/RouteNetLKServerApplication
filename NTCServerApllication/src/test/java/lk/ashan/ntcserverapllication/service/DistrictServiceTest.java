@@ -1,12 +1,15 @@
 package lk.ashan.ntcserverapllication.service;
 
+import lk.ashan.ntcserverapllication.module.branch.dto.DistrictResponse;
+import lk.ashan.ntcserverapllication.module.branch.mapper.DistrictMapper;
 import lk.ashan.ntcserverapllication.module.branch.model.District;
 import lk.ashan.ntcserverapllication.module.branch.model.Province;
 import lk.ashan.ntcserverapllication.module.branch.repository.DistrictRepository;
 import lk.ashan.ntcserverapllication.module.branch.service.DistrictService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,11 +25,18 @@ class DistrictServiceTest {
     @Mock
     private DistrictRepository districtRepository;
 
-    @InjectMocks
+    private final DistrictMapper districtMapper = Mappers.getMapper(DistrictMapper.class);
+
     private DistrictService districtService;
 
+    @BeforeEach
+    void setUp() {
+        districtService = new DistrictService(districtRepository, districtMapper);
+    }
+
+
     @Test
-    void getDistricts() {
+    void getDistricts_shouldReturnAllDistricts() {
 
         Province western = new Province(1, "Western");
         Province northern = new Province(4, "Northern");
@@ -40,7 +50,7 @@ class DistrictServiceTest {
 
         when(districtRepository.findAll()).thenReturn(mockDistrictes);
 
-        List<District> result = districtService.getDistricts();
+        List<DistrictResponse> result = districtService.getDistricts();
 
         assertEquals(3, result.size());
 

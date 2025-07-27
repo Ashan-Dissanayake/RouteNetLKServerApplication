@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.util;
+package lk.ashan.ntcserverapllication.shared;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
