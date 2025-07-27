@@ -35,7 +35,7 @@ class BranchtypeServiceTest {
 
 
     @Test
-    void getBranchtypes() {
+    void getBranchtypes_shouldReturnAllBranchtypes() {
 
         List<Branchtype> mockBranchtypes = Arrays.asList(
                 new Branchtype(1, "Head"),

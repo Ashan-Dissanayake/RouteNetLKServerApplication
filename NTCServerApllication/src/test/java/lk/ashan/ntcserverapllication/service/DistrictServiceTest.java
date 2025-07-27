@@ -36,7 +36,7 @@ class DistrictServiceTest {
 
 
     @Test
-    void getDistricts() {
+    void getDistricts_shouldReturnAllDistricts() {
 
         Province western = new Province(1, "Western");
         Province northern = new Province(4, "Northern");

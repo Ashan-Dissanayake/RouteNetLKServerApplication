@@ -34,7 +34,7 @@ class BranchstatusServiceTest {
     }
 
     @Test
-    void getBranchstatuss() {
+    void getBranchstatuses_shouldReturnAllBranchstatuses() {
 
         List<Branchstatus> mockBranchstatuses = Arrays.asList(
                 new Branchstatus(1, "Active"),

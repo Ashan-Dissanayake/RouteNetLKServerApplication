@@ -36,7 +36,7 @@ class ProvinceServiceTest {
     }
 
     @Test
-    void getProvinces() {
+    void getProvinces_shouldReturnAllProvinces() {
         List<Province> mockProvinces = Arrays.asList(
                 new Province(1, "Western"),
                 new Province(5, "Eastern")
