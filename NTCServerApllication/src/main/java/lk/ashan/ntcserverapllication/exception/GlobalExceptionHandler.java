@@ -3,7 +3,7 @@ package lk.ashan.ntcserverapllication.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
 import lk.ashan.ntcserverapllication.enums.ErrorCode;
-import lk.ashan.ntcserverapllication.util.APIResponseBuilder;
+import lk.ashan.ntcserverapllication.shared.APIResponseBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,7 +35,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // Add generic fallback for unexpected errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIErrorResponse> handleGenericException(
             Exception e,

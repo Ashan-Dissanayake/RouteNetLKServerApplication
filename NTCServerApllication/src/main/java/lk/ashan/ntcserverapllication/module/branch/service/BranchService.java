@@ -3,9 +3,13 @@ package lk.ashan.ntcserverapllication.module.branch.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.ntcserverapllication.exception.ResourceExistsException;
 import lk.ashan.ntcserverapllication.exception.ResourceNotFoundException;
+import lk.ashan.ntcserverapllication.module.branch.dto.BranchCreateRequest;
+import lk.ashan.ntcserverapllication.module.branch.dto.BranchFullResponse;
+import lk.ashan.ntcserverapllication.module.branch.dto.BranchUpdateRequest;
+import lk.ashan.ntcserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.ntcserverapllication.module.branch.model.Branch;
 import lk.ashan.ntcserverapllication.module.branch.repository.BranchRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -17,24 +21,21 @@ import java.util.stream.Stream;
 
 @Validated
 @Service
+@RequiredArgsConstructor
 public class BranchService {
 
     private final BranchRepository branchRepository;
+    private final BranchMapper branchMapper;
 
-    @Autowired
-    public BranchService(BranchRepository branchRepository) {
-        this.branchRepository = branchRepository;
+    public List<BranchFullResponse> getBranches(){
+        return branchMapper.toFulBranchResponseList(branchRepository.findAll());
     }
 
-    public List<Branch> getBranches(){
-        return this.branchRepository.findAll();
-    }
+    public List<BranchFullResponse> searchBranch(@NotNull HashMap<String, String> params) {
 
-    public List<Branch> searchBranch(@NotNull HashMap<String, String> params) {
+        List<Branch> branches = branchRepository.findAll();
 
-        List<Branch> branches = this.branchRepository.findAll();
-
-        if (params.isEmpty()) return branches;
+        if (!params.isEmpty()) {
 
         String branchname = params.get("branchname");
         String branchcode= params.get("branchcode");
@@ -46,33 +47,39 @@ public class BranchService {
         if(branchcode!=null)branchStream = branchStream.filter(i->i.getCode().equals(branchcode));
         if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
 
-        return branchStream.collect(Collectors.toList());
+        return branchMapper.toFulBranchResponseList( branchStream.collect(Collectors.toList()));
+
+        }
+
+        return branchMapper.toFulBranchResponseList(branches);
 
     }
 
     @Transactional
-    public Branch createBranch(@NotNull Branch branch){
-       validateBranchUniquenessForCreate(branch);
-       return this.branchRepository.save(branch);
+    public BranchFullResponse createBranch(@NotNull BranchCreateRequest request) {
+        validateBranchUniquenessForCreate(request);
+        Branch branch = branchMapper.toBranchEntity(request);
+        Branch saved = branchRepository.save(branch);
+        return branchMapper.toFullBranchResponse(saved);
     }
 
+
     @Transactional
-    public Branch updateBranch(@NotNull Branch branch){
-        validateBranchUniquenessForUpdate(branch);
-        return this.branchRepository.save(branch);
+    public BranchFullResponse updateBranch(@NotNull BranchUpdateRequest request) {
+        validateBranchUniquenessForUpdate(request);
+        Branch branch = branchMapper.toBranchEntity(request);
+        Branch updated = branchRepository.save(branch);
+        return branchMapper.toFullBranchResponse(updated);
     }
 
     @Transactional
     public void deleteBranch(@NotNull Integer branchId) {
         Branch branch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
-
         branchRepository.delete(branch);
     }
 
-
-
-    private void validateBranchUniquenessForCreate(@NotNull Branch branch) {
+    private void validateBranchUniquenessForCreate(@NotNull BranchCreateRequest branch) {
 
         if (branchRepository.existsByCode(branch.getCode())) {
             throw new ResourceExistsException("Branch code already exists.");
@@ -88,7 +95,7 @@ public class BranchService {
         }
     }
 
-    private void validateBranchUniquenessForUpdate(@NotNull Branch branch) {
+    private void validateBranchUniquenessForUpdate(@NotNull BranchUpdateRequest branch) {
         if (branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())) {
             throw new ResourceExistsException("Another branch already uses this code.");
         }

@@ -1,7 +1,9 @@
 package lk.ashan.ntcserverapllication.module.branch.service;
 
-import lk.ashan.ntcserverapllication.module.branch.model.District;
+import lk.ashan.ntcserverapllication.module.branch.dto.DistrictResponse;
+import lk.ashan.ntcserverapllication.module.branch.mapper.DistrictMapper;
 import lk.ashan.ntcserverapllication.module.branch.repository.DistrictRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,27 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DistrictService {
 
     private final DistrictRepository districtRepository;
+    private final DistrictMapper districtMapper;
 
-    @Autowired
-    public DistrictService(DistrictRepository districtRepository) {
-        this.districtRepository = districtRepository;
-    }
-
-    public List<District> getDistricts() {
-
-        List<District> districts = this.districtRepository.findAll();
-
-        return districts.stream().map(
-                district -> {
-                    District d = new District();
-                    d.setId(district.getId());
-                    d.setName(district.getName());
-                    d.setProvince(district.getProvince());
-                    return d;
-                }
-        ).collect(Collectors.toList());
+    public List<DistrictResponse> getDistricts() {
+        return districtMapper.toDistrictResponseList(districtRepository.findAll());
     }
 }

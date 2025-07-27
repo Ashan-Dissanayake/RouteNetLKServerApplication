@@ -1,11 +1,14 @@
 package lk.ashan.ntcserverapllication.service;
 
+import lk.ashan.ntcserverapllication.module.branch.dto.BranchstatusResponse;
+import lk.ashan.ntcserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.ntcserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.ntcserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.ntcserverapllication.module.branch.service.BranchstatusService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,8 +24,14 @@ class BranchstatusServiceTest {
     @Mock
     private BranchstatusRepository branchstatusRepository;
 
-    @InjectMocks
+    private final BranchstatusMapper branchstatusMapper = Mappers.getMapper(BranchstatusMapper.class);
+
     private BranchstatusService branchstatusService;
+
+    @BeforeEach
+    void setUp() {
+        branchstatusService = new BranchstatusService(branchstatusRepository, branchstatusMapper);
+    }
 
     @Test
     void getBranchstatuss() {
@@ -36,7 +45,7 @@ class BranchstatusServiceTest {
 
         when(branchstatusRepository.findAll()).thenReturn(mockBranchstatuses);
 
-        List<Branchstatus> result = branchstatusService.getBranchstatuss();
+        List<BranchstatusResponse> result = branchstatusService.getBranchstatuses();
 
         assertEquals(3, result.size());
 
