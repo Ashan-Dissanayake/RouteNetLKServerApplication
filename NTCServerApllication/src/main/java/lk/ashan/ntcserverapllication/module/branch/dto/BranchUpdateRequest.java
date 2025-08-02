@@ -1,5 +1,6 @@
 package lk.ashan.ntcserverapllication.module.branch.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -8,5 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 public class BranchUpdateRequest extends BranchBaseRequest{
+    @NotNull
     private Integer id;
 }

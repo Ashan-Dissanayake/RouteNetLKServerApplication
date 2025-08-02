@@ -6,6 +6,7 @@ import lk.ashan.ntcserverapllication.module.branch.model.District;
 import lk.ashan.ntcserverapllication.module.branch.model.Province;
 import lk.ashan.ntcserverapllication.module.branch.repository.DistrictRepository;
 import lk.ashan.ntcserverapllication.module.branch.service.DistrictService;
+import lk.ashan.ntcserverapllication.util.factory.BranchTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,14 +39,14 @@ class DistrictServiceTest {
     @Test
     void getDistricts_shouldReturnAllDistricts() {
 
-        Province western = new Province(1, "Western");
-        Province northern = new Province(4, "Northern");
-        Province uva = new Province(8, "Uva");
+        Province western = BranchTestDataFactory.buildProvince(1, "Western");
+        Province northern = BranchTestDataFactory.buildProvince(4, "Northern");
+        Province uva = BranchTestDataFactory.buildProvince(8, "Uva");
 
         List<District> mockDistrictes = Arrays.asList(
-                new District(1, "Colombo",western),
-                new District(12, "Mullaitivu",northern),
-                new District(23, "Monaragala",uva)
+                BranchTestDataFactory.buildDistrictWithProvince(1, "Colombo",western),
+                BranchTestDataFactory.buildDistrictWithProvince(12, "Mullaitivu",northern),
+                BranchTestDataFactory.buildDistrictWithProvince(23, "Monaragala",uva)
         );
 
         when(districtRepository.findAll()).thenReturn(mockDistrictes);

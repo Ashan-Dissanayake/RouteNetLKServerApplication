@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.paylaod.response;
+package lk.ashan.ntcserverapllication.shared.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

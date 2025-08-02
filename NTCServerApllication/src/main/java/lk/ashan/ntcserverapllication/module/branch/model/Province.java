@@ -10,7 +10,6 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 public class Province {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -22,11 +21,6 @@ public class Province {
     @JsonIgnore
     @OneToMany(mappedBy = "province")
     private Collection<District> districts;
-
-    public Province(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {

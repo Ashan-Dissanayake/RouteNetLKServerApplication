@@ -10,7 +10,6 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 public class Branchtype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -22,11 +21,6 @@ public class Branchtype {
     @JsonIgnore
     @OneToMany(mappedBy = "branchtype")
     private Collection<Branch> branches;
-
-    public Branchtype(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {

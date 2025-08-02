@@ -1,4 +1,4 @@
-package lk.ashan.ntcserverapllication.exception;
+package lk.ashan.ntcserverapllication.shared.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
 

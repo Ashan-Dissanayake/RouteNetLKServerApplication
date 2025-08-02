@@ -1,13 +1,13 @@
-package lk.ashan.ntcserverapllication.shared;
+package lk.ashan.ntcserverapllication.shared.api;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
-import lk.ashan.ntcserverapllication.paylaod.response.APISuccessResponse;
-import lk.ashan.ntcserverapllication.enums.ErrorCode;
+import lk.ashan.ntcserverapllication.shared.api.dto.APIErrorResponse;
+import lk.ashan.ntcserverapllication.shared.api.dto.APISuccessResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 public class APIResponseBuilder {
@@ -46,7 +46,7 @@ public class APIResponseBuilder {
 
     public static ResponseEntity<APIErrorResponse> error(
             ErrorCode errorCode,
-            String detail,
+            List<String> details,
             HttpServletRequest request
     ) {
         String instanceUri = buildInstanceUrl(request);
@@ -55,10 +55,11 @@ public class APIResponseBuilder {
                 errorCode.getTitle(),
                 errorCode.getStatus(),
                 errorCode,
-                detail,
+                details,
                 instanceUri
         ), errorCode.getStatus());
     }
+
 
     private static String buildCurrentRequestUrl() {
         return ServletUriComponentsBuilder

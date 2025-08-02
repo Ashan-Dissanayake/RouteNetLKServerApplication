@@ -1,8 +1,8 @@
 package lk.ashan.ntcserverapllication.module.branch.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.ntcserverapllication.exception.ResourceExistsException;
-import lk.ashan.ntcserverapllication.exception.ResourceNotFoundException;
+import lk.ashan.ntcserverapllication.shared.exception.ResourceExistsException;
+import lk.ashan.ntcserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.ntcserverapllication.module.branch.dto.BranchCreateRequest;
 import lk.ashan.ntcserverapllication.module.branch.dto.BranchFullResponse;
 import lk.ashan.ntcserverapllication.module.branch.dto.BranchUpdateRequest;
