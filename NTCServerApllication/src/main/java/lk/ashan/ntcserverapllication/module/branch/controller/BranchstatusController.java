@@ -2,8 +2,8 @@ package lk.ashan.ntcserverapllication.module.branch.controller;
 
 import lk.ashan.ntcserverapllication.module.branch.dto.BranchstatusResponse;
 import lk.ashan.ntcserverapllication.module.branch.service.BranchstatusService;
-import lk.ashan.ntcserverapllication.paylaod.response.APISuccessResponse;
-import lk.ashan.ntcserverapllication.shared.APIResponseBuilder;
+import lk.ashan.ntcserverapllication.shared.api.dto.APISuccessResponse;
+import lk.ashan.ntcserverapllication.shared.api.APIResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

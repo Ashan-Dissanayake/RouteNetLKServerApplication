@@ -6,6 +6,7 @@ import lk.ashan.ntcserverapllication.module.branch.dto.ProvinceResponse;
 import lk.ashan.ntcserverapllication.module.branch.mapper.ProvinceMapper;
 import lk.ashan.ntcserverapllication.module.branch.service.ProvinceService;
 
+import lk.ashan.ntcserverapllication.util.factory.BranchTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,8 +39,9 @@ class ProvinceServiceTest {
     @Test
     void getProvinces_shouldReturnAllProvinces() {
         List<Province> mockProvinces = Arrays.asList(
-                new Province(1, "Western"),
-                new Province(5, "Eastern")
+               BranchTestDataFactory.buildProvince(1, "Western"),
+               BranchTestDataFactory.buildProvince(5, "Eastern")
+
         );
         when(provinceRepository.findAll()).thenReturn(mockProvinces);
 

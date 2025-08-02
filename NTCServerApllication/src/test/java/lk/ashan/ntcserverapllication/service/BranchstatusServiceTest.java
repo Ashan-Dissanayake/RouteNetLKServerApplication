@@ -5,6 +5,7 @@ import lk.ashan.ntcserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.ntcserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.ntcserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.ntcserverapllication.module.branch.service.BranchstatusService;
+import lk.ashan.ntcserverapllication.util.factory.BranchTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +38,9 @@ class BranchstatusServiceTest {
     void getBranchstatuses_shouldReturnAllBranchstatuses() {
 
         List<Branchstatus> mockBranchstatuses = Arrays.asList(
-                new Branchstatus(1, "Active"),
-                new Branchstatus(2, "Inactive"),
-                new Branchstatus(3, "Closed")
-
+                BranchTestDataFactory.buildBranchStatus(1, "Active"),
+                BranchTestDataFactory.buildBranchStatus(2, "Inactive"),
+                BranchTestDataFactory.buildBranchStatus(3, "Closed")
         );
 
         when(branchstatusRepository.findAll()).thenReturn(mockBranchstatuses);

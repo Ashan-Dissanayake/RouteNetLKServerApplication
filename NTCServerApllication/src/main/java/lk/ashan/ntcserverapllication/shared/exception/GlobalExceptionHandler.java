@@ -1,12 +1,15 @@
-package lk.ashan.ntcserverapllication.exception;
+package lk.ashan.ntcserverapllication.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.ntcserverapllication.paylaod.response.APIErrorResponse;
-import lk.ashan.ntcserverapllication.enums.ErrorCode;
-import lk.ashan.ntcserverapllication.shared.APIResponseBuilder;
+import lk.ashan.ntcserverapllication.shared.api.dto.APIErrorResponse;
+import lk.ashan.ntcserverapllication.shared.api.ErrorCode;
+import lk.ashan.ntcserverapllication.shared.api.APIResponseBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,7 +21,7 @@ public class GlobalExceptionHandler {
     ) {
         return APIResponseBuilder.error(
                 ErrorCode.RESOURCE_ALREADY_EXISTS,
-                e.getMessage(),
+                List.of(e.getMessage()),
                 request
         );
     }
@@ -30,10 +33,30 @@ public class GlobalExceptionHandler {
     ) {
         return APIResponseBuilder.error(
                 ErrorCode.RESOURCE_NOT_FOUND,
-                e.getMessage(),
+                List.of(e.getMessage()),
                 request
         );
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<APIErrorResponse> handleValidationException(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request
+    ) {
+        List<String> details = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .toList();
+
+        return APIResponseBuilder.error(
+                ErrorCode.INVALID_DATA,
+                details,
+                request
+        );
+    }
+
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIErrorResponse> handleGenericException(
@@ -42,7 +65,7 @@ public class GlobalExceptionHandler {
     ) {
         return APIResponseBuilder.error(
                 ErrorCode.UNKNOWN_ERROR,
-                e.getMessage(),
+                List.of(e.getMessage()),
                 request
         );
     }

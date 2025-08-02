@@ -5,6 +5,7 @@ import lk.ashan.ntcserverapllication.module.branch.mapper.BranchtypeMapper;
 import lk.ashan.ntcserverapllication.module.branch.model.Branchtype;
 import lk.ashan.ntcserverapllication.module.branch.repository.BranchtypeRepository;
 import lk.ashan.ntcserverapllication.module.branch.service.BranchtypeService;
+import lk.ashan.ntcserverapllication.util.factory.BranchTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,8 +39,8 @@ class BranchtypeServiceTest {
     void getBranchtypes_shouldReturnAllBranchtypes() {
 
         List<Branchtype> mockBranchtypes = Arrays.asList(
-                new Branchtype(1, "Head"),
-                new Branchtype(2, "Region")
+               BranchTestDataFactory.buildBranchType(1, "Head"),
+                BranchTestDataFactory.buildBranchType(2, "Region")
         );
 
         when(branchtypeRepository.findAll()).thenReturn(mockBranchtypes);
