@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/NTCApplication.iml" filepath="$PROJECT_DIR$/.idea/NTCApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NTCServerApllication.iml" filepath="$PROJECT_DIR$/NTCServerApllication.iml" />
     </modules>
   </component>
 </project>
