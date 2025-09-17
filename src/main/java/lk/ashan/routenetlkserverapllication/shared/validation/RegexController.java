@@ -1,0 +1,28 @@
+package lk.ashan.routenetlkserverapllication.shared.validation;
+
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchBaseRequest;
+import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
+import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
+import lk.ashan.routenetlkserverapllication.util.RegexProvider;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+
+@CrossOrigin
+@RestController
+@RequestMapping(value = "/regexes")
+public class RegexController {
+
+    @GetMapping(path ="/branches", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> branch() {
+       HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new BranchBaseRequest());
+        assert regexes != null;
+        return APIResponseBuilder.getResponse(regexes, regexes.size());
+    }
+}
+
+

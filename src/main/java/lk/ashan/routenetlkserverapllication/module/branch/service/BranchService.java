@@ -90,6 +90,7 @@ public class BranchService {
         if (branchRepository.existsByEmail(branch.getEmail())) {
             throw new ResourceExistsException("Branch email already exists.");
         }
+
         if (branchRepository.existsByTelephone(branch.getTelephone())) {
             throw new ResourceExistsException("Branch telephone already exists.");
         }
