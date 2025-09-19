@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchtypeService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -21,8 +21,8 @@ public class BranchtypeController {
     private final BranchtypeService branchtypeService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<BranchtypeResponse>>> get() {
-        List<BranchtypeResponse> branchtypes = branchtypeService.getBranchtypes();
+    public ResponseEntity<APISuccessResponse<List<BranchtypeDto>>> get() {
+        List<BranchtypeDto> branchtypes = branchtypeService.getBranchtypes();
         return APIResponseBuilder.getResponse(branchtypes, branchtypes.size());
     }
 

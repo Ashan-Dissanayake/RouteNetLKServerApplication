@@ -3,8 +3,9 @@ package lk.ashan.routenetlkserverapllication.module.branch.dto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
 @SuperBuilder
-public class BranchCreateRequest extends BranchBaseRequest{
+public class BranchCreateRequestDto extends BranchRequestDto {
 }

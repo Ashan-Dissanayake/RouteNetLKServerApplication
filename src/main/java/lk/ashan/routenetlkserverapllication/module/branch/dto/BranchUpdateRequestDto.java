@@ -1,14 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.branch.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
 @SuperBuilder
-public class BranchUpdateRequest extends BranchBaseRequest{
+public class BranchUpdateRequestDto extends BranchRequestDto {
     @NotNull
     private Integer id;
 }

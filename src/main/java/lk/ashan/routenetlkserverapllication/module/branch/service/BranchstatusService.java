@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class BranchstatusService {
     private final BranchstatusMapper branchstatusMapper;
 
 
-    public List<BranchstatusResponse> getBranchstatuses() {
+    public List<BranchstatusDto> getBranchstatuses() {
         return branchstatusMapper.toBranchstatusResponseList(branchstatusRepository.findAll());
     }
 

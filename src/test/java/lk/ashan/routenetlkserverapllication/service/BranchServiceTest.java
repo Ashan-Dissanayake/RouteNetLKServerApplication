@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.service;
 
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequest;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchFullResponse;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequest;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
@@ -52,7 +52,7 @@ class BranchServiceTest {
     void getBranches_shouldReturnAllBranches() {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
-        List<BranchFullResponse> result = branchService.getBranches();
+        List<BranchDetailResponseDto> result = branchService.getBranches();
 
         assertEquals(2, result.size());
         assertBranchExists(result, "Colombo Branch");
@@ -68,7 +68,7 @@ class BranchServiceTest {
         HashMap<String, String> params = new HashMap<>();
         params.put("branchname", "Colombo");
 
-        List<BranchFullResponse> result = branchService.searchBranch(params);
+        List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
         assertEquals(1, result.size());
         assertBranch(result.get(0), "Colombo Branch", "CLB0001-1", 1);
@@ -81,7 +81,7 @@ class BranchServiceTest {
         HashMap<String, String> params = new HashMap<>();
         params.put("branchcode", "RAT0007-1");
 
-        List<BranchFullResponse> result = branchService.searchBranch(params);
+        List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
         assertEquals(1, result.size());
         assertBranch(result.get(0), "Ratnapura Branch", "RAT0007-1", 2);
@@ -94,7 +94,7 @@ class BranchServiceTest {
         HashMap<String, String> params = new HashMap<>();
         params.put("branchstatusid", "1");
 
-        List<BranchFullResponse> result = branchService.searchBranch(params);
+        List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
         assertEquals(1, result.size());
     }
@@ -107,7 +107,7 @@ class BranchServiceTest {
         params.put("branchname", "Colombo");
         params.put("branchstatusid", "1");
 
-        List<BranchFullResponse> result = branchService.searchBranch(params);
+        List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
         assertEquals(1, result.size());
         assertBranch(result.get(0), "Colombo Branch", "CLB0001-1", 1);
@@ -118,7 +118,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> emptyParams = new HashMap<>();
-        List<BranchFullResponse> result = branchService.searchBranch(emptyParams);
+        List<BranchDetailResponseDto> result = branchService.searchBranch(emptyParams);
 
         assertEquals(2, result.size());
     }
@@ -128,7 +128,7 @@ class BranchServiceTest {
 
     @Test
     void createBranch_shouldThrow_whenNameExists() {
-        BranchCreateRequest branch = BranchTestDataFactory.buildCreateBranchRequest("Colombo Branch", "UNIQUE001-1", "unique@ntc.gov.lk", "0119998888");
+        BranchCreateRequestDto branch = BranchTestDataFactory.buildCreateBranchRequest("Colombo Branch", "UNIQUE001-1", "unique@ntc.gov.lk", "0119998888");
         when(branchRepository.existsByName(branch.getName())).thenReturn(true);
 
         assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
@@ -138,7 +138,7 @@ class BranchServiceTest {
 
     @Test
     void createBranch_shouldThrow_whenCodeExists() {
-        BranchCreateRequest branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "CLB0001-1", "unique@ntc.gov.lk", "0119998888");
+        BranchCreateRequestDto branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "CLB0001-1", "unique@ntc.gov.lk", "0119998888");
         when(branchRepository.existsByCode(branch.getCode())).thenReturn(true);
 
         assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
@@ -148,7 +148,7 @@ class BranchServiceTest {
 
     @Test
     void createBranch_shouldThrow_whenEmailExists() {
-        BranchCreateRequest branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "UNIQUE001-1", "colombo@ntc.gov.lk", "0119998888");
+        BranchCreateRequestDto branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "UNIQUE001-1", "colombo@ntc.gov.lk", "0119998888");
         when(branchRepository.existsByEmail(branch.getEmail())).thenReturn(true);
 
         assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
@@ -158,7 +158,7 @@ class BranchServiceTest {
 
     @Test
     void createBranch_shouldThrow_whenTelephoneExists() {
-        BranchCreateRequest branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "UNIQUE001-1", "unique@ntc.gov.lk", "0112345678");
+        BranchCreateRequestDto branch = BranchTestDataFactory.buildCreateBranchRequest("Unique Branch", "UNIQUE001-1", "unique@ntc.gov.lk", "0112345678");
         when(branchRepository.existsByTelephone(branch.getTelephone())).thenReturn(true);
 
         assertThrows(ResourceExistsException.class, () -> branchService.createBranch(branch));
@@ -168,7 +168,7 @@ class BranchServiceTest {
 
     @Test
     void createBranch_shouldSucceed_whenAllUnique() {
-        BranchCreateRequest branchCreateRequest = BranchTestDataFactory.buildCreateBranchRequest("Unique Name", "UNIQUE001-1", "unique@ntc.gov.lk", "0112223344");
+        BranchCreateRequestDto branchCreateRequest = BranchTestDataFactory.buildCreateBranchRequest("Unique Name", "UNIQUE001-1", "unique@ntc.gov.lk", "0112223344");
 
         Branch branchEntity = branchMapper.toBranchEntity(branchCreateRequest);
 
@@ -178,7 +178,7 @@ class BranchServiceTest {
         when(branchRepository.existsByTelephone(branchCreateRequest.getTelephone())).thenReturn(false);
         when(branchRepository.save(branchEntity)).thenReturn(branchEntity);
 
-        BranchFullResponse created = branchService.createBranch(branchCreateRequest);
+        BranchDetailResponseDto created = branchService.createBranch(branchCreateRequest);
 
         assertNotNull(created);
         assertEquals("Unique Name", created.getName());
@@ -192,7 +192,7 @@ class BranchServiceTest {
 
     @Test
     void updateBranch_shouldThrow_whenNameExists() {
-        BranchUpdateRequest branch = BranchTestDataFactory.buildUpdateBranchRequest("Colombo Branch","UNIQUE001-1","unique@ntc.gov.lk","0112223344");
+        BranchUpdateRequestDto branch = BranchTestDataFactory.buildUpdateBranchRequest("Colombo Branch","UNIQUE001-1","unique@ntc.gov.lk","0112223344");
         branch.setId(2);
 
         when(branchRepository.existsByNameAndIdNot(branch.getName(), branch.getId())).thenReturn(true);
@@ -203,7 +203,7 @@ class BranchServiceTest {
 
     @Test
     void updateBranch_shouldThrow_whenCodeExists() {
-        BranchUpdateRequest branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","CLB0001-1","unique@ntc.gov.lk","0112223344");
+        BranchUpdateRequestDto branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","CLB0001-1","unique@ntc.gov.lk","0112223344");
         branch.setId(2);
 
         when(branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())).thenReturn(true);
@@ -214,7 +214,7 @@ class BranchServiceTest {
 
     @Test
     void updateBranch_shouldThrow_whenEmailExists() {
-        BranchUpdateRequest branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","UNIQUE001-1","colombo@ntc.gov.lk","0112223344");
+        BranchUpdateRequestDto branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","UNIQUE001-1","colombo@ntc.gov.lk","0112223344");
         branch.setId(2);
 
         when(branchRepository.existsByEmailAndIdNot(branch.getEmail(), branch.getId())).thenReturn(true);
@@ -225,7 +225,7 @@ class BranchServiceTest {
 
     @Test
     void updateBranch_shouldThrow_whenTelephoneExists() {
-        BranchUpdateRequest branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","UNIQUE001-1","unique@ntc.gov.lk","0112345678");
+        BranchUpdateRequestDto branch = BranchTestDataFactory.buildUpdateBranchRequest("Unique Name","UNIQUE001-1","unique@ntc.gov.lk","0112345678");
         branch.setId(2);
 
         when(branchRepository.existsByTelephoneAndIdNot(branch.getTelephone(), branch.getId())).thenReturn(true);
@@ -236,7 +236,7 @@ class BranchServiceTest {
 
     @Test
     void updateBranch_shouldSucceed_whenAllFieldsUnique() {
-        BranchUpdateRequest branchUpdateRequest = BranchTestDataFactory.buildUpdateBranchRequest("Colombo Branch-Head","UNIQUE001-1","0112345678","colombohead@ntc.gov.lk");
+        BranchUpdateRequestDto branchUpdateRequest = BranchTestDataFactory.buildUpdateBranchRequest("Colombo Branch-Head","UNIQUE001-1","0112345678","colombohead@ntc.gov.lk");
         branchUpdateRequest.setId(1);
 
         Branch branchEntity = branchMapper.toBranchEntity(branchUpdateRequest);
@@ -248,7 +248,7 @@ class BranchServiceTest {
         when(branchRepository.existsByTelephoneAndIdNot(branchUpdateRequest.getTelephone(), branchUpdateRequest.getId())).thenReturn(false);
         when(branchRepository.save(branchEntity)).thenReturn(branchEntity);
 
-        BranchFullResponse result = branchService.updateBranch(branchUpdateRequest);
+        BranchDetailResponseDto result = branchService.updateBranch(branchUpdateRequest);
 
         assertBranch(result, result.getName(), result.getCode(), result.getBranchstatus().getId());
         verify(branchRepository).save(branchEntity);
@@ -288,14 +288,14 @@ class BranchServiceTest {
 
     // ────────────── HELPERS ──────────────
 
-    private void assertBranch(BranchFullResponse branch, String expectedName, String expectedCode, Integer expectedStatusId) {
+    private void assertBranch(BranchDetailResponseDto branch, String expectedName, String expectedCode, Integer expectedStatusId) {
         assertEquals(expectedName, branch.getName());
         assertEquals(expectedCode, branch.getCode());
         assertEquals(expectedStatusId, branch.getBranchstatus().getId());
         assertEquals(fixedDate, branch.getDocreated());
     }
 
-    private void assertBranchExists(List<BranchFullResponse> branches, String name) {
+    private void assertBranchExists(List<BranchDetailResponseDto> branches, String name) {
         assertTrue(branches.stream().anyMatch(b -> b.getName().equals(name)));
     }
 

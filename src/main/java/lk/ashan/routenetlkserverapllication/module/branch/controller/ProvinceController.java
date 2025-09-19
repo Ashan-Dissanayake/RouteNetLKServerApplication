@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.ProvinceResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.ProvinceDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.ProvinceService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -21,8 +21,8 @@ public class ProvinceController {
     private final ProvinceService provinceService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<ProvinceResponse>>> get() {
-        List<ProvinceResponse> provinces = provinceService.getProvinces();
+    public ResponseEntity<APISuccessResponse<List<ProvinceDto>>> get() {
+        List<ProvinceDto> provinces = provinceService.getProvinces();
         return APIResponseBuilder.getResponse(provinces, provinces.size());
     }
 

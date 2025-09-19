@@ -1,22 +1,21 @@
 package lk.ashan.routenetlkserverapllication.module.branch.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchcoverage;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Date;
 import java.util.Collection;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@SuperBuilder
-public class BranchBaseRequest {
+@AllArgsConstructor
+@ToString
+@SuperBuilder // allows inheritance in builders
+public class BranchRequestDto {
     @NotBlank(message = "Branch name is mandatory")
     @Pattern(regexp = "^[A-Za-z0-9 .&'-]{1,100}$", message = "Invalid branch name format")
     private String name;
@@ -29,24 +28,25 @@ public class BranchBaseRequest {
     @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,255}$", message = "Invalid address format")
     private String address;
 
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$" , message = "Invalid telephone number")
+    @Pattern(regexp = "^\\+?[0-9]{10}$" , message = "Invalid telephone number")
     private String telephone;
 
     @Email(message = "Invalid email format")
     private String email;
 
     @PastOrPresent(message = "Creation date cannot be in the future")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date docreated;
 
     @Size(max = 500, message = "Remarks must not exceed 500 characters")
     private String remarks;
 
     @NotNull(message = "Branch type is mandatory")
-    private Branchtype branchtype;
+    private BranchtypeDto branchtype;
 
     @NotNull(message = "Branch status is mandatory")
-    private Branchstatus branchstatus;
+    private BranchstatusDto branchstatus;
 
     @NotNull(message = "Branch coverages are mandatory")
-    private Collection<Branchcoverage> branchcoverages;
+    private Collection<BranchDistrictCoverageDto> branchcoverages;
 }

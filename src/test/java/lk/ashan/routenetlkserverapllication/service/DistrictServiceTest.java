@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.DistrictResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.DistrictDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.DistrictMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.District;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Province;
@@ -51,7 +51,7 @@ class DistrictServiceTest {
 
         when(districtRepository.findAll()).thenReturn(mockDistrictes);
 
-        List<DistrictResponse> result = districtService.getDistricts();
+        List<DistrictDto> result = districtService.getDistricts();
 
         assertEquals(3, result.size());
 

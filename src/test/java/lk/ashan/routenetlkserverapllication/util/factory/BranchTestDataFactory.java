@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.util.factory;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequest;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequest;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
 
 import java.sql.Date;
@@ -82,8 +82,8 @@ public class BranchTestDataFactory {
                 .build();
     }
 
-    public static BranchCreateRequest buildCreateBranchRequest(String name, String code, String email, String telephone) {
-        return BranchCreateRequest.builder()
+    public static BranchCreateRequestDto buildCreateBranchRequest(String name, String code, String email, String telephone) {
+        return BranchCreateRequestDto.builder()
                 .name(name)
                 .code(code)
                 .email(email)
@@ -97,8 +97,8 @@ public class BranchTestDataFactory {
                 .build();
     }
 
-    public static BranchUpdateRequest buildUpdateBranchRequest(String name, String code, String email, String telephone) {
-        return BranchUpdateRequest.builder()
+    public static BranchUpdateRequestDto buildUpdateBranchRequest(String name, String code, String email, String telephone) {
+        return BranchUpdateRequestDto.builder()
                 .name(name)
                 .code(code)
                 .email(email)

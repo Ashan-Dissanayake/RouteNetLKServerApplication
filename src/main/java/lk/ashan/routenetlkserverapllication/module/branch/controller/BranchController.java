@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchBasicResponse;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequest;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchFullResponse;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequest;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -22,10 +22,10 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<BranchFullResponse>>> get(
+    public ResponseEntity<APISuccessResponse<List<BranchDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
-        List<BranchFullResponse> branches = params.isEmpty()
+        List<BranchDetailResponseDto> branches = params.isEmpty()
                 ? branchService.getBranches()
                 : branchService.searchBranch(params);
 
@@ -34,19 +34,20 @@ public class BranchController {
 
 
     @PostMapping
-    public ResponseEntity<APISuccessResponse<BranchFullResponse>> add(@RequestBody BranchCreateRequest branchCreateRequest) {
-        BranchFullResponse savedBranch = branchService.createBranch(branchCreateRequest);
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(@RequestBody BranchCreateRequestDto branchCreateRequest) {
+        System.out.println(branchCreateRequest.getCode());
+        BranchDetailResponseDto savedBranch = branchService.createBranch(branchCreateRequest);
         return APIResponseBuilder.postResponse(savedBranch, savedBranch.getId());
     }
 
     @PutMapping
-    public ResponseEntity<APISuccessResponse<BranchFullResponse>> update(@RequestBody BranchUpdateRequest branchUpdateRequest) {
-        BranchFullResponse updatedBranch = branchService.updateBranch(branchUpdateRequest);
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(@RequestBody BranchUpdateRequestDto branchUpdateRequest) {
+        BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
         return APIResponseBuilder.putResponse(updatedBranch, updatedBranch.getId());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<APISuccessResponse<BranchBasicResponse>> delete(@PathVariable Integer id) {
+    public ResponseEntity<APISuccessResponse<BranchSummaryResponseDto>> delete(@PathVariable Integer id) {
         branchService.deleteBranch(id);
         return APIResponseBuilder.deleteResponse(id);
     }

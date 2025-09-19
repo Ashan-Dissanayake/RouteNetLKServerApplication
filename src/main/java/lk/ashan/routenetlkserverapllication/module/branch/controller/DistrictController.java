@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.DistrictResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.DistrictDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.DistrictService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -21,8 +21,8 @@ public class DistrictController {
     private final DistrictService districtService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<DistrictResponse>>> get() {
-        List<DistrictResponse> districts = districtService.getDistricts();
+    public ResponseEntity<APISuccessResponse<List<DistrictDto>>> get() {
+        List<DistrictDto> districts = districtService.getDistricts();
         return APIResponseBuilder.getResponse(districts, districts.size());
     }
 

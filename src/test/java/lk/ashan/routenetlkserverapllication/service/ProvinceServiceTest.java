@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.service;
 
+import lk.ashan.routenetlkserverapllication.module.branch.dto.ProvinceDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Province;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.ProvinceRepository;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.ProvinceResponse;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.ProvinceMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.service.ProvinceService;
 
@@ -45,7 +45,7 @@ class ProvinceServiceTest {
         );
         when(provinceRepository.findAll()).thenReturn(mockProvinces);
 
-        List<ProvinceResponse> result = provinceService.getProvinces();
+        List<ProvinceDto> result = provinceService.getProvinces();
 
         assertEquals(2, result.size());
         assertEquals("Western", result.get(0).getName());
