@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BranchstatusMapper {
 
-  List<BranchstatusDto> toBranchstatusResponseList(List<Branchstatus> branchstatuses);
+  BranchstatusDto toDto(Branchstatus branchstatus);
+
+  List<BranchstatusDto> toDtoList(List<Branchstatus> branchstatuses);
 
 }

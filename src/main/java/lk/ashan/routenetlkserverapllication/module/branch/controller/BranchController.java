@@ -35,7 +35,6 @@ public class BranchController {
 
     @PostMapping
     public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(@RequestBody BranchCreateRequestDto branchCreateRequest) {
-        System.out.println(branchCreateRequest.getCode());
         BranchDetailResponseDto savedBranch = branchService.createBranch(branchCreateRequest);
         return APIResponseBuilder.postResponse(savedBranch, savedBranch.getId());
     }

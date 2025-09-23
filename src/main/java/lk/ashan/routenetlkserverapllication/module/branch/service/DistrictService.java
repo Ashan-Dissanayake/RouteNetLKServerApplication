@@ -16,6 +16,6 @@ public class DistrictService {
     private final DistrictMapper districtMapper;
 
     public List<DistrictDto> getDistricts() {
-        return districtMapper.toDistrictResponseList(districtRepository.findAll());
+        return districtMapper.toDtoList(districtRepository.findAll());
     }
 }

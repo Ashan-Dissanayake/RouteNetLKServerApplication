@@ -28,7 +28,7 @@ public class BranchService {
     private final BranchMapper branchMapper;
 
     public List<BranchDetailResponseDto> getBranches(){
-        return branchMapper.toFulBranchResponseList(branchRepository.findAll());
+        return branchMapper.toDetailList(branchRepository.findAll());
     }
 
     public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
@@ -47,29 +47,30 @@ public class BranchService {
         if(branchcode!=null)branchStream = branchStream.filter(i->i.getCode().toLowerCase().equals(branchcode));
         if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
 
-        return branchMapper.toFulBranchResponseList( branchStream.collect(Collectors.toList()));
+        return branchMapper.toDetailList( branchStream.collect(Collectors.toList()));
 
         }
 
-        return branchMapper.toFulBranchResponseList(branches);
+        return branchMapper.toDetailList(branches);
 
     }
 
     @Transactional
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
         validateBranchUniquenessForCreate(request);
-        Branch branch = branchMapper.toBranchEntity(request);
+        Branch branch = branchMapper.toEntity(request);
+        branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
         Branch saved = branchRepository.save(branch);
-        return branchMapper.toFullBranchResponse(saved);
+        return branchMapper.toDto(saved);
     }
 
 
     @Transactional
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
         validateBranchUniquenessForUpdate(request);
-        Branch branch = branchMapper.toBranchEntity(request);
+        Branch branch = branchMapper.toEntity(request);
         Branch updated = branchRepository.save(branch);
-        return branchMapper.toFullBranchResponse(updated);
+        return branchMapper.toDto(updated);
     }
 
     @Transactional

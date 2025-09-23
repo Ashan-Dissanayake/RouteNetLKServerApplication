@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchtypeMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchtypeRepository;
@@ -45,7 +45,7 @@ class BranchtypeServiceTest {
 
         when(branchtypeRepository.findAll()).thenReturn(mockBranchtypes);
 
-        List<BranchtypeResponse> result = branchtypeService.getBranchtypes();
+        List<BranchtypeDto> result = branchtypeService.getBranchtypes();
 
         assertEquals(2, result.size());
 

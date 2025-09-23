@@ -7,5 +7,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @ToString(callSuper = true)
 @SuperBuilder
+@NoArgsConstructor
 public class BranchCreateRequestDto extends BranchRequestDto {
 }

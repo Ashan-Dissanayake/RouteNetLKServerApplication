@@ -17,7 +17,7 @@ public class BranchstatusService {
 
 
     public List<BranchstatusDto> getBranchstatuses() {
-        return branchstatusMapper.toBranchstatusResponseList(branchstatusRepository.findAll());
+        return branchstatusMapper.toDtoList(branchstatusRepository.findAll());
     }
 
 }

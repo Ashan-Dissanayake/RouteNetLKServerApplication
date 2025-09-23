@@ -170,7 +170,7 @@ class BranchServiceTest {
     void createBranch_shouldSucceed_whenAllUnique() {
         BranchCreateRequestDto branchCreateRequest = BranchTestDataFactory.buildCreateBranchRequest("Unique Name", "UNIQUE001-1", "unique@ntc.gov.lk", "0112223344");
 
-        Branch branchEntity = branchMapper.toBranchEntity(branchCreateRequest);
+        Branch branchEntity = branchMapper.toEntity(branchCreateRequest);
 
         when(branchRepository.existsByName(branchCreateRequest.getName())).thenReturn(false);
         when(branchRepository.existsByCode(branchCreateRequest.getCode())).thenReturn(false);

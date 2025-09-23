@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BranchtypeMapper {
 
-  List<BranchtypeDto> toBranchtypeResponseList(List<Branchtype> branchtypes);
+  BranchtypeDto toDto(Branchtype branchtype);
+
+  List<BranchtypeDto> toDtoList(List<Branchtype> branchtypes);
 
 }

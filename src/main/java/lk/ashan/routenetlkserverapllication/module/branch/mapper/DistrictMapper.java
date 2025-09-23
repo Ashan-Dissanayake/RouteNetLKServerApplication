@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DistrictMapper {
 
-  List<DistrictDto> toDistrictResponseList(List<District> districts);
+  DistrictDto toDto(District district);
+
+  List<DistrictDto> toDtoList(List<District> districts);
 
 }

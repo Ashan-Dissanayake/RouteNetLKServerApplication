@@ -16,6 +16,6 @@ public class BranchtypeService {
     private final BranchtypeMapper branchtypeMapper;
 
     public List<BranchtypeDto> getBranchtypes() {
-        return branchtypeMapper.toBranchtypeResponseList(branchtypeRepository.findAll());
+        return branchtypeMapper.toDtoList(branchtypeRepository.findAll());
     }
 }

@@ -16,7 +16,7 @@ public class ProvinceService {
     private final ProvinceMapper provinceMapper;
 
     public List<ProvinceDto> getProvinces() {
-        return provinceMapper.toProvinceResponseList(provinceRepository.findAll());
+        return provinceMapper.toDtoList(provinceRepository.findAll());
     }
 
 }

@@ -31,6 +31,7 @@ public class BranchRequestDto {
     @Pattern(regexp = "^\\+?[0-9]{10}$" , message = "Invalid telephone number")
     private String telephone;
 
+    @NotBlank(message = "Branch email is mandatory")
     @Email(message = "Invalid email format")
     private String email;
 

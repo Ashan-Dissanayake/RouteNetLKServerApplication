@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusResponse;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
@@ -45,7 +45,7 @@ class BranchstatusServiceTest {
 
         when(branchstatusRepository.findAll()).thenReturn(mockBranchstatuses);
 
-        List<BranchstatusResponse> result = branchstatusService.getBranchstatuses();
+        List<BranchstatusDto> result = branchstatusService.getBranchstatuses();
 
         assertEquals(3, result.size());
 

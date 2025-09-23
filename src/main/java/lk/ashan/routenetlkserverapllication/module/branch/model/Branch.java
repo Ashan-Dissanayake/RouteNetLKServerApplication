@@ -48,7 +48,7 @@ public class Branch {
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
     private Branchstatus branchstatus;
-    @OneToMany(mappedBy = "branch",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Branchcoverage> branchcoverages;
 
     @Override

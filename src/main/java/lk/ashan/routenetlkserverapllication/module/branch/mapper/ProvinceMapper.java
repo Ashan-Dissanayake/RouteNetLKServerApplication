@@ -10,8 +10,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProvinceMapper {
 
-  List<ProvinceDto> toProvinceResponseList(List<Province> provinces);
+  ProvinceDto toDto(Province province);
 
-  ProvinceDto toProvinceResponse(Province province);
+  List<ProvinceDto> toDtoList(List<Province> provinces);
 
 }
