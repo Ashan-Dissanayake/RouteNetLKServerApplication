@@ -2,8 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,15 +29,7 @@ class BranchControllerTest {
     @Autowired
     private ObjectMapper objectMapper; // Jackson mapper
 
-    private String apiUrl = "/branches"; // adjust path
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
+    private final String apiUrl = "/branches"; // adjust path
 
     @Test
     void createBranch_shouldSucceed_whenAllCorrect() throws Exception {
@@ -80,5 +70,25 @@ class BranchControllerTest {
                 .andExpect(jsonPath("$.data.branchtype.name").value("Region"))
                 .andExpect(jsonPath("$.data.branchstatus.name").value("Active"));
     }
+
+    @Test
+    void createBranch_missingName_shouldReturnBadRequest() throws Exception {
+        BranchCreateRequestDto request = BranchCreateRequestDto.builder()
+                .code("DMB0010")
+                .branchtype(BranchtypeDto.builder().id(2).name("Region").build())
+                .branchstatus(BranchstatusDto.builder().id(1).name("Active").build())
+                .branchcoverages(Collections.emptyList())
+                .build();
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_DATA"))
+                .andExpect(jsonPath("$.details[0]").value("name: Branch name is mandatory"));
+
+
+    }
+
 
 }

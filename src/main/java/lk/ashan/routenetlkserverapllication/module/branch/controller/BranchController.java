@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
+import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
@@ -34,7 +35,7 @@ public class BranchController {
 
 
     @PostMapping
-    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(@RequestBody BranchCreateRequestDto branchCreateRequest) {
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(@RequestBody @Valid BranchCreateRequestDto branchCreateRequest) {
         BranchDetailResponseDto savedBranch = branchService.createBranch(branchCreateRequest);
         return APIResponseBuilder.postResponse(savedBranch, savedBranch.getId());
     }

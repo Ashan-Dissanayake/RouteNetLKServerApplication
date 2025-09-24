@@ -21,7 +21,7 @@ public class BranchRequestDto {
     private String name;
 
     @NotBlank(message = "Branch code is mandatory")
-    @Size(max = 20, message = "Branch code max length is 20")
+    @Size(max = 7, message = "Branch code max length is 20")
     @Pattern(regexp = "^[A-Z]{3}\\d{4}(-\\d+)?$", message = "Branch code must be 3 uppercase letters, 4 digits, optional dash and branch number")
     private String code;
 
