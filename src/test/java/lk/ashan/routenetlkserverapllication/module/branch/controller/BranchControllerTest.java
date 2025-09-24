@@ -90,5 +90,22 @@ class BranchControllerTest {
 
     }
 
+    @Test
+    void createBranch_missingCode_shouldReturnBadRequest() throws Exception {
+        BranchCreateRequestDto request = BranchCreateRequestDto.builder()
+                .name("Dambulla Branch")
+                .branchtype(BranchtypeDto.builder().id(2).name("Region").build())
+                .branchstatus(BranchstatusDto.builder().id(1).name("Active").build())
+                .branchcoverages(Collections.emptyList())
+                .build();
 
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_DATA"))
+                .andExpect(jsonPath("$.details[1]").value("code: Branch code is mandatory"));
+
+
+    }
 }
