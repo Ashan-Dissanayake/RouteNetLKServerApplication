@@ -2,6 +2,8 @@ package lk.ashan.routenetlkserverapllication.util.factory;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
 
 import java.sql.Date;
@@ -23,11 +25,25 @@ public class BranchTestDataFactory {
         return branchtype;
     }
 
+    public static BranchtypeDto buildBranchTypeDto(int id, String name) {
+        BranchtypeDto branchtypeDto = new BranchtypeDto();
+        branchtypeDto.setId(id);
+        branchtypeDto.setName(name);
+        return branchtypeDto;
+    }
+
     public static Branchstatus buildBranchStatus(int id, String name) {
         Branchstatus branchstatus =new Branchstatus();
         branchstatus.setId(id);
         branchstatus.setName(name);
         return branchstatus;
+    }
+
+    public static BranchstatusDto buildBranchStatusDto(int id, String name) {
+        BranchstatusDto branchstatusDto =new BranchstatusDto();
+        branchstatusDto.setId(id);
+        branchstatusDto.setName(name);
+        return branchstatusDto;
     }
 
     public static District buildDistrict(int id, String name) {
@@ -91,8 +107,8 @@ public class BranchTestDataFactory {
                 .address("123 Test Street")
                 .remarks("Test branch")
                 .docreated(FIXED_DATE)
-                .branchtype(buildBranchType(1, "Head"))
-                .branchstatus(buildBranchStatus(1, "Active"))
+                .branchtype(buildBranchTypeDto(1, "Head"))
+                .branchstatus(buildBranchStatusDto(1, "Active"))
                 .branchcoverages(Collections.emptyList())
                 .build();
     }
@@ -106,8 +122,8 @@ public class BranchTestDataFactory {
                 .address("123 Test Street")
                 .remarks("Test branch")
                 .docreated(FIXED_DATE)
-                .branchtype(buildBranchType(1, "Head"))
-                .branchstatus(buildBranchStatus(1, "Active"))
+                .branchtype(buildBranchTypeDto(1, "Head"))
+                .branchstatus(buildBranchStatusDto(1, "Active"))
                 .branchcoverages(Collections.emptyList())
                 .build();
     }

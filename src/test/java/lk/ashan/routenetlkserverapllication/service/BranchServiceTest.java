@@ -239,7 +239,7 @@ class BranchServiceTest {
         BranchUpdateRequestDto branchUpdateRequest = BranchTestDataFactory.buildUpdateBranchRequest("Colombo Branch-Head","UNIQUE001-1","0112345678","colombohead@ntc.gov.lk");
         branchUpdateRequest.setId(1);
 
-        Branch branchEntity = branchMapper.toBranchEntity(branchUpdateRequest);
+        Branch branchEntity = branchMapper.toEntity(branchUpdateRequest);
 
 
         when(branchRepository.existsByCodeAndIdNot(branchUpdateRequest.getCode(), branchUpdateRequest.getId())).thenReturn(false);
