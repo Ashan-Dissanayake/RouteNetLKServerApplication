@@ -102,6 +102,21 @@ class BranchControllerTest {
                 ));
     }
 
+    @Test
+    void createBranch_missingAddress_shouldReturnBadRequest() throws Exception{
+        BranchCreateRequestDto request = validRequest();
+        request.setAddress(null);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Branch address is mandatory"
+                ));
+
+    }
+
     private BranchCreateRequestDto validRequest() {
         return BranchCreateRequestDto.builder()
                 .name("Dambulla Branch")

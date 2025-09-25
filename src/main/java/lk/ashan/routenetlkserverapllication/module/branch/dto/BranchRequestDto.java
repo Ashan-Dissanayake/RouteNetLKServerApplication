@@ -25,7 +25,7 @@ public class BranchRequestDto {
     @Pattern(regexp = "^[A-Z]{3}\\d{4}(-\\d+)?$", message = "Branch code must be 3 uppercase letters, 4 digits, optional dash and branch number")
     private String code;
 
-    @NotBlank(message = "Branch Address is mandatory")
+    @NotBlank(message = "Branch address is mandatory")
     @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,255}$", message = "Invalid address format")
     private String address;
 
