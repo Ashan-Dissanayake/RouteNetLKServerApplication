@@ -14,20 +14,22 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@SuperBuilder // allows inheritance in builders
+@SuperBuilder
 public class BranchRequestDto {
     @NotBlank(message = "Branch name is mandatory")
     @Pattern(regexp = "^[A-Za-z0-9 .&'-]{1,100}$", message = "Invalid branch name format")
     private String name;
 
     @NotBlank(message = "Branch code is mandatory")
-    @Size(max = 7, message = "Branch code max length is 20")
+    @Size(max = 7, message = "Branch code max length is 7")
     @Pattern(regexp = "^[A-Z]{3}\\d{4}(-\\d+)?$", message = "Branch code must be 3 uppercase letters, 4 digits, optional dash and branch number")
     private String code;
 
+    @NotBlank(message = "Branch Address is mandatory")
     @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,255}$", message = "Invalid address format")
     private String address;
 
+    @NotBlank(message = "Telephone number is mandatory")
     @Pattern(regexp = "^\\+?[0-9]{10}$" , message = "Invalid telephone number")
     private String telephone;
 
