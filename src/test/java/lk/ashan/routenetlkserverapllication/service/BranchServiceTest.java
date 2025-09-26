@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BranchServiceTest {
 
-    private Date fixedDate;
+    private LocalDate fixedDate;
     private List<Branch> mockBranches;
 
     @Mock
@@ -66,7 +67,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("branchname", "Colombo");
+        params.put("ssname", "Colombo Branch");
 
         List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
@@ -79,7 +80,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("branchcode", "RAT0007-1");
+        params.put("sscode", "RAT0007-1");
 
         List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
@@ -92,7 +93,7 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("branchstatusid", "1");
+        params.put("ssbranchstatus", "1");
 
         List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 
@@ -104,8 +105,8 @@ class BranchServiceTest {
         when(branchRepository.findAll()).thenReturn(mockBranches);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("branchname", "Colombo");
-        params.put("branchstatusid", "1");
+        params.put("ssname", "Colombo Branch");
+        params.put("ssbranchstatus", "1");
 
         List<BranchDetailResponseDto> result = branchService.searchBranch(params);
 

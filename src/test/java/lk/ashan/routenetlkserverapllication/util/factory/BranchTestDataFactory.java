@@ -1,20 +1,19 @@
 package lk.ashan.routenetlkserverapllication.util.factory;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 public class BranchTestDataFactory {
 
-    private static final Date FIXED_DATE = Date.valueOf("2025-07-14");
+    // ────────────── SERVICE LAYER TESTS ──────────────
+    private static final LocalDate FIXED_DATE = LocalDate.parse("2025-07-14");
 
-    public static Date getFixedDate() {
+    public static LocalDate getFixedDate() {
         return FIXED_DATE;
     }
 
@@ -68,8 +67,7 @@ public class BranchTestDataFactory {
         return  province;
     }
 
-
-    public static List<Branch> buildMockBranches(Date createdDate) {
+    public static List<Branch> buildMockBranches(LocalDate createdDate) {
         Branch colomboBranch = buildBranch(
                 "Colombo Branch", "CLB0001-1", "colombo@ntc.gov.lk", "0112345678",
                 createdDate, buildBranchType(1, "Head"), buildBranchStatus(1, "Active")
@@ -83,7 +81,7 @@ public class BranchTestDataFactory {
         return List.of(colomboBranch, ratnapuraBranch);
     }
 
-    public static Branch buildBranch(String name, String code, String email, String telephone, Date createdDate, Branchtype type, Branchstatus status) {
+    public static Branch buildBranch(String name, String code, String email, String telephone, LocalDate createdDate, Branchtype type, Branchstatus status) {
         return Branch.builder()
                 .name(name)
                 .code(code)
@@ -128,6 +126,20 @@ public class BranchTestDataFactory {
                 .build();
     }
 
+    private static List<Branchcoverage> buildBranchCoverages(Branch branch){
+        Branchcoverage bc1 = new Branchcoverage();
+        bc1.setDistrict(buildDistrict(1,"Colombo"));
+        bc1.setBranch(branch);
+
+        Branchcoverage bc2 = new Branchcoverage();
+        bc2.setDistrict(buildDistrict(2,"Gampaha"));
+        bc2.setBranch(branch);
+
+        return List.of(bc1,bc2);
+    }
+
+
+    // ────────────── REPOSITORY LAYER TESTS ──────────────
     public static Branch buildBranchWithBranchcoverages() {
         Branch branch = Branch.builder()
                 .name("UNIQUE Branch")
@@ -146,16 +158,24 @@ public class BranchTestDataFactory {
         return branch;
     }
 
-    private static List<Branchcoverage> buildBranchCoverages(Branch branch){
-        Branchcoverage bc1 = new Branchcoverage();
-        bc1.setDistrict(buildDistrict(1,"Colombo"));
-        bc1.setBranch(branch);
+    // ────────────── CONTROLLER LAYER TESTS ──────────────
 
-        Branchcoverage bc2 = new Branchcoverage();
-        bc2.setDistrict(buildDistrict(2,"Gampaha"));
-        bc2.setBranch(branch);
+    public static BranchCreateRequestDto validRequest() {
+        return BranchCreateRequestDto.builder()
+                .name("Dambulla Branch")
+                .code("DMB0010")
+                .address("No.12 Kandy Road, Dambulla")
+                .telephone("0665714120")
+                .docreated(LocalDate.parse("2025-09-18"))
+                .email("dmb@ntc.lk")
+                .remarks("Test")
+                .branchtype(new BranchtypeDto(1, "Region"))
+                .branchstatus(new BranchstatusDto(1, "Active"))
+                .branchcoverages(List.of(
+                        new BranchDistrictCoverageDto(null, new DistrictDto(4, "Kandy", new ProvinceDto(1, "Central")))
+                ))
 
-        return List.of(bc1,bc2);
+                .build();
     }
 
 }

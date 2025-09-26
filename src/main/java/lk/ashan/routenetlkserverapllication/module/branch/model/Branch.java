@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ public class Branch {
     private String email;
     @Basic
     @Column(name = "docreated")
-    private Date docreated;
+    private LocalDate docreated;
     @Basic
     @Column(name = "remarks")
     private String remarks;

@@ -43,8 +43,8 @@ public class BranchService {
 
         Stream<Branch> branchStream = branches.stream();
 
-        if(branchname!=null)branchStream = branchStream.filter(i->i.getName().toLowerCase().contains(branchname));
-        if(branchcode!=null)branchStream = branchStream.filter(i->i.getCode().toLowerCase().equals(branchcode));
+        if(branchname!=null)branchStream = branchStream.filter(i->i.getName().toLowerCase().contains(branchname.toLowerCase()));
+        if(branchcode!=null)branchStream = branchStream.filter(i-> i.getCode().equalsIgnoreCase(branchcode));
         if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
 
         return branchMapper.toDetailList( branchStream.collect(Collectors.toList()));

@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 
 @Getter
@@ -29,7 +30,7 @@ public class BranchRequestDto {
     @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,255}$", message = "Invalid address format")
     private String address;
 
-    @NotBlank(message = "Telephone number is mandatory")
+    @NotBlank(message = "Branch telephone number is mandatory")
     @Pattern(regexp = "^\\+?[0-9]{10}$" , message = "Invalid telephone number")
     private String telephone;
 
@@ -37,9 +38,10 @@ public class BranchRequestDto {
     @Email(message = "Invalid email format")
     private String email;
 
+    @NotNull(message = "Branch date of created is mandatory")
     @PastOrPresent(message = "Creation date cannot be in the future")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date docreated;
+    private LocalDate docreated;
 
     @Size(max = 500, message = "Remarks must not exceed 500 characters")
     private String remarks;

@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 
 @Getter
@@ -21,7 +22,7 @@ public class BranchDetailResponseDto {
     String address;
     String telephone;
     String email;
-    Date docreated;
+    LocalDate docreated;
     String remarks;
     Branchtype branchtype;
     Branchstatus branchstatus;
