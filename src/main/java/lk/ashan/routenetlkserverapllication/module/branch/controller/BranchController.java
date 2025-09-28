@@ -41,7 +41,7 @@ public class BranchController {
     }
 
     @PutMapping
-    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(@RequestBody BranchUpdateRequestDto branchUpdateRequest) {
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(@RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
         BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
         return APIResponseBuilder.putResponse(updatedBranch, updatedBranch.getId());
     }

@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
-import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -135,7 +133,7 @@ class BranchControllerTest {
     }
 
     @Test
-    void testCreateBranch_futureDate_shouldReturnBadRequest() throws Exception {
+    void createBranch_futureDate_shouldReturnBadRequest() throws Exception {
 
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         requestDto.setDocreated(tomorrow);
@@ -150,7 +148,7 @@ class BranchControllerTest {
     }
 
     @Test
-    void testCreateBranch_pastDate_shouldReturnCreated() throws Exception {
+    void createBranch_pastDate_shouldReturnCreated() throws Exception {
 
         requestDto.setDocreated(LocalDate.now().minusYears(1));
 
@@ -161,7 +159,7 @@ class BranchControllerTest {
     }
 
     @Test
-    void testCreateBranch_todayDate_shouldReturnCreated() throws Exception {
+    void createBranch_todayDate_shouldReturnCreated() throws Exception {
         requestDto.setDocreated(LocalDate.now());
 
         mockMvc.perform(post(apiUrl)
@@ -210,5 +208,7 @@ class BranchControllerTest {
                         "branchcoverages: Branch coverages are mandatory"
                 ));
     }
+
+
 
 }

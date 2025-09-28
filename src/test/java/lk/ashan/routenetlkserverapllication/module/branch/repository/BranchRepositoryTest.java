@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.repository;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import lk.ashan.routenetlkserverapllication.util.seed.BranchTestDataSeeder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,11 @@ public class BranchRepositoryTest {
 
     @Test
     public void shouldSaveBranchWhenValidBranchProvided() {
-        Branch branch = BranchTestDataFactory.buildBranchWithBranchcoverages();
+        
+        Branchtype branchtype = EntityFactory.branchType(1,"Region");
+        Branchstatus branchstatus = EntityFactory.branchStatus(1,"Active");
+
+        Branch branch = EntityFactory.branchWithCoverages("UNIQUE Branch","UNIQUE001-1",EntityFactory.FIXED_DATE,branchtype,branchstatus);
 
         Branch saved = branchRepository.save(branch);
 

@@ -52,34 +52,6 @@ public class BranchTestDataFactory {
         return district;
     }
 
-    public static District buildDistrictWithProvince(int id,String name,Province province){
-        District district = new District();
-        district.setId(id);
-        district.setName(name);
-        district.setProvince(province);
-        return district;
-    }
-
-    public static Province buildProvince(int id, String name) {
-        Province province = new Province();
-        province.setId(id);
-        province.setName(name);
-        return  province;
-    }
-
-    public static List<Branch> buildMockBranches(LocalDate createdDate) {
-        Branch colomboBranch = buildBranch(
-                "Colombo Branch", "CLB0001-1", "colombo@ntc.gov.lk", "0112345678",
-                createdDate, buildBranchType(1, "Head"), buildBranchStatus(1, "Active")
-        );
-
-        Branch ratnapuraBranch = buildBranch(
-                "Ratnapura Branch", "RAT0007-1", "ratnapura@ntc.gov.lk", "0452233445",
-                createdDate, buildBranchType(2, "Region"), buildBranchStatus(2, "Inactive")
-        );
-
-        return List.of(colomboBranch, ratnapuraBranch);
-    }
 
     public static Branch buildBranch(String name, String code, String email, String telephone, LocalDate createdDate, Branchtype type, Branchstatus status) {
         return Branch.builder()
@@ -138,25 +110,6 @@ public class BranchTestDataFactory {
         return List.of(bc1,bc2);
     }
 
-
-    // ────────────── REPOSITORY LAYER TESTS ──────────────
-    public static Branch buildBranchWithBranchcoverages() {
-        Branch branch = Branch.builder()
-                .name("UNIQUE Branch")
-                .code("UNIQUE001-1")
-                .email("unique@ntc.gov.lk")
-                .telephone("0119998888")
-                .address("123 Test Street")
-                .remarks("Test branch")
-                .docreated(FIXED_DATE)
-                .branchtype(buildBranchType(1,"Region"))
-                .branchstatus(buildBranchStatus(1,"Active"))
-                .build();
-
-        branch.setBranchcoverages(buildBranchCoverages(branch));
-
-        return branch;
-    }
 
     // ────────────── CONTROLLER LAYER TESTS ──────────────
 

@@ -25,11 +25,4 @@ public interface BranchMapper {
 
   List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
 
-  @AfterMapping
-  default void linkCoverages(@MappingTarget Branch branch) {
-    System.out.println("linkCoverages() called");
-  }
-
-
-
 }

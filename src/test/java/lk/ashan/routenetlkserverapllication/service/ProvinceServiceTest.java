@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.mapper.ProvinceMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.service.ProvinceService;
 
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +40,8 @@ class ProvinceServiceTest {
     @Test
     void getProvinces_shouldReturnAllProvinces() {
         List<Province> mockProvinces = Arrays.asList(
-               BranchTestDataFactory.buildProvince(1, "Western"),
-               BranchTestDataFactory.buildProvince(5, "Eastern")
+               EntityFactory.province(1, "Western"),
+               EntityFactory.province(5, "Eastern")
 
         );
         when(provinceRepository.findAll()).thenReturn(mockProvinces);

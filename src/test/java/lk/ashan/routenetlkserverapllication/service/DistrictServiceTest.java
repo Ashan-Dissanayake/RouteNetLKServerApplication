@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Province;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.DistrictRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.service.DistrictService;
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,14 +40,14 @@ class DistrictServiceTest {
     @Test
     void getDistricts_shouldReturnAllDistricts() {
 
-        Province western = BranchTestDataFactory.buildProvince(1, "Western");
-        Province northern = BranchTestDataFactory.buildProvince(4, "Northern");
-        Province uva = BranchTestDataFactory.buildProvince(8, "Uva");
+        Province western = EntityFactory.province(1, "Western");
+        Province northern = EntityFactory.province(4, "Northern");
+        Province uva = EntityFactory.province(8, "Uva");
 
         List<District> mockDistrictes = Arrays.asList(
-                BranchTestDataFactory.buildDistrictWithProvince(1, "Colombo",western),
-                BranchTestDataFactory.buildDistrictWithProvince(12, "Mullaitivu",northern),
-                BranchTestDataFactory.buildDistrictWithProvince(23, "Monaragala",uva)
+                EntityFactory.district(1, "Colombo",western),
+                EntityFactory.district(12, "Mullaitivu",northern),
+                EntityFactory.district(23, "Monaragala",uva)
         );
 
         when(districtRepository.findAll()).thenReturn(mockDistrictes);

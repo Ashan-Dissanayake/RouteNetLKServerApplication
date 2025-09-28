@@ -3,10 +3,10 @@ package lk.ashan.routenetlkserverapllication.module.branch.dto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
-@ToString(callSuper = true)
-@SuperBuilder
-@NoArgsConstructor
-public class BranchCreateRequestDto extends BranchRequestDto {
-}
+    @Getter
+    @Setter
+    @ToString(callSuper = true)
+    @SuperBuilder
+    @NoArgsConstructor
+    public class BranchCreateRequestDto extends BranchRequestDto {
+    }

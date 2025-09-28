@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchstatusService;
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,9 +39,9 @@ class BranchstatusServiceTest {
     void getBranchstatuses_shouldReturnAllBranchstatuses() {
 
         List<Branchstatus> mockBranchstatuses = Arrays.asList(
-                BranchTestDataFactory.buildBranchStatus(1, "Active"),
-                BranchTestDataFactory.buildBranchStatus(2, "Inactive"),
-                BranchTestDataFactory.buildBranchStatus(3, "Closed")
+                EntityFactory.branchStatus(1, "Active"),
+                EntityFactory.branchStatus(2, "Inactive"),
+                EntityFactory.branchStatus(3, "Closed")
         );
 
         when(branchstatusRepository.findAll()).thenReturn(mockBranchstatuses);

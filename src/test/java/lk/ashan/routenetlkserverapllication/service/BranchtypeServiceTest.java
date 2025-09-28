@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchtypeRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchtypeService;
 import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +40,8 @@ class BranchtypeServiceTest {
     void getBranchtypes_shouldReturnAllBranchtypes() {
 
         List<Branchtype> mockBranchtypes = Arrays.asList(
-               BranchTestDataFactory.buildBranchType(1, "Head"),
-                BranchTestDataFactory.buildBranchType(2, "Region")
+                EntityFactory.branchType(1, "Head"),
+                EntityFactory.branchType(2, "Region")
         );
 
         when(branchtypeRepository.findAll()).thenReturn(mockBranchtypes);
