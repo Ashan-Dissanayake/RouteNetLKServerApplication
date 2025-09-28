@@ -6,7 +6,6 @@ import lk.ashan.routenetlkserverapllication.module.branch.repository.ProvinceRep
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.ProvinceMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.service.ProvinceService;
 
-import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

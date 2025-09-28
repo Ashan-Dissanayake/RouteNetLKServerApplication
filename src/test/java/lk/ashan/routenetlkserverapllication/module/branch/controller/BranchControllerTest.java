@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
+import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ class BranchControllerTest {
 
     @BeforeEach
     void setUp() {
-        requestDto = BranchTestDataFactory.validRequest();
+        requestDto = DtoFactory.createBranchRequest("Dambulla","DMB0010","0665714120");
     }
 
     @Test
@@ -45,7 +45,7 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.name").value("Dambulla Branch"))
+                .andExpect(jsonPath("$.data.name").value("Dambulla"))
                 .andExpect(jsonPath("$.data.branchcoverages.length()").value(1))
                 .andExpect(jsonPath("$.data.branchtype.name").value("Region"))
                 .andExpect(jsonPath("$.data.branchstatus.name").value("Active"));
@@ -208,7 +208,6 @@ class BranchControllerTest {
                         "branchcoverages: Branch coverages are mandatory"
                 ));
     }
-
 
 
 }

@@ -5,7 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchstatusMap
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchstatusService;
-import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

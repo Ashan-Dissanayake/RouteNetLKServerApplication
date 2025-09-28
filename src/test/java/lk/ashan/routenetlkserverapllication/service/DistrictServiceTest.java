@@ -6,7 +6,6 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.District;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Province;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.DistrictRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.service.DistrictService;
-import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

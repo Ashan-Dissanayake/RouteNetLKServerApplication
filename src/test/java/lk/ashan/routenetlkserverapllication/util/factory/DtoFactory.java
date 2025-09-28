@@ -46,12 +46,12 @@ public class DtoFactory {
                 .build();
     }
 
-    public static BranchUpdateRequestDto updateBranchRequest(String name, String code) {
+    public static BranchUpdateRequestDto updateBranchRequest(String name, String code,String telephone) {
         return BranchUpdateRequestDto.builder()
                 .name(name)
                 .code(code)
                 .address("No.12 Kandy Road")
-                .telephone("0665714120")
+                .telephone(telephone)
                 .email(name.toLowerCase().replace(" ","") + "@ntc.lk")
                 .remarks("Updated test")
                 .docreated(FIXED_DATE)

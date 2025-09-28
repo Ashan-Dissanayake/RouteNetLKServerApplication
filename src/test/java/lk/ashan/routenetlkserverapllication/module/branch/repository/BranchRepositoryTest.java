@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.repository;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
-import lk.ashan.routenetlkserverapllication.util.factory.BranchTestDataFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.EntityFactory;
 import lk.ashan.routenetlkserverapllication.util.seed.BranchTestDataSeeder;
 import org.junit.jupiter.api.BeforeEach;
