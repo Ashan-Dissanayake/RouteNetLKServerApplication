@@ -69,6 +69,7 @@ public class BranchService {
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
         validateBranchUniquenessForUpdate(request);
         Branch branch = branchMapper.toEntity(request);
+        branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
         Branch updated = branchRepository.save(branch);
         return branchMapper.toDto(updated);
     }

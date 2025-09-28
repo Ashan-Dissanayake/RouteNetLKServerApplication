@@ -40,7 +40,6 @@ public class BranchRequestDto {
 
     @NotNull(message = "Branch date of created is mandatory")
     @PastOrPresent(message = "Creation date cannot be in the future")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate docreated;
 
     @Size(max = 500, message = "Remarks must not exceed 500 characters")

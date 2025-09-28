@@ -21,8 +21,8 @@ public class DtoFactory {
         return new ProvinceDto(id, name);
     }
 
-    public static DistrictDto districtDto(int id, String name, ProvinceDto province) {
-        return new DistrictDto(id, name, province);
+    public static DistrictDto districtDto(int id, String name) {
+        return new DistrictDto(id, name);
     }
 
     public static BranchDistrictCoverageDto branchCoverageDto(DistrictDto district) {
@@ -41,7 +41,7 @@ public class DtoFactory {
                 .branchtype(branchTypeDto(1, "Region"))
                 .branchstatus(branchStatusDto(1, "Active"))
                 .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(4,"Kandy", provinceDto(1,"Central")))
+                        branchCoverageDto(districtDto(4,"Kandy"))
                 ))
                 .build();
     }
@@ -58,7 +58,7 @@ public class DtoFactory {
                 .branchtype(branchTypeDto(1, "Region"))
                 .branchstatus(branchStatusDto(1, "Active"))
                 .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(4,"Kandy", provinceDto(1,"Central")))
+                        branchCoverageDto(districtDto(4,"Kandy"))
                 ))
                 .build();
     }

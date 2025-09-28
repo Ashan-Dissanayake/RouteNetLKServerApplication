@@ -3,9 +3,8 @@ package lk.ashan.routenetlkserverapllication.service;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchCoverageMapper;
+import lk.ashan.routenetlkserverapllication.module.branch.mapper.*;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
-import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
@@ -41,6 +40,12 @@ class BranchServiceTest {
     @Mock
     private BranchRepository branchRepository;
     @Spy
+    private BranchstatusMapper branchstatusMapper = Mappers.getMapper(BranchstatusMapper.class);
+    @Spy
+    private BranchtypeMapper branchtypeMapper = Mappers.getMapper(BranchtypeMapper.class);
+    @Spy
+    private DistrictMapper districtMapper = Mappers.getMapper(DistrictMapper.class);
+    @Spy
     private BranchCoverageMapper branchCoverageMapper = Mappers.getMapper(BranchCoverageMapper.class);
     @Spy
     private BranchMapper branchMapper = Mappers.getMapper(BranchMapper.class);
@@ -54,7 +59,9 @@ class BranchServiceTest {
         fixedDate = EntityFactory.FIXED_DATE;
         mockBranches = EntityFactory.buildMockBranches(fixedDate);
         ReflectionTestUtils.setField(branchMapper, "branchCoverageMapper", branchCoverageMapper);
-
+        ReflectionTestUtils.setField(branchMapper, "districtMapper", districtMapper);
+        ReflectionTestUtils.setField(branchMapper,"branchstatusMapper",branchstatusMapper);
+        ReflectionTestUtils.setField(branchMapper,"branchtypeMapper",branchtypeMapper);
     }
 
 

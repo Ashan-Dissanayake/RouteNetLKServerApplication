@@ -12,5 +12,4 @@ import lombok.*;
 public class DistrictDto {
     Integer id;
     String name;
-    ProvinceDto province;
 }
