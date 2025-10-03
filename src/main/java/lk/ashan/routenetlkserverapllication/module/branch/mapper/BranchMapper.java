@@ -4,10 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateReques
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -25,4 +22,7 @@ public interface BranchMapper {
 
   List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
 
+  // This method updates an existing entity with values from DTO
+  @Mapping(target = "id", ignore = true) // usually you don’t want to override the id
+  void updateEntityFromDto(BranchUpdateRequestDto dto, @MappingTarget Branch entity);
 }

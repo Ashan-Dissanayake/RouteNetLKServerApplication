@@ -8,6 +8,8 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @ToString(callSuper = true)
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BranchUpdateRequestDto extends BranchRequestDto {
     @NotNull
     private Integer id;

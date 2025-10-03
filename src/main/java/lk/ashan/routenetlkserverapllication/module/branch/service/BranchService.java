@@ -1,9 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDistrictCoverageDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.mapper.DistrictMapper;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branchcoverage;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
@@ -14,8 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +29,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
+    private final DistrictMapper districtMapper;
 
     public List<BranchDetailResponseDto> getBranches(){
         return branchMapper.toDetailList(branchRepository.findAll());
@@ -58,21 +62,40 @@ public class BranchService {
     @Transactional
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
         validateBranchUniquenessForCreate(request);
+
         Branch branch = branchMapper.toEntity(request);
         branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
+
         Branch saved = branchRepository.save(branch);
+
         return branchMapper.toDto(saved);
     }
 
 
     @Transactional
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
+
         validateBranchUniquenessForUpdate(request);
-        Branch branch = branchMapper.toEntity(request);
-        branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
-        Branch updated = branchRepository.save(branch);
-        return branchMapper.toDto(updated);
+
+        Branch existing = branchRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+
+        // Update basic attributes using MapStruct
+        branchMapper.updateEntityFromDto(request, existing);
+
+        // Update branch coverages
+        existing.getBranchcoverages().clear();
+        for (BranchDistrictCoverageDto cDto : request.getBranchcoverages()) {
+            Branchcoverage coverage = new Branchcoverage();
+            coverage.setBranch(existing);
+            coverage.setDistrict(districtMapper.toEntity(cDto.getDistrict()));
+            existing.getBranchcoverages().add(coverage);
+        }
+
+        return branchMapper.toDto(existing);
     }
+
+
 
     @Transactional
     public void deleteBranch(@NotNull Integer branchId) {
@@ -99,6 +122,7 @@ public class BranchService {
     }
 
     private void validateBranchUniquenessForUpdate(@NotNull BranchUpdateRequestDto branch) {
+
         if (branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())) {
             throw new ResourceExistsException("Another branch already uses this code.");
         }

@@ -11,6 +11,7 @@ import java.util.List;
 public interface DistrictMapper {
 
   DistrictDto toDto(District district);
+  District toEntity(DistrictDto districtDto);
 
   List<DistrictDto> toDtoList(List<District> districts);
 

@@ -290,7 +290,7 @@ class BranchServiceTest {
         );
         branch.setId(1);
 
-        when(branchRepository.findById(1)).thenReturn((Optional<Branch>) Optional.of(branch));
+        when(branchRepository.findById(1)).thenReturn(Optional.of(branch));
 
         branchService.deleteBranch(1);
 
@@ -311,10 +311,6 @@ class BranchServiceTest {
         assertEquals(expectedCode, branch.getCode());
         assertEquals(expectedStatusId, branch.getBranchstatus().getId());
         assertEquals(expectedDate, branch.getDocreated());
-    }
-
-    private void assertBranchExists(List<BranchDetailResponseDto> branches, String name) {
-        assertTrue(branches.stream().anyMatch(b -> b.getName().equals(name)));
     }
 
 

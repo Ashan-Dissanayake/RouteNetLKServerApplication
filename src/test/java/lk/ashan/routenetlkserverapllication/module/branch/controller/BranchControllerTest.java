@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,33 +34,34 @@ class BranchControllerTest {
     private ObjectMapper objectMapper; // Jackson mapper
 
     private final String apiUrl = "/branches"; // adjust path
-    private BranchCreateRequestDto requestDto;
+    private BranchCreateRequestDto createRequestDto;
+    private BranchUpdateRequestDto updateRequestDto;
 
     @BeforeEach
     void setUp() {
-        requestDto = DtoFactory.createBranchRequest("Dambulla","DMB0010","0665714120");
+        createRequestDto = DtoFactory.createBranchRequest("Colombo","CLB0005","0665714180");
     }
 
     @Test
-    void createBranch_shouldSucceed_whenAllCorrect() throws Exception {
+    void createBranch_shouldSucceed_whenNameUpdated() throws Exception {
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.name").value("Dambulla"))
-                .andExpect(jsonPath("$.data.branchcoverages.length()").value(1))
+                .andExpect(jsonPath("$.data.name").value("Colombo"))
+                .andExpect(jsonPath("$.data.branchcoverages.length()").value(2))
                 .andExpect(jsonPath("$.data.branchtype.name").value("Region"))
                 .andExpect(jsonPath("$.data.branchstatus.name").value("Active"));
     }
 
     @Test
     void createBranch_missingName_shouldReturnBadRequest() throws Exception {
-        requestDto.setName(null);
+        createRequestDto.setName(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "name: Branch name is mandatory"
@@ -70,11 +72,11 @@ class BranchControllerTest {
     @Test
     void createBranch_missingCode_shouldReturnBadRequest() throws Exception {
 
-        requestDto.setCode(null);
+        createRequestDto.setCode(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "code: Branch code is mandatory"
@@ -83,11 +85,11 @@ class BranchControllerTest {
 
     @Test
     void createBranch_missingAddress_shouldReturnBadRequest() throws Exception{
-        requestDto.setAddress(null);
+        createRequestDto.setAddress(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "address: Branch address is mandatory"
@@ -96,11 +98,11 @@ class BranchControllerTest {
 
     @Test
     void createBranch_missingTelephone_shouldReturnBadRequest() throws Exception{
-        requestDto.setTelephone(null);
+        createRequestDto.setTelephone(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "telephone: Branch telephone number is mandatory"
@@ -110,11 +112,11 @@ class BranchControllerTest {
     @Test
     void createBranch_missingEmail_shouldReturnBadRequest() throws Exception{
 
-        requestDto.setEmail(null);
+        createRequestDto.setEmail(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "email: Branch email is mandatory"
@@ -123,11 +125,11 @@ class BranchControllerTest {
 
     @Test
     void createBranch_missingDocreated_shouldReturnBadRequest() throws Exception{
-        requestDto.setDocreated(null);
+        createRequestDto.setDocreated(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "docreated: Branch date of created is mandatory"
@@ -138,11 +140,11 @@ class BranchControllerTest {
     void createBranch_futureDate_shouldReturnBadRequest() throws Exception {
 
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        requestDto.setDocreated(tomorrow);
+        createRequestDto.setDocreated(tomorrow);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "docreated: Creation date cannot be in the future"
@@ -152,31 +154,31 @@ class BranchControllerTest {
     @Test
     void createBranch_pastDate_shouldReturnCreated() throws Exception {
 
-        requestDto.setDocreated(LocalDate.now().minusYears(1));
+        createRequestDto.setDocreated(LocalDate.now().minusYears(1));
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void createBranch_todayDate_shouldReturnCreated() throws Exception {
-        requestDto.setDocreated(LocalDate.now());
+        createRequestDto.setDocreated(LocalDate.now());
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void createBranch_missingBranchType_shouldReturnBadRequest() throws Exception{
-        requestDto.setBranchtype(null);
+        createRequestDto.setBranchtype(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "branchtype: Branch type is mandatory"
@@ -186,11 +188,11 @@ class BranchControllerTest {
     @Test
     void createBranch_missingBranchStatus_shouldReturnBadRequest() throws Exception{
 
-        requestDto.setBranchstatus(null);
+        createRequestDto.setBranchstatus(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "branchstatus: Branch status is mandatory"
@@ -199,17 +201,29 @@ class BranchControllerTest {
 
     @Test
     void createBranch_missingBranchCoverages_shouldReturnBadRequest() throws Exception{
-
-        requestDto.setBranchcoverages(null);
+        createRequestDto.setBranchcoverages(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "branchcoverages: Branch coverages are mandatory"
                 ));
     }
 
+    @Test
+    void updateBranch_shouldSucceed_whenBasicFieldsUpdated() throws Exception{
+        String response = mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        BranchDetailResponseDto created = objectMapper.readValue(response, BranchDetailResponseDto.class);
+
+        // Prepare update request (change name & address)
+        BranchUpdateRequestDto updateRequest = DtoFactory.updateBasicFields(86);
+    }
 
 }

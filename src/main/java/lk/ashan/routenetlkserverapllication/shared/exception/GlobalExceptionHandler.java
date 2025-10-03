@@ -56,8 +56,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIErrorResponse> handleGenericException(
             Exception e,
