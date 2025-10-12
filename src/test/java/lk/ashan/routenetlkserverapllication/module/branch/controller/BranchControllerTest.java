@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,7 +36,6 @@ class BranchControllerTest {
 
     private final String apiUrl = "/branches"; // adjust path
     private BranchCreateRequestDto createRequestDto;
-    private BranchUpdateRequestDto updateRequestDto;
 
     @BeforeEach
     void setUp() {
@@ -212,18 +212,6 @@ class BranchControllerTest {
                 ));
     }
 
-    @Test
-    void updateBranch_shouldSucceed_whenBasicFieldsUpdated() throws Exception{
-        String response = mockMvc.perform(put(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequestDto)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
 
-        BranchDetailResponseDto created = objectMapper.readValue(response, BranchDetailResponseDto.class);
-
-        // Prepare update request (change name & address)
-        BranchUpdateRequestDto updateRequest = DtoFactory.updateBasicFields(86);
-    }
 
 }

@@ -1,11 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,7 +14,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE branch SET branchstatus_id = 3 WHERE id = ?")
+@SQLRestriction("deleted = 0")
 public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -49,8 +47,16 @@ public class Branch {
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
     private Branchstatus branchstatus;
-    @OneToMany(mappedBy = "branch", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "branch",
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // cascade updates only
+            orphanRemoval = true
+    )
     private Collection<Branchcoverage> branchcoverages;
+
+    @Column(name = "deleted")
+    private Byte deleted;
 
     @Override
     public boolean equals(Object o) {

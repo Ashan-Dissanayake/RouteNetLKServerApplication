@@ -23,6 +23,7 @@ public interface BranchMapper {
   List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
 
   // This method updates an existing entity with values from DTO
-  @Mapping(target = "id", ignore = true) // usually you don’t want to override the id
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "branchstatus", ignore = true) // handled manually
   void updateEntityFromDto(BranchUpdateRequestDto dto, @MappingTarget Branch entity);
 }

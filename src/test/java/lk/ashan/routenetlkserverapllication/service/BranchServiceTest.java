@@ -269,7 +269,7 @@ class BranchServiceTest {
 
 
     // ────────────── DELETE Test ──────────────
-
+/*
     @Test
     void deleteBranch_shouldThrow_whenBranchNotFound() {
         when(branchRepository.findById(99)).thenReturn(Optional.empty());
@@ -297,7 +297,7 @@ class BranchServiceTest {
         verify(branchRepository).delete(branch);
     }
 
-
+*/
     // ────────────── HELPERS ──────────────
 
     private void assertSearchBranch(BranchDetailResponseDto branch, String expectedName, String expectedCode, Integer expectedStatusId) {

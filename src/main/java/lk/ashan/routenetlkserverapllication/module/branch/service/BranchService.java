@@ -2,12 +2,11 @@ package lk.ashan.routenetlkserverapllication.module.branch.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDistrictCoverageDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.DistrictMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchcoverage;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
@@ -28,6 +27,7 @@ import java.util.stream.Stream;
 public class BranchService {
 
     private final BranchRepository branchRepository;
+    private final BranchstatusRepository branchstatusRepository;
     private final BranchMapper branchMapper;
     private final DistrictMapper districtMapper;
 
@@ -83,6 +83,11 @@ public class BranchService {
         // Update basic attributes using MapStruct
         branchMapper.updateEntityFromDto(request, existing);
 
+        Branchstatus status = branchstatusRepository.findById(request.getBranchstatus().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Status not found"));
+
+        existing.setBranchstatus(status);
+
         // Update branch coverages
         existing.getBranchcoverages().clear();
         for (BranchDistrictCoverageDto cDto : request.getBranchcoverages()) {
@@ -95,14 +100,30 @@ public class BranchService {
         return branchMapper.toDto(existing);
     }
 
+    @Transactional
+    public List<Integer> deactivateBranches(List<Integer> branchIds) {
+        List<Branch> branches = branchRepository.findAllById(branchIds);
 
+        if (branches.isEmpty())
+            throw new ResourceNotFoundException("No branches found for the given IDs");
+
+        branchRepository.removeAll(branchIds);
+
+        return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
+    }
 
     @Transactional
-    public void deleteBranch(@NotNull Integer branchId) {
-        Branch branch = branchRepository.findById(branchId)
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
-        branchRepository.delete(branch);
+    public List<Integer> activateBranches(List<Integer> branchIds) {
+        List<Branch> branches = branchRepository.findAllById(branchIds);
+
+        if (branches.isEmpty())
+            throw new ResourceNotFoundException("No branches found for the given IDs");
+
+        branchRepository.restoreAll(branchIds);
+
+        return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
     }
+
 
     private void validateBranchUniquenessForCreate(@NotNull BranchCreateRequestDto branch) {
 
@@ -136,5 +157,6 @@ public class BranchService {
             throw new ResourceExistsException("Another branch already uses this telephone.");
         }
     }
+
 
 }

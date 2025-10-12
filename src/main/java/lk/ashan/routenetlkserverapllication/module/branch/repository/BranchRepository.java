@@ -2,7 +2,13 @@ package lk.ashan.routenetlkserverapllication.module.branch.repository;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
@@ -19,5 +25,13 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
     boolean existsByTelephone(String telephone);
     boolean existsByTelephoneAndIdNot(String telephone, Integer id);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Branch b SET b.deleted = 0 WHERE b.id IN :ids")
+    void restoreAll(@Param("ids") List<Integer> ids);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Branch  b SET b.deleted=1 WHERE b.id in :ids")
+    void removeAll(@Param("ids")List<Integer>ids);
 }

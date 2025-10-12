@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
@@ -33,23 +32,30 @@ public class BranchController {
         return APIResponseBuilder.getResponse(branches, branches.size());
     }
 
-
     @PostMapping
-    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(@RequestBody @Valid BranchCreateRequestDto branchCreateRequest) {
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(
+            @RequestBody @Valid BranchCreateRequestDto branchCreateRequest) {
         BranchDetailResponseDto savedBranch = branchService.createBranch(branchCreateRequest);
         return APIResponseBuilder.postResponse(savedBranch, savedBranch.getId());
     }
 
-    @PutMapping
-    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(@RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
-        BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
-        return APIResponseBuilder.putResponse(updatedBranch, updatedBranch.getId());
+    @PostMapping("/deactivate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> deactivatedIds = branchService.deactivateBranches(ids);
+        return APIResponseBuilder.postResponse(null,deactivatedIds);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<APISuccessResponse<BranchSummaryResponseDto>> delete(@PathVariable Integer id) {
-        branchService.deleteBranch(id);
-        return APIResponseBuilder.deleteResponse(id);
+    @PostMapping("/activate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> deactivatedIds = branchService.activateBranches(ids);
+        return APIResponseBuilder.deleteResponse(deactivatedIds);
+    }
+
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(
+            @RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
+        BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
+        return APIResponseBuilder.putResponse(updatedBranch, updatedBranch.getId());
     }
 
 }
