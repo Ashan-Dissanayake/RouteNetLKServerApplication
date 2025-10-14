@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.util;
+package lk.ashan.routenetlkserverapllication.shared.validation;
 
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

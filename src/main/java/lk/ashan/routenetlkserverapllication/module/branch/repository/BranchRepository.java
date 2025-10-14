@@ -27,11 +27,11 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Branch b SET b.deleted = 0 WHERE b.id IN :ids")
+    @Query("UPDATE Branch b SET b.deleted = false WHERE b.id IN :ids")
     void restoreAll(@Param("ids") List<Integer> ids);
 
     @Modifying
     @Transactional
-    @Query("UPDATE Branch  b SET b.deleted=1 WHERE b.id in :ids")
+    @Query("UPDATE Branch  b SET b.deleted=true WHERE b.id in :ids")
     void removeAll(@Param("ids")List<Integer>ids);
 }

@@ -12,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,7 @@ public class BranchService {
     }
 
     @Transactional
+    @DisableSoftDeleteFilter
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
         validateBranchUniquenessForCreate(request);
 
@@ -71,8 +73,8 @@ public class BranchService {
         return branchMapper.toDto(saved);
     }
 
-
     @Transactional
+    @DisableSoftDeleteFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
 
         validateBranchUniquenessForUpdate(request);
@@ -123,7 +125,6 @@ public class BranchService {
 
         return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
     }
-
 
     private void validateBranchUniquenessForCreate(@NotNull BranchCreateRequestDto branch) {
 

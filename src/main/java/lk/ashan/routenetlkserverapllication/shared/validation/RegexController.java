@@ -3,7 +3,6 @@ package lk.ashan.routenetlkserverapllication.shared.validation;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
-import lk.ashan.routenetlkserverapllication.util.RegexProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,8 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -14,7 +15,14 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLRestriction("deleted = 0")
+//@SQLRestriction("deleted = 0")
+@FilterDef(
+        name = "softDeleteFilter",
+        parameters = @ParamDef(name = "is_deleted", type = Boolean.class)
+)
+@Filters({
+        @Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")
+})
 public class Branch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -56,7 +64,7 @@ public class Branch {
     private Collection<Branchcoverage> branchcoverages;
 
     @Column(name = "deleted")
-    private Byte deleted;
+    private boolean deleted;
 
     @Override
     public boolean equals(Object o) {
