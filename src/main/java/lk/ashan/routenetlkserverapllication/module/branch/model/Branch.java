@@ -15,7 +15,6 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@SQLRestriction("deleted = 0")
 @FilterDef(
         name = "softDeleteFilter",
         parameters = @ParamDef(name = "is_deleted", type = Boolean.class)

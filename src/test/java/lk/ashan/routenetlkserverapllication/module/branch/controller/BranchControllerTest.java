@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -209,6 +210,7 @@ class BranchControllerTest {
                 ));
     }
 
+
     @Test
     void createBranch_deactivatedExistingName_shouldReturnBadRequest() throws Exception {
 
@@ -228,7 +230,6 @@ class BranchControllerTest {
                 );
 
     }
-
 
     @Test
     void createBranch_deactivatedExistingCode_shouldReturnBadRequest() throws Exception {
@@ -290,5 +291,88 @@ class BranchControllerTest {
 
     }
 
+    @Test
+    void updateBranch_deactivatedExistingName_shouldReturnBadRequest() throws Exception{
 
+        BranchUpdateRequestDto updateRequestDto = DtoFactory.branchSoftDeletedUpdateRequest(
+                2,
+                "Kesbewa Deport",
+                "ANG0002",
+                "WWF7 2H4, Colombo",
+                "0117706321",
+                "ang@sltb.lk"
+        );
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this name.")
+                );
+
+    }
+
+    @Test
+    void updateBranch_deactivatedExistingCode_shouldReturnBadRequest() throws Exception{
+
+        BranchUpdateRequestDto updateRequestDto = DtoFactory.branchSoftDeletedUpdateRequest(
+                2,
+                "Angoda",
+                "KSB0005",
+                "WWF7 2H4, Colombo",
+                "0117706321",
+                "ang@sltb.lk"
+        );
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this code.")
+                );
+
+    }
+
+    @Test
+    void updateBranch_deactivatedExistingEmail_shouldReturnBadRequest() throws Exception{
+
+        BranchUpdateRequestDto updateRequestDto = DtoFactory.branchSoftDeletedUpdateRequest(
+                2,
+                "Angoda",
+                "ANG0002",
+                "WWF7 2H4, Colombo",
+                "0117706321",
+                "ksb@sltb.lk"
+        );
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this email.")
+                );
+
+    }
+
+
+    @Test
+    void updateBranch_deactivatedExistingTelephone_shouldReturnBadRequest() throws Exception{
+
+        BranchUpdateRequestDto updateRequestDto = DtoFactory.branchSoftDeletedUpdateRequest(
+                2,
+                "Angoda",
+                "ANG0002",
+                "WWF7 2H4, Colombo",
+                "0117706360",
+                "ang@sltb.lk"
+        );
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this telephone.")
+                );
+
+    }
 }

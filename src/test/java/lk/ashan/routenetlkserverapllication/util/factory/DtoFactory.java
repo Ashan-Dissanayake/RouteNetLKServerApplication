@@ -80,4 +80,25 @@ public class DtoFactory {
                 .build();
 
     }
+
+    public static BranchUpdateRequestDto branchSoftDeletedUpdateRequest(Integer id,String name,String code,String address,String telephone,String email){
+
+        return BranchUpdateRequestDto.builder()
+                .id(id)
+                .name(name)
+                .code(code)
+                .address(address)
+                .telephone(telephone)
+                .email(email)
+                .docreated(FIXED_DATE)
+                .branchtype(branchTypeDto(3, " Local/Sub Depot"))
+                .branchstatus(branchStatusDto(1, "Active"))
+                .branchcoverages(List.of(
+                        branchCoverageDto(districtDto(3,"Kalutara")),
+                        branchCoverageDto(districtDto(4,"Kandy")),
+                        branchCoverageDto(districtDto(1,"Colombo"))
+                ))
+                .build();
+
+    }
 }
