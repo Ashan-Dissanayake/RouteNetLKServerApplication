@@ -268,36 +268,8 @@ class BranchServiceTest {
     }
 
 
-    // ────────────── DELETE Test ──────────────
-/*
-    @Test
-    void deleteBranch_shouldThrow_whenBranchNotFound() {
-        when(branchRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> branchService.deleteBranch(99));
 
-        verify(branchRepository, never()).delete(any());
-    }
-
-    @Test
-    void deleteBranch_shouldMarkStatusAsClosed() {
-
-        Branchtype branchtype = EntityFactory.branchType(1, "Head");
-        Branchstatus branchstatus = EntityFactory.branchStatus(1, "Active");
-
-        Branch branch = EntityFactory. branch(
-                "Colombo Branch", "CLB0001-1", fixedDate, branchtype, branchstatus
-        );
-        branch.setId(1);
-
-        when(branchRepository.findById(1)).thenReturn(Optional.of(branch));
-
-        branchService.deleteBranch(1);
-
-        verify(branchRepository).delete(branch);
-    }
-
-*/
     // ────────────── HELPERS ──────────────
 
     private void assertSearchBranch(BranchDetailResponseDto branch, String expectedName, String expectedCode, Integer expectedStatusId) {

@@ -62,4 +62,22 @@ public class DtoFactory {
                 ))
                 .build();
     }
+
+    public static BranchCreateRequestDto branchSoftDeletedCreateRequest(String name,String code,String address,String telephone,String email){
+
+        return BranchCreateRequestDto.builder()
+                .name(name)
+                .code(code)
+                .address(address)
+                .telephone(telephone)
+                .email(email)
+                .docreated(FIXED_DATE)
+                .branchtype(branchTypeDto(1, "Region"))
+                .branchstatus(branchStatusDto(1, "Active"))
+                .branchcoverages(List.of(
+                        branchCoverageDto(districtDto(4,"Kandy"))
+                ))
+                .build();
+
+    }
 }

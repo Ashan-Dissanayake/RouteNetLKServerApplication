@@ -6,8 +6,6 @@ import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -212,6 +209,86 @@ class BranchControllerTest {
                 ));
     }
 
+    @Test
+    void createBranch_deactivatedExistingName_shouldReturnBadRequest() throws Exception {
+
+        createRequestDto = DtoFactory.branchSoftDeletedCreateRequest(
+                "Kesbewa Deport",
+                "ABC0005",
+                "Piliyandala",
+                "0117706888",
+                "abc@sltb.lk"
+        );
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Branch name already exists.")
+                );
+
+    }
+
+
+    @Test
+    void createBranch_deactivatedExistingCode_shouldReturnBadRequest() throws Exception {
+
+        createRequestDto = DtoFactory.branchSoftDeletedCreateRequest(
+                "Abc Deport",
+                "KSB0005",
+                "Piliyandala",
+                "0117706888",
+                "abc@sltb.lk"
+        );
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Branch code already exists.")
+                );
+
+    }
+
+    @Test
+    void createBranch_deactivatedExistingEmail_shouldReturnBadRequest() throws Exception {
+
+        createRequestDto = DtoFactory.branchSoftDeletedCreateRequest(
+                "Abc Deport",
+                "ABC0005",
+                "Piliyandala",
+                "0117706888",
+                "ksb@sltb.lk"
+        );
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Branch email already exists.")
+                );
+
+    }
+
+    @Test
+    void createBranch_deactivatedExistingTelephone_shouldReturnBadRequest() throws Exception {
+
+        createRequestDto = DtoFactory.branchSoftDeletedCreateRequest(
+                "Abc Deport",
+                "ABC0005",
+                "Piliyandala",
+                "0117706360",
+                "abc@sltb.lk"
+        );
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError("Branch telephone already exists.")
+                );
+
+    }
 
 
 }
