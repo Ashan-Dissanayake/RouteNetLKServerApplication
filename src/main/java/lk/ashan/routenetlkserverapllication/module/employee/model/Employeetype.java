@@ -1,10 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Objects;
 
+@Getter
 @Entity
 public class Employeetype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,16 +19,8 @@ public class Employeetype {
     @OneToMany(mappedBy = "employeetype")
     private Collection<Employee> employees;
 
-    public Integer getId() {
-        return id;
-    }
-
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
@@ -44,10 +38,6 @@ public class Employeetype {
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
-    }
-
-    public Collection<Employee> getEmployees() {
-        return employees;
     }
 
     public void setEmployees(Collection<Employee> employees) {

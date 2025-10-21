@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
+import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -61,6 +62,9 @@ public class Branch {
             orphanRemoval = true
     )
     private Collection<Branchcoverage> branchcoverages;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Employee> employees;
 
     @Column(name = "deleted")
     private boolean deleted;

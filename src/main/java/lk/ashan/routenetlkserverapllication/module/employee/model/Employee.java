@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -46,8 +47,9 @@ public class Employee {
     @JoinColumn(name = "gender_id", referencedColumnName = "id", nullable = false)
     private Gender gender;
     @ManyToOne
-    @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "branch_id",referencedColumnName = "id",nullable = false)
     private Branch branch;
+
     @ManyToOne
     @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     private Department department;
@@ -170,14 +172,6 @@ public class Employee {
 
     public void setGender(Gender gender) {
         this.gender = gender;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
     }
 
     public Department getDepartment() {
