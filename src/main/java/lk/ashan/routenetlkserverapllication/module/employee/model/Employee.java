@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -45,7 +45,7 @@ public class Employee {
     private byte[] image;
     @Basic
     @Column(name = "doj")
-    private Date doj;
+    private LocalDate doj;
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
