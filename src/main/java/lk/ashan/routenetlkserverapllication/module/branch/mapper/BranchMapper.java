@@ -15,12 +15,12 @@ import java.util.List;
 public interface BranchMapper {
 
   BranchDetailResponseDto toDto(Branch branch);
+  List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
 
   Branch toEntity(BranchCreateRequestDto request);
 
   Branch toEntity(BranchUpdateRequestDto request);
 
-  List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
 
   // This method updates an existing entity with values from DTO
   @Mapping(target = "id", ignore = true)
