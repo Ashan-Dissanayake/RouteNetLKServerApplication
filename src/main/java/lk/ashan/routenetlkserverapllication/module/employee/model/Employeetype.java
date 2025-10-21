@@ -1,12 +1,17 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
 
+@Setter
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Employeetype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,16 +21,10 @@ public class Employeetype {
     @Basic
     @Column(name = "name")
     private String name;
+    @JsonIgnore
     @OneToMany(mappedBy = "employeetype")
     private Collection<Employee> employees;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -40,7 +39,4 @@ public class Employeetype {
         return Objects.hash(id, name);
     }
 
-    public void setEmployees(Collection<Employee> employees) {
-        this.employees = employees;
-    }
 }

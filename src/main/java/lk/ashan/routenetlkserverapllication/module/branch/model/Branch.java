@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
@@ -63,6 +64,7 @@ public class Branch {
     )
     private Collection<Branchcoverage> branchcoverages;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private Collection<Employee> employees;
 

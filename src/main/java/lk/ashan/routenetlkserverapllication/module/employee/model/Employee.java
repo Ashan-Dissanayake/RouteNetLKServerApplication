@@ -2,11 +2,17 @@ package lk.ashan.routenetlkserverapllication.module.employee.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lombok.*;
 
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Objects;
 
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +55,6 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "branch_id",referencedColumnName = "id",nullable = false)
     private Branch branch;
-
     @ManyToOne
     @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     private Department department;
@@ -63,93 +68,6 @@ public class Employee {
     @JoinColumn(name = "employeestatus_id", referencedColumnName = "id", nullable = false)
     private Employeestatus employeestatus;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getNic() {
-        return nic;
-    }
-
-    public void setNic(String nic) {
-        this.nic = nic;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmergencycontact() {
-        return emergencycontact;
-    }
-
-    public void setEmergencycontact(String emergencycontact) {
-        this.emergencycontact = emergencycontact;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public Date getDoj() {
-        return doj;
-    }
-
-    public void setDoj(Date doj) {
-        this.doj = doj;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -164,45 +82,5 @@ public class Employee {
         int result = Objects.hash(id, number, fullname, nic, mobile, email, address, emergencycontact, doj, deleted);
         result = 31 * result + Arrays.hashCode(image);
         return result;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public Designation getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(Designation designation) {
-        this.designation = designation;
-    }
-
-    public Employeetype getEmployeetype() {
-        return employeetype;
-    }
-
-    public void setEmployeetype(Employeetype employeetype) {
-        this.employeetype = employeetype;
-    }
-
-    public Employeestatus getEmployeestatus() {
-        return employeestatus;
-    }
-
-    public void setEmployeestatus(Employeestatus employeestatus) {
-        this.employeestatus = employeestatus;
     }
 }
