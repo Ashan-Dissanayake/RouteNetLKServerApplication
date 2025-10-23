@@ -178,8 +178,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(ValidationResultMatcher.expectValidationError(
-                        "branchtype: Branch type is mandatory"
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("branchtype: Branch type is mandatory"
                 ));
     }
 
@@ -192,7 +192,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(ValidationResultMatcher.expectValidationError(
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError(
                         "branchstatus: Branch status is mandatory"
                 ));
     }
@@ -205,7 +206,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(ValidationResultMatcher.expectValidationError(
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError(
                         "branchcoverages: Branch coverages are mandatory"
                 ));
     }
@@ -226,7 +228,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Branch name already exists.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Branch name already exists.")
                 );
 
     }
@@ -246,7 +249,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Branch code already exists.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Branch code already exists.")
                 );
 
     }
@@ -266,7 +270,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Branch email already exists.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Branch email already exists.")
                 );
 
     }
@@ -286,7 +291,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Branch telephone already exists.")
+                .andExpect(ValidationResultMatcher
+                        .expectValidationError("Branch telephone already exists.")
                 );
 
     }
@@ -307,7 +313,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this name.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Another branch already uses this name.")
                 );
 
     }
@@ -328,7 +335,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this code.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Another branch already uses this code.")
                 );
 
     }
@@ -349,7 +357,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this email.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Another branch already uses this email.")
                 );
 
     }
@@ -371,7 +380,8 @@ class BranchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequestDto)))
                 .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError("Another branch already uses this telephone.")
+                .andExpect(ValidationResultMatcher.
+                        expectValidationError("Another branch already uses this telephone.")
                 );
 
     }

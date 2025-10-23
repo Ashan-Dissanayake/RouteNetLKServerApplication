@@ -1,0 +1,27 @@
+package lk.ashan.routenetlkserverapllication.module.employee.controller;
+
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
+import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
+import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin
+@RestController
+@RequestMapping(value = "/employees")
+@RequiredArgsConstructor
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get() {
+        List<EmployeeDetailResponseDto> employeees = employeeService.getEmployees();
+        return APIResponseBuilder.getResponse(employeees, employeees.size());
+    }
+    
+}
