@@ -25,7 +25,6 @@ public class EmployeeDetailResponseDto implements Serializable {
     private  String emergencycontact;
     private  byte[] image;
     private  LocalDate doj;
-    private  Boolean deleted;
     private  GenderDto gender;
     private  BranchSummaryResponseDto branch;
     private  DepartmentDto department;

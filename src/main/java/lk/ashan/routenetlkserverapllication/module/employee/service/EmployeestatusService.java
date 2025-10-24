@@ -15,7 +15,7 @@ public class EmployeestatusService {
     private final EmployeestatusRepository employeestatusRepository;
     private final EmployeestatusMapper employeestatusMapper;
     
-    public List<EmployeestatusDto> getEmployeestatuss(){
+    public List<EmployeestatusDto> getEmployeestatuses(){
        return employeestatusMapper.toDtoList(employeestatusRepository.findAll());
     }
     
