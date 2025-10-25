@@ -23,13 +23,11 @@ public class EmployeeController {
     public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
-        List<EmployeeDetailResponseDto> employeees = params.isEmpty()
+        List<EmployeeDetailResponseDto> employees = params.isEmpty()
         ?employeeService.getEmployees()
         : employeeService.searchEmployee(params);
 
-        return APIResponseBuilder.getResponse(employeees, employeees.size());
+        return APIResponseBuilder.getResponse(employees, employees.size());
     }
 
-
-    
 }

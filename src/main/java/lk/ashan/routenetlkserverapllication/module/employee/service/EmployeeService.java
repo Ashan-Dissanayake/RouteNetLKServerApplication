@@ -20,10 +20,9 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
 
-    public List<EmployeeDetailResponseDto> getEmployees(){
+    public List<EmployeeDetailResponseDto> getEmployee(){
        return employeeMapper.toDtoList(employeeRepository.findAll());
     }
-
 
     public List<EmployeeDetailResponseDto> searchEmployee(@NotNull HashMap<String, String> params) {
 
