@@ -21,7 +21,6 @@ public interface BranchMapper {
 
   Branch toEntity(BranchUpdateRequestDto request);
 
-
   // This method updates an existing entity with values from DTO
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "branchstatus", ignore = true) // handled manually
