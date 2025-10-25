@@ -1,10 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.employee.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 
@@ -14,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @ToString
-public class EmployeeDetailResponseDto implements Serializable {
+public class EmployeeDetailResponseDto{
     private  Integer id;
     private  String number;
     private  String fullname;
