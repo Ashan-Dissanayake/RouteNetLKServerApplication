@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin
@@ -19,9 +20,16 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get() {
-        List<EmployeeDetailResponseDto> employeees = employeeService.getEmployees();
+    public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get(
+            @RequestParam HashMap<String, String> params
+    ) {
+        List<EmployeeDetailResponseDto> employeees = params.isEmpty()
+        ?employeeService.getEmployees()
+        : employeeService.searchEmployee(params);
+
         return APIResponseBuilder.getResponse(employeees, employeees.size());
     }
+
+
     
 }
