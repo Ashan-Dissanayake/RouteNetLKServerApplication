@@ -17,8 +17,8 @@ public class SoftDeleteFilterAspect {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Before("execution(* lk.ashan.routenetlkserverapllication.module.branch.service..*.get*(..)) || " +
-            "execution(* lk.ashan.routenetlkserverapllication.module.branch.service..*.search*(..))"
+    @Before("execution(* lk.ashan.routenetlkserverapllication.module.*.service..*.get*(..)) || " +
+            "execution(* lk.ashan.routenetlkserverapllication.module.*.service..*.search*(..))"
     )
     public void enableSoftDeleteFilter() {
         Session session = entityManager.unwrap(Session.class);
@@ -37,7 +37,6 @@ public class SoftDeleteFilterAspect {
         if (filter != null) {
             session.disableFilter("softDeleteFilter");
         }
-
         try {
             return joinPoint.proceed();
         } finally {

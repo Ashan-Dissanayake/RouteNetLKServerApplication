@@ -2,7 +2,12 @@ package lk.ashan.routenetlkserverapllication.module.employee.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -14,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Employee {
+public class Employee extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -46,9 +51,9 @@ public class Employee {
     @Basic
     @Column(name = "doj")
     private LocalDate doj;
-    @Basic
-    @Column(name = "deleted")
-    private Boolean deleted;
+//    @Basic
+//    @Column(name = "deleted")
+//    private Boolean deleted;
     @ManyToOne
     @JoinColumn(name = "gender_id", referencedColumnName = "id", nullable = false)
     private Gender gender;
@@ -74,12 +79,24 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return Objects.equals(id, employee.id) && Objects.equals(number, employee.number) && Objects.equals(fullname, employee.fullname) && Objects.equals(nic, employee.nic) && Objects.equals(mobile, employee.mobile) && Objects.equals(email, employee.email) && Objects.equals(address, employee.address) && Objects.equals(emergencycontact, employee.emergencycontact) && Arrays.equals(image, employee.image) && Objects.equals(doj, employee.doj) && Objects.equals(deleted, employee.deleted);
+        return Objects.equals(
+                id, employee.id) &&
+                Objects.equals(number, employee.number) &&
+                Objects.equals(fullname, employee.fullname) &&
+                Objects.equals(nic, employee.nic) &&
+                Objects.equals(mobile, employee.mobile) &&
+                Objects.equals(email, employee.email) &&
+                Objects.equals(address, employee.address) &&
+                Objects.equals(emergencycontact, employee.emergencycontact) &&
+                Arrays.equals(image, employee.image) &&
+                Objects.equals(doj, employee.doj)
+//                && Objects.equals(deleted, employee.deleted)
+                ;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, number, fullname, nic, mobile, email, address, emergencycontact, doj, deleted);
+        int result = Objects.hash(id, number, fullname, nic, mobile, email, address, emergencycontact, doj);
         result = 31 * result + Arrays.hashCode(image);
         return result;
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -17,14 +18,14 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@FilterDef(
-        name = "softDeleteFilter",
-        parameters = @ParamDef(name = "is_deleted", type = Boolean.class)
-)
-@Filters({
-        @Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")
-})
-public class Branch {
+//@FilterDef(
+//        name = "softDeleteFilter",
+//        parameters = @ParamDef(name = "is_deleted", type = Boolean.class)
+//)
+//@Filters({
+//        @Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")
+//})
+public class Branch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -68,8 +69,8 @@ public class Branch {
     @OneToMany(mappedBy = "branch")
     private Collection<Employee> employees;
 
-    @Column(name = "deleted")
-    private boolean deleted;
+//    @Column(name = "deleted")
+//    private boolean deleted;
 
     @Override
     public boolean equals(Object o) {
