@@ -31,6 +31,9 @@ public class Employee extends BaseEntity {
     @Column(name = "fullname")
     private String fullname;
     @Basic
+    @Column(name = "callingname")
+    private String callingname;
+    @Basic
     @Column(name = "nic")
     private String nic;
     @Basic
