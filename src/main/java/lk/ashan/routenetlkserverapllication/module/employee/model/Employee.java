@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
