@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.dto;
 import jakarta.validation.constraints.*;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -11,12 +12,12 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
 public class EmployeeRequestDto {
 
     @NotBlank(message = "Number mandatory")
-    @Pattern(regexp = "^EMP[A-Z]{3}\\d{4}$\n",message = "Invalid employee number")
+    @Pattern(regexp = "^EMP[A-Z]{3}\\d{4}$", message = "Invalid employee number")
     private  String number;
 
     @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid full name")
@@ -47,14 +48,15 @@ public class EmployeeRequestDto {
     private  String address;
 
     @NotBlank(message = "Emergency Contact is mandatory")
-    @Pattern(regexp = "^0(?:(7[0|1|2|4-8])|(1[1]|2[1-7]|3[1-8]|4[1|5|7]|5[1|2|4|5|7]|6[3|5|6|7]|8[1]|9[1]))\\\\d{7}$\n",message = "Invalid emergency contact")
+    @Pattern(regexp = "^0(?:(7[0|1|2|4-8])|(1[1]|2[1-7]|3[1-8]|4[1|5|7]|5[1|2|4|5|7]|6[3|5|6|7]|8[1]|9[1]))\\d{7}$",
+            message = "Invalid emergency contact")
     private  String emergencycontact;
 
     private  byte[] image;
 
-    @NotBlank(message = "Date of joined is mandatory")
+    @NotNull(message = "Date of joined is mandatory")
     @PastOrPresent(message = "Joined date cannot be in the future")
-    private  LocalDate doj;
+    private LocalDate doj;
 
     @NotNull(message = "Branch is mandatory")
     private  BranchSummaryResponseDto branch;

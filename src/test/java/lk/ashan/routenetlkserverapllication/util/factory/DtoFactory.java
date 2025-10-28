@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.util.factory;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -101,4 +102,53 @@ public class DtoFactory {
                 .build();
 
     }
+
+
+    //Employee
+    public static GenderDto genderDto(int id, String name) {
+        return new GenderDto(id, name);
+    }
+
+    public static BranchSummaryResponseDto branchSummaryResponseDto(int id, String name) {
+        return new BranchSummaryResponseDto(id, name);
+    }
+
+    public static DepartmentDto departmentDto(int id, String name) {
+        return new DepartmentDto(id, name);
+    }
+
+    public static DesignationDto designationDto(int id, String name) {
+        return new DesignationDto(id, name);
+    }
+
+    public static EmployeetypeDto employeetypeDto(int id, String name) {
+        return new EmployeetypeDto(id, name);
+    }
+
+    public static EmployeestatusDto employeestatusDto(int id, String name) {
+        return new EmployeestatusDto(id, name);
+    }
+
+
+    public static EmployeeCreateRequestDto createUniqueEmployeeRequestNoImage(){
+        return EmployeeCreateRequestDto.builder()
+                .number("EMPCLM0007")
+                .fullname("Minuri Navoddika")
+                .callingname("Minuri")
+                .nic("200223171988")
+                .gender(genderDto(1,"Male"))
+                .mobile("0716042647")
+                .email("minuri.EMPCLM0007@sltb.lk")
+                .address("No 12, Pepiliyana, Kirindiwela")
+                .emergencycontact("0331547842")
+                .branch(branchSummaryResponseDto(4,"Avissawella"))
+                .department(departmentDto(3,"Administrative "))
+                .designation(designationDto(5,"Assistant Manager"))
+                .employeetype(employeetypeDto(1,"Permanent"))
+                .employeestatus(employeestatusDto(1,"Active"))
+                .doj(LocalDate.parse("2025-10-28"))
+                .build();
+    }
+
+
 }

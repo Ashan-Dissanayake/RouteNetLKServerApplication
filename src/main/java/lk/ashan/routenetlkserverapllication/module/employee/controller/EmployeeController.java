@@ -1,5 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -23,5 +25,12 @@ public class EmployeeController {
         List<EmployeeDetailResponseDto> employeees = employeeService.getEmployees();
         return APIResponseBuilder.getResponse(employeees, employeees.size());
     }
-    
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> add(
+            @RequestBody @Valid EmployeeCreateRequestDto employeeCreateRequest) {
+        EmployeeDetailResponseDto savedEmployee = employeeService.createEmployee(employeeCreateRequest);
+        return APIResponseBuilder.postResponse(savedEmployee, savedEmployee.getId());
+    }
+
 }
