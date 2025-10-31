@@ -29,7 +29,6 @@ class EmployeeControllerTest {
 
     private static final String apiUrl = "/employees";
 
-
     @Test
     void createEmployee_shouldSucceed_whenUniqueEmployeeRequestWithoutImage() throws Exception {
         // Arrange: Prepare valid, unique employee creation request (no image)
@@ -290,7 +289,115 @@ class EmployeeControllerTest {
                 ));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenDuplicateNumber() throws Exception {
 
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNic("200223171988");//Unique NIC
+        employeeCreateRequestDto.setMobile("0716042647");//Unique mobile
+        employeeCreateRequestDto.setEmail("minuri.EMPCLM0007@sltb.lk");//Unique Email
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Employee number already exists."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenDuplicateNic() throws Exception {
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNumber("EMPCLM0007");//Unique Number
+        employeeCreateRequestDto.setMobile("0716042647");//Unique mobile
+        employeeCreateRequestDto.setEmail("minuri.EMPCLM0007@sltb.lk");//Unique Email
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "NIC already exists."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenDuplicateMobile() throws Exception {
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNumber("EMPCLM0007");//Unique Number
+        employeeCreateRequestDto.setNic("200223171988");//Unique NIC
+        employeeCreateRequestDto.setEmail("minuri.EMPCLM0007@sltb.lk");//Unique Email
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Mobile number already exists."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenDuplicateEmail() throws Exception {
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNumber("EMPCLM0007");//Unique Number
+        employeeCreateRequestDto.setNic("200223171988");//Unique NIC
+        employeeCreateRequestDto.setMobile("0716042647");//Unique mobile
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Email already exists."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileAndEmergencyContactAreSame() throws Exception {
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setEmergencycontact("0716042647");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Employee mobile number and emergency contact cannot be the same."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileAlreadyUsedAsEmergencyContactByAnotherEmployee() throws Exception {
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setMobile("0725566778");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Mobile number already used as emergency contact by another employee."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencyContactAlreadyUsedAsMobileByAnotherEmployee() throws Exception {
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setEmergencycontact("0757788990");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Emergency contact already used as another employee’s mobile number."
+                ));
+    }
 
 
 }

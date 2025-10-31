@@ -16,7 +16,7 @@ public enum ErrorCode {
     CONTACT_INVALID("Invalid contact information", HttpStatus.BAD_REQUEST, "/errors/contact-invalid"),
 
     SERVICE_UNAVAILABLE("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE, "/errors/service-unavailable"),
-    DATA_CONFLICT("Data conflict", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/data-conflict"),
+    DATA_CONFLICT("Data conflict", HttpStatus.CONFLICT, "/errors/data-conflict"),
     UNKNOWN_ERROR("Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, "/errors/unknown-error");
 
     private final String title;

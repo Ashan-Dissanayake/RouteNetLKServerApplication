@@ -26,6 +26,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ContactConflictException.class)
+    public ResponseEntity<APIErrorResponse> handleContactConflictException(
+            ContactConflictException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<APIErrorResponse> handleNotFoundException(
             ResourceNotFoundException e,

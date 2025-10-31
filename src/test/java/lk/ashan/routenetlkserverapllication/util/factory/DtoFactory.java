@@ -136,7 +136,7 @@ public class DtoFactory {
                 .fullname("Minuri Navoddika")
                 .callingname("Minuri")
                 .nic("200223171988")
-                .gender(genderDto(1,"Male"))
+                .gender(genderDto(2,"Female"))
                 .mobile("0716042647")
                 .email("minuri.EMPCLM0007@sltb.lk")
                 .address("No 12, Pepiliyana, Kirindiwela")
@@ -150,5 +150,25 @@ public class DtoFactory {
                 .build();
     }
 
+    public static EmployeeCreateRequestDto createExistEmployeeRequestNoImage(){
+        return EmployeeCreateRequestDto.builder()
+                .number("EMPCLM0001")
+                .fullname("Sunil Perera")
+                .callingname("Sunil")
+                .nic("200045602345")
+                .gender(genderDto(1,"Male"))
+                .mobile("0771234567")
+                .email("sunil.EMPCLM0001@sltb.lk")
+                .address("No 12, Maradana, Colombo 10")
+                .emergencycontact("0712345678")
+                .branch(branchSummaryResponseDto(1,"Colombo head office"))
+                .department(departmentDto(1,"Operations (Traffic)"))
+                .designation(designationDto(4,"Depot Manager"))
+                .employeetype(employeetypeDto(1,"Permanent"))
+                .employeestatus(employeestatusDto(2,"Suspend"))
+                .doj(LocalDate.parse("2015-03-12"))
+                .build();
+
+    }
 
 }
