@@ -53,11 +53,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenNumberIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setNumber(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -69,11 +67,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenFullNameIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setFullname(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -85,11 +81,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenCallingNameIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setCallingname(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -101,11 +95,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenNicIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setNic(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -117,11 +109,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenGenderIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setGender(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -133,11 +123,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenMobileIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setMobile(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -149,11 +137,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenEmailIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setEmail(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -165,11 +151,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenAddressIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setAddress(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -181,11 +165,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenEmergencycontactIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setEmergencycontact(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -197,11 +179,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenDojIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setDoj(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -214,11 +194,9 @@ class EmployeeControllerTest {
     @Test
     void createEmployee_shouldFail_whenDojIsFutureDate() throws Exception{
 
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setDoj(LocalDate.parse("2025-11-01"));
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -230,40 +208,10 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void createEmployee_shouldSucceed_whenDojIsPastDate() throws Exception{
-
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
-        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
-        employeeCreateRequestDto.setDoj(LocalDate.parse("2015-11-01"));
-
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
-        mockMvc.perform(post(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    void createEmployee_shouldSucceed_whenDojIsToday() throws Exception{
-
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
-        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
-        employeeCreateRequestDto.setDoj(LocalDate.now());
-
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
-        mockMvc.perform(post(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
     void createEmployee_shouldFail_whenBranchIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setBranch(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -275,11 +223,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenDepartmentIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setDepartment(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -291,11 +237,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenDesignationIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setDesignation(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -307,11 +251,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenEmployeetypeIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setEmployeetype(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -323,11 +265,9 @@ class EmployeeControllerTest {
 
     @Test
     void createEmployee_shouldFail_whenEmployeestatusIsMissing() throws Exception {
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setEmployeestatus(null);
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
@@ -447,6 +387,87 @@ class EmployeeControllerTest {
                 ));
     }
 
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsPastDate() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.parse("2015-11-01"));
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsToday() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.now());
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenNicIsOldFormat() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNic("995412786V");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenNicIsNewFormat() throws Exception{
+
+        //createUniqueEmployeeRequestNoImage() returns object with nic is new format
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenOldNicIsInvalidFormat() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNic("9a41A7@6x");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "nic: Invalid NIC"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNewNicIsInvalidFormat() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setNic("200@23A7x98");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "nic: Invalid NIC"
+                ));
+    }
 
 
 }
