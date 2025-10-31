@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -210,6 +212,52 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void createEmployee_shouldFail_whenDojIsFutureDate() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.parse("2025-11-01"));
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "doj: Joined date cannot be in the future"
+                ));
+
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsPastDate() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.parse("2015-11-01"));
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsToday() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.now());
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
     void createEmployee_shouldFail_whenBranchIsMissing() throws Exception {
         // Arrange: Prepare a valid employee request, then remove the mandatory employee number
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
@@ -398,6 +446,7 @@ class EmployeeControllerTest {
                         "Emergency contact already used as another employee’s mobile number."
                 ));
     }
+
 
 
 }
