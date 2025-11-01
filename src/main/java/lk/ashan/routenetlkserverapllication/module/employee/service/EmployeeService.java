@@ -31,30 +31,111 @@ public class EmployeeService {
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
 
-        String expectedEmail = generateEmail(request.getCallingname(),request.getNumber());
+        // --- Ensure email auto-generated correctly ---
+        ensureEmailFormat(request);
 
-        if (request.getEmail() == null || !request.getEmail().equalsIgnoreCase(expectedEmail)) {
-            request.setEmail(expectedEmail); // ensure correct format
-        }
+        // --- Validate NIC & Gender consistency ---
+        validateGenderAgainstNIC(request);
 
-        String gender = extractGender(request.getNic());
-        if (!request.getGender().getName().equalsIgnoreCase(gender)){
-            throw new InvalidNICGenderException("Gender not match with given NIC");
-        }
+        // --- Validate Department vs Designation mapping ---
+        validateDepartmentDesignation(request.getDepartment().getName(), request.getDesignation().getName());
 
-        validateDepartmentDesignation(request.getDepartment().getName(),request.getDesignation().getName());
+        // --- Validate employment type & joining date ---
         validateEmploymentDate(request);
-        validateBranchUniquenessForCreate(request);
 
+        // --- Validate uniqueness across branch & personal contact details ---
+        validateEmployeeUniquenessForCreate(request);
+
+        // --- Persist ---
         Employee employee = employeeMapper.toEntity(request);
-
         Employee saved = employeeRepository.save(employee);
 
         return employeeMapper.toDto(saved);
     }
 
+    private void ensureEmailFormat(@NotNull EmployeeCreateRequestDto request) {
+        String expectedEmail = generateEmail(request.getCallingname(), request.getNumber());
 
-    private void validateBranchUniquenessForCreate(@NotNull EmployeeCreateRequestDto employee) {
+        if (request.getEmail() == null || !request.getEmail().equalsIgnoreCase(expectedEmail)) {
+            request.setEmail(expectedEmail);
+        }
+    }
+
+    private String generateEmail(String callingName, String number) {
+        if (callingName == null || number == null) {
+            throw new IllegalArgumentException("Calling name and employee number required");
+        }
+        return callingName.toLowerCase() + "." + number + "@sltb.lk";
+    }
+
+    private void validateGenderAgainstNIC(@NotNull EmployeeCreateRequestDto request) {
+        String gender = extractGender(request.getNic());
+
+        if (!request.getGender().getName().equalsIgnoreCase(gender)) {
+            throw new InvalidNICGenderException("Gender not match with given NIC");
+        }
+    }
+
+    private static String extractGender(String nic) {
+        if (nic == null) {
+            throw new IllegalArgumentException("NIC cannot be null");
+        }
+
+        nic = nic.trim().toUpperCase();
+
+        // --- New NIC (12 digits) ---
+        if (nic.matches("^\\d{12}$")) {
+            int dayCode = Integer.parseInt(nic.substring(4, 7));
+            return (dayCode > 500) ? "Female" : "Male";
+        }
+
+        // --- Old NIC (9 digits + letter) ---
+        if (nic.matches("^\\d{9}[VvXx]$")) {
+            int dayCode = Integer.parseInt(nic.substring(2, 5));
+            return (dayCode > 500) ? "Female" : "Male";
+        }
+
+        throw new IllegalArgumentException("Invalid NIC format");
+    }
+
+    private void validateDepartmentDesignation(String department, String designation) {
+        String dept = department.trim().toLowerCase();
+        String desig = designation.trim().toLowerCase();
+
+        List<String> allowed = VALID_COMBINATIONS.get(dept);
+        if (allowed == null || !allowed.contains(desig)) {
+            throw new InvalidDepartmentDesignationException(
+                    String.format("Invalid combination: %s cannot belong to %s department.", designation, department)
+            );
+        }
+    }
+
+    private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of(
+            "operations (traffic)", List.of("driver", "conductor", "depot manager"),
+            "engineering and technical", List.of("mechanic", "supervisory"),
+            "administrative", List.of("assistant manager", "supervisory", "clerical"),
+            "finance and revenue", List.of("clerical"),
+            "stores department", List.of("clerical")
+    );
+
+    private void validateEmploymentDate(@NotNull EmployeeCreateRequestDto request) {
+        String type = request.getEmployeetype().getName().trim().toLowerCase();
+        LocalDate doj = request.getDoj();
+        int currentYear = LocalDate.now().getYear();
+
+        if (doj == null) {
+            throw new InvalidEmploymentDateException("Date of Joining is required.");
+        }
+
+        if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
+            throw new InvalidEmploymentDateException(
+                    String.format("%s employees cannot have a Date of Joining older than the current year (%d).",
+                            request.getEmployeetype().getName(), currentYear)
+            );
+        }
+    }
+
+    private void validateEmployeeUniquenessForCreate(@NotNull EmployeeCreateRequestDto employee) {
 
         if (employeeRepository.existsByNumber(employee.getNumber())) {
             throw new ResourceExistsException("Employee number already exists.");
@@ -73,7 +154,6 @@ public class EmployeeService {
         }
 
         mobileAndEmergencyContactConflictVerification(employee);
-
     }
 
     private void mobileAndEmergencyContactConflictVerification(@NotNull EmployeeCreateRequestDto employee) {
@@ -96,69 +176,6 @@ public class EmployeeService {
         }
     }
 
-    private String generateEmail(String callingName, String number) {
-        if (callingName == null || number == null)
-            throw new IllegalArgumentException("Calling name and employee number required");
-        return callingName.toLowerCase() + "." + number + "@sltb.lk";
-    }
-
-    private static String extractGender(String nic) {
-        if (nic == null) {
-            throw new IllegalArgumentException("NIC cannot be null");
-        }
-
-        nic = nic.trim().toUpperCase();
-
-        // --- New NIC format (12 digits) ---
-        if (nic.matches("^\\d{12}$")) {
-            int dayCode = Integer.parseInt(nic.substring(4, 7));
-            return (dayCode > 500) ? "Female" : "Male";
-        }
-
-        // --- Old NIC format (9 digits + letter) ---
-        else if (nic.matches("^\\d{9}[VvXx]$")) {
-            int dayCode = Integer.parseInt(nic.substring(2, 5));
-            return (dayCode > 500) ? "Female" : "Male";
-        }
-
-        throw new IllegalArgumentException("Invalid NIC format");
-    }
-
-    private void validateEmploymentDate(EmployeeCreateRequestDto request) {
-        String type = request.getEmployeetype().getName().trim().toLowerCase();
-        LocalDate doj = request.getDoj();
-        int currentYear = LocalDate.now().getYear();
-
-        if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
-            throw new InvalidEmploymentDateException(
-                    String.format("%s employees cannot have a Date of Joining older than the current year (%d).",
-                            request.getEmployeetype().getName(), currentYear)
-            );
-        }
-    }
-
-
-
-    private void validateDepartmentDesignation(String department, String designation) {
-        String dept = department.trim().toLowerCase();
-        String desig = designation.trim().toLowerCase();
-
-        List<String> allowed = VALID_COMBINATIONS.get(dept);
-        if (allowed == null || !allowed.contains(desig)) {
-            throw new InvalidDepartmentDesignationException(
-                    String.format("Invalid combination: %s cannot belong to %s department.", designation, department)
-            );
-        }
-    }
-
-
-    private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of(
-            "operations (traffic)", List.of("driver", "conductor", "depot manager"),
-            "engineering and technical", List.of("mechanic", "supervisory"),
-            "administrative", List.of("assistant manager", "supervisory", "clerical"),
-            "finance and revenue", List.of("clerical"),
-            "stores department", List.of("clerical")
-    );
 
 
 }

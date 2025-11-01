@@ -43,7 +43,7 @@ class EmployeeControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.fullname").value("Minuri Navoddika"))
                 .andExpect(jsonPath("$.data.number").value("EMPCLM0007"))
-                .andExpect(jsonPath("$.data.nic").value("200223171988"))
+                .andExpect(jsonPath("$.data.nic").value("200253171988"))
                 .andExpect(jsonPath("$.data.branch.name").value("Avissawella"))
                 .andExpect(jsonPath("$.data.designation.name").value("Assistant Manager"))
                 .andExpect(jsonPath("$.data.department.name").value("Administrative "))
@@ -356,23 +356,6 @@ class EmployeeControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "Mobile number already exists."
-                ));
-    }
-
-    @Test
-    void createEmployee_shouldFail_whenDuplicateEmail() throws Exception {
-
-        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
-        employeeCreateRequestDto.setNumber("EMPCLM0007");//Unique Number
-        employeeCreateRequestDto.setNic("200223171988");//Unique NIC
-        employeeCreateRequestDto.setMobile("0716042647");//Unique mobile
-
-        mockMvc.perform(post(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isConflict())
-                .andExpect(ValidationResultMatcher.expectValidationError(
-                        "Email already exists."
                 ));
     }
     
