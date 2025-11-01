@@ -1017,4 +1017,18 @@ class EmployeeControllerTest {
                 .andExpect(jsonPath("$.data.email").value(expectedEmail));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenGenderDoesNotMatchNIC() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNic("200012345678"); // dayCode < 500 → Male
+        dto.setGender(DtoFactory.genderDto(2, "Female")); // mismatch
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Gender not match with given NIC"
+                ));
+    }
 }

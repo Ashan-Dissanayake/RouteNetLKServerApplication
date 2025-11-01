@@ -50,6 +50,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidNICGenderException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidGenderNicException(
+            InvalidNICGenderException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIErrorResponse> handleValidationException(
             MethodArgumentNotValidException e,
@@ -68,15 +80,15 @@ public class GlobalExceptionHandler {
         );
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<APIErrorResponse> handleGenericException(
-//            Exception e,
-//            HttpServletRequest request
-//    ) {
-//        return APIResponseBuilder.error(
-//                ErrorCode.UNKNOWN_ERROR,
-//                List.of(e.getMessage()),
-//                request
-//        );
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<APIErrorResponse> handleGenericException(
+            Exception e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.UNKNOWN_ERROR,
+                List.of(e.getMessage()),
+                request
+        );
+    }
 }

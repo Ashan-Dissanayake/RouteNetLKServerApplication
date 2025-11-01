@@ -1,13 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ContactConflictException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidNICGenderException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,14 @@ public class EmployeeService {
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
 
         String expectedEmail = generateEmail(request.getCallingname(),request.getNumber());
+
         if (request.getEmail() == null || !request.getEmail().equalsIgnoreCase(expectedEmail)) {
             request.setEmail(expectedEmail); // ensure correct format
+        }
+
+        String gender = extractGender(request.getNic());
+        if (!request.getGender().getName().equalsIgnoreCase(gender)){
+            throw new InvalidNICGenderException("Gender not match with given NIC");
         }
 
         validateBranchUniquenessForCreate(request);
@@ -64,6 +71,11 @@ public class EmployeeService {
             throw new ResourceExistsException("Email already exists.");
         }
 
+        mobileAndEmergencyContactConflictVerification(employee);
+
+    }
+
+    private void mobileAndEmergencyContactConflictVerification(@NotNull EmployeeCreateRequestDto employee) {
         if (employee.getMobile().equals(employee.getEmergencycontact())) {
             throw new ContactConflictException(
                     "Employee mobile number and emergency contact cannot be the same."
@@ -89,5 +101,26 @@ public class EmployeeService {
         return callingName.toLowerCase() + "." + number + "@sltb.lk";
     }
 
+    private static String extractGender(String nic) {
+        if (nic == null) {
+            throw new IllegalArgumentException("NIC cannot be null");
+        }
+
+        nic = nic.trim().toUpperCase();
+
+        // --- New NIC format (12 digits) ---
+        if (nic.matches("^\\d{12}$")) {
+            int dayCode = Integer.parseInt(nic.substring(4, 7));
+            return (dayCode > 500) ? "Female" : "Male";
+        }
+
+        // --- Old NIC format (9 digits + letter) ---
+        else if (nic.matches("^\\d{9}[VvXx]$")) {
+            int dayCode = Integer.parseInt(nic.substring(2, 5));
+            return (dayCode > 500) ? "Female" : "Male";
+        }
+
+        throw new IllegalArgumentException("Invalid NIC format");
+    }
 
 }
