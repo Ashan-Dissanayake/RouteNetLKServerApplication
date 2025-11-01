@@ -15,5 +15,4 @@ public class ValidationResultMatcher {
     public static ResultMatcher expectValidationError(String expectedError) {
         return jsonPath("$.details", hasItem(expectedError));
     }
-
 }

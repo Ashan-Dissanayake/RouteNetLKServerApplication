@@ -1000,4 +1000,21 @@ class EmployeeControllerTest {
                 ));
     }
 
+
+    @Test
+    void createEmployee_shouldAutoCorrectEmail_whenEmailIsIncorrect() throws Exception {
+        // Arrange
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmail("wrong.email@sltb.lk"); // deliberately incorrect
+
+        String expectedEmail = "minuri.EMPCLM0007@sltb.lk";
+
+        // Act & Assert
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.email").value(expectedEmail));
+    }
+
 }

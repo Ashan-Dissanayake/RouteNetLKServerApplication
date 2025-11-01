@@ -31,6 +31,11 @@ public class EmployeeService {
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
 
+        String expectedEmail = generateEmail(request.getCallingname(),request.getNumber());
+        if (request.getEmail() == null || !request.getEmail().equalsIgnoreCase(expectedEmail)) {
+            request.setEmail(expectedEmail); // ensure correct format
+        }
+
         validateBranchUniquenessForCreate(request);
 
         Employee employee = employeeMapper.toEntity(request);
@@ -76,8 +81,13 @@ public class EmployeeService {
                     "Emergency contact already used as another employee’s mobile number."
             );
         }
-
-
     }
+
+    private String generateEmail(String callingName, String number) {
+        if (callingName == null || number == null)
+            throw new IllegalArgumentException("Calling name and employee number required");
+        return callingName.toLowerCase() + "." + number + "@sltb.lk";
+    }
+
 
 }
