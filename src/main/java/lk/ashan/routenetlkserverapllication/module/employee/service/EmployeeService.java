@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMappe
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ContactConflictException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidNICGenderException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -42,6 +43,8 @@ public class EmployeeService {
         if (!request.getGender().getName().equalsIgnoreCase(gender)){
             throw new InvalidNICGenderException("Gender not match with given NIC");
         }
+
+        validateDepartmentDesignation(request.getDepartment().getName(),request.getDesignation().getName());
 
         validateBranchUniquenessForCreate(request);
 
@@ -122,5 +125,28 @@ public class EmployeeService {
 
         throw new IllegalArgumentException("Invalid NIC format");
     }
+
+
+    private void validateDepartmentDesignation(String department, String designation) {
+        String dept = department.trim().toLowerCase();
+        String desig = designation.trim().toLowerCase();
+
+        List<String> allowed = VALID_COMBINATIONS.get(dept);
+        if (allowed == null || !allowed.contains(desig)) {
+            throw new InvalidDepartmentDesignationException(
+                    String.format("Invalid combination: %s cannot belong to %s department.", designation, department)
+            );
+        }
+    }
+
+
+    private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of(
+            "operations (traffic)", List.of("driver", "conductor", "depot manager"),
+            "engineering and technical", List.of("mechanic", "supervisory"),
+            "administrative", List.of("assistant manager", "supervisory", "clerical"),
+            "finance and revenue", List.of("clerical"),
+            "stores department", List.of("clerical")
+    );
+
 
 }

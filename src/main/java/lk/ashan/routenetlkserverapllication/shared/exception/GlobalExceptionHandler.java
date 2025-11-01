@@ -62,6 +62,22 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidDepartmentDesignationException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidDepartmentDesignationException(
+            InvalidDepartmentDesignationException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+
+
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIErrorResponse> handleValidationException(
             MethodArgumentNotValidException e,

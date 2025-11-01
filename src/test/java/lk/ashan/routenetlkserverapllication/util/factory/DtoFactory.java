@@ -135,7 +135,7 @@ public class DtoFactory {
                 .number("EMPCLM0007")
                 .fullname("Minuri Navoddika")
                 .callingname("Minuri")
-                .nic("200223171988")
+                .nic("200253171988")
                 .gender(genderDto(2,"Female"))
                 .mobile("0716042647")
                 .email("minuri.EMPCLM0007@sltb.lk")

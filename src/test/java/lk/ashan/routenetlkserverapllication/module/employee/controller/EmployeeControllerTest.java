@@ -1031,4 +1031,33 @@ class EmployeeControllerTest {
                         "Gender not match with given NIC"
                 ));
     }
+
+    @Test
+    void createEmployee_shouldSucceed_whenDepartmentDesignationValid() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setDepartment(DtoFactory.departmentDto(1, "Operations (Traffic)"));
+        dto.setDesignation(DtoFactory.designationDto(1, "Driver"));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAssistantManagerInWrongDepartment() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setDepartment(DtoFactory.departmentDto(3, "Finance and Revenue"));
+        dto.setDesignation(DtoFactory.designationDto(4, "Assistant Manager"));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid combination: Assistant Manager cannot belong to Finance and Revenue department."
+                ));
+    }
+
+
 }
