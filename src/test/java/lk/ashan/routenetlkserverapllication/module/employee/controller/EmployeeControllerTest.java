@@ -51,6 +51,7 @@ class EmployeeControllerTest {
                 .andExpect(jsonPath("$.data.employeestatus.name").value("Active"));
     }
 
+    //Testing for mandatory field validation
     @Test
     void createEmployee_shouldFail_whenNumberIsMissing() throws Exception {
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
@@ -192,22 +193,6 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void createEmployee_shouldFail_whenDojIsFutureDate() throws Exception{
-
-        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
-        employeeCreateRequestDto.setDoj(LocalDate.parse("2025-11-01"));
-
-        mockMvc.perform(post(apiUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(ValidationResultMatcher.expectValidationError(
-                        "doj: Joined date cannot be in the future"
-                ));
-
-    }
-
-    @Test
     void createEmployee_shouldFail_whenBranchIsMissing() throws Exception {
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
         employeeCreateRequestDto.setBranch(null);
@@ -278,6 +263,52 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void createEmployee_shouldFail_whenDojIsFutureDate() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.now().plusDays(1));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "doj: Joined date cannot be in the future"
+                ));
+
+    }
+
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsPastDate() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.parse("2015-11-01"));
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    //DOJ range validation
+    @Test
+    void createEmployee_shouldSucceed_whenDojIsToday() throws Exception{
+
+        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setDoj(LocalDate.now());
+
+        // Act & Assert: Perform POST request and verify it fails with proper validation error
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isCreated());
+    }
+
+    //Unique field validation
+    @Test
     void createEmployee_shouldFail_whenDuplicateNumber() throws Exception {
 
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createExistEmployeeRequestNoImage();
@@ -344,7 +375,7 @@ class EmployeeControllerTest {
                         "Email already exists."
                 ));
     }
-
+    
     @Test
     void createEmployee_shouldFail_whenMobileAndEmergencyContactAreSame() throws Exception {
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
@@ -387,34 +418,179 @@ class EmployeeControllerTest {
                 ));
     }
 
+    //Pattern validation-Number
     @Test
-    void createEmployee_shouldSucceed_whenDojIsPastDate() throws Exception{
+    void createEmployee_shouldFail_whenNumberHasTooFewLetters() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPAB1234");
 
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
-        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
-        employeeCreateRequestDto.setDoj(LocalDate.parse("2015-11-01"));
-
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isCreated());
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
     }
 
     @Test
-    void createEmployee_shouldSucceed_whenDojIsToday() throws Exception{
+    void createEmployee_shouldFail_whenNumberHasTooManyLetters() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPABCD1234");
 
-        // Arrange: Prepare a valid employee request, then remove the mandatory employee number
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberHasLowercasePrefix() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("empABC1234");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberHasLowercaseLetters() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPabc1234");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberHasTooFewDigits() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPABC123");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberHasTooManyDigits() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPABC12345");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberHasNonDigitCharactersInSuffix() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPABC12A4");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberContainsSymbol() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMPABC12@4");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberContainsSpace() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMP ABC1234");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenNumberContainsHyphen() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setNumber("EMP-ABC1234");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid employee number"
+                ));
+    }
+
+    //Pattern validation-Full Name
+    @Test
+    void createEmployee_shouldFail_whenFullnameIsInvalidFormat() throws Exception{
+
         EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
-        employeeCreateRequestDto.setDoj(LocalDate.now());
+        employeeCreateRequestDto.setFullname("Minuri N@vodd1kA");
 
-        // Act & Assert: Perform POST request and verify it fails with proper validation error
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "fullname: Invalid full name"
+                ));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenCallingnameIsInvalidFormat() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setCallingname("N@vodd1kA");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "callingname: Invalid calling name"
+                ));
+    }
+
+    //Pattern validation-NIC
     @Test
     void createEmployee_shouldSucceed_whenNicIsOldFormat() throws Exception{
 
@@ -469,5 +645,359 @@ class EmployeeControllerTest {
                 ));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenMobileHasInvalidPrefix() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("0791234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    //Pattern validation-Mobile
+    @Test
+    void createEmployee_shouldFail_whenMobileIsTooShort() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("07123456");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileIsTooLong() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("07123456789");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileStartsWithCountryCode() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("+94771234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileContainsHyphen() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("071-1234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileContainsSpace() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("071 1234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileContainsLetter() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("071A234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenMobileContainsSymbol() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setMobile("071@234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Invalid mobile number"
+                ));
+    }
+
+    //Pattern validation-Email
+    @Test
+    void createEmployee_shouldFail_whenEmailIsInvalidFormat() throws Exception{
+
+        EmployeeCreateRequestDto employeeCreateRequestDto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        employeeCreateRequestDto.setEmail("minuri.EMPCLM0007#sltb.lk");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "email: Invalid email format"
+                ));
+    }
+
+    //Pattern validation-Address
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsHash() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("#12, Flower Rd");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsAtSymbol() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("12@Main Street");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsPeriod() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("Colombo 07.");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsQuotes() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("“No 5”");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsUnicodeSinhala() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("අංක 12, පාර");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressContainsAsterisk() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("12* Main Rd");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenAddressIsTooShort() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setAddress("A");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Invalid address"
+                ));
+    }
+
+    //Pattern validation-Emergency Contact
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactIsTooShort() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("07123456");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactIsTooLong() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("07123456789");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactHasInvalidMobilePrefix() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("0791234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactHasInvalidLandlinePrefix() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("0491234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactStartsWithCountryCode() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("+94771234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactContainsHyphen() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("071-1234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactContainsSpace() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("071 1234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactContainsLetter() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("071A234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenEmergencycontactContainsSymbol() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmergencycontact("071@234567");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Invalid emergency contact"
+                ));
+    }
 
 }
