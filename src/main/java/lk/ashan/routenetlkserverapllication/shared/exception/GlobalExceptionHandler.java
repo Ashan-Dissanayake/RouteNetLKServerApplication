@@ -74,6 +74,20 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidEmploymentDateException .class)
+    public ResponseEntity<APIErrorResponse> handleIInvalidEmploymentDateException(
+            InvalidEmploymentDateException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+
+
 
 
 

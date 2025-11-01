@@ -1059,5 +1059,39 @@ class EmployeeControllerTest {
                 ));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenProbationerHasOldDOJ() throws Exception {
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmployeetype(DtoFactory.employeetypeDto(4, "Probationers"));
+        dto.setDoj(LocalDate.of(2023, 5, 10)); // previous year
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Probationers employees cannot have a Date of Joining older than the current year (2025)."
+                ));
+    }
+
+    @Test
+    void createEmployee_shouldFail_whenContractDOJOlderThanCurrentYear() throws Exception {
+        // Arrange
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setEmployeetype(DtoFactory.employeetypeDto(2, "Contract"));
+        dto.setDoj(LocalDate.of(2023, 5, 10)); // DOJ older than current year (e.g. 2025)
+
+        // Act & Assert
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Contract employees cannot have a Date of Joining older than the current year (2025)."
+                ));
+    }
+
+
+
 
 }

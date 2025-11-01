@@ -6,15 +6,13 @@ import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailRe
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.ContactConflictException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidNICGenderException;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
+import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +43,7 @@ public class EmployeeService {
         }
 
         validateDepartmentDesignation(request.getDepartment().getName(),request.getDesignation().getName());
-
+        validateEmploymentDate(request);
         validateBranchUniquenessForCreate(request);
 
         Employee employee = employeeMapper.toEntity(request);
@@ -125,6 +123,20 @@ public class EmployeeService {
 
         throw new IllegalArgumentException("Invalid NIC format");
     }
+
+    private void validateEmploymentDate(EmployeeCreateRequestDto request) {
+        String type = request.getEmployeetype().getName().trim().toLowerCase();
+        LocalDate doj = request.getDoj();
+        int currentYear = LocalDate.now().getYear();
+
+        if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
+            throw new InvalidEmploymentDateException(
+                    String.format("%s employees cannot have a Date of Joining older than the current year (%d).",
+                            request.getEmployeetype().getName(), currentYear)
+            );
+        }
+    }
+
 
 
     private void validateDepartmentDesignation(String department, String designation) {
