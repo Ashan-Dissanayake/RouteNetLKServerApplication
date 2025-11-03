@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import org.mapstruct.*;
@@ -16,6 +17,8 @@ public interface BranchMapper {
 
   BranchDetailResponseDto toDto(Branch branch);
   List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
+
+  List<BranchSummaryResponseDto> toSummaryDetailList(List<Branch> branches);
 
   Branch toEntity(BranchCreateRequestDto request);
 

@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -29,6 +30,12 @@ public class BranchController {
                 ? branchService.getBranches()
                 : branchService.searchBranch(params);
 
+        return APIResponseBuilder.getResponse(branches, branches.size());
+    }
+
+    @GetMapping(value = "/list",produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<BranchSummaryResponseDto>>> get() {
+        List<BranchSummaryResponseDto> branches =  branchService.getSummaryBranches();
         return APIResponseBuilder.getResponse(branches, branches.size());
     }
 

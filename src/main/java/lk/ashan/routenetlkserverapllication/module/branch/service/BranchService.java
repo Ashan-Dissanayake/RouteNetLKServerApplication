@@ -36,6 +36,10 @@ public class BranchService {
         return branchMapper.toDetailList(branchRepository.findAll());
     }
 
+    public List<BranchSummaryResponseDto> getSummaryBranches(){
+        return branchMapper.toSummaryDetailList(branchRepository.findAll());
+    }
+
     public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
 
         List<Branch> branches = branchRepository.findAll();
