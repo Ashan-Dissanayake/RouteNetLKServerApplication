@@ -74,6 +74,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidGenderDesignationException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidGenderDesignationException(
+            InvalidGenderDesignationException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(InvalidEmploymentDateException .class)
     public ResponseEntity<APIErrorResponse> handleIInvalidEmploymentDateException(
             InvalidEmploymentDateException e,

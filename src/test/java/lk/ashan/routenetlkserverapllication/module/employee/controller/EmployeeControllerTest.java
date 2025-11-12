@@ -1074,7 +1074,22 @@ class EmployeeControllerTest {
                 ));
     }
 
+    @Test
+    void createEmployee_shouldFail_whenGenderOfDriverIsFemale() throws Exception{
 
+        // Arrange
+        EmployeeCreateRequestDto dto = DtoFactory.createUniqueEmployeeRequestNoImage();
+        dto.setDepartment(DtoFactory.departmentDto(1,"Operations (Traffic)"));
+        dto.setDesignation(DtoFactory.designationDto(1,"Driver"));
 
+        // Act & Assert
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Female employees are not allowed to be a driver."
+                ));
 
+    }
 }

@@ -62,6 +62,9 @@ public class EmployeeService {
         // --- Validate Department vs Designation mapping ---
         validateDepartmentDesignation(request.getDepartment().getName(), request.getDesignation().getName());
 
+        // --- Validate Gender vs Designation mapping ---
+        validateFemaleEmployeesNotDriver(request);
+
         // --- Validate employment type & joining date ---
         validateEmploymentDate(request);
 
@@ -196,6 +199,17 @@ public class EmployeeService {
                     "Emergency contact already used as another employee’s mobile number."
             );
         }
+    }
+
+    private void validateFemaleEmployeesNotDriver(@NotNull EmployeeCreateRequestDto employee){
+
+        Boolean isFemale = employee.getGender().getName().equalsIgnoreCase("female");
+        Boolean isDriver = employee.getDesignation().getName().equalsIgnoreCase("driver");
+
+        if (isFemale && isDriver){
+            throw  new InvalidGenderDesignationException("Female employees are not allowed to be a driver.");
+        }
+
     }
 
 
