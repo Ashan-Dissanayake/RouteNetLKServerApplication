@@ -1097,6 +1097,219 @@ class EmployeeControllerTest {
 
     //Employee-Update Test
 
+    //Mandatory
+
+    //Full Name
+    @Test
+    void updateEmployee_shouldFail_whenFullNameIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setFullname(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "fullname: Full name is mandatory"
+                ));
+    }
+
+    //Number
+    @Test
+    void updateEmployee_shouldFail_whenNumberIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setNumber(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Number mandatory"
+                ));
+    }
+
+    //Calling Name
+    @Test
+    void updateEmployee_shouldFail_whenCallingNameIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setCallingname(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "callingname: Calling name is mandatory"
+                ));
+    }
+
+    //Nic
+    @Test
+    void updateEmployee_shouldFail_whenNicIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setNic(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "nic: NIC is mandatory"
+                ));
+    }
+
+    //Gender
+    @Test
+    void updateEmployee_shouldFail_whenGenderIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setGender(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "gender: Gender is mandatory"
+                ));
+    }
+
+    //Mobile
+    @Test
+    void updateEmployee_shouldFail_whenMobileIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setMobile(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mobile: Mobile is mandatory"
+                ));
+    }
+
+    //Email
+    @Test
+    void updateEmployee_shouldFail_whenEmailIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmail(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "email: Email is mandatory"
+                ));
+    }
+
+    //Address
+    @Test
+    void updateEmployee_shouldFail_whenAddressIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setAddress(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "address: Address is mandatory"
+                ));
+    }
+
+    //Emergency Contact
+    @Test
+    void updateEmployee_shouldFail_whenEmergencyContactIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmergencycontact(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "emergencycontact: Emergency Contact is mandatory"
+                ));
+    }
+
+    //Branch
+    @Test
+    void updateEmployee_shouldFail_whenBranchIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setBranch(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "branch: Branch is mandatory"
+                ));
+    }
+
+    //Department
+    @Test
+    void updateEmployee_shouldFail_whenDepartmentIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setDepartment(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "department: Department is mandatory"
+                ));
+    }
+
+    //Designation
+    @Test
+    void updateEmployee_shouldFail_whenDesignationIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setDesignation(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "designation: Designation is mandatory"
+                ));
+    }
+
+    //Employee Type
+    @Test
+    void updateEmployee_shouldFail_whenEmployeeTypeIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmployeetype(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "employeetype: Employee Type is mandatory"
+                ));
+    }
+
+    //Employee Status
+    @Test
+    void updateEmployee_shouldFail_whenEmployeeStatusIsMissing() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmployeestatus(null);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "employeestatus: Employee Status is mandatory"
+                ));
+    }
+
+
     //Pattern validation
 
     //Full Name
