@@ -103,7 +103,6 @@ public class DtoFactory {
 
     }
 
-
     //Employee
     public static GenderDto genderDto(int id, String name) {
         return new GenderDto(id, name);
@@ -128,7 +127,6 @@ public class DtoFactory {
     public static EmployeestatusDto employeestatusDto(int id, String name) {
         return new EmployeestatusDto(id, name);
     }
-
 
     public static EmployeeCreateRequestDto createUniqueEmployeeRequestNoImage(){
         return EmployeeCreateRequestDto.builder()
@@ -169,6 +167,27 @@ public class DtoFactory {
                 .doj(LocalDate.parse("2015-03-12"))
                 .build();
 
+    }
+
+    public static EmployeeUpdateRequestDto createEmployeeUpateRequestNoImage(){
+        return EmployeeUpdateRequestDto.builder()
+                .id(1)
+                .number("EMPCLM0001")
+                .fullname("Sunil Perera")
+                .callingname("Sunil")
+                .nic("200045602345")
+                .gender(genderDto(1,"Male"))
+                .mobile("0771234567")
+                .email("sunil.EMPCLM0001@sltb.lk")
+                .address("No 12, Maradana, Colombo 10")
+                .emergencycontact("0712345678")
+                .branch(branchSummaryResponseDto(1,"Colombo head office"))
+                .department(departmentDto(1,"Operations (Traffic)"))
+                .designation(designationDto(4,"Depot Manager"))
+                .employeetype(employeetypeDto(1,"Permanent"))
+                .employeestatus(employeestatusDto(2,"Suspend"))
+                .doj(LocalDate.parse("2015-03-12"))
+                .build();
     }
 
 }

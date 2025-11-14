@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.controller;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -34,9 +35,18 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> add(
-            @RequestBody @Valid EmployeeCreateRequestDto employeeCreateRequest) {
+            @RequestBody @Valid EmployeeCreateRequestDto employeeCreateRequest)
+    {
         EmployeeDetailResponseDto savedEmployee = employeeService.createEmployee(employeeCreateRequest);
         return APIResponseBuilder.postResponse(savedEmployee, savedEmployee.getId());
+    }
+
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> update(
+            @RequestBody @Valid EmployeeUpdateRequestDto employeeUpdateRequestDto)
+    {
+        EmployeeDetailResponseDto updatedEmployee = employeeService.updateEmployee(employeeUpdateRequestDto);
+        return APIResponseBuilder.putResponse(updatedEmployee,updatedEmployee.getId());
     }
 
 }

@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
@@ -11,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDelete
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -77,6 +79,17 @@ public class EmployeeService {
 
         return employeeMapper.toDto(saved);
     }
+
+    @Transactional
+    @DisableSoftDeleteFilter
+    public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
+        Employee employee = employeeMapper.toEntity(request);
+        Employee updated = employeeRepository.save(employee);
+
+        return employeeMapper.toDto(updated);
+
+    }
+
 
     private void ensureEmailFormat(@NotNull EmployeeCreateRequestDto request) {
         String expectedEmail = generateEmail(request.getCallingname(), request.getNumber());
