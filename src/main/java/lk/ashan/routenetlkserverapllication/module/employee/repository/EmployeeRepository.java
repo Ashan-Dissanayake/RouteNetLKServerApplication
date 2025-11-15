@@ -1,8 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.employee.repository;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
@@ -22,4 +28,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsByEmailAndIdNot(String email, Integer employeeId);
 
     boolean existsByEmergencycontactAndIdNot(String mobile, Integer employeeId);
+
+    @Query("select e from Employee e where e.id=:id")
+    Employee findByMyId(@Param("id")Integer id);
+
 }

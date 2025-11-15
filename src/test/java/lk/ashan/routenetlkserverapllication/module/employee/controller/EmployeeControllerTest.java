@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeestatusDto;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
 import org.junit.jupiter.api.Test;
@@ -1856,6 +1857,47 @@ class EmployeeControllerTest {
                 ));
     }
 
+
+    //Flow
+    @Test
+    void updateEmployee_shouldSuccess_whenValidStatusTransition() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmployeestatus(DtoFactory.employeestatusDto(1,"Active")); // Valid transition from SUSPEND →ACTIVE
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateEmployee_shouldFail_whenInvalidStatusTransition() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmployeestatus(DtoFactory.employeestatusDto(7,"Terminated")); // Not allowed in transition map
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid status transition from SUSPEND to TERMINATED"
+                ));
+    }
+
+
+    @Test
+    void updateEmployee_shouldFail_whenTransitionFromTerminalState() throws Exception {
+        EmployeeUpdateRequestDto employeeUpdateRequestDto = DtoFactory.createEmployeeUpateRequestNoImage();
+        employeeUpdateRequestDto.setEmployeestatus(DtoFactory.employeestatusDto(6,"On Leave"));           // not allowed
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid status transition from SUSPEND to ON LEAVE"
+                ));
+    }
 
 
 }

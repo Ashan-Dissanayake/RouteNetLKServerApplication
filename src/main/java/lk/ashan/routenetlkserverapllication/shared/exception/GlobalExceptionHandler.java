@@ -98,10 +98,17 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-
-
-
+    @ExceptionHandler(InvalidStatusTransitionException .class)
+    public ResponseEntity<APIErrorResponse> handleInvalidStatusTransitionException(
+            InvalidStatusTransitionException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
