@@ -5,7 +5,9 @@ import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailRe
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -19,6 +21,9 @@ public interface EmployeeMapper {
     Employee toEntity(EmployeeCreateRequestDto request);
     Employee toEntity(EmployeeUpdateRequestDto request);
 
+    // This method updates an existing entity with values from DTO
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(EmployeeUpdateRequestDto dto, @MappingTarget Employee entity);
 
 
 }

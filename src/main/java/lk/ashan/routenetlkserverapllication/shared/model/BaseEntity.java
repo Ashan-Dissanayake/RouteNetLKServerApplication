@@ -23,7 +23,7 @@ import org.hibernate.annotations.ParamDef;
 public abstract class BaseEntity {
 
     @Column(name = "deleted")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
 }
 
