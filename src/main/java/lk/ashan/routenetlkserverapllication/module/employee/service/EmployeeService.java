@@ -290,6 +290,8 @@ public class EmployeeService {
             throw new IllegalArgumentException("Status cannot be null.");
         }
 
+        if (currentStatus.equalsIgnoreCase(newStatus)) return;
+
         currentStatus = currentStatus.trim().toUpperCase();
         newStatus = newStatus.trim().toUpperCase();
 
