@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -1899,5 +1901,57 @@ class EmployeeControllerTest {
                 ));
     }
 
+    //Activation,Deactivation
 
+    @Test
+    void deactivateEmployee_shouldPass_whenEmployeesExist() throws Exception {
+
+        List<Integer> ids = List.of(1, 2);
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deactivateEmployee_shouldFail_whenEmployeesNotFound() throws Exception {
+
+        List<Integer> ids = List.of(99, 100);
+
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "No employees found for the given IDs"
+                ));
+    }
+
+    @Test
+    void deactivateEmployee_shouldFail_whenIdsListIsEmpty() throws Exception {
+
+        List<Integer> ids = Collections.emptyList();
+
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "No employees found for the given IDs"
+                ));
+    }
+
+    @Test
+    void activateEmployee_shouldPass_whenEmployeesExist() throws Exception {
+
+        List<Integer> ids = List.of(1, 2);
+
+        mockMvc.perform(post(apiUrl+"/activate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isCreated());
+    }
 }

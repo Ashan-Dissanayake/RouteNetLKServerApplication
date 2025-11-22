@@ -32,7 +32,6 @@ public class EmployeeService {
        return employeeMapper.toDtoList(employeeRepository.findAll());
     }
 
-
     public List<EmployeeDetailResponseDto> searchEmployee(@NotNull HashMap<String, String> params) {
 
         String fullName = params.get("ssname");
@@ -96,6 +95,29 @@ public class EmployeeService {
 
     }
 
+    @Transactional
+    public List<Integer> deactivateEmployee(List<Integer> employeeIds) {
+        List<Employee> employees = employeeRepository.findAllById(employeeIds);
+
+        if (employees.isEmpty())
+            throw new ResourceNotFoundException("No employees found for the given IDs");
+
+        employeeRepository.removeAll(employeeIds);
+
+        return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<Integer> activateEmployees(List<Integer> branchIds) {
+        List<Employee> employees = employeeRepository.findAllById(branchIds);
+
+        if (employees.isEmpty())
+            throw new ResourceNotFoundException("No employees found for the given IDs");
+
+        employeeRepository.restoreAll(branchIds);
+
+        return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
+    }
 
     private void ensureEmailFormat(@NotNull EmployeeCreateRequestDto request) {
         String expectedEmail = generateEmail(request.getCallingname(), request.getNumber());

@@ -49,4 +49,16 @@ public class EmployeeController {
         return APIResponseBuilder.putResponse(updatedEmployee,updatedEmployee.getId());
     }
 
+    @PostMapping("/deactivate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> deactivatedIds = employeeService.deactivateEmployee(ids);
+        return APIResponseBuilder.deleteResponse(deactivatedIds);
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> activatedIds = employeeService.activateEmployees(ids);
+        return APIResponseBuilder.postResponse(null,activatedIds);
+    }
+
 }

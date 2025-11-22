@@ -4,9 +4,11 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,5 +33,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query("select e from Employee e where e.id=:id")
     Employee findByMyId(@Param("id")Integer id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Employee  e SET e.deleted=true WHERE e.id in :ids")
+    void removeAll(@Param("ids")List<Integer>ids);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Employee  e SET e.deleted=false WHERE e.id in :ids")
+    void restoreAll(@Param("ids") List<Integer> ids);
+
 
 }
