@@ -1,8 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.Filter;
@@ -12,6 +14,7 @@ import org.hibernate.annotations.ParamDef;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -76,7 +79,9 @@ public class Employee extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "employeestatus_id", referencedColumnName = "id", nullable = false)
     private Employeestatus employeestatus;
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "employee")
+    private Collection<Vehicle> vehicles;
 
     @Override
     public boolean equals(Object o) {
