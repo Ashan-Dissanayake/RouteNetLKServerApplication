@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public class Vehicle extends BaseEntity {
     private Object yom;
     @Basic
     @Column(name = "dob")
-    private Date dob;
+    private LocalDate dob;
     @Basic
     @Column(name = "mileage")
     private Integer mileage;

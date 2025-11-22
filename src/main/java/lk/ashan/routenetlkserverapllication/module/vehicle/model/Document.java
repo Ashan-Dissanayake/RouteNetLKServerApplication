@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -26,10 +27,10 @@ public class Document {
     private Integer version;
     @Basic
     @Column(name = "doi")
-    private Date doi;
+    private LocalDate doi;
     @Basic
     @Column(name = "doe")
-    private Date doe;
+    private LocalDate doe;
     @Basic
     @Column(name = "remarks")
     private String remarks;
