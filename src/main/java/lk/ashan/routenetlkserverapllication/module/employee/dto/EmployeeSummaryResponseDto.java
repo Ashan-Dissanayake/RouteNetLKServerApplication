@@ -10,6 +10,6 @@ import lombok.*;
 @ToString
 public class EmployeeSummaryResponseDto {
     Integer id;
-    String name;
+    String callingname;
 }
 

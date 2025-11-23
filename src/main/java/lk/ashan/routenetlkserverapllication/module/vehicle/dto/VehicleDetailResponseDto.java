@@ -1,13 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.*;
 import lombok.*;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Collection;
 

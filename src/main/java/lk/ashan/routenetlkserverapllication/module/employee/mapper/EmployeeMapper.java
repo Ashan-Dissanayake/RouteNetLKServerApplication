@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.mapper;
 
+import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
@@ -11,7 +12,10 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
+        DepartmentMapper.class, DesignationMapper.class,EmployeestatusMapper.class,
+        EmployeetypeMapper.class,GenderMapper.class, BranchMapper.class
+})
 public interface EmployeeMapper {
 
     EmployeeDetailResponseDto toDto(Employee employeeDetailResponse);
