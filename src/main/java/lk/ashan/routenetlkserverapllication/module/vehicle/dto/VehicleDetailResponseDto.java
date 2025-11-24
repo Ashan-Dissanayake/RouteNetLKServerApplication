@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryR
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 
 @Getter
@@ -18,7 +19,7 @@ public class VehicleDetailResponseDto {
     private String code;
     private String number;
     private Integer seatingcapacity;
-    private Object yom;
+    private Year yom;
     private LocalDate dob;
     private Integer mileage;
     private String chasisnumber;

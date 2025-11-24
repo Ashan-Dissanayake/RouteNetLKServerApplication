@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class Vehicle extends BaseEntity {
     private Integer seatingcapacity;
     @Basic
     @Column(name = "yom")
-    private Object yom;
+    private Year yom;
     @Basic
     @Column(name = "dob")
     private LocalDate dob;
