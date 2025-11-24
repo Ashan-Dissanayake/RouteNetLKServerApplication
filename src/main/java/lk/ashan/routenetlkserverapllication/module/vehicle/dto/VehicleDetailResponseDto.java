@@ -24,7 +24,6 @@ public class VehicleDetailResponseDto {
     private String chasisnumber;
     private String enginenumber;
     private String remarks;
-    private Collection<DocumentDetailResponseDto> documents;
     private MakeDto make;
     private FueltypeDto fueltype;
     private ConditionrateDto conditionrate;

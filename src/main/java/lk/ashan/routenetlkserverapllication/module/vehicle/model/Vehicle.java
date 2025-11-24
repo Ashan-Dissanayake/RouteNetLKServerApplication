@@ -52,8 +52,6 @@ public class Vehicle extends BaseEntity {
     @Basic
     @Column(name = "deleted")
     private Boolean deleted;
-    @OneToMany(mappedBy = "vehicle")
-    private Collection<Document> documents;
     @ManyToOne
     @JoinColumn(name = "make_id", referencedColumnName = "id", nullable = false)
     private Make make;
