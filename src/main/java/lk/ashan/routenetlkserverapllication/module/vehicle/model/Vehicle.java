@@ -30,9 +30,6 @@ public class Vehicle extends BaseEntity {
     @Column(name = "number")
     private String number;
     @Basic
-    @Column(name = "seatingcapacity")
-    private Integer seatingcapacity;
-    @Basic
     @Column(name = "yom")
     private Year yom;
     @Basic
@@ -74,18 +71,21 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
+    @ManyToOne
+    @JoinColumn(name = "seatingcapacity_id", referencedColumnName = "id", nullable = false)
+    private Seatingcapacity seatingcapacity;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vehicle vehicle = (Vehicle) o;
-        return Objects.equals(id, vehicle.id) && Objects.equals(code, vehicle.code) && Objects.equals(number, vehicle.number) && Objects.equals(seatingcapacity, vehicle.seatingcapacity) && Objects.equals(yom, vehicle.yom) && Objects.equals(dob, vehicle.dob) && Objects.equals(mileage, vehicle.mileage) && Objects.equals(chasisnumber, vehicle.chasisnumber) && Objects.equals(enginenumber, vehicle.enginenumber) && Objects.equals(remarks, vehicle.remarks) && Objects.equals(deleted, vehicle.deleted);
+        return Objects.equals(id, vehicle.id) && Objects.equals(code, vehicle.code) && Objects.equals(number, vehicle.number) && Objects.equals(yom, vehicle.yom) && Objects.equals(dob, vehicle.dob) && Objects.equals(mileage, vehicle.mileage) && Objects.equals(chasisnumber, vehicle.chasisnumber) && Objects.equals(enginenumber, vehicle.enginenumber) && Objects.equals(remarks, vehicle.remarks) && Objects.equals(deleted, vehicle.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, code, number, seatingcapacity, yom, dob, mileage, chasisnumber, enginenumber, remarks, deleted);
+        return Objects.hash(id, code, number, yom, dob, mileage, chasisnumber, enginenumber, remarks, deleted);
     }
 
 }

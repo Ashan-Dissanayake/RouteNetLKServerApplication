@@ -31,12 +31,7 @@ public class VehicleRequestDto {
     @Pattern(regexp = "^N[A-Z]-[0-9]{4}$",message = "Invalid Plate Number")
     private String number;
 
-    @NotNull(message = "Seating Capacity Can Not be Empty")
-    @RegexPattern(reg ="^[0-9]{2}$")
-    private Integer seatingcapacity;
-
     @NotNull(message = "YOM Can Not be Empty")
-    @RegexPattern(reg = "^20[0-9]{2}$",msg = "Invalid YOM")
     @PastOrPresent(message = "YOM Date Can Not be in the Future")
     private Year yom;
 
@@ -68,6 +63,9 @@ public class VehicleRequestDto {
 
     @NotNull(message = "Vehicle Status Can Not be Empty")
     private VehiclestatusDto vehiclestatus;
+
+    @NotNull(message = "Seating Capacity Can Not be Empty")
+    private SeatingcapacityDto seatingcapacity;
 
     @NotNull(message = "Employee Can Not be Empty")
     private EmployeeSummaryResponseDto employee;

@@ -6,12 +6,17 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequ
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.Year;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +35,7 @@ class VehicleControllerTest {
 
     private static final String apiUrl = "/vehicles";
 
+    //Mandatory Attributes
     @Test
     void createVehicle_shouldSucceed_whenUniqueValid_vehicleCreateRequest() throws Exception{
 
@@ -213,5 +219,101 @@ class VehicleControllerTest {
                         "branch: Branch Not be Empty"
                 ));
     }
+
+    //Pattern and format validations
+
+    //Code
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "ALV00013",      // missing prefix
+            "AB-ALV00013",   // wrong prefix
+            "BSS-ALV00013",  // too long prefix
+            "BSALV00013",    // missing hyphen
+            "BS-alv00013",   // lowercase letters
+            "bs-ALV00013",   // lowercase prefix
+            "BS-AL000013",   // 2 letters
+            "BS-ALVV00013",  // 4 letters
+            "BS-A1V00013",   // digit in letter block
+            "BS-ALV123",     // too few digits
+            "BS-ALV123456",  // too many digits
+            "BS-ALV12A45",   // letter in digit block
+            "BS-ALV00013XYZ",// trailing chars
+            " BS-ALV00013",  // leading space
+            "BS-ALV00013 "   // trailing space
+    })
+    void createVehicle_shouldFail_whenCodeFormatIsInvalid(String invalidCode) throws Exception {
+
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setCode(invalidCode);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "code: Invalid Code"
+                ));
+    }
+
+    //Number
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "A-1234",       // missing N prefix
+            "NB1234",       // missing hyphen
+            "NAB-1234",     // too many letters
+            "N1-1234",      // digit in letter part
+            "Na-1234",      // lowercase
+            "NA-123",       // too few digits
+            "NA-12345",     // too many digits
+            "NA-12A4",      // letter in digit block
+            "NA-1234XYZ",   // trailing invalid chars
+            " NA-1234",     // leading space
+            "NA-1234 "      // trailing space
+    })
+    void createVehicle_shouldFail_whenPlateNumberFormatIsInvalid(String invalidNumber) throws Exception {
+
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setNumber(invalidNumber);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "number: Invalid Plate Number"
+                ));
+    }
+
+    //Date of Buy
+    @Test
+    void createVehicle_shouldFail_whenDobIsInFuture() throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setDob(LocalDate.now().plusDays(1));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "dob: DOB Date Can Not be in the Future"
+                ));
+    }
+
+
+    //Year of Made
+    @Test
+    void createVehicle_shouldFail_whenYomIsInFuture() throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setYom(Year.now().plusYears(1));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "yom: YOM Date Can Not be in the Future"
+                ));
+    }
+
 
 }

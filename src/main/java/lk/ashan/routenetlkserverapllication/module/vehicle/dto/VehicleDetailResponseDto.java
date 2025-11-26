@@ -18,7 +18,6 @@ public class VehicleDetailResponseDto {
     private  Integer id;
     private String code;
     private String number;
-    private Integer seatingcapacity;
     private Year yom;
     private LocalDate dob;
     private Integer mileage;
@@ -30,6 +29,7 @@ public class VehicleDetailResponseDto {
     private ConditionrateDto conditionrate;
     private ServicetypeDto servicetype;
     private VehiclestatusDto vehiclestatus;
+    private SeatingcapacityDto seatingcapacity;
     private EmployeeSummaryResponseDto employee;
     private BranchSummaryResponseDto branch;
 }

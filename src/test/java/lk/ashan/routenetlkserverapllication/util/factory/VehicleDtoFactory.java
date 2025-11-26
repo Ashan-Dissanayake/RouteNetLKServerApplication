@@ -12,6 +12,10 @@ public class VehicleDtoFactory {
         return new MakeDto(id, name);
     }
 
+    public static SeatingcapacityDto seatingcapacityDto(int id, String name) {
+        return new SeatingcapacityDto(id, name);
+    }
+
     public static FueltypeDto fueltypeDto(int id, String name) {
         return new FueltypeDto(id, name);
     }
@@ -33,7 +37,6 @@ public class VehicleDtoFactory {
                 .make(makeDto(1,"Ashok Leyland Viking 193"))
                 .code("BS-ALV00013")
                 .number("NB-7701")
-                .seatingcapacity(42)
                 .yom(Year.of(2016))
                 .dob(LocalDate.parse("2016-03-11"))
                 .mileage(120210)
@@ -43,6 +46,7 @@ public class VehicleDtoFactory {
                 .vehiclestatus(vehiclestatusDto(1,"Available"))
                 .conditionrate(conditionrateDto(2,"Good"))
                 .servicetype(servicetypeDto(1,"Passenger"))
+                .seatingcapacity(seatingcapacityDto(1,"42 Seats"))
                 .employee(DtoFactory.employeeSummaryyResponseDto(1,"sunil"))
                 .branch(DtoFactory.branchSummaryResponseDto(2,"Angoda"))
                 .build();
