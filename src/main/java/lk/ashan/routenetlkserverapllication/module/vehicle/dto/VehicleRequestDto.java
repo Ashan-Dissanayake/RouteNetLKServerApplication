@@ -1,9 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.shared.validation.RegexPattern;
@@ -39,6 +36,9 @@ public class VehicleRequestDto {
     @PastOrPresent(message = "DOB Date Can Not be in the Future")
     private LocalDate dob;
 
+    @NotNull(message = "Mileage Can Not be Empty")
+    @Digits(integer = 7, fraction = 2,message = "Numeric value out of bounds (<7 digits> expected)")
+    @Positive(message = "Mileage must be positive")
     private Integer mileage;
 
     @NotBlank(message = "Chassis Number Can Not be Empty")

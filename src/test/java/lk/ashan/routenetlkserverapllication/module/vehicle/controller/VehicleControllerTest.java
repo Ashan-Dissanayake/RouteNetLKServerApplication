@@ -220,6 +220,21 @@ class VehicleControllerTest {
                 ));
     }
 
+    @Test
+    void createVehicle_shouldFail_whenMileageIsMissing() throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setMileage(null);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "mileage: Mileage Can Not be Empty"
+                ));
+    }
+
+
     //Pattern and format validations
 
     //Code
@@ -312,6 +327,27 @@ class VehicleControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "yom: YOM Date Can Not be in the Future"
+                ));
+    }
+
+    //Mileage
+    @ParameterizedTest
+    @ValueSource(ints = {
+            -1,            // negative
+            10000000,      // 8 digits
+            100000000      // 9 digits
+    })
+    void createVehicle_shouldFail_whenMileageIsInvalid(int invalidMileage) throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setMileage(invalidMileage);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        invalidMileage < 0 ? "mileage: Mileage must be positive" :
+                                "mileage: Numeric value out of bounds (<7 digits> expected)"
                 ));
     }
 
