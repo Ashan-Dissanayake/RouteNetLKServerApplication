@@ -22,11 +22,11 @@ public class BusValidator implements ConstraintValidator<ValidBus, VehicleReques
             context.disableDefaultConstraintViolation();
             if (!chassisValid) {
                 context.buildConstraintViolationWithTemplate("Invalid chassis number for " + bus.getMake().getName())
-                        .addPropertyNode("chassisNumber").addConstraintViolation();
+                        .addPropertyNode("chasisnumber").addConstraintViolation();
             }
             if (!engineValid) {
                 context.buildConstraintViolationWithTemplate("Invalid engine number for " + bus.getMake().getName())
-                        .addPropertyNode("engineNumber").addConstraintViolation();
+                        .addPropertyNode("enginenumber").addConstraintViolation();
             }
             return false;
         }

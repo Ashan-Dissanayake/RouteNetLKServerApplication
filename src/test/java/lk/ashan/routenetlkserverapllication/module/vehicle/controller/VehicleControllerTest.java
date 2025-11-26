@@ -3,16 +3,19 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.shared.validation.BusPattern;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -351,5 +354,63 @@ class VehicleControllerTest {
                 ));
     }
 
+    //Chassis Number
+    @ParameterizedTest
+    @CsvSource({
+            "Ashok Leyland Viking 193, ALV12345678901234",  // valid
+            "Ashok Leyland Viking 193, A!V12345678901234",  // invalid char
+            "Tata LP 12.10/42, TLP12345678901234",          // valid
+            "Tata LP 12.10/42, TLP1234567890",             // too short
+            "Isuzu MT 111L, ISUZU1234567890123",           // valid
+            "Isuzu MT 111L, ISUZU1234567890$",             // invalid char
+    })
+    void createVehicle_shouldValidateChassis(String model, String chassisnumber) throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.getMake().setName(model);
+        dto.setChasisnumber(chassisnumber);
+
+        ResultActions result = mockMvc.perform(post(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (chassisnumber.matches(BusPattern.CHASSIS_REGEX.get(model))) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isBadRequest())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "chasisnumber: Invalid chassis number for " + dto.getMake().getName()
+                    ));
+        }
+    }
+
+
+    //Engine Number
+    @ParameterizedTest
+    @CsvSource({
+            "Ashok Leyland Viking 193, ABC123DEF456",       // valid for ^[A-Z0-9]{12}$
+            "Ashok Leyland Viking 193, ABC123DEF45!",       // invalid char
+            "Ashok Leyland Viking 210 Turbo, ABC123456XYZ",// valid for ^[A-Z0-9]{3}[0-9]{3}[A-Z0-9]{5}$
+            "Ashok Leyland Viking 210 Turbo, AB!123456XYZ",// invalid char
+            "Leyland Tiger TL 11, AB123CC.123456",         // valid for ^[A-Z]{2}[0-9]{3}[A-Z]{2}\.[0-9]{6}$
+            "Leyland Tiger TL 11, AB123C1.12345",          // too short
+    })
+    void createVehicle_shouldValidateEngine(String model, String engineNumber) throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.getMake().setName(model);
+        dto.setEnginenumber(engineNumber);
+
+        ResultActions result = mockMvc.perform(post(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (engineNumber.matches(BusPattern.ENGINE_REGEX.get(model))) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isBadRequest())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "enginenumber: Invalid engine number for " + dto.getMake().getName()
+                    ));
+        }
+    }
 
 }
