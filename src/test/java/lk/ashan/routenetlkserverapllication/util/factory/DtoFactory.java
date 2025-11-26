@@ -190,4 +190,8 @@ public class DtoFactory {
                 .build();
     }
 
+    public static EmployeeSummaryResponseDto employeeSummaryyResponseDto(int id, String name) {
+        return new EmployeeSummaryResponseDto(id, name);
+    }
+
 }

@@ -21,4 +21,5 @@ public interface VehicleMapper {
 
     Vehicle toEntity(VehicleCreateRequestDto requestDto);
 
+
 }

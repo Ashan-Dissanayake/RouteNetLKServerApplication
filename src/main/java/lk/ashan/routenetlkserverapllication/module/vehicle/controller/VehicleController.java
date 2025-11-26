@@ -1,5 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -27,5 +31,13 @@ public class VehicleController {
                 ?vehicleService.getVehicles()
                 : vehicleService.searchVehicle(params);
         return APIResponseBuilder.getResponse(vehicles, vehicles.size());
+    }
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> add(
+            @RequestBody @Valid VehicleCreateRequestDto vehicleCreateRequest)
+    {
+        VehicleDetailResponseDto savedVehicle = vehicleService.createVehicle(vehicleCreateRequest);
+        return APIResponseBuilder.postResponse(savedVehicle, savedVehicle.getId());
     }
 }

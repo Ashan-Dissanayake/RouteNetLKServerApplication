@@ -1,12 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +44,16 @@ public class VehicleService {
 
         return vehicleMapper.toDtoList(vehicleStream.collect(Collectors.toList()));
 
+    }
+
+    @Transactional
+    @DisableSoftDeleteFilter
+    public VehicleDetailResponseDto createVehicle(@Valid VehicleCreateRequestDto request){
+
+        Vehicle vehicle = vehicleMapper.toEntity(request);
+        Vehicle savedVehicle = vehicleRepository.save(vehicle);
+
+        return vehicleMapper.toDto(savedVehicle);
     }
 
 }
