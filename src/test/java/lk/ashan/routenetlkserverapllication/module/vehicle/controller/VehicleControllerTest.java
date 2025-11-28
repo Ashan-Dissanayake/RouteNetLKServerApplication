@@ -413,4 +413,61 @@ class VehicleControllerTest {
         }
     }
 
+    //Uniqueness
+    @Test
+    void createVehicle_shouldFail_whenCodeIsExist() throws Exception{
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+       dto.setCode("BS-ALV00001");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Vehicle code already exists."
+                ));
+    }
+
+    @Test
+    void createVehicle_shouldFail_whenNumberIsExist() throws Exception{
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setNumber("ND-1217");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Vehicle number already exists."
+                ));
+    }
+
+    @Test
+    void createVehicle_shouldFail_whenChasisnumberIsExist() throws Exception{
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.setChasisnumber("KLWT712345ABC6789");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Vehicle chassis number already exists."
+                ));
+    }
+
+    @Test
+    void createVehicle_shouldFail_whenEnginenumberIsExist() throws Exception{
+            VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+            dto.setEnginenumber("VLK193A1B2C3");
+
+            mockMvc.perform(post(apiUrl)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(dto)))
+                    .andExpect(status().isConflict())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "Vehicle engine number already exists."
+                    ));
+        }
+
 }
