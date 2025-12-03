@@ -1,8 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
@@ -49,6 +51,11 @@ public class EmployeeService {
         return employeeMapper.toDtoList(employeeStream.collect(Collectors.toList()));
 
     }
+
+    public List<EmployeeSummaryResponseDto> getSummaryEmployees(){
+        return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
+    }
+
 
     @Transactional
     @DisableSoftDeleteFilter
