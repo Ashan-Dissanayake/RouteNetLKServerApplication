@@ -12,8 +12,8 @@ public class VehicleDtoFactory {
         return new MakeDto(id, name);
     }
 
-    public static SeatingcapacityDto seatingcapacityDto(int id, String name) {
-        return new SeatingcapacityDto(id, name);
+    public static SeatingcapacityDto seatingcapacityDto(int id, Integer amount) {
+        return new SeatingcapacityDto(id, amount);
     }
 
     public static FueltypeDto fueltypeDto(int id, String name) {
@@ -40,13 +40,13 @@ public class VehicleDtoFactory {
                 .yom(Year.of(2016))
                 .dob(LocalDate.parse("2016-03-11"))
                 .mileage(120210)
-                .chasisnumber("WAUZZZ8K7CA123456")
-                .enginenumber("BSS321L0K9J8")
+                .chasisnumber("KLXP712345ABE6781")
+                .enginenumber("VMK193C1A2D3")
                 .fueltype(fueltypeDto(2,"Disel"))
                 .vehiclestatus(vehiclestatusDto(1,"Available"))
                 .conditionrate(conditionrateDto(2,"Good"))
                 .servicetype(servicetypeDto(1,"Passenger"))
-                .seatingcapacity(seatingcapacityDto(1,"42 Seats"))
+                .seatingcapacity(seatingcapacityDto(1,42))
                 .employee(DtoFactory.employeeSummaryyResponseDto(1,"sunil"))
                 .branch(DtoFactory.branchSummaryResponseDto(2,"Angoda"))
                 .build();

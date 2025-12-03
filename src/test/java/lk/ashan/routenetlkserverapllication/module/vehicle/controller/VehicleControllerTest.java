@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.validation.BusPattern;
+import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed.VehicleValidationData;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
@@ -373,7 +373,7 @@ class VehicleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        if (chassisnumber.matches(BusPattern.CHASSIS_REGEX.get(model))) {
+        if (chassisnumber.matches(VehicleValidationData.CHASSIS_REGEX.get(model))) {
             result.andExpect(status().isCreated());
         } else {
             result.andExpect(status().isBadRequest())
@@ -382,7 +382,6 @@ class VehicleControllerTest {
                     ));
         }
     }
-
 
     //Engine Number
     @ParameterizedTest
@@ -403,7 +402,7 @@ class VehicleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        if (engineNumber.matches(BusPattern.ENGINE_REGEX.get(model))) {
+        if (engineNumber.matches(VehicleValidationData.ENGINE_REGEX.get(model))) {
             result.andExpect(status().isCreated());
         } else {
             result.andExpect(status().isBadRequest())

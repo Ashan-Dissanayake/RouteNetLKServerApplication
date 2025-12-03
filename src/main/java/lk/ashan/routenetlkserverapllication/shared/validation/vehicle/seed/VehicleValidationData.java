@@ -1,8 +1,17 @@
-package lk.ashan.routenetlkserverapllication.shared.validation;
+package lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed;
 
+import java.util.List;
 import java.util.Map;
 
-public class BusPattern {
+public class VehicleValidationData {
+
+    public static final Map<String, List<Integer>> MODEL_SEATING_MAP = Map.of(
+            "Ashok Leyland Viking 193", List.of(45, 50),
+            "Ashok Leyland Viking 210 Turbo", List.of(55),
+            "Leyland Tiger TL 11", List.of(60),
+            "Tata LP 12.10/42", List.of(42),
+            "Tata LP 15.10/52", List.of(52)
+    );
 
     public static final Map<String, String> CHASSIS_REGEX = Map.ofEntries(
             Map.entry("Ashok Leyland Viking 193", "^[A-HJ-NPR-Z0-9]{17}$"),
@@ -40,4 +49,3 @@ public class BusPattern {
             Map.entry("Fiat 642", "^[A-Z0-9]{12}$")
     );
 }
-

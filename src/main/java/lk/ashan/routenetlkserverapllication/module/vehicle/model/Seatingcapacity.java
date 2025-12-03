@@ -18,8 +18,8 @@ public class Seatingcapacity {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "name")
-    private String name;
+    @Column(name = "amount")
+    private Integer amount;
     @OneToMany(mappedBy = "seatingcapacity")
     private Collection<Vehicle> vehicles;
 
@@ -28,12 +28,12 @@ public class Seatingcapacity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seatingcapacity that = (Seatingcapacity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        return Objects.equals(id, that.id) && Objects.equals(amount, that.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, amount);
     }
 
 }

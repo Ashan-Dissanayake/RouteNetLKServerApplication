@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.shared.validation;
+package lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seatingcapacity;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -8,12 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = ModelEngineValidator.class)
+@Constraint(validatedBy = ModelSeatingValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidModelEngine {
-    String message() default "Engine number does not match model";
+public @interface ValidModelSeating {
+    String message() default "Seating capacity does not match model";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
-

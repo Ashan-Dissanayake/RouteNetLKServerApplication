@@ -1,7 +1,8 @@
-package lk.ashan.routenetlkserverapllication.shared.validation;
+package lk.ashan.routenetlkserverapllication.shared.validation.vehicle.modelchassis;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.modelchassis.ModelChassisValidator;
 
 import java.lang.annotation.*;
 

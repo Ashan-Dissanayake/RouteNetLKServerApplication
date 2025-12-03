@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @ToString
 public class SeatingcapacityDto {
-    private  Integer id;
-    private  String name;
+    private Integer id;
+    private Integer amount;
+
 }

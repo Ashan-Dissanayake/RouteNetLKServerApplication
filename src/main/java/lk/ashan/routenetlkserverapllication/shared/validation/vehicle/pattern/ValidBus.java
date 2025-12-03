@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.shared.validation;
+package lk.ashan.routenetlkserverapllication.shared.validation.vehicle.pattern;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
