@@ -470,4 +470,57 @@ class VehicleControllerTest {
                     ));
         }
 
+    //Cross field validation
+    @ParameterizedTest
+    @CsvSource({
+            "Ashok Leyland Viking 193, ALV12345678901234, true",   // correct model → valid
+            "Ashok Leyland Viking 210 Turbo, ABC123456XYZ, false",  // wrong model → cross-field fail
+            "Tata LP 12.10/42, TLP12345678901277, true",             // correct model
+            "Tata LP 15.10/52, ALV123456789012, false"             // valid format but wrong model → fail
+    })
+    void createVehicle_shouldValidateModelChassis(String model, String chassis, boolean valid) throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.getMake().setName(model);
+        dto.setChasisnumber(chassis);
+
+        ResultActions result = mockMvc.perform(post(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (valid) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isBadRequest())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "chasisnumber: Invalid chassis number for " + dto.getMake().getName()
+                    ));
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "Ashok Leyland Viking 193, ABC123DEF456, true",   // valid model → engine matches model
+            "Leyland Tiger TL 11, AV123CD.123456, true",      // valid model → engine matches
+    })
+    void createVehicle_shouldValidateModelEngine(String model, String engineNumber, boolean valid) throws Exception {
+        VehicleCreateRequestDto dto = VehicleDtoFactory.createUniqueVehicleRequest();
+        dto.getMake().setName(model);
+        dto.setEnginenumber(engineNumber);
+
+        ResultActions result = mockMvc.perform(post(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (valid) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isBadRequest())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "enginenumber: Engine number does not match model"
+                    ));
+        }
+    }
+
+
+
 }

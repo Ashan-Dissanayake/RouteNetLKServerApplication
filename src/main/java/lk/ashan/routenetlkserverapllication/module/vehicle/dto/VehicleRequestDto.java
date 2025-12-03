@@ -5,6 +5,8 @@ import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryRespo
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.shared.validation.RegexPattern;
 import lk.ashan.routenetlkserverapllication.shared.validation.ValidBus;
+import lk.ashan.routenetlkserverapllication.shared.validation.ValidModelChassis;
+import lk.ashan.routenetlkserverapllication.shared.validation.ValidModelEngine;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +20,8 @@ import java.time.Year;
 @SuperBuilder
 @ToString
 @ValidBus
+@ValidModelChassis
+@ValidModelEngine
 public class VehicleRequestDto {
 
     @NotBlank(message = "Code Can Not be Empty")
