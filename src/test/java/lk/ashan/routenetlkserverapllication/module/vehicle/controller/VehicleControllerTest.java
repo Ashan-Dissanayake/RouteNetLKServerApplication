@@ -40,16 +40,16 @@ class VehicleControllerTest {
 
     //Mandatory Attributes
     @Test
-    void createVehicle_shouldSucceed_whenUniqueValid_vehicleCreateRequest() throws Exception{
+    void createVehicle_shouldSucceed_whenUniqueValid_vehicleCreateRequest() throws Exception {
 
         VehicleCreateRequestDto createRequestDto = VehicleDtoFactory.createUniqueVehicleRequest();
 
         mockMvc.perform(post(apiUrl)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().isCreated());
-
     }
+
 
     @Test
     void createVehicle_shouldFail_whenCodeIsMissing() throws Exception{
@@ -519,7 +519,5 @@ class VehicleControllerTest {
                     ));
         }
     }
-
-
 
 }

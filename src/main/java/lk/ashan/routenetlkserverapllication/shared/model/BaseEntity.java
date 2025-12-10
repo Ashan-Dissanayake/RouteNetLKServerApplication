@@ -11,7 +11,6 @@ import org.hibernate.annotations.ParamDef;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @MappedSuperclass
 @FilterDef(
         name = "softDeleteFilter",
@@ -21,9 +20,7 @@ import org.hibernate.annotations.ParamDef;
         @Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")
 })
 public abstract class BaseEntity {
-
     @Column(name = "deleted")
-    private Boolean deleted = false;
-
+    private boolean deleted = false;
 }
 

@@ -8,8 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class SeatingcapacityDto {
-    private Integer id;
-    private Integer amount;
-
+public class MakeRequestDto {
+    private  Integer id;
+    private  String name;
 }

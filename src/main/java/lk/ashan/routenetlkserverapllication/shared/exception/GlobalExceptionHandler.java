@@ -110,6 +110,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+@ExceptionHandler(InvalidSeatingCapacityException .class)
+    public ResponseEntity<APIErrorResponse> handleInvalidSeatingCapacityException(
+        InvalidSeatingCapacityException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIErrorResponse> handleValidationException(

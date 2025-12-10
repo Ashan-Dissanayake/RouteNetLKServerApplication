@@ -8,12 +8,12 @@ import java.time.Year;
 
 public class VehicleDtoFactory {
 
-    public static MakeDto makeDto(int id, String name) {
-        return new MakeDto(id, name);
+    public static MakeRequestDto makeDto(int id, String name) {
+        return new MakeRequestDto(id, name);
     }
 
-    public static SeatingcapacityDto seatingcapacityDto(int id, Integer amount) {
-        return new SeatingcapacityDto(id, amount);
+    public static SeatingcapacityRequestDto seatingcapacityRequestDto(int id, Integer amount) {
+        return new SeatingcapacityRequestDto(id, amount);
     }
 
     public static FueltypeDto fueltypeDto(int id, String name) {
@@ -46,7 +46,7 @@ public class VehicleDtoFactory {
                 .vehiclestatus(vehiclestatusDto(1,"Available"))
                 .conditionrate(conditionrateDto(2,"Good"))
                 .servicetype(servicetypeDto(1,"Passenger"))
-                .seatingcapacity(seatingcapacityDto(1,42))
+                .seatingcapacity(seatingcapacityRequestDto(1,42))
                 .employee(DtoFactory.employeeSummaryyResponseDto(1,"sunil"))
                 .branch(DtoFactory.branchSummaryResponseDto(2,"Angoda"))
                 .build();

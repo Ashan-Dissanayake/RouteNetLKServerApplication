@@ -58,9 +58,6 @@ public class Employee extends BaseEntity {
     @Basic
     @Column(name = "doj")
     private LocalDate doj;
-//    @Basic
-//    @Column(name = "deleted")
-//    private Boolean deleted;
     @ManyToOne
     @JoinColumn(name = "gender_id", referencedColumnName = "id", nullable = false)
     private Gender gender;
@@ -99,7 +96,6 @@ public class Employee extends BaseEntity {
                 Objects.equals(emergencycontact, employee.emergencycontact) &&
                 Arrays.equals(image, employee.image) &&
                 Objects.equals(doj, employee.doj)
-//                && Objects.equals(deleted, employee.deleted)
                 ;
     }
 

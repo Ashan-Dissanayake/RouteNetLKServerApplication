@@ -4,10 +4,16 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.MakeMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Make;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Seatingcapacity;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.SeatingcapacityRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidSeatingCapacityException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,7 @@ import java.util.stream.Stream;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final SeatingcapacityRepository seatingcapacityRepository;
     private final VehicleMapper vehicleMapper;
 
     public List<VehicleDetailResponseDto> getVehicles(){
@@ -49,9 +56,10 @@ public class VehicleService {
 
     @Transactional
     @DisableSoftDeleteFilter
-    public VehicleDetailResponseDto createVehicle(@Valid VehicleCreateRequestDto request){
+    public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request){
 
         validateVehicleUniquenessForCreate(request);
+        validateSeatingCapacityWithModel(request);
 
         Vehicle vehicle = vehicleMapper.toEntity(request);
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
@@ -85,5 +93,29 @@ public class VehicleService {
         }
 
     }
+
+    public void validateSeatingCapacityWithModel(VehicleCreateRequestDto vehicle) {
+
+        Integer makeId = vehicle.getMake().getId();
+        Integer amount = vehicle.getSeatingcapacity().getAmount();
+
+        // 1. Get all allowed capacities for this model
+        List<Seatingcapacity> allowedCapacities = seatingcapacityRepository.findByMakeId(makeId);
+
+        if (allowedCapacities.isEmpty()) {
+            throw new ResourceNotFoundException("No seating capacities found for the selected model.");
+        }
+
+        // 2. Check if requested capacity is one of them
+        boolean isValid = allowedCapacities.stream()
+                .anyMatch(s -> s.getAmount().equals(amount));
+
+        if (!isValid) {
+            throw new InvalidSeatingCapacityException(
+                    "Selected seating capacity is not valid for the chosen model."
+            );
+        }
+    }
+
 
 }

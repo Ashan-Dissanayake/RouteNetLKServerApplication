@@ -1,9 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -11,5 +8,5 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class VehicleCreateRequestDto extends VehicleRequestDto{
+public class VehicleCreateRequestDto extends VehicleRequestDto {
 }

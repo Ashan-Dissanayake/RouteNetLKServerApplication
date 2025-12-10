@@ -20,7 +20,7 @@ import java.time.Year;
 @ToString
 @ValidBus
 @ValidModelChassis
-//@ValidModelEngine
+@ValidModelEngine
 public class VehicleRequestDto {
 
     @NotBlank(message = "Code Can Not be Empty")
@@ -53,7 +53,7 @@ public class VehicleRequestDto {
     private String remarks;
 
     @NotNull(message = "Make/Mode Can Not be Empty")
-    private MakeDto make;
+    private MakeRequestDto make;
 
     @NotNull(message = "Fuel Type Can Not be Empty")
     private FueltypeDto fueltype;
@@ -68,7 +68,7 @@ public class VehicleRequestDto {
     private VehiclestatusDto vehiclestatus;
 
     @NotNull(message = "Seating Capacity Can Not be Empty")
-    private SeatingcapacityDto seatingcapacity;
+    private SeatingcapacityRequestDto seatingcapacity;
 
     @NotNull(message = "Employee Can Not be Empty")
     private EmployeeSummaryResponseDto employee;

@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lombok.*;
 
 import java.util.Collection;
@@ -20,6 +21,11 @@ public class Seatingcapacity {
     @Basic
     @Column(name = "amount")
     private Integer amount;
+
+    @ManyToOne
+    @JoinColumn(name = "make_id", referencedColumnName = "id", nullable = false)
+    private Make make;
+
     @OneToMany(mappedBy = "seatingcapacity")
     private Collection<Vehicle> vehicles;
 

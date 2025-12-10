@@ -6,13 +6,15 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequ
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
         ConditionrateMapper.class,EmployeeMapper.class,VehiclestatusMapper.class,
-        FueltypeMapper.class, ServicetypeMapper.class, MakeMapper.class, BranchMapper.class
+        FueltypeMapper.class, ServicetypeMapper.class, MakeMapper.class, BranchMapper.class,
+        SeatingcapacityMapper.class
 })
 public interface VehicleMapper {
 

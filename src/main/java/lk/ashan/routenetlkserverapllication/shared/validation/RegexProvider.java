@@ -35,6 +35,9 @@ public class RegexProvider {
                     }
                 }
             }
+
+            
+
             return regex;
         } catch (Exception e) {
             System.out.println(e.getMessage());

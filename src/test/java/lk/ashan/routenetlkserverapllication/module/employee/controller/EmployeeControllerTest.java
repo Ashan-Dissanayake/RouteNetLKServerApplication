@@ -47,7 +47,7 @@ class EmployeeControllerTest {
                         .content(objectMapper.writeValueAsString(employeeCreateRequestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.fullname").value("Minuri Navoddika"))
-                .andExpect(jsonPath("$.data.number").value("EMPCLM0007"))
+                .andExpect(jsonPath("$.data.number").value("EMPCLM0011"))
                 .andExpect(jsonPath("$.data.nic").value("200253171988"))
                 .andExpect(jsonPath("$.data.branch.name").value("Avissawella"))
                 .andExpect(jsonPath("$.data.designation.name").value("Assistant Manager"))

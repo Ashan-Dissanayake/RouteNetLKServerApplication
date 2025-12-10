@@ -16,6 +16,6 @@ public class MapBasedModelEngineValidator implements ModelChassisValidationStrat
     public boolean isValid(String modelName, String enginenumber) {
         String allowedEngines = modelEngineMap.get(modelName);
         if (allowedEngines == null) return true;
-        return allowedEngines.matches(enginenumber);
+        return enginenumber.matches(allowedEngines);
     }
 }

@@ -5,14 +5,6 @@ import java.util.Map;
 
 public class VehicleValidationData {
 
-    public static final Map<String, List<Integer>> MODEL_SEATING_MAP = Map.of(
-            "Ashok Leyland Viking 193", List.of(45, 50),
-            "Ashok Leyland Viking 210 Turbo", List.of(55),
-            "Leyland Tiger TL 11", List.of(60),
-            "Tata LP 12.10/42", List.of(42),
-            "Tata LP 15.10/52", List.of(52)
-    );
-
     public static final Map<String, String> CHASSIS_REGEX = Map.ofEntries(
             Map.entry("Ashok Leyland Viking 193", "^[A-HJ-NPR-Z0-9]{17}$"),
             Map.entry("Ashok Leyland Viking 210 Turbo", "^[A-HJ-NPR-Z0-9]{17}$"),

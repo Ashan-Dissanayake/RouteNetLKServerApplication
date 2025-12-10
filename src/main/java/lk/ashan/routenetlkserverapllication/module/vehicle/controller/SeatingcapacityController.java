@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.SeatingcapacityDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.SeatingcapacityResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.SeatingcapacityService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -22,8 +22,8 @@ public class SeatingcapacityController {
     private final SeatingcapacityService seatingcapacityService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<SeatingcapacityDto>>> get() {
-        List<SeatingcapacityDto> seatingcapacities = seatingcapacityService.getSeatingcapacities();
+    public ResponseEntity<APISuccessResponse<List<SeatingcapacityResponseDto>>> get() {
+        List<SeatingcapacityResponseDto> seatingcapacities = seatingcapacityService.getSeatingcapacities();
         return APIResponseBuilder.getResponse(seatingcapacities, seatingcapacities.size());
     }
 

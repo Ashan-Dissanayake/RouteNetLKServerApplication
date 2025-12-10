@@ -130,7 +130,7 @@ public class DtoFactory {
 
     public static EmployeeCreateRequestDto createUniqueEmployeeRequestNoImage(){
         return EmployeeCreateRequestDto.builder()
-                .number("EMPCLM0007")
+                .number("EMPCLM0011")
                 .fullname("Minuri Navoddika")
                 .callingname("Minuri")
                 .nic("200253171988")

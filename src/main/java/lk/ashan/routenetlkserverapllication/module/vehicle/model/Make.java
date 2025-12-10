@@ -20,8 +20,13 @@ public class Make {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @Basic
+    @Column(name = "airconditioned")
+    private boolean airconditioned;
+
     @OneToMany(mappedBy = "make")
-    private Collection<Vehicle> vehicles;
+    private Collection<Seatingcapacity> seatingcapacities;
 
     @Override
     public boolean equals(Object o) {

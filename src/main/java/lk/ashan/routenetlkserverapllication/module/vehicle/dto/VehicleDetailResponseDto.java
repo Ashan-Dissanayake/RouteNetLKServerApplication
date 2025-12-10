@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -15,7 +14,7 @@ import java.util.Collection;
 @Builder
 @ToString
 public class VehicleDetailResponseDto {
-    private  Integer id;
+    private Integer id;
     private String code;
     private String number;
     private Year yom;
@@ -24,12 +23,11 @@ public class VehicleDetailResponseDto {
     private String chasisnumber;
     private String enginenumber;
     private String remarks;
-    private MakeDto make;
     private FueltypeDto fueltype;
     private ConditionrateDto conditionrate;
     private ServicetypeDto servicetype;
     private VehiclestatusDto vehiclestatus;
-    private SeatingcapacityDto seatingcapacity;
+    private SeatingcapacityResponseDto seatingcapacity;
     private EmployeeSummaryResponseDto employee;
     private BranchSummaryResponseDto branch;
 }
