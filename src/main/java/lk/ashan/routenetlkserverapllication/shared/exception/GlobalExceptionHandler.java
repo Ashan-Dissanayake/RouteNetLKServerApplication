@@ -110,6 +110,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidRateTransitionException .class)
+    public ResponseEntity<APIErrorResponse> handleInvalidRateTransitionException(
+            InvalidRateTransitionException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
 @ExceptionHandler(InvalidSeatingCapacityException .class)
     public ResponseEntity<APIErrorResponse> handleInvalidSeatingCapacityException(
         InvalidSeatingCapacityException e,

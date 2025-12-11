@@ -2,9 +2,12 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed.VehicleValidationData;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
+import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 import java.time.Year;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -518,6 +522,75 @@ class VehicleControllerTest {
                             "enginenumber: Engine number does not match model"
                     ));
         }
+    }
+
+    //Status Transition Validation in Update Process
+    @Test
+    void updateVehicle_shouldFail_whenStatusFromAvailableToOutOfService() throws Exception {
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setVehiclestatus(VehicleDtoFactory.vehiclestatusDto(4,"Out Of Service")); // Not allowed in transition map
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid status transition from AVAILABLE to OUT OF SERVICE"
+                ));
+    }
+
+    //Status Transition Validation in Update Process
+    @Test
+    void updateVehicle_shouldFail_whenStatusFromAvailableToDecommistioned() throws Exception {
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setVehiclestatus(VehicleDtoFactory.vehiclestatusDto(5,"Decommissioned")); // Not allowed in transition map
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid status transition from AVAILABLE to DECOMMISSIONED"
+                ));
+    }
+
+    //Status Transition  Validation
+    @Test
+    void updateVehicle_shouldPass_whenStatusFromAvailableToReserved() throws Exception{
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setVehiclestatus(VehicleDtoFactory.vehiclestatusDto(6,"Reserved"));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isOk());
+    }
+
+    //Condition Rate Transition Validation
+    @Test
+    void updateVehicle_shouldFail_whenConditionRateFromGoodToPoor()throws Exception{
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setConditionrate(VehicleDtoFactory.conditionrateDto(4,"Poor"));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid Rate transition from GOOD to POOR"
+                ));
+    }
+
+    //Condition Rate Transition Validation
+    @Test
+    void updateVehicle_shouldPass_whenConditionRateFromGoodToFair()throws Exception{
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setConditionrate(VehicleDtoFactory.conditionrateDto(3,"Fair"));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isOk());
     }
 
 }

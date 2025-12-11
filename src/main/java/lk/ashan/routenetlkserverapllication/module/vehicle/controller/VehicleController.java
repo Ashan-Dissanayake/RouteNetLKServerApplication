@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRe
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -40,4 +41,11 @@ public class VehicleController {
         VehicleDetailResponseDto savedVehicle = vehicleService.createVehicle(vehicleCreateRequest);
         return APIResponseBuilder.postResponse(savedVehicle, savedVehicle.getId());
     }
+
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> update(
+            @RequestBody @Valid VehicleUpdateRequestDto vehicleUpdateRequestDto)
+    {
+        VehicleDetailResponseDto updatedVehicle = vehicleService.updateVehicle(vehicleUpdateRequestDto);
+        return APIResponseBuilder.putResponse(updatedVehicle,updatedVehicle.getId());    }
 }

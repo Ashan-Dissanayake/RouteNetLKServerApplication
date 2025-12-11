@@ -4,14 +4,16 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.MakeMapper;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Make;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Conditionrate;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Seatingcapacity;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.SeatingcapacityRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidSeatingCapacityException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,6 +68,70 @@ public class VehicleService {
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
         return vehicleMapper.toDto(savedVehicle);
+    }
+
+    @Transactional
+    @DisableSoftDeleteFilter
+    public VehicleDetailResponseDto updateVehicle(@Valid @NotNull VehicleUpdateRequestDto request) {
+
+        Conditionrate currentConditionrate = vehicleRepository.findByMyId(request.getId()).getConditionrate();
+        Vehiclestatus currentStatus = vehicleRepository.findByMyId(request.getId()).getVehiclestatus();
+
+        validateConditionRateTransition(currentConditionrate.getName(), request.getConditionrate().getName());
+        validateStatusTransition(currentStatus.getName(), request.getVehiclestatus().getName());
+
+        Vehicle vehicle = vehicleMapper.toEntity(request);
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return vehicleMapper.toDto(updatedVehicle);
+    }
+
+    private void validateConditionRateTransition(String currentRate, String newRate) {
+
+        if (currentRate == null || newRate == null) {
+            throw new IllegalArgumentException("Rate cannot be null.");
+        }
+
+        if (currentRate.equalsIgnoreCase(newRate)) return;
+
+        currentRate = currentRate.trim().toUpperCase();
+        newRate = newRate.trim().toUpperCase();
+
+        List<String> allowedRates = VALID_CONDITION_TRANSITIONS.get(currentRate);
+
+        if (allowedRates == null) {
+            throw new IllegalArgumentException("Unknown current Rate: " + currentRate);
+        }
+
+        if (!allowedRates.contains(newRate)) {
+            throw new InvalidStatusTransitionException(
+                    "Invalid Rate transition from " + currentRate + " to " + newRate
+            );
+        }
+    }
+
+    private void validateStatusTransition(String currentStatus, String newStatus) {
+
+        if (currentStatus == null || newStatus == null) {
+            throw new IllegalArgumentException("Status cannot be null.");
+        }
+
+        if (currentStatus.equalsIgnoreCase(newStatus)) return;
+
+        currentStatus = currentStatus.trim().toUpperCase();
+        newStatus = newStatus.trim().toUpperCase();
+
+        List<String> allowedStatuses = VALID_STATUS_TRANSITIONS.get(currentStatus);
+
+        if (allowedStatuses == null) {
+            throw new IllegalArgumentException("Unknown current status: " + currentStatus);
+        }
+
+        if (!allowedStatuses.contains(newStatus)) {
+            throw new InvalidStatusTransitionException(
+                    "Invalid status transition from " + currentStatus + " to " + newStatus
+            );
+        }
     }
 
     private void validateVehicleUniquenessForCreate(VehicleCreateRequestDto vehicle){
@@ -116,6 +183,23 @@ public class VehicleService {
             );
         }
     }
+
+    private static final Map<String, List<String>> VALID_CONDITION_TRANSITIONS = Map.of(
+            "EXCELLENT", List.of("GOOD"),
+            "GOOD",      List.of("FAIR"),
+            "FAIR",      List.of("POOR"),
+            "POOR",      List.of("CRITICAL"),
+            "CRITICAL",  List.of() // terminal state
+    );
+
+    private static final Map<String, List<String>> VALID_STATUS_TRANSITIONS = Map.of(
+            "AVAILABLE", List.of("IN SERVICE", "RESERVED", "UNDER MAINTENANCE"),
+            "IN SERVICE", List.of("AVAILABLE", "UNDER MAINTENANCE", "OUT OF SERVICE"),
+            "UNDER MAINTENANCE", List.of("AVAILABLE", "OUT OF SERVICE", "DECOMMISSIONED"),
+            "OUT OF SERVICE", List.of("UNDER MAINTENANCE", "DECOMMISSIONED"),
+            "RESERVED", List.of("IN SERVICE", "AVAILABLE"),
+            "DECOMMISSIONED", List.of() // terminal state
+    );
 
 
 }

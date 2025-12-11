@@ -52,5 +52,26 @@ public class VehicleDtoFactory {
                 .build();
     }
 
+    public static VehicleUpdateRequestDto createUniqueVehicleUpdateRequest(){
+        return VehicleUpdateRequestDto.builder()
+                .id(181)
+                .make(makeDto(14,"Volvo B7RLE"))
+                .code("BS-VLV00013")
+                .number("ND-1299")
+                .yom(Year.of(2017))
+                .dob(LocalDate.parse("2017-10-03"))
+                .mileage(7654)
+                .chasisnumber("YV3BE7RLEAB012345")
+                .enginenumber("D7E290L0001A")
+                .fueltype(fueltypeDto(2,"Disel"))
+                .vehiclestatus(vehiclestatusDto(1,"Available"))
+                .conditionrate(conditionrateDto(2,"Good"))
+                .servicetype(servicetypeDto(1,"Passenger"))
+                .seatingcapacity(seatingcapacityRequestDto(1,42))
+                .employee(DtoFactory.employeeSummaryyResponseDto(6,"Chaminda"))
+                .branch(DtoFactory.branchSummaryResponseDto(2,"Angoda"))
+                .build();
+    }
+
 
 }
