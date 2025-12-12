@@ -12,10 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.SeatingcapacityRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidSeatingCapacityException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,6 +76,7 @@ public class VehicleService {
 
         validateConditionRateTransition(currentConditionrate.getName(), request.getConditionrate().getName());
         validateStatusTransition(currentStatus.getName(), request.getVehiclestatus().getName());
+        validateMileageIncrement(request);
 
         Vehicle vehicle = vehicleMapper.toEntity(request);
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
@@ -161,7 +159,7 @@ public class VehicleService {
 
     }
 
-    public void validateSeatingCapacityWithModel(VehicleCreateRequestDto vehicle) {
+    private void validateSeatingCapacityWithModel(VehicleCreateRequestDto vehicle) {
 
         Integer makeId = vehicle.getMake().getId();
         Integer amount = vehicle.getSeatingcapacity().getAmount();
@@ -182,6 +180,11 @@ public class VehicleService {
                     "Selected seating capacity is not valid for the chosen model."
             );
         }
+    }
+
+    private void validateMileageIncrement(VehicleUpdateRequestDto vehicle){
+        Integer currentMileage = vehicleRepository.findByMyId(vehicle.getId()).getMileage();
+        if (vehicle.getMileage() <currentMileage) throw new InvalidMileageException("Mileage can not be Minus value");
     }
 
     private static final Map<String, List<String>> VALID_CONDITION_TRANSITIONS = Map.of(

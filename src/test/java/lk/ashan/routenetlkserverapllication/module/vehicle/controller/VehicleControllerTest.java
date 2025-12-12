@@ -593,4 +593,30 @@ class VehicleControllerTest {
                 .andExpect(status().isOk());
     }
 
+    //Mileage Increase Validation
+    @Test void updateVehicle_shouldFail_whenMileageIsDecreased() throws Exception{
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setMileage(4654);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Mileage can not be Minus value"
+                ));
+    }
+
+    @Test void updateVehicle_shouldPass_whenMileageIsIncreased() throws Exception{
+        VehicleUpdateRequestDto vehicleUpdateRequestDto = VehicleDtoFactory.createUniqueVehicleUpdateRequest();
+        vehicleUpdateRequestDto.setMileage(9654);
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(vehicleUpdateRequestDto)))
+                .andExpect(status().isOk());
+    }
+
+
+
 }
