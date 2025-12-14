@@ -12,8 +12,8 @@
 	<artifactId>RouteNetLKServerApllication</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>NTCServerApllication</name>
-	<description>NTCServerApplication</description>
+	<name>RouteNetLkServerApplication</name>
+	<description>RouteNetLkServerApplication</description>
 	<url/>
 	<licenses>
 		<license/>
