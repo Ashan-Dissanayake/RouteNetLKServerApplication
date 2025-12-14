@@ -84,6 +84,31 @@ public class VehicleService {
         return vehicleMapper.toDto(updatedVehicle);
     }
 
+    @Transactional
+    public List<Integer> deactivateVehicle(List<Integer> vehicleIds) {
+        List<Vehicle> vehicles = vehicleRepository.findAllById(vehicleIds);
+
+        if (vehicles.isEmpty())
+            throw new ResourceNotFoundException("No vehicles found for the given IDs");
+
+        vehicleRepository.removeAll(vehicleIds);
+
+        return vehicles.stream() .map(Vehicle::getId) .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<Integer> activateVehicle(List<Integer> vehicleIds) {
+        List<Vehicle> vehicles = vehicleRepository.findAllById(vehicleIds);
+
+        if (vehicles.isEmpty())
+            throw new ResourceNotFoundException("No vehicles found for the given IDs");
+
+        vehicleRepository.restoreAll(vehicleIds);
+
+        return vehicles.stream() .map(Vehicle::getId) .collect(Collectors.toList());
+    }
+
+
     private void validateConditionRateTransition(String currentRate, String newRate) {
 
         if (currentRate == null || newRate == null) {

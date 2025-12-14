@@ -2,12 +2,10 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed.VehicleValidationData;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
 import lk.ashan.routenetlkserverapllication.util.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -617,6 +617,58 @@ class VehicleControllerTest {
                 .andExpect(status().isOk());
     }
 
+    //Activation,Deactivation
+    @Test
+    void deactivateVehicle_shouldPass_whenVehiclesExist() throws Exception {
+
+        List<Integer> ids = List.of(23, 24);
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deactivateVehicle_shouldFail_whenVehiclesNotFound() throws Exception {
+
+        List<Integer> ids = List.of(99, 100);
+
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "No vehicles found for the given IDs"
+                ));
+    }
+
+    @Test
+    void deactivateVehicle_shouldFail_whenIdsListIsEmpty() throws Exception {
+
+        List<Integer> ids = Collections.emptyList();
+
+
+        mockMvc.perform(post(apiUrl+"/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "No vehicles found for the given IDs"
+                ));
+    }
+
+    @Test
+    void activateVehicle_shouldPass_whenVehiclesExist() throws Exception {
+
+        List<Integer> ids = List.of(13, 14);
+
+        mockMvc.perform(post(apiUrl+"/activate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ids)))
+                .andExpect(status().isCreated());
+    }
 
 
 }

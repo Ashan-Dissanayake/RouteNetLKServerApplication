@@ -1,8 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
@@ -47,5 +45,19 @@ public class VehicleController {
             @RequestBody @Valid VehicleUpdateRequestDto vehicleUpdateRequestDto)
     {
         VehicleDetailResponseDto updatedVehicle = vehicleService.updateVehicle(vehicleUpdateRequestDto);
-        return APIResponseBuilder.putResponse(updatedVehicle,updatedVehicle.getId());    }
+        return APIResponseBuilder.putResponse(updatedVehicle,updatedVehicle.getId());
+    }
+
+    @PostMapping("/deactivate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> deactivatedIds = vehicleService.deactivateVehicle(ids);
+        return APIResponseBuilder.deleteResponse(deactivatedIds);
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
+        List<Integer> activatedIds = vehicleService.activateVehicle(ids);
+        return APIResponseBuilder.postResponse(null,activatedIds);
+    }
+
 }

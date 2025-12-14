@@ -1902,7 +1902,6 @@ class EmployeeControllerTest {
     }
 
     //Activation,Deactivation
-
     @Test
     void deactivateEmployee_shouldPass_whenEmployeesExist() throws Exception {
 
