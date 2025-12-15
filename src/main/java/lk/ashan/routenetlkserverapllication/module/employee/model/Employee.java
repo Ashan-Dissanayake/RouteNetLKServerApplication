@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -79,6 +81,10 @@ public class Employee extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Vehicle> vehicles;
+    @OneToOne(mappedBy = "employee",optional = true)
+    private Conductor conductor;
+    @OneToOne(mappedBy = "employee",optional = true)
+    private Driver driver;
 
     @Override
     public boolean equals(Object o) {
