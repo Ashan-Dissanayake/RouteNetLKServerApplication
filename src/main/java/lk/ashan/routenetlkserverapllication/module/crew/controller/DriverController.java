@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin
@@ -20,8 +21,12 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping( produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<DriverDetailResponseDto>>> get() {
-        List<DriverDetailResponseDto> drivers = driverService.getDrivers();
+    public ResponseEntity<APISuccessResponse<List<DriverDetailResponseDto>>> get(
+            @RequestParam HashMap<String, String> params
+    ) {
+        List<DriverDetailResponseDto> drivers = params.isEmpty()
+                ?driverService.getDrivers()
+                : driverService.searchDriver(params);
         return APIResponseBuilder.getResponse(drivers, drivers.size());
     }
 
