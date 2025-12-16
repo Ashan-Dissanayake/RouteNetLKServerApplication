@@ -1,0 +1,7 @@
+package lk.ashan.routenetlkserverapllication.module.crew.repository;
+
+import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DriverRepository extends JpaRepository<Driver, Integer> {
+}
