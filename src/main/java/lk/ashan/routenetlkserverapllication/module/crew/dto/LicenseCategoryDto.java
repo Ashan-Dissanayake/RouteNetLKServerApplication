@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RoutefamiliaritylevelDto {
+public class LicenseCategoryDto {
     Integer id;
     String name;
 }

@@ -10,8 +10,8 @@ import org.mapstruct.MappingConstants;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        EmployeeMapper.class, AllowedbustypeMapper.class, LicensecategoryMapper.class,
-        RoutefamiliaritylevelMapper.class, CrewstatusMapper.class
+        EmployeeMapper.class, AllowedBusTypeMapper.class, LicenseCategoryMapper.class,
+        RouteFamiliarityLevelMapper.class, CrewStatusMapper.class
 })
 public interface DriverMapper {
 

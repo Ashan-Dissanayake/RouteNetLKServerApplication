@@ -17,9 +17,9 @@ public class DriverDetailResponseDto {
     private String licensenumber;
     private LocalDate dolicenseexpired;
     private LocalDate domedicalexpired;
-    private LicensecategoryDto licensecategory;
-    private CrewstatusDto crewstatus;
-    private RoutefamiliaritylevelDto routefamiliaritylevel;
-    private AllowedbustypeDto allowedbustype;
+    private LicenseCategoryDto licensecategory;
+    private CrewStatusDto crewstatus;
+    private RouteFamiliarityLevelDto routefamiliaritylevel;
+    private AllowedBusTypeDto allowedbustype;
     private EmployeeSummaryResponseDto employee;
 }

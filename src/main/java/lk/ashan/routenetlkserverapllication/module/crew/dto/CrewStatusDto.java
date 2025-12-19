@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AllowedbustypeDto {
+public class CrewStatusDto {
     Integer id;
     String name;
 }
