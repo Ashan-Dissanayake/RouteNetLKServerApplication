@@ -22,9 +22,3 @@ public class ModelChassisValidator implements ConstraintValidator<ValidModelChas
     }
 }
 
-
-//null handled by @NotBlank
-//if (dto.getMake() == null || dto.getChasisnumber() == null) return true;
-//String regex = VehicleValidationData.CHASSIS_REGEX.get(dto.getMake().getName());
-//if (regex == null) return true; // unknown model, skip validation
-//return dto.getChasisnumber().matches(regex);

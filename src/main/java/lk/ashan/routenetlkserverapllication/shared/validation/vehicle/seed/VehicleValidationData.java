@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed;
 
-import java.util.List;
 import java.util.Map;
 
 public class VehicleValidationData {
