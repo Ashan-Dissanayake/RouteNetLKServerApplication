@@ -5,6 +5,7 @@ import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.LicenseCategoryDto;
 import lk.ashan.routenetlkserverapllication.module.driver.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
@@ -52,7 +53,6 @@ public class DriverService {
     }
 
     public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto createRequestDto){
-
         validateUniqueness(createRequestDto);
         validateLicenseDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
         validateMedicalDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
@@ -67,9 +67,16 @@ public class DriverService {
         return driverMapper.toDto(savedDriver);
     }
 
+    public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto updateRequestDto){
+        Driver driver = driverMapper.toEntity(updateRequestDto);
+        Driver updatedDriver = driverRepository.save(driver);
+
+        return driverMapper.toDto(updatedDriver);
+    }
+    
     private void validateLicenseDateRangeValidity(LocalDate issuedDate, LocalDate expiryDate){
 
-        final int MAX_ALLOWED_YEARS = 8;
+        final int MAX_ALLOWED_YEARS = 4;
 
         long years = ChronoUnit.YEARS.between(issuedDate, expiryDate);
 
@@ -99,6 +106,5 @@ public class DriverService {
             throw new ValidationException("Driver number already exists");
         }
     }
-
 
 }

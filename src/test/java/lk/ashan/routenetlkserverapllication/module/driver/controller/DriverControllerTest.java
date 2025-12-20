@@ -280,7 +280,7 @@ class DriverControllerTest {
     @Test
     void createDriver_shouldFail_whenLicenseValidityPeriodIsExceed() throws  Exception{
         DriverCreateRequestDto createRequestDto = DriverDtoFactory.createUniqueDriverCreateRequest();
-        createRequestDto.setDolicenseissued(LocalDate.of(2021,10,10));
+        createRequestDto.setDolicenseissued(LocalDate.of(2022,10,10));
         createRequestDto.setDolicenseexpired(LocalDate.of(2035,10,10));
 
         mockMvc.perform(post(apiUrl)
