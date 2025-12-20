@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.driver.mapper;
 
 
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
@@ -16,4 +17,7 @@ import java.util.List;
 public interface DriverMapper {
 
     List<DriverDetailResponseDto> toDtoList(List<Driver> drivers);
+    DriverDetailResponseDto toDto(Driver driver);
+    Driver toEntity(DriverCreateRequestDto driverCreateRequestDto);
+
 }

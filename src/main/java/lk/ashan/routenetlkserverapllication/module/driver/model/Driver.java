@@ -5,7 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -23,11 +23,17 @@ public class Driver {
     @Column(name = "licensenumber")
     private String licensenumber;
     @Basic
+    @Column(name = "dolicenseissued")
+    private LocalDate dolicenseissued;
+    @Basic
     @Column(name = "dolicenseexpired")
-    private Date dolicenseexpired;
+    private LocalDate dolicenseexpired;
+    @Basic
+    @Column(name = "domedicalissued")
+    private LocalDate domedicalissued;
     @Basic
     @Column(name = "domedicalexpired")
-    private Date domedicalexpired;
+    private LocalDate domedicalexpired;
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;

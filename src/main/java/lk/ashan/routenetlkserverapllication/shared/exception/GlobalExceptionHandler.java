@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -29,6 +30,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ContactConflictException.class)
     public ResponseEntity<APIErrorResponse> handleContactConflictException(
             ContactConflictException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<APIErrorResponse> handleContactConflictException(
+            ValidationException e,
             HttpServletRequest request
     ) {
         return APIResponseBuilder.error(
@@ -105,6 +118,18 @@ public class GlobalExceptionHandler {
     ) {
         return APIResponseBuilder.error(
                 ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidStatusException .class)
+    public ResponseEntity<APIErrorResponse> handleInvalidStatusTransitionException(
+            InvalidStatusException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.STATUS_INVALID,
                 List.of(e.getMessage()),
                 request
         );

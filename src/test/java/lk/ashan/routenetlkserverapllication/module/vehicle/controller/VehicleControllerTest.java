@@ -321,7 +321,6 @@ class VehicleControllerTest {
                 ));
     }
 
-
     //Year of Made
     @Test
     void createVehicle_shouldFail_whenYomIsInFuture() throws Exception {

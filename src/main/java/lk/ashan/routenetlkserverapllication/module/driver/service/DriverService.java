@@ -1,13 +1,19 @@
 package lk.ashan.routenetlkserverapllication.module.driver.service;
 
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.driver.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.driver.repository.DriverRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +47,39 @@ public class DriverService {
 
         return driverMapper.toDtoList(driverStream.collect(Collectors.toList()));
 
+    }
+
+    public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto createRequestDto){
+        validateMedicalValidity(createRequestDto);
+        validateUniqueness(createRequestDto);
+
+        if (!createRequestDto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
+            throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
+        }
+
+        Driver driver =  driverMapper.toEntity(createRequestDto);
+        Driver savedDriver = driverRepository.save(driver);
+
+        return driverMapper.toDto(savedDriver);
+    }
+
+    private void validateMedicalValidity(DriverCreateRequestDto dto) {
+        LocalDate today = LocalDate.now();
+
+        if (dto.getDomedicalexpired().isBefore(today)) {
+            throw new ValidationException( "Medical certificate is expired");
+        }
+    }
+
+    private void validateUniqueness(DriverCreateRequestDto dto) {
+
+        if (driverRepository.existsByLicensenumber(dto.getLicensenumber())) {
+            throw new ValidationException("License number already exists");
+        }
+
+        if (driverRepository.existsByNumber(dto.getNumber())) {
+            throw new ValidationException("Driver number already exists");
+        }
     }
 
 

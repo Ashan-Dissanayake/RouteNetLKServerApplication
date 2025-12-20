@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.driver.controller;
 
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.driver.service.DriverService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -28,6 +30,14 @@ public class DriverController {
                 ?driverService.getDrivers()
                 : driverService.searchDriver(params);
         return APIResponseBuilder.getResponse(drivers, drivers.size());
+    }
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> add(
+            @RequestBody @Valid DriverCreateRequestDto driverCreateRequestDto)
+    {
+        DriverDetailResponseDto savedDriver = driverService.createDriver(driverCreateRequestDto);
+        return APIResponseBuilder.postResponse(savedDriver, savedDriver.getId());
     }
 
    
