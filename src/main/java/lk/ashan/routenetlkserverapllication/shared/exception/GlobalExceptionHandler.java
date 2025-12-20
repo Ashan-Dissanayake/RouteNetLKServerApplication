@@ -99,6 +99,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BusinessRuleValidationException.class)
+    public ResponseEntity<APIErrorResponse> handleBusinessRuleValidationException(
+            BusinessRuleValidationException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.INVALID_DATA,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(InvalidEmploymentDateException .class)
     public ResponseEntity<APIErrorResponse> handleIInvalidEmploymentDateException(
             InvalidEmploymentDateException e,

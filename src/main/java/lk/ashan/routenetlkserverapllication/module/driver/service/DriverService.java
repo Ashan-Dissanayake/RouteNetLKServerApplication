@@ -5,15 +5,17 @@ import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.LicenseCategoryDto;
 import lk.ashan.routenetlkserverapllication.module.driver.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.driver.repository.DriverRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,8 +52,10 @@ public class DriverService {
     }
 
     public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto createRequestDto){
-        validateMedicalValidity(createRequestDto);
+
         validateUniqueness(createRequestDto);
+        validateLicenseDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
+        validateMedicalDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
 
         if (!createRequestDto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
@@ -63,11 +67,25 @@ public class DriverService {
         return driverMapper.toDto(savedDriver);
     }
 
-    private void validateMedicalValidity(DriverCreateRequestDto dto) {
-        LocalDate today = LocalDate.now();
+    private void validateLicenseDateRangeValidity(LocalDate issuedDate, LocalDate expiryDate){
 
-        if (dto.getDomedicalexpired().isBefore(today)) {
-            throw new ValidationException( "Medical certificate is expired");
+        final int MAX_ALLOWED_YEARS = 8;
+
+        long years = ChronoUnit.YEARS.between(issuedDate, expiryDate);
+
+        if (years>MAX_ALLOWED_YEARS) throw new BusinessRuleValidationException("Invalid license validity period");
+
+    }
+
+    private void validateMedicalDateRangeValidity(LocalDate issuedDate, LocalDate expiryDate) {
+
+        final int MAX_ALLOWED_MONTHS = 6;
+
+        long months = ChronoUnit.MONTHS.between(issuedDate, expiryDate);
+        if (months > MAX_ALLOWED_MONTHS) {
+            throw new BusinessRuleValidationException(
+                    "Medical validity cannot exceed 6 months"
+            );
         }
     }
 

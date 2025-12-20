@@ -237,7 +237,6 @@ class DriverControllerTest {
                 ));
     }
 
-
     @Test
     void createDriver_shouldFail_whenDriverNumberAlreadyExists() throws Exception {
         DriverCreateRequestDto dto = DriverDtoFactory.createUniqueDriverCreateRequest();
@@ -252,7 +251,6 @@ class DriverControllerTest {
                 ));
     }
 
-
     @ParameterizedTest
     @CsvSource({
             // id, name, isValid
@@ -262,7 +260,6 @@ class DriverControllerTest {
             "4, Inactive, false"
     })
     void createDriver_shouldValidateCrewStatus(int id, String name, boolean isValid) throws Exception {
-
         DriverCreateRequestDto createRequestDto = DriverDtoFactory.createUniqueDriverCreateRequest();
         createRequestDto.setCrewstatus(DriverDtoFactory.crewStatusDto(id,name));
 
@@ -279,6 +276,38 @@ class DriverControllerTest {
                     ));
         }
     }
+
+    @Test
+    void createDriver_shouldFail_whenLicenseValidityPeriodIsExceed() throws  Exception{
+        DriverCreateRequestDto createRequestDto = DriverDtoFactory.createUniqueDriverCreateRequest();
+        createRequestDto.setDolicenseissued(LocalDate.of(2021,10,10));
+        createRequestDto.setDolicenseexpired(LocalDate.of(2035,10,10));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid license validity period"
+                ));
+    }
+
+    @Test
+    void createDriver_shouldFail_whenMedicalValidityPeriodIsExceed() throws  Exception{
+        DriverCreateRequestDto createRequestDto = DriverDtoFactory.createUniqueDriverCreateRequest();
+        createRequestDto.setDomedicalissued(LocalDate.of(2021,10,10));
+        createRequestDto.setDomedicalexpired(LocalDate.of(2035,10,10));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Medical validity cannot exceed 6 months"
+                ));
+    }
+
+
 
 }
 

@@ -40,6 +40,4 @@ public class DriverController {
         return APIResponseBuilder.postResponse(savedDriver, savedDriver.getId());
     }
 
-   
-
 }
