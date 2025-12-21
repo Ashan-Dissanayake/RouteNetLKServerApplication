@@ -38,4 +38,22 @@ public class DriverDtoFactory {
                 .build();
     }
 
+    public static DriverUpdateRequestDto createUniqueDriverUpdateRequest() {
+        return DriverUpdateRequestDto.builder()
+                .id(1)
+                .employee(DtoFactory.employeeSummaryyResponseDto(1, "sunil"))
+                .number("DRV-2025-006")
+                .licensenumber("B39345678905")
+                // License (≤ 4 years, not future issued)
+                .dolicenseissued(LocalDate.parse("2025-12-10"))
+                .dolicenseexpired(LocalDate.parse("2029-12-10"))
+                // Medical (≤ 6 months, valid on 2025-12-21)
+                .domedicalissued(LocalDate.parse("2025-12-01"))
+                .domedicalexpired(LocalDate.parse("2026-05-01"))
+                .licensecategory(licenseCategoryDto(1, "B1"))
+                .routefamiliaritylevel(routeFamiliarityLevelDto(1, "Low"))
+                .crewstatus(crewStatusDto(1, "Eligible"))
+                .build();
+    }
+
 }

@@ -3,15 +3,11 @@ package lk.ashan.routenetlkserverapllication.module.driver.service;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.driver.dto.LicenseCategoryDto;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.*;
 import lk.ashan.routenetlkserverapllication.module.driver.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.driver.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusException;
+import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +15,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,58 +49,140 @@ public class DriverService {
 
     }
 
-    public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto createRequestDto){
-        validateUniqueness(createRequestDto);
-        validateLicenseDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
-        validateMedicalDateRangeValidity(createRequestDto.getDolicenseissued(),createRequestDto.getDolicenseexpired());
+    public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto dto) {
 
-        if (!createRequestDto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
+        validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
+        validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        validateUniqueness(dto);
+
+        if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
         }
 
-        Driver driver =  driverMapper.toEntity(createRequestDto);
-        Driver savedDriver = driverRepository.save(driver);
-
-        return driverMapper.toDto(savedDriver);
+        Driver driver = driverMapper.toEntity(dto);
+        return driverMapper.toDto(driverRepository.save(driver));
     }
 
-    public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto updateRequestDto){
-        Driver driver = driverMapper.toEntity(updateRequestDto);
-        Driver updatedDriver = driverRepository.save(driver);
+    public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto dto) {
 
-        return driverMapper.toDto(updatedDriver);
-    }
-    
-    private void validateLicenseDateRangeValidity(LocalDate issuedDate, LocalDate expiryDate){
+        Driver existingDriver =  driverRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        final int MAX_ALLOWED_YEARS = 4;
+        validateLicenseCategoryChange(existingDriver,dto.getLicensecategory());
+        validateUniqueness(dto);
+        validateRouteFamiliarityTransition(existingDriver.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
+        validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
+        validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
 
-        long years = ChronoUnit.YEARS.between(issuedDate, expiryDate);
-
-        if (years>MAX_ALLOWED_YEARS) throw new BusinessRuleValidationException("Invalid license validity period");
-
+        Driver driver = driverMapper.toEntity(dto);
+        return driverMapper.toDto(driverRepository.save(driver));
     }
 
-    private void validateMedicalDateRangeValidity(LocalDate issuedDate, LocalDate expiryDate) {
+    public void validateLicenseCategoryChange(Driver existingDriver, LicenseCategoryDto newCategory) {
 
-        final int MAX_ALLOWED_MONTHS = 6;
+        if (newCategory == null) {
+            throw new IllegalArgumentException("New license category cannot be null");
+        }
 
-        long months = ChronoUnit.MONTHS.between(issuedDate, expiryDate);
-        if (months > MAX_ALLOWED_MONTHS) {
+        // 1. If category NOT changed → do nothing
+        if (existingDriver.getLicensecategory().getId().equals(newCategory.getId())) {
+            return;
+        }
+
+        // 2. Category changed → license must be expired
+        if (!existingDriver.getDolicenseexpired().isBefore(LocalDate.now())) {
             throw new BusinessRuleValidationException(
-                    "Medical validity cannot exceed 6 months"
+                    "License category can only be changed when the existing license is expired"
             );
         }
     }
 
-    private void validateUniqueness(DriverCreateRequestDto dto) {
+    private static final Map<String, List<String>> VALID_ROUTE_UPGRADES = Map.of(
+            "Low",    List.of("Medium"),
+            "Medium", List.of("High"),
+            "High",   List.of() // no upgrade from High
+    );
 
+    private void validateRouteFamiliarityTransition(String currentLevel, String newLevel) {
+
+        if (currentLevel == null || newLevel == null) {
+            throw new IllegalArgumentException("Route familiarity level cannot be null.");
+        }
+
+        currentLevel = currentLevel.trim();
+        newLevel = newLevel.trim();
+
+        if (currentLevel.equals(newLevel)) return;
+
+        List<String> allowedUpgrades = VALID_ROUTE_UPGRADES.get(currentLevel);
+
+        if (allowedUpgrades == null) {
+            throw new IllegalArgumentException(
+                    "Unknown route familiarity level: " + currentLevel
+            );
+        }
+
+        // downgrade → always allowed
+        if (!allowedUpgrades.contains(newLevel)) {
+            // if downgrade or invalid upgrade
+            if (VALID_ROUTE_UPGRADES.containsKey(newLevel)) {
+                return; // downgrade → allowed
+            }
+            throw new InvalidStatusTransitionException(
+                    "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
+            );
+        }
+
+    }
+
+
+    private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
+        if (issued.isAfter(LocalDate.now())) {
+            throw new BusinessRuleValidationException("License issued date cannot be in the future");
+        }
+        if (!expiry.isAfter(issued)) {
+            throw new BusinessRuleValidationException("License expiry must be after issued date");
+        }
+
+        long years = ChronoUnit.YEARS.between(issued, expiry);
+        if (years > 4) {
+            throw new BusinessRuleValidationException("Invalid license validity period");
+        }
+    }
+
+    private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
+        if (issued.isAfter(LocalDate.now())) {
+            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
+        }
+        if (!expiry.isAfter(issued)) {
+            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
+        }
+
+        long months = ChronoUnit.MONTHS.between(issued, expiry);
+        if (months > 6) {
+            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
+        }
+    }
+
+    private void validateUniqueness(DriverCreateRequestDto dto) {
         if (driverRepository.existsByLicensenumber(dto.getLicensenumber())) {
             throw new ValidationException("License number already exists");
         }
 
         if (driverRepository.existsByNumber(dto.getNumber())) {
             throw new ValidationException("Driver number already exists");
+        }
+    }
+
+    private void validateUniqueness(DriverUpdateRequestDto dto) {
+        // License number uniqueness
+        if (driverRepository.existsByLicensenumberAndIdNot(dto.getLicensenumber(), dto.getId())) {
+            throw new ResourceExistsException("License number already exists");
+        }
+
+        // Driver number uniqueness
+        if (driverRepository.existsByNumberAndIdNot(dto.getNumber(), dto.getId())) {
+            throw new ResourceExistsException("Driver number already exists");
         }
     }
 

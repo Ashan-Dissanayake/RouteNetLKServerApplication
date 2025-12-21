@@ -41,7 +41,7 @@ public class DriverController {
         return APIResponseBuilder.postResponse(savedDriver, savedDriver.getId());
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> update(
             @RequestBody @Valid DriverUpdateRequestDto driverUpdateRequestDto)
     {

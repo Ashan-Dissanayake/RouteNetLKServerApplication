@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.driver.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.util.factory.DriverDtoFactory;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -306,6 +309,96 @@ class DriverControllerTest {
                         "Medical validity cannot exceed 6 months"
                 ));
     }
+
+    //Update Tests
+    @Test
+    void updateDriver_shouldFail_whenLicenseIssuedDateInFuture() throws Exception {
+        DriverUpdateRequestDto dto = DriverDtoFactory.createUniqueDriverUpdateRequest();
+        dto.setDolicenseissued(LocalDate.now().plusDays(1));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateDriver_shouldFail_whenLicenseValidityPeriodIsExceed() throws  Exception{
+        DriverUpdateRequestDto updateRequestDto = DriverDtoFactory.createUniqueDriverUpdateRequest();
+        updateRequestDto.setDolicenseissued(LocalDate.of(2025,12,12));
+        updateRequestDto.setDolicenseexpired(LocalDate.of(2035,12,12));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Invalid license validity period"
+                ));
+    }
+
+    @Test
+    void updateDriver_shouldFail_whenMedicalValidityPeriodIsExceed() throws Exception {
+        DriverUpdateRequestDto dto = DriverDtoFactory.createUniqueDriverUpdateRequest();
+        // issued and expiry more than 6 months apart, expiry after today
+        dto.setDomedicalissued(LocalDate.of(2025, 6, 1));
+        dto.setDomedicalexpired(LocalDate.of(2026, 1, 15));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Medical validity cannot exceed 6 months"
+                ));
+    }
+
+    @Test
+    void updateDriver_shouldSucceed_whenUniquenessFieldsUnchanged() throws Exception {
+        DriverUpdateRequestDto dto = DriverDtoFactory.createUniqueDriverUpdateRequest();
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            // current, id, new, isValid
+            "Low, 1, Low, true",       // no change
+            "Low, 2, Medium, true",    // valid upgrade
+            "Low, 3, High, false",     // skip upgrade
+            "Medium, 2, Medium, true", // no change
+            "Medium, 3, High, true",   // valid upgrade
+            "Medium, 1, Low, true",    // downgrade allowed
+            "High, 3, High, true",     // no change
+            "High, 2, Medium, true",   // downgrade allowed
+            "High, 1, Low, true"       // downgrade allowed
+    })
+    void updateDriver_shouldValidateRouteFamiliarityLevelTransitions(
+            String currentLevel,
+            Integer id,
+            String newLevel,
+            boolean isValid
+    ) throws Exception {
+        DriverUpdateRequestDto dto = DriverDtoFactory.createUniqueDriverUpdateRequest();
+        dto.setRoutefamiliaritylevel(DriverDtoFactory.routeFamiliarityLevelDto(id, newLevel));
+
+        ResultActions result = mockMvc.perform(put(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (isValid) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isBadRequest())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "Cannot skip route familiarity levels when upgrading from " + currentLevel
+                    ));
+        }
+    }
+
 
 
 

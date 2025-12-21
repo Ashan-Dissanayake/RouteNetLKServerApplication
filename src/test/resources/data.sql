@@ -173,11 +173,42 @@ INSERT INTO allowedbustype (name) VALUES
 ('Luxury'),
 ('Super Luxury');
 
-INSERT INTO driver (employee_id, number, licensenumber, dolicenseissued, dolicenseexpired, domedicalissued, domedicalexpired, licensecategory_id, crewstatus_id, routefamiliaritylevel_id) VALUES
-(2, 'DRV-2025-002', 'B12345678902', '2015-03-15', '2025-03-15', '2024-02-28', '2025-02-28', 1, 2, 2),
-(3, 'DRV-2025-003', 'C12345678903', '2014-11-30', '2024-11-30', '2023-10-15', '2024-10-15', 2, 3, 1),
-(4, 'DRV-2025-004', 'C12345678904', '2018-08-20', '2028-08-20', '2026-09-10', '2027-09-10', 2, 1, 3),
-(5, 'DRV-2025-005', 'B12345678905', '2016-01-10', '2026-01-10', '2025-01-05', '2026-01-05', 1, 1, 2);
+INSERT INTO driver (
+    employee_id,
+    number,
+    licensenumber,
+    dolicenseissued,
+    dolicenseexpired,
+    domedicalissued,
+    domedicalexpired,
+    licensecategory_id,
+    crewstatus_id,
+    routefamiliaritylevel_id
+) VALUES
+-- Row 1
+(2, 'DRV-2025-002', 'B12345678902',
+ '2022-12-10', '2025-12-10',
+ '2025-07-01', '2025-12-31',
+ 1, 1, 2),
+
+-- Row 2
+(3, 'DRV-2025-003', 'C12345678903',
+ '2021-11-30', '2024-11-30',
+ '2024-10-15', '2025-04-15',
+ 2, 1, 1),
+
+-- Row 3
+(4, 'DRV-2025-004', 'C12345678904',
+ '2022-08-20', '2025-08-20',
+ '2025-09-10', '2026-03-10',
+ 2, 1, 3),
+
+-- Row 4
+(5, 'DRV-2025-005', 'B12345678905',
+ '2023-01-10', '2026-01-10',
+ '2025-01-05', '2025-07-05',
+ 1, 1, 2);
+
 
 INSERT INTO licensecategoryallowedbustype (licensecategory_id, allowedbustype_id) VALUES
 (1, 1),
