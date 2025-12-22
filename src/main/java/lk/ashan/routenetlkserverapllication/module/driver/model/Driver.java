@@ -34,8 +34,8 @@ public class Driver {
     @Basic
     @Column(name = "domedicalexpired")
     private LocalDate domedicalexpired;
-    @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
     @ManyToOne
     @JoinColumn(name = "licensecategory_id", referencedColumnName = "id", nullable = false)

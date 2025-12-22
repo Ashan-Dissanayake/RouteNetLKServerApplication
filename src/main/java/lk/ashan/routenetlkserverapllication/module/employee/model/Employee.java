@@ -75,8 +75,8 @@ public class Employee extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Vehicle> vehicles;
-    @OneToMany(mappedBy = "employee")
-    private Collection<Driver> drivers;
+    @OneToOne(mappedBy = "employee")
+    private Driver driver;
 
     @Override
     public boolean equals(Object o) {

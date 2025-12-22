@@ -1,11 +1,13 @@
 package lk.ashan.routenetlkserverapllication.shared.validation;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchRequestDto;
+import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
+import lk.ashan.routenetlkserverapllication.shared.validation.driver.seed.DriverValidationData;
 import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.seed.VehicleValidationData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,31 @@ public class RegexController {
             regexes.put("enginenumber", new HashMap<>() {{
                 put("regex", enginePattern);
                 put("message", "Invalid Engine Number");
+            }});
+        }
+
+        return APIResponseBuilder.getResponse(regexes, regexes.size());
+    }
+
+    @GetMapping(path ="/driver", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> driverStatic() {
+        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new DriverRequestDto());
+        assert regexes != null;
+        return APIResponseBuilder.getResponse(regexes, regexes.size());
+    }
+
+    @GetMapping(path = "/driver/{licensecategory}", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<HashMap<String, HashMap<String, String>>>> driverDynamic(
+            @PathVariable String licensecategory) {
+
+        HashMap<String, HashMap<String, String>> regexes = new HashMap<>();
+
+        String licenseCategoryPattern = DriverValidationData.LICENSE_CATEGORY_LICENSE_NUMBER_REGEX.get(licensecategory);
+
+        if (licenseCategoryPattern != null) {
+            regexes.put("licensenumber", new HashMap<>() {{
+                put("regex", licenseCategoryPattern);
+                put("message", "Invalid license number");
             }});
         }
 
