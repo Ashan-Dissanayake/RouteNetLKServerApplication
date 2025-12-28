@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
@@ -38,6 +37,13 @@ public class EmployeeController {
     @GetMapping(value = "/list",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get() {
         List<EmployeeSummaryResponseDto> employees =  employeeService.getSummaryEmployees();
+        return APIResponseBuilder.getResponse(employees, employees.size());
+    }
+
+    @GetMapping(value = "/list/{designation}",produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get(
+            @PathVariable String designation) {
+        List<EmployeeSummaryResponseDto> employees =  employeeService.getEmployeesByDesignation(designation);
         return APIResponseBuilder.getResponse(employees, employees.size());
     }
 

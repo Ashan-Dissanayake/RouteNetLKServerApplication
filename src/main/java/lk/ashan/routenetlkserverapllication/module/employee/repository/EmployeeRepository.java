@@ -44,6 +44,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("UPDATE Employee  e SET e.deleted=false WHERE e.id in :ids")
     void restoreAll(@Param("ids") List<Integer> ids);
 
+    @Query("SELECT e FROM Employee e WHERE e.designation.name = :designation AND e.driver IS NULL")
+    List<Employee> findEmployeesWithoutDriver(@Param("designation") String designation);
 
 
 }

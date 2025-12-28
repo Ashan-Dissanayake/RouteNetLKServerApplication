@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.driver.dto.DriverUpdateReques
 import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 import java.util.List;
@@ -19,7 +20,9 @@ public interface DriverMapper {
 
     List<DriverDetailResponseDto> toDtoList(List<Driver> drivers);
     DriverDetailResponseDto toDto(Driver driver);
+
     Driver toEntity(DriverCreateRequestDto driverCreateRequestDto);
+
     Driver toEntity(DriverUpdateRequestDto driverUpdateRequestDto);
 
 }

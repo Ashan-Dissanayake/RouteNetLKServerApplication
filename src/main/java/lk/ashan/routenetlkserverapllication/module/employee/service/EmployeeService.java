@@ -56,6 +56,9 @@ public class EmployeeService {
         return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
     }
 
+    public  List<EmployeeSummaryResponseDto> getEmployeesByDesignation(String designation){
+        return employeeMapper.toSummaryDetailList(employeeRepository.findEmployeesWithoutDriver(designation));
+    }
 
     @Transactional
     @DisableSoftDeleteFilter

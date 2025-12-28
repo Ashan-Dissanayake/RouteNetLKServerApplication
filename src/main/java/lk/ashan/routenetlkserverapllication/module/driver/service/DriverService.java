@@ -59,6 +59,10 @@ public class DriverService {
             throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
         }
 
+        if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
+            throw new InvalidStatusException("New driver route familiarity must have 'LOW'");
+        }
+
         Driver driver = driverMapper.toEntity(dto);
         return driverMapper.toDto(driverRepository.save(driver));
     }
