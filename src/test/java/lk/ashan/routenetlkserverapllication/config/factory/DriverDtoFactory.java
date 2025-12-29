@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.config.factory;
 
 
-import lk.ashan.routenetlkserverapllication.module.driver.dto.*;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 
 import java.time.LocalDate;
 

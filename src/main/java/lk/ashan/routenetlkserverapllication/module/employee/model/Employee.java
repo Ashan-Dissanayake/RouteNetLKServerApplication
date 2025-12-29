@@ -3,7 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.employee.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -75,8 +76,12 @@ public class Employee extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private Collection<Vehicle> vehicles;
+
     @OneToOne(mappedBy = "employee")
     private Driver driver;
+
+    @OneToOne(mappedBy = "employee")
+    private Conductor conductor;
 
     @Override
     public boolean equals(Object o) {

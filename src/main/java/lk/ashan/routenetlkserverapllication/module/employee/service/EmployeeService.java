@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.driver.model.Crewstatus;
-import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
-import lk.ashan.routenetlkserverapllication.module.driver.repository.DriverRepository;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
