@@ -186,8 +186,8 @@ INSERT INTO driver (
     routefamiliaritylevel_id
 ) VALUES
 -- Row 1
-(2, 'DRV-2025-002', 'B12345678902',
- '2022-12-10', '2025-12-10',
+(1, 'DRV-2025-002', 'B12345678902',
+ '2022-12-10', '2025-12-27',
  '2025-07-01', '2025-12-31',
  1, 1, 2),
 
@@ -208,7 +208,6 @@ INSERT INTO driver (
  '2023-01-10', '2026-01-10',
  '2025-01-05', '2025-07-05',
  1, 1, 2);
-
 
 INSERT INTO licensecategoryallowedbustype (licensecategory_id, allowedbustype_id) VALUES
 (1, 1),

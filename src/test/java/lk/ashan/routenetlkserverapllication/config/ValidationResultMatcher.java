@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.util;
+package lk.ashan.routenetlkserverapllication.config;
 
 import org.springframework.test.web.servlet.ResultMatcher;
 

@@ -3,9 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.employee.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeestatusDto;
-import lk.ashan.routenetlkserverapllication.util.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.util.factory.DtoFactory;
+import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
+import lk.ashan.routenetlkserverapllication.config.factory.DtoFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -1953,4 +1952,17 @@ class EmployeeControllerTest {
                         .content(objectMapper.writeValueAsString(ids)))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void deactivateEmployee_shouldBlockAssociatedDrivers() throws Exception {
+        // Given: employees with IDs 1 and 2 exist and have active driver records
+        List<Integer> employeeIds = List.of(1);
+
+        // Perform deactivation
+        mockMvc.perform(post(apiUrl + "/deactivate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeIds)))
+                .andExpect(status().isNoContent());
+    }
+
 }

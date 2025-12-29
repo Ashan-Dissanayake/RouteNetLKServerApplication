@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.driver.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -10,6 +10,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 public class Crewstatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -20,6 +21,11 @@ public class Crewstatus {
     private String name;
     @OneToMany(mappedBy = "crewstatus")
     private Collection<Driver> drivers;
+
+    public Crewstatus(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,7 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.driver.model.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.driver.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.driver.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
@@ -28,6 +30,7 @@ import java.util.stream.Stream;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final DriverRepository driverRepository;
     private final EmployeeMapper employeeMapper;
 
     public List<EmployeeDetailResponseDto> getEmployees(){
@@ -113,6 +116,12 @@ public class EmployeeService {
             throw new ResourceNotFoundException("No employees found for the given IDs");
 
         employeeRepository.removeAll(employeeIds);
+
+        List<Driver> drivers = driverRepository.findAllByEmployeeIds(employeeIds);
+        for (Driver driver : drivers) {
+            driver.setCrewstatus(new Crewstatus(4,"Inactive"));
+        }
+        driverRepository.saveAll(drivers);
 
         return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
     }

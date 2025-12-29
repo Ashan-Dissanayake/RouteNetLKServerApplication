@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.util.factory;
+package lk.ashan.routenetlkserverapllication.config.factory;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.*;
 
