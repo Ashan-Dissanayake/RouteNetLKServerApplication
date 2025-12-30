@@ -215,3 +215,16 @@ INSERT INTO licensecategoryallowedbustype (licensecategory_id, allowedbustype_id
 (2, 3),
 (2, 4);
 
+INSERT INTO conductor (
+    employee_id,
+    number,
+    domedicalissued,
+    domedicalexpired,
+    crewstatus_id,
+    routefamiliaritylevel_id
+)values
+     (9,'CON-2025-001','2025-01-01','2025-06-30',3,1),
+     (10,'CON-2025-002','2025-02-01','2025-07-31',2,2),
+     (11,'CON-2025-003','2025-02-01','2025-07-31',1,3),
+     (12,'CON-2025-004','2025-08-01','2026-02-01',3,1),
+     (13,'CON-2025-005','2025-08-01','2026-02-01',2,1);

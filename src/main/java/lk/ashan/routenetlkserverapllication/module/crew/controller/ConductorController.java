@@ -1,6 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.service.ConductorService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -27,6 +31,14 @@ public class ConductorController {
                 ?conductorService.getConductors()
                 : conductorService.searchConductor(params);
         return APIResponseBuilder.getResponse(conductors, conductors.size());
+    }
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<ConductorDetailResponseDto>> add(
+            @RequestBody @Valid ConductorCreateRequestDto conductorCreateRequestDto)
+    {
+        ConductorDetailResponseDto savedConductor = conductorService.createConductor(conductorCreateRequestDto);
+        return APIResponseBuilder.postResponse(savedConductor, savedConductor.getId());
     }
 
 }

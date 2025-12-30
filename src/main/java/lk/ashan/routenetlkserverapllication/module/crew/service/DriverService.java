@@ -139,7 +139,6 @@ public class DriverService {
 
     }
 
-
     private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleValidationException("License issued date cannot be in the future");

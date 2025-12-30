@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.ConductorMapper;
@@ -42,4 +43,12 @@ public class ConductorService {
         return conductorMapper.toDtoList(conductorStream.collect(Collectors.toList()));
 
     }
+
+    public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
+        Conductor conductor = conductorMapper.toEntity(dto);
+        return conductorMapper.toDto(conductorRepository.save(conductor));
+    }
+
+
 }
+

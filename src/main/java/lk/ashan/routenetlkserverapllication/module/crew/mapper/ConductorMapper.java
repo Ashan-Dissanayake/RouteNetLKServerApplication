@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
+import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
@@ -14,6 +15,10 @@ import java.util.List;
 public interface ConductorMapper {
 
     List<ConductorDetailResponseDto> toDtoList(List<Conductor> conductors);
+
     ConductorDetailResponseDto toDto(Conductor conductor);
+
+    Conductor toEntity(ConductorCreateRequestDto conductorCreateRequestDto);
+
 
 }
