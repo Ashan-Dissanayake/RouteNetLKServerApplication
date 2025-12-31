@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.shared.validation;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleRequestDto;
@@ -87,6 +88,13 @@ public class RegexController {
             }});
         }
 
+        return APIResponseBuilder.getResponse(regexes, regexes.size());
+    }
+
+    @GetMapping(path ="/conductor", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> conductorStatic() {
+        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new ConductorRequestDto());
+        assert regexes != null;
         return APIResponseBuilder.getResponse(regexes, regexes.size());
     }
 
