@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.ConductorDtoFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -91,5 +93,76 @@ class ConductorControllerTest {
                 ));
     }
 
-    
+    @ParameterizedTest
+    @MethodSource("pastOrPresentDateProvider")
+    void createConductor_shouldValidatePastOrPresentDates(
+            LocalDate value,
+            boolean isValid) throws Exception {
+
+        ConductorCreateRequestDto dto = ConductorDtoFactory.createUniqueConductorCreateRequest();
+        dto.setDomedicalissued(value);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(isValid ? status().isCreated() : status().isBadRequest());
+    }
+
+    static Stream<Arguments> pastOrPresentDateProvider() {
+        return Stream.of(
+                Arguments.of(LocalDate.now(), true),
+                Arguments.of( LocalDate.now().plusDays(1), false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("futureDateProvider")
+    void createConductor_shouldValidateFutureDates(
+            LocalDate value,
+            boolean isValid) throws Exception {
+
+        ConductorCreateRequestDto dto = ConductorDtoFactory.createUniqueConductorCreateRequest();
+        dto.setDomedicalexpired(value);
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(isValid ? status().isCreated() : status().isBadRequest());
+    }
+
+    static Stream<Arguments> futureDateProvider() {
+        return Stream.of(
+                Arguments.of( LocalDate.now().plusDays(1), true),
+                Arguments.of( LocalDate.now(), false)
+        );
+    }
+
+    @Test
+    void createConductor_shouldFail_whenConductorNumberAlreadyExists() throws Exception {
+        ConductorCreateRequestDto dto = ConductorDtoFactory.createUniqueConductorCreateRequest();
+        dto.setNumber("CON-2025-002");
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Conductor number already exists"
+                ));
+    }
+
+    @Test
+    void createConductor_shouldFail_whenMedicalIssueExpiryDateRangeMoreThanSix() throws Exception{
+        ConductorCreateRequestDto dto = ConductorDtoFactory.createUniqueConductorCreateRequest();
+        dto.setDomedicalissued(LocalDate.parse("2025-12-25"));
+        dto.setDomedicalexpired(LocalDate.parse("2026-12-25"));
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Medical validity cannot exceed 6 months"
+                ));
+    }
 }
