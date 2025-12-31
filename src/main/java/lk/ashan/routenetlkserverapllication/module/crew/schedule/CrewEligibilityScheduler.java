@@ -18,5 +18,10 @@ public class CrewEligibilityScheduler {
     public void updateDriverStatuses() {
         crewEligibilityService.recalculateDriverStatuses();
     }
+
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void updateConductorStatuses() {
+        crewEligibilityService.recalculateConductorStatuses();
+    }
 }
 
