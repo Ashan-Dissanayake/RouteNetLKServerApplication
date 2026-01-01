@@ -40,12 +40,13 @@ public class EmployeeController {
         return APIResponseBuilder.getResponse(employees, employees.size());
     }
 
-    @GetMapping(value = "/list/{designation}",produces = "application/json")
+    @GetMapping(value = "/list/{designation}")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get(
             @PathVariable String designation) {
-        List<EmployeeSummaryResponseDto> employees =  employeeService.getEmployeesByDesignation(designation);
+        List<EmployeeSummaryResponseDto> employees = employeeService.getEmployeesByDesignation(designation);
         return APIResponseBuilder.getResponse(employees, employees.size());
     }
+
 
 
     @PostMapping

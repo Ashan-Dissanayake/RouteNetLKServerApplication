@@ -59,8 +59,16 @@ public class EmployeeService {
         return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
     }
 
-    public  List<EmployeeSummaryResponseDto> getEmployeesByDesignation(String designation){
-        return employeeMapper.toSummaryDetailList(employeeRepository.findEmployeesWithoutDriver(designation));
+    public List<EmployeeSummaryResponseDto> getEmployeesByDesignation(String designation) {
+        List<Employee> employees;
+        if (designation.equalsIgnoreCase("driver")) {
+            employees = employeeRepository.findEmployeesWithoutDriver(designation);
+        } else if (designation.equalsIgnoreCase("conductor")) {
+            employees = employeeRepository.findEmployeesWithoutConductor(designation);
+        } else {
+            employees = List.of();
+        }
+        return employeeMapper.toSummaryDetailList(employees);
     }
 
     @Transactional

@@ -47,5 +47,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT e FROM Employee e WHERE e.designation.name = :designation AND e.driver IS NULL")
     List<Employee> findEmployeesWithoutDriver(@Param("designation") String designation);
 
+    @Query("SELECT e FROM Employee e WHERE e.designation.name = :designation AND e.conductor IS NULL")
+    List<Employee> findEmployeesWithoutConductor(@Param("designation") String designation);
+
 
 }
