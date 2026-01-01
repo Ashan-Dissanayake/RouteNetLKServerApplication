@@ -25,4 +25,16 @@ public class ConductorDtoFactory {
                 .crewstatus(crewStatusDto(1,"Eligible"))
                 .build();
     }
+
+    public static ConductorUpdateRequestDto createUniqueConductorUpdateRequest(){
+        return ConductorUpdateRequestDto.builder()
+                .id(1)
+                .employee(DtoFactory.employeeSummaryyResponseDto(9,"kasun"))
+                .number("CON-2025-001")
+                .domedicalissued(LocalDate.parse("2025-08-01"))
+                .domedicalexpired(LocalDate.parse("2026-02-01"))
+                .routefamiliaritylevel(routeFamiliarityLevelDto(1,"Low"))
+                .crewstatus(crewStatusDto(1,"Eligible"))
+                .build();
+    }
 }

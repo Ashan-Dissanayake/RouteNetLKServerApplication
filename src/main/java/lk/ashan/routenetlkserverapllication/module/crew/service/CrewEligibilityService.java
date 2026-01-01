@@ -7,11 +7,15 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -72,7 +76,6 @@ public class CrewEligibilityService {
         return new Crewstatus(1,"Eligible");
     }
 
-
     private Crewstatus calculateConductorStatus(Employee emp, Conductor conductor) {
         LocalDate today = LocalDate.now();
 
@@ -88,5 +91,48 @@ public class CrewEligibilityService {
 
         return new Crewstatus(1,"Eligible");
     }
+
+    public void validateMedicalDates(LocalDate issued, LocalDate expiry) {
+        if (issued.isAfter(LocalDate.now())) {
+            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
+        }
+        if (!expiry.isAfter(issued)) {
+            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
+        }
+
+        long months = ChronoUnit.MONTHS.between(issued, expiry);
+        if (months > 6) {
+            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
+        }
+    }
+
+    public void validateRouteFamiliarityTransition(String currentLevel, String newLevel) {
+
+        if (currentLevel == null || newLevel == null) {
+            throw new IllegalArgumentException("Route familiarity level cannot be null");
+        }
+
+        currentLevel = currentLevel.trim();
+        newLevel = newLevel.trim();
+
+        if (currentLevel.equals(newLevel)) return;
+
+        List<String> allowedUpgrades = VALID_ROUTE_UPGRADES.get(currentLevel);
+        if (allowedUpgrades == null) {
+            throw new IllegalArgumentException("Unknown route familiarity level: " + currentLevel);
+        }
+
+        if (!allowedUpgrades.contains(newLevel)) {
+            throw new InvalidStatusTransitionException(
+                    "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
+            );
+        }
+    }
+
+    private static final Map<String, List<String>> VALID_ROUTE_UPGRADES = Map.of(
+            "Low", List.of("Medium"),
+            "Medium", List.of("High"),
+            "High", List.of()
+    );
 
 }

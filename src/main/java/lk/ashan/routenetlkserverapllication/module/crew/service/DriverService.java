@@ -25,6 +25,7 @@ public class DriverService {
 
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
+    private final CrewEligibilityService crewEligibilityService;
 
     public List<DriverDetailResponseDto> getDrivers(){
        return driverMapper.toDtoList(driverRepository.findAll());
@@ -52,7 +53,7 @@ public class DriverService {
     public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto dto) {
 
         validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
-        validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
         validateUniqueness(dto);
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
@@ -74,9 +75,9 @@ public class DriverService {
 
         validateLicenseCategoryChange(existingDriver,dto.getLicensecategory());
         validateUniqueness(dto);
-        validateRouteFamiliarityTransition(existingDriver.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
+        crewEligibilityService.validateRouteFamiliarityTransition(existingDriver.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
         validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
-        validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
 
         Driver driver = driverMapper.toEntity(dto);
         return driverMapper.toDto(driverRepository.save(driver));
@@ -101,44 +102,6 @@ public class DriverService {
         }
     }
 
-    private static final Map<String, List<String>> VALID_ROUTE_UPGRADES = Map.of(
-            "Low",    List.of("Medium"),
-            "Medium", List.of("High"),
-            "High",   List.of() // no upgrade from High
-    );
-
-    private void validateRouteFamiliarityTransition(String currentLevel, String newLevel) {
-
-        if (currentLevel == null || newLevel == null) {
-            throw new IllegalArgumentException("Route familiarity level cannot be null.");
-        }
-
-        currentLevel = currentLevel.trim();
-        newLevel = newLevel.trim();
-
-        if (currentLevel.equals(newLevel)) return;
-
-        List<String> allowedUpgrades = VALID_ROUTE_UPGRADES.get(currentLevel);
-
-        if (allowedUpgrades == null) {
-            throw new IllegalArgumentException(
-                    "Unknown route familiarity level: " + currentLevel
-            );
-        }
-
-        // downgrade → always allowed
-        if (!allowedUpgrades.contains(newLevel)) {
-            // if downgrade or invalid upgrade
-            if (VALID_ROUTE_UPGRADES.containsKey(newLevel)) {
-                return; // downgrade → allowed
-            }
-            throw new InvalidStatusTransitionException(
-                    "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
-            );
-        }
-
-    }
-
     private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleValidationException("License issued date cannot be in the future");
@@ -150,20 +113,6 @@ public class DriverService {
         long years = ChronoUnit.YEARS.between(issued, expiry);
         if (years > 4) {
             throw new BusinessRuleValidationException("Invalid license validity period");
-        }
-    }
-
-    private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
-        if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
-        }
-        if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
-        }
-
-        long months = ChronoUnit.MONTHS.between(issued, expiry);
-        if (months > 6) {
-            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
         }
     }
 

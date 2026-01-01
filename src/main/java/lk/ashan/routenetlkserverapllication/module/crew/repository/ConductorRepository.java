@@ -11,6 +11,7 @@ import java.util.List;
 public interface ConductorRepository extends JpaRepository<Conductor, Integer> {
 
     boolean existsByNumber(String number);
+    boolean existsByNumberAndIdNot(String number, Integer id);
 
 
 }

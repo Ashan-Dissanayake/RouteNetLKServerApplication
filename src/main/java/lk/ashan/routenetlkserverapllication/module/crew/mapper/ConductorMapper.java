@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import org.mapstruct.Mapper;
@@ -19,6 +20,7 @@ public interface ConductorMapper {
     ConductorDetailResponseDto toDto(Conductor conductor);
 
     Conductor toEntity(ConductorCreateRequestDto conductorCreateRequestDto);
+    Conductor toEntity(ConductorUpdateRequestDto conductorCreateRequestDto);
 
 
 }

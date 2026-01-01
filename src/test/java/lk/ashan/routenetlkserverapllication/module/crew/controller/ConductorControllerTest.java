@@ -3,10 +3,14 @@ package lk.ashan.routenetlkserverapllication.module.crew.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.ConductorDtoFactory;
+import lk.ashan.routenetlkserverapllication.config.factory.DriverDtoFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverUpdateRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -22,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -165,4 +171,57 @@ class ConductorControllerTest {
                         "Medical validity cannot exceed 6 months"
                 ));
     }
+
+    @Test
+    void updateConductor_shouldFail_whenMedicalIssuedInFuture() throws Exception {
+        ConductorUpdateRequestDto dto = ConductorDtoFactory.createUniqueConductorUpdateRequest();
+        dto.setDomedicalissued(LocalDate.now().plusDays(1));
+
+        mockMvc.perform(put(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "domedicalissued: Medical issued date is cannot be in the future"
+                ));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            // current, id, new, isValid
+            "Low, 1, Low, true",       // no change
+            "Low, 2, Medium, true",    // valid upgrade
+            "Low, 3, High, false",     // skip upgrade
+            "Medium, 2, Medium, true", // no change
+            "Medium, 3, High, true",   // valid upgrade
+            "Medium, 1, Low, true",    // downgrade allowed
+            "High, 3, High, true",     // no change
+            "High, 2, Medium, true",   // downgrade allowed
+            "High, 1, Low, true"       // downgrade allowed
+    })
+    void updateConductor_shouldValidateRouteFamiliarityLevelTransitions(
+            String currentLevel,
+            Integer newId,
+            String newLevel,
+            boolean isValid
+    ) throws Exception {
+        ConductorUpdateRequestDto dto = ConductorDtoFactory.createUniqueConductorUpdateRequest();
+        dto.setRoutefamiliaritylevel(ConductorDtoFactory.routeFamiliarityLevelDto(newId, newLevel));
+
+        ResultActions result = mockMvc.perform(put(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        if (isValid) {
+            result.andExpect(status().isCreated());
+        } else {
+            result.andExpect(status().isConflict())
+                    .andExpect(ValidationResultMatcher.expectValidationError(
+                            "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
+                    ));
+        }
+    }
+
+
+
 }

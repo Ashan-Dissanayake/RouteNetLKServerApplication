@@ -1,10 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.service.ConductorService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -39,6 +36,14 @@ public class ConductorController {
     {
         ConductorDetailResponseDto savedConductor = conductorService.createConductor(conductorCreateRequestDto);
         return APIResponseBuilder.postResponse(savedConductor, savedConductor.getId());
+    }
+    
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<ConductorDetailResponseDto>> update(
+            @RequestBody @Valid ConductorUpdateRequestDto conductorUpdateRequestDto)
+    {
+        ConductorDetailResponseDto updateConductor = conductorService.updateConductor(conductorUpdateRequestDto);
+        return APIResponseBuilder.postResponse(updateConductor, updateConductor.getId());
     }
 
 }

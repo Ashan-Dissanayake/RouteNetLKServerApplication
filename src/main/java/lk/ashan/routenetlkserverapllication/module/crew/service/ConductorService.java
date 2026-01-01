@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.ConductorMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusException;
+import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +26,7 @@ public class ConductorService {
 
     private final ConductorRepository conductorRepository;
     private final ConductorMapper conductorMapper;
+    private final CrewEligibilityService crewEligibilityService;
 
     public List<ConductorDetailResponseDto> getConductors(){
        return conductorMapper.toDtoList(conductorRepository.findAll());
@@ -50,7 +52,7 @@ public class ConductorService {
     }
 
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
-        validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
         validateUniqueness(dto);
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
@@ -65,23 +67,30 @@ public class ConductorService {
         return conductorMapper.toDto(conductorRepository.save(conductor));
     }
 
-    private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
-        if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
-        }
-        if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
-        }
+    public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
-        long months = ChronoUnit.MONTHS.between(issued, expiry);
-        if (months > 6) {
-            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
-        }
+        Conductor existingConductor =  conductorRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
+
+        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        crewEligibilityService.validateRouteFamiliarityTransition(existingConductor.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
+
+        validateUniqueness(dto);
+
+        Conductor conductor = conductorMapper.toEntity(dto);
+        return conductorMapper.toDto(conductorRepository.save(conductor));
     }
 
     private void validateUniqueness(ConductorCreateRequestDto dto) {
         if (conductorRepository.existsByNumber(dto.getNumber())) {
             throw new ValidationException("Conductor number already exists");
+        }
+    }
+
+    private void validateUniqueness(ConductorUpdateRequestDto dto) {
+        // Driver number uniqueness
+        if (conductorRepository.existsByNumberAndIdNot(dto.getNumber(), dto.getId())) {
+            throw new ResourceExistsException("Conductor number already exists");
         }
     }
 
