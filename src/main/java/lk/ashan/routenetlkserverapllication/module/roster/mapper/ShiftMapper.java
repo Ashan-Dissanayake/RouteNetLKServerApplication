@@ -12,5 +12,5 @@ import java.util.List;
 })
 public interface ShiftMapper {
   ShiftDto toDto(Shift shift);
-  List<ShiftDto> toDetailList(List<Shift> Shifts);
+  List<ShiftDto> toDtolList(List<Shift> Shifts);
 }

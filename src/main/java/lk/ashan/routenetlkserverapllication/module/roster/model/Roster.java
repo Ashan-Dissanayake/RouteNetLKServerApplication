@@ -31,6 +31,9 @@ public class Roster {
     private Branch branch;
     @OneToMany(mappedBy = "roster")
     private Collection<Rosterassignement> rosterassignements;
+    @ManyToOne
+    @JoinColumn(name = "rosterstatus_id", referencedColumnName = "id", nullable = false)
+    private Rosterstatus rosterstatus;
 
     @Override
     public boolean equals(Object o) {

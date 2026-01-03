@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ShiftStatusMapper {
   ShiftStatusDto toDto(Shiftstatus shiftStatus);
-  List<ShiftStatusDto> toDetailList(List<Shiftstatus> shiftStatuses);
+  List<ShiftStatusDto> toDtoList(List<Shiftstatus> shiftStatuses);
 }

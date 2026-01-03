@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryR
 import lombok.*;
 
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,8 +12,6 @@ import lombok.*;
 @Builder
 @ToString
 public class RosterAssignmentDto {
-   private Integer id;
-   private RosterDto roster;
-   private EmployeeSummaryResponseDto employee;
-   private RosterAssignmentStatusDto rosterassigementstatus;
+    private Integer id;
+    private EmployeeSummaryResponseDto employee;
 }

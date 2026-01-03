@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,7 +30,8 @@ public class DriverService {
        return driverMapper.toDtoList(driverRepository.findAll());
     }
 
-    public List<DriverDetailResponseDto> searchDriver(@NotNull HashMap<String, String> params) {
+    public List<DriverDetailResponseDto> searchDriver(
+            @NotNull HashMap<String, String> params) {
 
         String number = params.get("ssnumber");
         String crewStatusId = params.get("sscrewstatus");

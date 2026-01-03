@@ -12,7 +12,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Rosterassigementstatus {
+public class Rosterstatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,14 +20,14 @@ public class Rosterassigementstatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "rosterassigementstatus")
-    private Collection<Rosterassignement> rosterassignements;
+    @OneToMany(mappedBy = "rosterstatus")
+    private Collection<Roster> rosters;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Rosterassigementstatus that = (Rosterassigementstatus) o;
+        Rosterstatus that = (Rosterstatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

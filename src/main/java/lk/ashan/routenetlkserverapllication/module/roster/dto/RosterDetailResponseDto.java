@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryRespo
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 
 @Getter
@@ -12,9 +13,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RosterDto {
+public class RosterDetailResponseDto {
     private Integer id;
     private LocalDate doroster;
     private ShiftDto shift;
+    private RosterStatusDto rosterstatus;
     private BranchSummaryResponseDto branch;
+    private Collection<RosterAssignmentDto> rosterassignements;
 }

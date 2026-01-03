@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ShiftTypeMapper {
   ShiftTypeDto toDto(Shifttype shiftType);
-  List<ShiftTypeDto> toDetailList(List<Shifttype> shiftTypes);
+  List<ShiftTypeDto> toDtoList(List<Shifttype> shiftTypes);
 }

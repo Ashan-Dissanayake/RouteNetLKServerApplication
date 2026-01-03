@@ -23,9 +23,7 @@ public class Rosterassignement {
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
-    @ManyToOne
-    @JoinColumn(name = "rosterassigementstatus_id", referencedColumnName = "id", nullable = false)
-    private Rosterassigementstatus rosterassigementstatus;
+
 
     @Override
     public boolean equals(Object o) {

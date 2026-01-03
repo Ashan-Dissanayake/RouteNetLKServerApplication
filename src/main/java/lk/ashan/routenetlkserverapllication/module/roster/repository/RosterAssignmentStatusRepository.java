@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.repository;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassigementstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RosterAssignmentStatusRepository extends JpaRepository<Rosterassigementstatus, Integer> {
+public interface RosterAssignmentStatusRepository extends JpaRepository<Rosterstatus, Integer> {
 }

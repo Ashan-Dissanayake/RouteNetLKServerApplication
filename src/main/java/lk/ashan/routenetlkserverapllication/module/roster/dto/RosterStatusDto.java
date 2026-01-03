@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RosterAssignmentStatusDto {
+public class RosterStatusDto {
    private Integer id;
    private String name;
 }
