@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterAssignmentDetailedResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterAssignmentDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignement;
 import org.mapstruct.Mapper;
@@ -14,5 +15,5 @@ import java.util.List;
 )
 public interface RosterAssignmentMapper {
   RosterAssignmentDto toDto(Rosterassignement rosterAssignment);
-  List<RosterAssignmentDto> toDetailList(List<Rosterassignement> rosterAssignments);
+  List<RosterAssignmentDetailedResponseDto> toDetailList(List<Rosterassignement> rosterAssignments);
 }

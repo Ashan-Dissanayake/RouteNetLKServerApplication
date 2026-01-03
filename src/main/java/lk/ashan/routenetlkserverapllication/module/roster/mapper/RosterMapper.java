@@ -13,5 +13,6 @@ import java.util.List;
 })
 public interface RosterMapper {
   RosterDto toDto(Roster roster);
+  Roster toEntity(RosterDto rosterDto);
   List<RosterDto> toDetailList(List<Roster> rosters);
 }
