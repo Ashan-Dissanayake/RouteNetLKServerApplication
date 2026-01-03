@@ -33,30 +33,6 @@ public class Shift {
     @JoinColumn(name = "shiftstatus_id", referencedColumnName = "id", nullable = false)
     private Shiftstatus shiftstatus;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Time getTostarted() {
-        return tostarted;
-    }
-
-    public void setTostarted(Time tostarted) {
-        this.tostarted = tostarted;
-    }
-
-    public Time getToend() {
-        return toend;
-    }
-
-    public void setToend(Time toend) {
-        this.toend = toend;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,27 +46,4 @@ public class Shift {
         return Objects.hash(id, tostarted, toend);
     }
 
-    public Collection<Roster> getRosters() {
-        return rosters;
-    }
-
-    public void setRosters(Collection<Roster> rosters) {
-        this.rosters = rosters;
-    }
-
-    public Shifttype getShifttype() {
-        return shifttype;
-    }
-
-    public void setShifttype(Shifttype shifttype) {
-        this.shifttype = shifttype;
-    }
-
-    public Shiftstatus getShiftstatus() {
-        return shiftstatus;
-    }
-
-    public void setShiftstatus(Shiftstatus shiftstatus) {
-        this.shiftstatus = shiftstatus;
-    }
 }

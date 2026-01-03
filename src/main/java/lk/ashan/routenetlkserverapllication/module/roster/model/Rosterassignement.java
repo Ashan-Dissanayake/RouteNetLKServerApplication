@@ -27,14 +27,6 @@ public class Rosterassignement {
     @JoinColumn(name = "rosterassigementstatus_id", referencedColumnName = "id", nullable = false)
     private Rosterassigementstatus rosterassigementstatus;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -48,27 +40,4 @@ public class Rosterassignement {
         return Objects.hash(id);
     }
 
-    public Roster getRoster() {
-        return roster;
-    }
-
-    public void setRoster(Roster roster) {
-        this.roster = roster;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Rosterassigementstatus getRosterassigementstatus() {
-        return rosterassigementstatus;
-    }
-
-    public void setRosterassigementstatus(Rosterassigementstatus rosterassigementstatus) {
-        this.rosterassigementstatus = rosterassigementstatus;
-    }
 }

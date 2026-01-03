@@ -23,22 +23,6 @@ public class Shiftstatus {
     @OneToMany(mappedBy = "shiftstatus")
     private Collection<Shift> shifts;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,11 +36,4 @@ public class Shiftstatus {
         return Objects.hash(id, name);
     }
 
-    public Collection<Shift> getShifts() {
-        return shifts;
-    }
-
-    public void setShifts(Collection<Shift> shifts) {
-        this.shifts = shifts;
-    }
 }

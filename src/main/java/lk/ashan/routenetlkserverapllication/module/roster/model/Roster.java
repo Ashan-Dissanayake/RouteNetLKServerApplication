@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class Roster {
     private Integer id;
     @Basic
     @Column(name = "doroster")
-    private Date doroster;
+    private LocalDate doroster;
     @ManyToOne
     @JoinColumn(name = "shift_id", referencedColumnName = "id", nullable = false)
     private Shift shift;
@@ -30,22 +31,6 @@ public class Roster {
     private Branch branch;
     @OneToMany(mappedBy = "roster")
     private Collection<Rosterassignement> rosterassignements;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Date getDoroster() {
-        return doroster;
-    }
-
-    public void setDoroster(Date doroster) {
-        this.doroster = doroster;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -60,27 +45,4 @@ public class Roster {
         return Objects.hash(id, doroster);
     }
 
-    public Shift getShift() {
-        return shift;
-    }
-
-    public void setShift(Shift shift) {
-        this.shift = shift;
-    }
-
-    public Branch getBranch() {
-        return branch;
-    }
-
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
-
-    public Collection<Rosterassignement> getRosterassignements() {
-        return rosterassignements;
-    }
-
-    public void setRosterassignements(Collection<Rosterassignement> rosterassignements) {
-        this.rosterassignements = rosterassignements;
-    }
 }
