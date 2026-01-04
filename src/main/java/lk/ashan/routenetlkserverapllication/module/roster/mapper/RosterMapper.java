@@ -9,10 +9,10 @@ import org.mapstruct.MappingConstants;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        ShiftTypeMapper.class, BranchMapper.class
+        ShiftTypeMapper.class, BranchMapper.class, RosterStatusMapper.class
 })
 public interface RosterMapper {
   RosterDetailResponseDto toDto(Roster roster);
   Roster toEntity(RosterDetailResponseDto rosterDetailResponseDto);
-  List<RosterDetailResponseDto> toDetailList(List<Roster> rosters);
+  List<RosterDetailResponseDto> toDtoList(List<Roster> rosters);
 }
