@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RosterStatusMapper {
   RosterStatusDto toDto(Rosterstatus rosterStatus);
-  List<RosterStatusDto> toDetailList(List<Rosterstatus> rosterStatuses);
+  List<RosterStatusDto> toDtoList(List<Rosterstatus> rosterStatuses);
 }
