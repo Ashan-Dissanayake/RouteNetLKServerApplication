@@ -228,4 +228,16 @@ INSERT INTO conductor (
      (14,'CON-2025-004','2025-08-01','2026-02-01',3,1);
 
 INSERT INTO shiftstatus (name) VALUES ('Active'),('Inactive');
+
 INSERT INTO shifttype (name) VALUES ('Early Morning'),('Morning'),('Day'),('Evening'),('Night'),('Overnight');
+
+INSERT INTO shift (tostarted,toend,shifttype_id,shiftstatus_id) VALUES
+    ('04:00:00','06:30:00',1,1),
+    ('03:00:00','13:00:00',1,2),
+    ('08:00:00','16:00:00',2,1),
+    ('14:00:00','22:00:00',3,1),
+    ('18:00:00','02:00:00',3,2),
+    ('20:00:00','06:00:00',4,1),
+    ('05:00:00','17:00:00',5,1);
+
+INSERT INTO rosterstatus(name) VALUES ('Draft'),('Solved'),('Locked');

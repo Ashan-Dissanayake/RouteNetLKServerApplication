@@ -26,6 +26,6 @@ public class RosterRequestDto {
     private RosterStatusDto rosterstatus;
     @NotNull(message = "Branch can not be empty")
     private BranchSummaryResponseDto branch;
-    @NotNull(message = "Roster assignments can not be empty")
-    private Collection<RosterAssignmentDto> rosterassignements;
+//    @NotNull(message = "Roster assignments can not be empty")
+//    private Collection<RosterAssignmentDto> rosterassignements;
 }
