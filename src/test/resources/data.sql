@@ -241,3 +241,6 @@ INSERT INTO shift (tostarted,toend,shifttype_id,shiftstatus_id) VALUES
     ('05:00:00','17:00:00',5,1);
 
 INSERT INTO rosterstatus(name) VALUES ('Draft'),('Solved'),('Locked');
+
+INSERT INTO roster (doroster,shift_id,branch_id,rosterstatus_id) VALUES
+             ('2026-08-12',5,1,1)

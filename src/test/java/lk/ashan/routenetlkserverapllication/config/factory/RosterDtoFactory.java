@@ -25,7 +25,7 @@ public class RosterDtoFactory {
 
     public static RosterCreateRequestDto createUniqueRosterCreateRequest(){
         return RosterCreateRequestDto.builder()
-                .doroster(LocalDate.now().plusDays(10))
+                .doroster(LocalDate.of(2026, 8,12))
                 .shift(createShiftDto(1))
                 .rosterstatus(createRosterStatus(1,"Draft"))
                 .branch(DtoFactory.branchSummaryResponseDto(1,"Colombo head office"))

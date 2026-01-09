@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.DriverDtoFactory;
+import lk.ashan.routenetlkserverapllication.config.factory.DtoFactory;
 import lk.ashan.routenetlkserverapllication.config.factory.RosterDtoFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
@@ -65,7 +66,7 @@ class RosterControllerTest {
     }
 
     @Test
-    void createRoster_should_Fail_whenRosterDateIsNotFuture() throws Exception{
+    void createRoster_shouldFail_whenRosterDateIsNotFuture() throws Exception{
         RosterCreateRequestDto dto = RosterDtoFactory.createUniqueRosterCreateRequest();
         dto.setDoroster(LocalDate.now().minusMonths(2));
 
@@ -76,6 +77,19 @@ class RosterControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(ValidationResultMatcher.expectValidationError(
                         "doroster: Roster date can not be past"
+                ));
+    }
+
+    @Test
+    void createRoster_shouldFail_whenRosterAlreadyExistsForBranchAndDate() throws Exception{
+        RosterCreateRequestDto dto = RosterDtoFactory.createUniqueRosterCreateRequest();
+
+        mockMvc.perform(post(apiUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Roster already existed"
                 ));
     }
 }
