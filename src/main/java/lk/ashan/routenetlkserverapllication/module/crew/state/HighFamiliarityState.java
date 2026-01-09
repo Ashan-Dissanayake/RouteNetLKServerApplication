@@ -1,0 +1,20 @@
+package lk.ashan.routenetlkserverapllication.module.crew.state;
+
+import lk.ashan.routenetlkserverapllication.module.crew.model.Routefamiliaritylevel;
+import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+
+public class HighFamiliarityState implements RouteFamiliarityState {
+    
+    @Override
+    public void transitionTo(Employee employee, Routefamiliaritylevel newLevel) {
+        String newName = newLevel.getName().trim().toUpperCase();
+        
+        if ("HIGH".equals(newName)) return;
+
+        // No upgrades from HIGH
+        throw new InvalidStatusTransitionException(
+             "Invalid route familiarity transition from HIGH to " + newName
+        );
+    }
+}

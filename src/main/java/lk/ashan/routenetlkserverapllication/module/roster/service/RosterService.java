@@ -1,16 +1,15 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterStatusDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterStatusMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
-import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterStatusRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,5 +42,22 @@ public class RosterService {
 
         return rosterMapper.toDtoList(rosterStream.collect(Collectors.toList()));
     }
+
+    @Transactional
+    public RosterDetailResponseDto createRoster(@NotNull RosterCreateRequestDto createRequestDto){
+        validateUniqueness(createRequestDto);
+
+        Roster roster = rosterMapper.toEntity(createRequestDto);
+        Roster savedRoster = rosterRepository.save(roster);
+        return rosterMapper.toDto(savedRoster);
+    }
+
+    public void validateUniqueness(RosterCreateRequestDto createRequestDto){
+        boolean isExisted = rosterRepository.existsByBranch_IdAndDoroster(createRequestDto.getBranch().getId(),createRequestDto.getDoroster());
+        if (isExisted){
+            throw new ResourceExistsException("Roster already existed");
+        }
+    }
+
 }
 

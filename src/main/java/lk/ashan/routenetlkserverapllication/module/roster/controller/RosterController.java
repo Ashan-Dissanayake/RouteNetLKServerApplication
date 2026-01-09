@@ -1,15 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.service.RosterService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,14 @@ public class RosterController {
                 : rosterService.searchRosters(params);
 
         return APIResponseBuilder.getResponse(rosters, rosters.size());
+    }
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> add(
+            @RequestBody @Valid RosterCreateRequestDto rosterCreateRequestDto)
+    {
+        RosterDetailResponseDto savedRoster = rosterService.createRoster(rosterCreateRequestDto);
+        return APIResponseBuilder.postResponse(savedRoster, savedRoster.getId());
     }
 
 }

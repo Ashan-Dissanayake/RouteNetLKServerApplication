@@ -1,18 +1,19 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Routefamiliaritylevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
+import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
+import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,8 @@ public class DriverService {
 
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
-    private final CrewEligibilityService crewEligibilityService;
+    private final List<DriverValidationStrategy> validationStrategies;
+    private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
 
     public List<DriverDetailResponseDto> getDrivers(){
        return driverMapper.toDtoList(driverRepository.findAll());
@@ -52,9 +54,7 @@ public class DriverService {
 
     public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto dto) {
 
-        validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
-        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
-        validateUniqueness(dto);
+        validationStrategies.forEach(s -> s.validateCreate(dto));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
@@ -70,72 +70,21 @@ public class DriverService {
 
     public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto dto) {
 
+        validationStrategies.forEach(s -> s.validateUpdate(dto));
+
         Driver existingDriver =  driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        validateLicenseCategoryChange(existingDriver,dto.getLicensecategory());
-        validateUniqueness(dto);
-        crewEligibilityService.validateRouteFamiliarityTransition(existingDriver.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
-        validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
-        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
+        Routefamiliaritylevel currentLevel = existingDriver.getRoutefamiliaritylevel();
+
+        // State Pattern Transition
+        if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {
+             RouteFamiliarityState state = routeFamiliarityStateFactory.getState(currentLevel.getName());
+             state.transitionTo(existingDriver.getEmployee(), driverMapper.toEntity(dto).getRoutefamiliaritylevel());
+        }
 
         Driver driver = driverMapper.toEntity(dto);
         return driverMapper.toDto(driverRepository.save(driver));
-    }
-
-    public void validateLicenseCategoryChange(Driver existingDriver, LicenseCategoryDto newCategory) {
-
-        if (newCategory == null) {
-            throw new IllegalArgumentException("New license category cannot be null");
-        }
-
-        // 1. If category NOT changed → do nothing
-        if (existingDriver.getLicensecategory().getId().equals(newCategory.getId())) {
-            return;
-        }
-
-        // 2. Category changed → license must be expired
-        if (!existingDriver.getDolicenseexpired().isBefore(LocalDate.now())) {
-            throw new BusinessRuleValidationException(
-                    "License category can only be changed when the existing license is expired"
-            );
-        }
-    }
-
-    private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
-        if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("License issued date cannot be in the future");
-        }
-        if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("License expiry must be after issued date");
-        }
-
-        long years = ChronoUnit.YEARS.between(issued, expiry);
-        if (years > 4) {
-            throw new BusinessRuleValidationException("Invalid license validity period");
-        }
-    }
-
-    private void validateUniqueness(DriverCreateRequestDto dto) {
-        if (driverRepository.existsByLicensenumber(dto.getLicensenumber())) {
-            throw new ValidationException("License number already exists");
-        }
-
-        if (driverRepository.existsByNumber(dto.getNumber())) {
-            throw new ValidationException("Driver number already exists");
-        }
-    }
-
-    private void validateUniqueness(DriverUpdateRequestDto dto) {
-        // License number uniqueness
-        if (driverRepository.existsByLicensenumberAndIdNot(dto.getLicensenumber(), dto.getId())) {
-            throw new ResourceExistsException("License number already exists");
-        }
-
-        // Driver number uniqueness
-        if (driverRepository.existsByNumberAndIdNot(dto.getNumber(), dto.getId())) {
-            throw new ResourceExistsException("Driver number already exists");
-        }
     }
 
 }

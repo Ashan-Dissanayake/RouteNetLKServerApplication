@@ -12,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class BranchService {
     private final BranchstatusRepository branchstatusRepository;
     private final BranchMapper branchMapper;
     private final DistrictMapper districtMapper;
+    private final List<BranchValidationStrategy> validationStrategies;
 
     public List<BranchDetailResponseDto> getBranches(){
         return branchMapper.toDetailList(branchRepository.findAll());
@@ -67,7 +69,8 @@ public class BranchService {
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
-        validateBranchUniquenessForCreate(request);
+        
+        validationStrategies.forEach(s -> s.validateCreate(request));
 
         Branch branch = branchMapper.toEntity(request);
         branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
@@ -81,7 +84,7 @@ public class BranchService {
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
 
-        validateBranchUniquenessForUpdate(request);
+        validationStrategies.forEach(s -> s.validateUpdate(request));
 
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
@@ -129,39 +132,5 @@ public class BranchService {
 
         return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
     }
-
-    private void validateBranchUniquenessForCreate(@NotNull BranchCreateRequestDto branch) {
-
-        if (branchRepository.existsByCode(branch.getCode())) {
-            throw new ResourceExistsException("Branch code already exists.");
-        }
-        if (branchRepository.existsByName(branch.getName())) {
-            throw new ResourceExistsException("Branch name already exists.");
-        }
-        if (branchRepository.existsByEmail(branch.getEmail())) {
-            throw new ResourceExistsException("Branch email already exists.");
-        }
-
-        if (branchRepository.existsByTelephone(branch.getTelephone())) {
-            throw new ResourceExistsException("Branch telephone already exists.");
-        }
-    }
-
-    private void validateBranchUniquenessForUpdate(@NotNull BranchUpdateRequestDto branch) {
-
-        if (branchRepository.existsByCodeAndIdNot(branch.getCode(), branch.getId())) {
-            throw new ResourceExistsException("Another branch already uses this code.");
-        }
-        if (branchRepository.existsByNameAndIdNot(branch.getName(), branch.getId())) {
-            throw new ResourceExistsException("Another branch already uses this name.");
-        }
-        if (branchRepository.existsByEmailAndIdNot(branch.getEmail(), branch.getId())) {
-            throw new ResourceExistsException("Another branch already uses this email.");
-        }
-        if (branchRepository.existsByTelephoneAndIdNot(branch.getTelephone(), branch.getId())) {
-            throw new ResourceExistsException("Another branch already uses this telephone.");
-        }
-    }
-
 
 }

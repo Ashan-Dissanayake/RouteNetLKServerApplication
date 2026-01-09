@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import org.mapstruct.Mapper;
@@ -12,7 +13,7 @@ import java.util.List;
         ShiftTypeMapper.class, BranchMapper.class, RosterStatusMapper.class
 })
 public interface RosterMapper {
-  RosterDetailResponseDto toDto(Roster roster);
-  Roster toEntity(RosterDetailResponseDto rosterDetailResponseDto);
   List<RosterDetailResponseDto> toDtoList(List<Roster> rosters);
+  RosterDetailResponseDto toDto(Roster roster);
+  Roster toEntity(RosterCreateRequestDto createRequestDto);
 }

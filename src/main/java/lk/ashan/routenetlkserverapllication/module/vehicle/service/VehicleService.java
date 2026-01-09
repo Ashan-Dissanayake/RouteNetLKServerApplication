@@ -7,12 +7,14 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResp
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Conditionrate;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Seatingcapacity;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
-import lk.ashan.routenetlkserverapllication.module.vehicle.repository.SeatingcapacityRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleState;
+import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
+import lk.ashan.routenetlkserverapllication.module.vehicle.validation.VehicleValidationStrategy;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +31,9 @@ import java.util.stream.Stream;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
-    private final SeatingcapacityRepository seatingcapacityRepository;
     private final VehicleMapper vehicleMapper;
+    private final List<VehicleValidationStrategy> validationStrategies;
+    private final VehicleStateFactory vehicleStateFactory;
 
     public List<VehicleDetailResponseDto> getVehicles(){
        return vehicleMapper.toDtoList(vehicleRepository.findAll());
@@ -58,8 +61,8 @@ public class VehicleService {
     @DisableSoftDeleteFilter
     public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request){
 
-        validateVehicleUniquenessForCreate(request);
-        validateSeatingCapacityWithModel(request);
+        // Execute all validation strategies
+        validationStrategies.forEach(strategy -> strategy.validateCreate(request));
 
         Vehicle vehicle = vehicleMapper.toEntity(request);
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
@@ -71,14 +74,29 @@ public class VehicleService {
     @DisableSoftDeleteFilter
     public VehicleDetailResponseDto updateVehicle(@Valid @NotNull VehicleUpdateRequestDto request) {
 
-        Conditionrate currentConditionrate = vehicleRepository.findByMyId(request.getId()).getConditionrate();
-        Vehiclestatus currentStatus = vehicleRepository.findByMyId(request.getId()).getVehiclestatus();
+        validationStrategies.forEach(strategy -> strategy.validateUpdate(request));
+
+        Vehicle existingVehicle = vehicleRepository.findByMyId(request.getId());
+        Conditionrate currentConditionrate = existingVehicle.getConditionrate();
+        Vehiclestatus currentStatus = existingVehicle.getVehiclestatus();
 
         validateConditionRateTransition(currentConditionrate.getName(), request.getConditionrate().getName());
-        validateStatusTransition(currentStatus.getName(), request.getVehiclestatus().getName());
-        validateMileageIncrement(request);
 
+        // State Pattern for Status Transition
+        if (!currentStatus.getName().equalsIgnoreCase(request.getVehiclestatus().getName())) {
+            VehicleState state = vehicleStateFactory.getState(currentStatus.getName());
+            // The State implementation validates the transition
+            // Note: In a full State pattern, the State object might also apply the change,
+            // but here we are using it for validation logic primarily as per requirement to replace the map.
+             // We pass the entity so the State *could* modify it if needed, or just validate.
+            state.transitionTo(existingVehicle, vehicleMapper.toEntity(request).getVehiclestatus());
+        }
+
+        // Mapping updates to entity
         Vehicle vehicle = vehicleMapper.toEntity(request);
+        // Ensure ID is set for update
+        vehicle.setId(request.getId());
+        
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
         return vehicleMapper.toDto(updatedVehicle);
@@ -133,85 +151,6 @@ public class VehicleService {
         }
     }
 
-    private void validateStatusTransition(String currentStatus, String newStatus) {
-
-        if (currentStatus == null || newStatus == null) {
-            throw new IllegalArgumentException("Status cannot be null.");
-        }
-
-        if (currentStatus.equalsIgnoreCase(newStatus)) return;
-
-        currentStatus = currentStatus.trim().toUpperCase();
-        newStatus = newStatus.trim().toUpperCase();
-
-        List<String> allowedStatuses = VALID_STATUS_TRANSITIONS.get(currentStatus);
-
-        if (allowedStatuses == null) {
-            throw new IllegalArgumentException("Unknown current status: " + currentStatus);
-        }
-
-        if (!allowedStatuses.contains(newStatus)) {
-            throw new InvalidStatusTransitionException(
-                    "Invalid status transition from " + currentStatus + " to " + newStatus
-            );
-        }
-    }
-
-    private void validateVehicleUniquenessForCreate(VehicleCreateRequestDto vehicle){
-        if (vehicleRepository.existsByCode(vehicle.getCode())) {
-            throw new ResourceExistsException("Vehicle code already exists.");
-        }
-
-        if (vehicleRepository.existsByNumber(vehicle.getNumber())) {
-            throw new ResourceExistsException("Vehicle number already exists.");
-        }
-
-        if (vehicleRepository.existsByChasisnumber(vehicle.getChasisnumber())) {
-            throw new ResourceExistsException("Vehicle chassis number already exists.");
-        }
-
-        if (vehicleRepository.existsByEnginenumber(vehicle.getEnginenumber())) {
-            throw new ResourceExistsException("Vehicle engine number already exists.");
-        }
-
-        if (vehicleRepository.existsByCodeOrChasisnumber(vehicle.getCode(),vehicle.getChasisnumber())){
-            throw new ResourceExistsException("Code cannot reference a chassis number already used by another vehicle");
-        }
-
-        if (vehicleRepository.existsByCodeOrEnginenumber(vehicle.getCode(),vehicle.getEnginenumber())){
-            throw new ResourceExistsException("Code cannot reference a engine number already used by another vehicle");
-        }
-
-    }
-
-    private void validateSeatingCapacityWithModel(VehicleCreateRequestDto vehicle) {
-
-        Integer makeId = vehicle.getMake().getId();
-        Integer amount = vehicle.getSeatingcapacity().getAmount();
-
-        // 1. Get all allowed capacities for this model
-        List<Seatingcapacity> allowedCapacities = seatingcapacityRepository.findByMakeId(makeId);
-
-        if (allowedCapacities.isEmpty()) {
-            throw new ResourceNotFoundException("No seating capacities found for the selected model.");
-        }
-
-        // 2. Check if requested capacity is one of them
-        boolean isValid = allowedCapacities.stream()
-                .anyMatch(s -> s.getAmount().equals(amount));
-
-        if (!isValid) {
-            throw new InvalidSeatingCapacityException(
-                    "Selected seating capacity is not valid for the chosen model."
-            );
-        }
-    }
-
-    private void validateMileageIncrement(VehicleUpdateRequestDto vehicle){
-        Integer currentMileage = vehicleRepository.findByMyId(vehicle.getId()).getMileage();
-        if (vehicle.getMileage() <currentMileage) throw new InvalidMileageException("Mileage can not be Minus value");
-    }
-
     private static final Map<String, List<String>> VALID_CONDITION_TRANSITIONS = Map.of(
             "EXCELLENT", List.of("GOOD"),
             "GOOD",      List.of("FAIR"),
@@ -219,15 +158,5 @@ public class VehicleService {
             "POOR",      List.of("CRITICAL"),
             "CRITICAL",  List.of() // terminal state
     );
-
-    private static final Map<String, List<String>> VALID_STATUS_TRANSITIONS = Map.of(
-            "AVAILABLE", List.of("IN SERVICE", "RESERVED", "UNDER MAINTENANCE"),
-            "IN SERVICE", List.of("AVAILABLE", "UNDER MAINTENANCE", "OUT OF SERVICE"),
-            "UNDER MAINTENANCE", List.of("AVAILABLE", "OUT OF SERVICE", "DECOMMISSIONED"),
-            "OUT OF SERVICE", List.of("UNDER MAINTENANCE", "DECOMMISSIONED"),
-            "RESERVED", List.of("IN SERVICE", "AVAILABLE"),
-            "DECOMMISSIONED", List.of() // terminal state
-    );
-
 
 }

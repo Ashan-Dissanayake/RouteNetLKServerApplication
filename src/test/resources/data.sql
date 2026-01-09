@@ -226,3 +226,6 @@ INSERT INTO conductor (
      (9,'CON-2025-001','2025-01-01','2025-06-30',3,1),
      (11,'CON-2025-002','2025-02-01','2025-07-31',2,2),
      (14,'CON-2025-004','2025-08-01','2026-02-01',3,1);
+
+INSERT INTO shiftstatus (name) VALUES ('Active'),('Inactive');
+INSERT INTO shifttype (name) VALUES ('Early Morning'),('Morning'),('Day'),('Evening'),('Night'),('Overnight');

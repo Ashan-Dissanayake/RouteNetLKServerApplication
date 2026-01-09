@@ -6,17 +6,17 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.ConductorMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Routefamiliaritylevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
+import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
+import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.ConductorValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,7 +26,8 @@ public class ConductorService {
 
     private final ConductorRepository conductorRepository;
     private final ConductorMapper conductorMapper;
-    private final CrewEligibilityService crewEligibilityService;
+    private final List<ConductorValidationStrategy> validationStrategies;
+    private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
 
     public List<ConductorDetailResponseDto> getConductors(){
        return conductorMapper.toDtoList(conductorRepository.findAll());
@@ -52,8 +53,8 @@ public class ConductorService {
     }
 
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
-        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
-        validateUniqueness(dto);
+        
+        validationStrategies.forEach(s -> s.validateCreate(dto));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new InvalidStatusException("New conductor must have status 'ELIGIBLE'");
@@ -69,29 +70,21 @@ public class ConductorService {
 
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
+        validationStrategies.forEach(s -> s.validateUpdate(dto));
+
         Conductor existingConductor =  conductorRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
 
-        crewEligibilityService.validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
-        crewEligibilityService.validateRouteFamiliarityTransition(existingConductor.getRoutefamiliaritylevel().getName(),dto.getRoutefamiliaritylevel().getName());
+        Routefamiliaritylevel currentLevel = existingConductor.getRoutefamiliaritylevel();
 
-        validateUniqueness(dto);
+        // State Pattern Transition
+        if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {
+             RouteFamiliarityState state = routeFamiliarityStateFactory.getState(currentLevel.getName());
+             state.transitionTo(existingConductor.getEmployee(), conductorMapper.toEntity(dto).getRoutefamiliaritylevel());
+        }
 
         Conductor conductor = conductorMapper.toEntity(dto);
         return conductorMapper.toDto(conductorRepository.save(conductor));
-    }
-
-    private void validateUniqueness(ConductorCreateRequestDto dto) {
-        if (conductorRepository.existsByNumber(dto.getNumber())) {
-            throw new ValidationException("Conductor number already exists");
-        }
-    }
-
-    private void validateUniqueness(ConductorUpdateRequestDto dto) {
-        // Driver number uniqueness
-        if (conductorRepository.existsByNumberAndIdNot(dto.getNumber(), dto.getId())) {
-            throw new ResourceExistsException("Conductor number already exists");
-        }
     }
 
 }
