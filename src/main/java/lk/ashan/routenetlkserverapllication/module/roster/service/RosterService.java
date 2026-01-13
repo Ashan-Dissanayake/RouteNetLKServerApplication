@@ -1,11 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.validation.RosterValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class RosterService {
 
     private final RosterRepository rosterRepository;
     private final RosterMapper rosterMapper;
+    private final List<RosterValidationStrategy> validationStrategies;
+
 
     public List<RosterDetailResponseDto> getRosters() {
         List<Roster> rosters =rosterRepository.findAll();
@@ -45,18 +49,11 @@ public class RosterService {
 
     @Transactional
     public RosterDetailResponseDto createRoster(@NotNull RosterCreateRequestDto createRequestDto){
-        validateUniqueness(createRequestDto);
+        validationStrategies.forEach(strategy -> strategy.validateCreate(createRequestDto));
 
         Roster roster = rosterMapper.toEntity(createRequestDto);
         Roster savedRoster = rosterRepository.save(roster);
         return rosterMapper.toDto(savedRoster);
-    }
-
-    public void validateUniqueness(RosterCreateRequestDto createRequestDto){
-        boolean isExisted = rosterRepository.existsByBranch_IdAndDoroster(createRequestDto.getBranch().getId(),createRequestDto.getDoroster());
-        if (isExisted){
-            throw new ResourceExistsException("Roster already existed");
-        }
     }
 
 }
