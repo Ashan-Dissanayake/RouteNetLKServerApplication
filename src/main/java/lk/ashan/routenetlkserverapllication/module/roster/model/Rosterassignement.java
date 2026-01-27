@@ -3,9 +3,6 @@ package lk.ashan.routenetlkserverapllication.module.roster.model;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lombok.*;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.Objects;
 
