@@ -1,14 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.RosterValidationStrategy;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,13 +47,14 @@ public class RosterService {
     }
 
     @Transactional
-    public RosterDetailResponseDto createRoster(@NotNull RosterCreateRequestDto createRequestDto){
+    public RosterDetailResponseDto createRoster(@Valid @NotNull RosterCreateRequestDto createRequestDto){
         validationStrategies.forEach(strategy -> strategy.validateCreate(createRequestDto));
 
         Roster roster = rosterMapper.toEntity(createRequestDto);
         Roster savedRoster = rosterRepository.save(roster);
         return rosterMapper.toDto(savedRoster);
     }
+
 
 }
 

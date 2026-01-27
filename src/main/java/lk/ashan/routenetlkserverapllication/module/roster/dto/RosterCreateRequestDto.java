@@ -9,5 +9,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class RosterCreateRequestDto extends RosterRequestDto{
-
+private Integer id;
 }

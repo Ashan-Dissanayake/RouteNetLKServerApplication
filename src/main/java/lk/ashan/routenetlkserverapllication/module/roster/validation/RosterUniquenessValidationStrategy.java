@@ -19,4 +19,5 @@ public class RosterUniquenessValidationStrategy implements RosterValidationStrat
             throw new ResourceExistsException("Roster already existed");
         }
     }
+
 }

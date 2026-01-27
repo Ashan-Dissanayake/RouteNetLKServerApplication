@@ -92,4 +92,17 @@ class RosterControllerTest {
                         "Roster already existed"
                 ));
     }
+
+    @Test
+    void solveRoster_shouldFail_whenRosterNotFound() throws Exception{
+
+        Integer rosterId = 8;
+
+        mockMvc.perform(post(apiUrl+"/{id}/solve",rosterId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "Roster not found"
+                ));
+    }
 }

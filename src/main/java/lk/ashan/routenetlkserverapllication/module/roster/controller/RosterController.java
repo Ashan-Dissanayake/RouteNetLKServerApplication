@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestD
 import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterSolverService;
 import lk.ashan.routenetlkserverapllication.module.roster.service.RosterService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -21,6 +22,8 @@ import java.util.List;
 public class RosterController {
 
     private final RosterService rosterService;
+    private final RosterSolverService rosterSolverService;
+
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RosterDetailResponseDto>>> get(
@@ -39,6 +42,12 @@ public class RosterController {
     {
         RosterDetailResponseDto savedRoster = rosterService.createRoster(rosterCreateRequestDto);
         return APIResponseBuilder.postResponse(savedRoster, savedRoster.getId());
+    }
+
+    @PostMapping("/{id}/solve")
+    public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> solveRoster(@PathVariable Integer id) {
+        rosterSolverService.solveRoster(id);
+        return APIResponseBuilder.postResponse(null,id);
     }
 
 }

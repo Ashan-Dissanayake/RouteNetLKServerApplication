@@ -54,7 +54,6 @@ class VehicleControllerTest {
                 .andExpect(status().isCreated());
     }
 
-
     @Test
     void createVehicle_shouldFail_whenCodeIsMissing() throws Exception{
 
