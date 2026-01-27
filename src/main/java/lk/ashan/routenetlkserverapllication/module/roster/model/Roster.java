@@ -35,6 +35,10 @@ public class Roster {
     @JoinColumn(name = "rosterstatus_id", referencedColumnName = "id", nullable = false)
     private Rosterstatus rosterstatus;
 
+    @ManyToOne
+    @JoinColumn(name = "route_id", referencedColumnName = "id", nullable = false)
+    private Route route;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

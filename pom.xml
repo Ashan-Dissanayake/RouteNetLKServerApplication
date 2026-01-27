@@ -71,21 +71,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.optaplanner</groupId>
-			<artifactId>optaplanner-spring-boot-starter</artifactId>
-			<version>10.1.0</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.optaplanner</groupId>
-			<artifactId>optaplanner-test</artifactId>
-			<version>10.1.0</version>
-			<scope>test</scope>
-		</dependency>
-
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
@@ -95,6 +80,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
