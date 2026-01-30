@@ -28,8 +28,6 @@ public class RosterService {
     private final RosterRepository rosterRepository;
     private final RosterMapper rosterMapper;
     private final List<RosterValidationStrategy> validationStrategies;
-    private final RosterAssignmentScheduler rosterAssignmentScheduler;
-
 
     public List<RosterDetailResponseDto> getRosters() {
         List<Roster> rosters =rosterRepository.findAll();
@@ -59,13 +57,6 @@ public class RosterService {
         Roster savedRoster = rosterRepository.save(roster);
         return rosterMapper.toDto(savedRoster);
     }
-
-    @Transactional
-    public RosterAssignmentSolution solveRoster(String branchID,String date){
-
-        return rosterAssignmentScheduler.manualAssignment(Integer.parseInt(branchID), LocalDate.parse(date));
-    }
-
 
 }
 

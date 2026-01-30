@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentScheduler;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentService;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.service.RosterService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.PublicKey;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,7 @@ import java.util.Objects;
 public class RosterController {
 
     private final RosterService rosterService;
+    private final RosterAssignmentService rosterAssignmentService;
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RosterDetailResponseDto>>> get(
@@ -49,7 +52,7 @@ public class RosterController {
         String branchId = params.get("branchId");
         String date = params.get("date");
 
-        RosterAssignmentSolution solution = rosterService.solveRoster(branchId,date);
+        RosterAssignmentSolution solution = rosterAssignmentService.executeAssignment(Integer.parseInt(branchId), LocalDate.parse(date));
         return APIResponseBuilder.postResponse(solution, solution.getTotalSlots());
     }
 
