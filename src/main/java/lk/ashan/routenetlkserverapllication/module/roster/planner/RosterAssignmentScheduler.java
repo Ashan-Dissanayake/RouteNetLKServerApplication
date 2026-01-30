@@ -60,24 +60,26 @@ public class RosterAssignmentScheduler {
      * Manual trigger for roster assignment (for testing or manual runs).
      * Can be called via REST endpoint or admin interface.
      */
-    public void manualAssignment(Integer branchId, LocalDate date) {
+    public RosterAssignmentSolution manualAssignment(Integer branchId, LocalDate date) {
         log.info("Manual roster assignment triggered for branch {} on {}", branchId, date);
 
         try {
-            RosterAssignmentSolution solution =
-                    rosterAssignmentService.executeAssignment(branchId, date);
+            RosterAssignmentSolution solution = rosterAssignmentService.executeAssignment(branchId, date);
 
             if (solution != null) {
                 log.info("Manual assignment completed. Score: {}", solution.getScore());
+
             } else {
                 log.info("No rosters to process for the given criteria");
             }
+            return solution;
 
         } catch (Exception e) {
             log.error("Manual assignment failed", e);
             throw new RuntimeException("Manual assignment failed: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Get list of branches to process.

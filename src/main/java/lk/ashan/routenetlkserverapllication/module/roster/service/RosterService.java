@@ -6,12 +6,16 @@ import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateReques
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentScheduler;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentService;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.RosterValidationStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,7 @@ public class RosterService {
     private final RosterRepository rosterRepository;
     private final RosterMapper rosterMapper;
     private final List<RosterValidationStrategy> validationStrategies;
+    private final RosterAssignmentScheduler rosterAssignmentScheduler;
 
 
     public List<RosterDetailResponseDto> getRosters() {
@@ -53,6 +58,12 @@ public class RosterService {
         Roster roster = rosterMapper.toEntity(createRequestDto);
         Roster savedRoster = rosterRepository.save(roster);
         return rosterMapper.toDto(savedRoster);
+    }
+
+    @Transactional
+    public RosterAssignmentSolution solveRoster(String branchID,String date){
+
+        return rosterAssignmentScheduler.manualAssignment(Integer.parseInt(branchID), LocalDate.parse(date));
     }
 
 
