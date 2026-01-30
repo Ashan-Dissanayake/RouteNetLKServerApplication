@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RouteMapper {
-  @Mapping(target = "name", expression = "java(route.getFrom() + \"-\" + route.getTo())")
+  @Mapping(target = "name", expression = "java(route.getSource() + \"-\" + route.getDestination())")
   RouteDto toDto(Route route);
   List<RouteDto> toDtoList(List<Route> routes);
 }

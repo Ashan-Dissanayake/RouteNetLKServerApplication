@@ -242,5 +242,15 @@ INSERT INTO shift (tostarted,toend,shifttype_id,shiftstatus_id) VALUES
 
 INSERT INTO rosterstatus(name) VALUES ('Draft'),('Solved'),('Locked');
 
-INSERT INTO roster (doroster,shift_id,branch_id,rosterstatus_id) VALUES
-             ('2026-08-12',5,1,1)
+INSERT INTO route(number,source,destination,distance,duration) VALUES
+                                                                   ('G001','Gampaha','Kandy',115,180),
+                                                                   ('C001','Colombo','Gampaha',35,60),
+                                                                   ('C002','Colombo','Galle',130,210);
+
+INSERT INTO roster (doroster,shift_id,branch_id,rosterstatus_id,route_id) VALUES
+             ('2026-08-12',1,1,1,2),
+             ('2026-08-12',5,1,1,3);
+
+INSERT INTO rosterassignementstatus(name) VALUES ('Planned'),('Assigned'),('Confirmed'),('Cancelled');
+
+

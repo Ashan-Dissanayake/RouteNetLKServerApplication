@@ -3,6 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.roster.model;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lombok.*;
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 
 import java.util.Objects;
@@ -21,10 +23,14 @@ public class Rosterassignement {
     @ManyToOne
     @JoinColumn(name = "roster_id", referencedColumnName = "id", nullable = false)
     private Roster roster;
+
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
 
+    @ManyToOne
+    @JoinColumn(name = "rosterassignementstatus_id", referencedColumnName = "id", nullable = false)
+    private Rosterassignementstatus rosterassignementstatus;
 
     @Override
     public boolean equals(Object o) {

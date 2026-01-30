@@ -21,11 +21,11 @@ public class Route {
     @Column(name = "number")
     private String number;
     @Basic
-    @Column(name = "from")
-    private String from;
+    @Column(name = "source")
+    private String source;
     @Basic
-    @Column(name = "to")
-    private String to;
+    @Column(name = "destination")
+    private String destination;
 
     @Basic
     @Column(name = "distance")
@@ -42,15 +42,15 @@ public class Route {
         Route that = (Route) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(number, that.number)
-                && Objects.equals(from, that.from)
-                && Objects.equals(to, that.to)
+                && Objects.equals(source, that.source)
+                && Objects.equals(destination, that.destination)
                 && Objects.equals(distance, that.distance)
                 && Objects.equals(duration, that.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number,from,to,distance,duration);
+        return Objects.hash(id, number,source,destination,distance,duration);
     }
 
 }

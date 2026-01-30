@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.config.factory;
 
 
 import lk.ashan.routenetlkserverapllication.module.roster.dto.*;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignementstatus;
 
 import java.time.LocalDate;
 
@@ -21,6 +22,14 @@ public class RosterDtoFactory {
 
     public static ShiftDto createShiftDto(int id) {
         return ShiftDto.builder().id(id).build();
+    }
+
+    public static RouteDto createRouteDto(int id,String number,String name){
+        return RouteDto.builder().id(id).number(number).name(name).build();
+    }
+
+    public static RosterAssignmentStatusDto createRosterAssigmentStatusDto(int id, String name){
+        return RosterAssignmentStatusDto.builder().id(id).name(name).build();
     }
 
     public static RosterCreateRequestDto createUniqueRosterCreateRequest(){

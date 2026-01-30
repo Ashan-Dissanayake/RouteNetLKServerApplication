@@ -51,6 +51,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findEmployeesWithoutConductor(@Param("designation") String designation);
 
 
+    List<Employee> findByDeletedFalseAndEmployeestatus_NameAndBranch_IdAndDesignation_IdIn(
+            String employeeStatus,
+            Integer branchId,
+            List<Integer> designationIds
+    );
+
 
 
 }
