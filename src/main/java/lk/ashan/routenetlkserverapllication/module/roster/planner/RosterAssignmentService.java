@@ -7,6 +7,10 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignement;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignementstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeePlanning;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeePlanningMapper;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentPlanning;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
@@ -197,7 +201,7 @@ public class RosterAssignmentService {
 
         // Get status entities
         Rosterassignementstatus assignedStatus =
-                rosterAssignmentStatusRepository.findByName("Assigned");
+                rosterAssignmentStatusRepository.findByName("Planned");
         Rosterstatus solvedStatus =
                 rosterStatusRepository.findByName("Solved");
 
