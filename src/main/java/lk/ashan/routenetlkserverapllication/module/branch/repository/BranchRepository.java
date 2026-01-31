@@ -36,4 +36,6 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
     @Query("UPDATE Branch  b SET b.deleted=true WHERE b.id in :ids")
     void removeAll(@Param("ids")List<Integer>ids);
 
+    List<Branch> findByDeletedFalseAndBranchstatus_Name(String branchStatusName);
+
 }

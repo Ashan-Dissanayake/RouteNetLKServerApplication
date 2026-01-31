@@ -2,10 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.config.factory.DriverDtoFactory;
-import lk.ashan.routenetlkserverapllication.config.factory.DtoFactory;
 import lk.ashan.routenetlkserverapllication.config.factory.RosterDtoFactory;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -105,4 +103,24 @@ class RosterControllerTest {
                         "Roster not found"
                 ));
     }
+
+    @Test
+    void confirmRoster_shouldFail_whenRosterNotFound() throws Exception {
+
+        RosterConfirmationRequestDto request = RosterDtoFactory.CreateConfirmationRequestDto(
+                2,
+                LocalDate.of(2026,1,12)
+                ,true
+        );
+
+        mockMvc.perform(post(apiUrl+"/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(ValidationResultMatcher.expectValidationError(
+                        "No SOLVED roster found for given branch and date"
+                ));
+    }
+
+
 }

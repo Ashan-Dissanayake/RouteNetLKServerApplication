@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.repository;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -15,5 +16,7 @@ public interface RosterRepository extends JpaRepository<Roster, Integer> {
             LocalDate doroster,
             String rosterStatusName
     );
+
+    Roster findByBranch_IdAndRosterstatus_NameAndDoroster(Integer branchId,String rosterStatus,LocalDate doRoster);
 
 }

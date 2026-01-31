@@ -41,4 +41,13 @@ public class RosterDtoFactory {
                 .build();
     }
 
+    public static RosterConfirmationRequestDto CreateConfirmationRequestDto(Integer branchId, LocalDate date,Boolean isConfirm){
+       return RosterConfirmationRequestDto.builder()
+                        .branchId(branchId)
+                        .date(date)
+                        .confirm(isConfirm)
+                        .build();
+    }
+
+
 }

@@ -13,8 +13,6 @@ public class RejectState implements RosterState {
     @Override
     public void transitionTo(Roster roster, Rosterstatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
-        if ("DRAFT".equals(newStatusName)) return;
-
         if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStatusTransitionException(
                 "Invalid status transition from REJECTED to " + newStatusName

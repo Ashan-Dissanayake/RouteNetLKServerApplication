@@ -1,5 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -14,6 +17,7 @@ import java.util.List;
 public class RosterAssignmentScheduler {
 
     private final RosterAssignmentService rosterAssignmentService;
+    private final BranchRepository branchRepository;
 
     /**
      * Execute daily roster assignment at 1:00 AM.
@@ -85,14 +89,10 @@ public class RosterAssignmentScheduler {
      * Can be configured via properties or loaded from database.
      */
     private List<Integer> getBranchesToProcess() {
-        // TODO: Load from database or configuration
-        // For now, return hardcoded list
-        return List.of(1, 2, 3, 4, 5);
-
         // Alternative: Load from database
-        // return branchRepository.findByDeletedFalseAndBranchstatus_Name("Active")
-        //     .stream()
-        //     .map(Branch::getId)
-        //     .collect(Collectors.toList());
+         return branchRepository.findByDeletedFalseAndBranchstatus_Name("Active")
+             .stream()
+             .map(Branch::getId)
+             .collect(Collectors.toList());
     }
 }

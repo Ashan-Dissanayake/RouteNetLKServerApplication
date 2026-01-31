@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
 import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentScheduler;
@@ -55,5 +57,16 @@ public class RosterController {
         RosterAssignmentSolution solution = rosterAssignmentService.executeAssignment(Integer.parseInt(branchId), LocalDate.parse(date));
         return APIResponseBuilder.postResponse(solution, solution.getTotalSlots());
     }
+
+    @PostMapping(value = "/confirm")
+    public ResponseEntity<APISuccessResponse<RosterConfirmationResponseDto>> confirm(
+            @RequestBody @Valid RosterConfirmationRequestDto confirmationRequestDto
+    ) {
+
+        RosterConfirmationResponseDto response =
+                rosterService.confirmRoster(confirmationRequestDto);
+        return APIResponseBuilder.putResponse(response,response.getRosterId());
+    }
+
 
 }

@@ -248,9 +248,17 @@ INSERT INTO route(number,source,destination,distance,duration) VALUES
                                                                    ('C002','Colombo','Galle',130,210);
 
 INSERT INTO roster (doroster,shift_id,branch_id,rosterstatus_id,route_id) VALUES
-             ('2026-08-12',1,1,1,2),
-             ('2026-08-12',5,1,1,3);
+             ('2026-02-02', 1, 1, 2, 2),
+             ('2026-03-01', 1, 1, 1, 2),
+             ('2026-03-05', 1, 1, 2, 2),
+             ('2026-03-10', 1, 1, 2, 2),
+             ('2026-03-15', 1, 1, 3, 2),
+             ('2026-03-20', 1, 1, 2, 2);
 
-INSERT INTO rosterassignementstatus(name) VALUES ('Planned'),('Assigned'),('Confirmed'),('Cancelled');
+INSERT INTO rosterassignementstatus(name) VALUES ('Planned'),('Confirmed'),('Cancelled');
+
+INSERT INTO rosterassignement (roster_id,employee_id,rosterassignementstatus_id) VALUES
+(1, 22, 1),(5, 22, 2),(6, 22, 1);
+
 
 
