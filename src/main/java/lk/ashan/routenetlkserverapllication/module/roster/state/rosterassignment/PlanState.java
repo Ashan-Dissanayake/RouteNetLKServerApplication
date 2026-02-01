@@ -18,5 +18,6 @@ public class PlanState implements RosterAssignmentState {
                 "Invalid status transition from PLANNED to " + newStatusName
             );
         }
+        rosterassignement.setRosterassignementstatus(newStatus);
     }
 }

@@ -18,5 +18,6 @@ public class SolveState implements RosterState {
                 "Invalid status transition from Solved to " + newStatusName
             );
         }
+        roster.setRosterstatus(newStatus);
     }
 }

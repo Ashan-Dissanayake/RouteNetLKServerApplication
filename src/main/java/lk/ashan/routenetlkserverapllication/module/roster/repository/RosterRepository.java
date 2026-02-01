@@ -19,4 +19,5 @@ public interface RosterRepository extends JpaRepository<Roster, Integer> {
 
     Roster findByBranch_IdAndRosterstatus_NameAndDoroster(Integer branchId,String rosterStatus,LocalDate doRoster);
 
+    
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ConfirmState implements RosterAssignmentState {
     
-    private static final List<String> ALLOWED = List.of("CANCELLED");
+    private static final List<String> ALLOWED = List.of("CONFIRMED");
 
     @Override
     public void transitionTo(Rosterassignement rosterassignement, Rosterassignementstatus newStatus) {
@@ -18,5 +18,7 @@ public class ConfirmState implements RosterAssignmentState {
                 "Invalid status transition from CONFIRMED to " + newStatusName
             );
         }
+        rosterassignement.setRosterassignementstatus(newStatus);
+
     }
 }

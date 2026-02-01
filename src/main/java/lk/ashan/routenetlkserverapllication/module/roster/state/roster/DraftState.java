@@ -18,5 +18,6 @@ public class DraftState implements RosterState {
                 "Invalid status transition from DRAFT to " + newStatusName
             );
         }
+        roster.setRosterstatus(newStatus);
     }
 }

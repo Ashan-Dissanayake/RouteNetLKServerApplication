@@ -83,7 +83,6 @@ public class RosterAssignmentScheduler {
         }
     }
 
-
     /**
      * Get list of branches to process.
      * Can be configured via properties or loaded from database.

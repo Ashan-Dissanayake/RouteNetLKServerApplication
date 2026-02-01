@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lombok.Getter;
 import lombok.Setter;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;

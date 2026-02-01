@@ -143,7 +143,7 @@ public class RosterService {
                         );
 
                 assignmentState.transitionTo(assignment, targetAssignmentStatus);
-                assignment.setRosterassignementstatus(targetAssignmentStatus);
+//                assignment.setRosterassignementstatus(targetAssignmentStatus);
             });
         }
 

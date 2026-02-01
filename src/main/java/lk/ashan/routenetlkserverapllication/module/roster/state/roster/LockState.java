@@ -8,17 +8,16 @@ import java.util.List;
 
 public class LockState implements RosterState {
     
-    private static final List<String> ALLOWED = List.of("REJECTED");
+    private static final List<String> ALLOWED = List.of("LOCKED");
 
     @Override
     public void transitionTo(Roster roster, Rosterstatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
-        if ("REJECTED".equals(newStatusName)) return;
-
         if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStatusTransitionException(
-                "Invalid status transition from SOLVED to " + newStatusName
+                "Invalid status transition from LOCKED to " + newStatusName
             );
         }
+        roster.setRosterstatus(newStatus);
     }
 }

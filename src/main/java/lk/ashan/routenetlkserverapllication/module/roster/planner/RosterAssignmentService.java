@@ -15,6 +15,10 @@ import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssig
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterState;
+import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStateFactory;
+import lk.ashan.routenetlkserverapllication.module.roster.state.rosterassignment.RosterAssignmentStateFactory;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.optaplanner.core.api.solver.Solver;
@@ -40,6 +44,9 @@ public class RosterAssignmentService {
     private final RosterAssignmentStatusRepository rosterAssignmentStatusRepository;
     private final EmployeePlanningMapper employeePlanningMapper;
     private final SolverFactory<RosterAssignmentSolution> solverFactory;
+    private final RosterStateFactory rosterStateFactory;
+    private final RosterAssignmentStateFactory rosterAssignmentStateFactory;
+
 
     /**
      * Load eligible employees for roster assignment.
@@ -297,4 +304,41 @@ public class RosterAssignmentService {
             throw new RuntimeException("Roster assignment failed: " + e.getMessage(), e);
         }
     }
+
+    @Transactional
+    public List<Roster> resetRejectedRosters(Integer branchId, LocalDate date) {
+
+        log.info("Resetting rejected rosters for branch {} on {}", branchId, date);
+
+        // Step 1: Fetch rejected rosters
+        List<Roster> rejectedRosters = rosterRepository
+                .findByBranch_IdAndDorosterAndRosterstatus_Name(branchId, date, "Rejected");
+
+        if (rejectedRosters.isEmpty()) {
+            log.warn("No rejected rosters found for branch {} on {}", branchId, date);
+            throw new ResourceNotFoundException("No rejected rosters found for given branch and date");
+        }
+
+        // Step 2: Target status = Draft
+        Rosterstatus draftStatus = rosterStatusRepository.findByName("Draft");
+        if (draftStatus == null) {
+            throw new IllegalStateException("RosterStatus 'Draft' not found");
+        }
+
+        // Step 3: Get REJECTED roster state
+        RosterState rejectedState = rosterStateFactory.getState("REJECTED");
+
+        // Step 4: Reset roster lifecycle ONLY
+        rejectedRosters.forEach(roster -> {
+            rejectedState.transitionTo(roster, draftStatus);
+        });
+
+
+        // Step 5: Persist
+        rosterRepository.saveAll(rejectedRosters);
+
+        log.info("Successfully reset {} rejected rosters to DRAFT status", rejectedRosters.size());
+        return rejectedRosters;
+    }
+
 }

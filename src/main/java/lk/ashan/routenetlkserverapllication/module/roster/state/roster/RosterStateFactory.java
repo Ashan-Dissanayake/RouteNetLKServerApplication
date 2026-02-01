@@ -13,11 +13,12 @@ public class RosterStateFactory {
     public RosterStateFactory() {
         // Initialize map with suppliers for each state
         stateMap = Map.of(
-            "DRAFT", DraftState::new,
-            "SOLVED", SolveState::new,
-            "LOCKED", LockState::new,
-            "REJECTED", RejectState::new
+                "DRAFT", DraftState::new,
+                "SOLVED", SolveState::new,
+                "LOCKED", LockState::new,
+                "REJECTED", RejectState::new
         );
+
     }
 
     public RosterState getState(String statusName) {

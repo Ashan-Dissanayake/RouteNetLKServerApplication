@@ -18,5 +18,6 @@ public class RejectState implements RosterState {
                 "Invalid status transition from REJECTED to " + newStatusName
             );
         }
+        roster.setRosterstatus(newStatus);
     }
 }

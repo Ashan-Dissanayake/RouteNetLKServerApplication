@@ -1,10 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationResponseDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.*;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentScheduler;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentService;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolution;
@@ -13,6 +11,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.engine.spi.Resolution;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +53,8 @@ public class RosterController {
         String branchId = params.get("branchId");
         String date = params.get("date");
 
-        RosterAssignmentSolution solution = rosterAssignmentService.executeAssignment(Integer.parseInt(branchId), LocalDate.parse(date));
-        return APIResponseBuilder.postResponse(solution, solution.getTotalSlots());
+        RosterAssignmentSolution responseDto = rosterAssignmentService.executeAssignment(Integer.parseInt(branchId), LocalDate.parse(date));
+        return APIResponseBuilder.putResponse(responseDto,responseDto.getTotalSlots());
     }
 
     @PostMapping("/confirm")
@@ -76,6 +75,15 @@ public class RosterController {
                 rosterService.rejectRoster(confirmationRequestDto);
 
         return APIResponseBuilder.putResponse(response, response.getRosterId());
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<APISuccessResponse<RosterResetResponseDto>> resetRejected(@RequestParam HashMap<String, String> params) {
+        String branchId = params.get("branchId");
+        String date = params.get("date");
+
+        List<Roster> rosters = rosterAssignmentService.resetRejectedRosters(Integer.parseInt(branchId), LocalDate.parse(date));
+        return APIResponseBuilder.postResponse(null, rosters.size());
     }
 
 
