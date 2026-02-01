@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.state;
+package lk.ashan.routenetlkserverapllication.module.roster.state.roster;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;

@@ -8,12 +8,16 @@ import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateReques
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignementstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.roster.state.RosterState;
-import lk.ashan.routenetlkserverapllication.module.roster.state.RosterStateFactory;
+import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterState;
+import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStateFactory;
+import lk.ashan.routenetlkserverapllication.module.roster.state.rosterassignment.RosterAssignmentState;
+import lk.ashan.routenetlkserverapllication.module.roster.state.rosterassignment.RosterAssignmentStateFactory;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.RosterValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +37,10 @@ public class RosterService {
     private final RosterMapper rosterMapper;
     private final List<RosterValidationStrategy> validationStrategies;
     private final RosterStatusRepository rosterStatusRepository;
+    private final RosterAssignmentStatusRepository rosterAssignmentStatusRepository;
     private final RosterAssignmentRepository rosterAssignmentRepository;
     private final RosterStateFactory rosterStateFactory;
+    private final RosterAssignmentStateFactory rosterAssignmentStateFactory;
 
     public List<RosterDetailResponseDto> getRosters() {
         List<Roster> rosters =rosterRepository.findAll();
@@ -77,23 +83,42 @@ public class RosterService {
                 );
 
         if (existingRoster == null) {
-            throw new ResourceNotFoundException("No SOLVED roster found for given branch and date");
+            throw new ResourceNotFoundException(
+                    "No SOLVED roster found for given branch and date"
+            );
         }
 
-        RosterState rosterState =
-                rosterStateFactory.getState(existingRoster.getRosterstatus().getName());
-
         if (confirmationRequestDto.getConfirm()) {
+
+            // ---- Roster state transition ----
+            RosterState rosterState =
+                    rosterStateFactory.getState(
+                            existingRoster.getRosterstatus().getName()
+                    );
 
             Rosterstatus lockedStatus =
                     rosterStatusRepository.findByName("Locked");
 
             rosterState.transitionTo(existingRoster, lockedStatus);
-
             existingRoster.setRosterstatus(lockedStatus);
 
-            rosterAssignmentRepository
-                    .updateStatusByRosterId(existingRoster.getId(), "Confirmed");
+            // ---- Assignment state transition ----
+            Rosterassignementstatus confirmedStatus =
+                    rosterAssignmentStatusRepository.findByName("Confirmed");
+
+            existingRoster.getRosterassignements().forEach(assignment -> {
+
+                RosterAssignmentState assignmentState =
+                        rosterAssignmentStateFactory.getState(
+                                assignment.getRosterassignementstatus().getName()
+                        );
+
+                // Validate transition
+                assignmentState.transitionTo(assignment, confirmedStatus);
+
+                // Apply transition
+                assignment.setRosterassignementstatus(confirmedStatus);
+            });
         }
 
         return RosterConfirmationResponseDto.builder()
@@ -103,8 +128,5 @@ public class RosterService {
                 .message("Roster confirmed successfully")
                 .build();
     }
-
-
-
 }
 

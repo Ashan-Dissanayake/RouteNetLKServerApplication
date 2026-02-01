@@ -5,6 +5,10 @@ import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.RosterDtoFactory;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterConfirmationRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignementstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,6 +26,8 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +44,8 @@ class RosterControllerTest {
     private ObjectMapper objectMapper;
 
     private static final String apiUrl = "/rosters";
+    @Autowired
+    private RosterRepository rosterRepository;
 
     @ParameterizedTest
     @MethodSource("missingFieldProvider")
@@ -121,6 +129,5 @@ class RosterControllerTest {
                         "No SOLVED roster found for given branch and date"
                 ));
     }
-
 
 }

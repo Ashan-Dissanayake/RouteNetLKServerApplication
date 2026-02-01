@@ -29,7 +29,7 @@ public class Roster {
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
-    @OneToMany(mappedBy = "roster")
+    @OneToMany(mappedBy = "roster",cascade = CascadeType.ALL,orphanRemoval = true)
     private Collection<Rosterassignement> rosterassignements;
     @ManyToOne
     @JoinColumn(name = "rosterstatus_id", referencedColumnName = "id", nullable = false)
