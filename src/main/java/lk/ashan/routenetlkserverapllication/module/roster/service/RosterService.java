@@ -8,6 +8,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateReques
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignement;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterassignementstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterAssignmentRepository;
@@ -21,9 +22,11 @@ import lk.ashan.routenetlkserverapllication.module.roster.state.rosterassignment
 import lk.ashan.routenetlkserverapllication.module.roster.validation.RosterValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.drools.base.rule.Collect;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,12 +77,41 @@ public class RosterService {
     @Transactional
     public RosterConfirmationResponseDto confirmRoster(
             @Valid @NotNull RosterConfirmationRequestDto confirmationRequestDto) {
+        return processRosterConfirmation(
+                confirmationRequestDto,
+                true,
+                "Locked",
+                "Confirmed",
+                "Roster confirmed successfully"
+        );
+    }
 
-        Roster existingRoster =
-                rosterRepository.findByBranch_IdAndRosterstatus_NameAndDoroster(
-                        confirmationRequestDto.getBranchId(),
+    @Transactional
+    public RosterConfirmationResponseDto rejectRoster(
+            @Valid @NotNull RosterConfirmationRequestDto confirmationRequestDto) {
+        return processRosterConfirmation(
+                confirmationRequestDto,
+                false,
+                "Rejected",
+                "Cancelled",
+                "Roster rejected successfully"
+        );
+    }
+
+    // ----- Common private method -----
+    private RosterConfirmationResponseDto processRosterConfirmation(
+            RosterConfirmationRequestDto request,
+            boolean confirmFlag,
+            String targetRosterStatusName,
+            String targetAssignmentStatusName,
+            String message
+    ) {
+        // 1. Fetch roster
+        Roster existingRoster = rosterRepository
+                .findByBranch_IdAndRosterstatus_NameAndDoroster(
+                        request.getBranchId(),
                         "Solved",
-                        confirmationRequestDto.getDate()
+                        request.getDate()
                 );
 
         if (existingRoster == null) {
@@ -88,45 +120,41 @@ public class RosterService {
             );
         }
 
-        if (confirmationRequestDto.getConfirm()) {
+        // 2. Only process if request matches the confirm/reject logic
+        if (request.getConfirm() == confirmFlag) {
 
             // ---- Roster state transition ----
             RosterState rosterState =
-                    rosterStateFactory.getState(
-                            existingRoster.getRosterstatus().getName()
-                    );
+                    rosterStateFactory.getState(existingRoster.getRosterstatus().getName());
 
-            Rosterstatus lockedStatus =
-                    rosterStatusRepository.findByName("Locked");
+            Rosterstatus targetRosterStatus = rosterStatusRepository.findByName(targetRosterStatusName);
 
-            rosterState.transitionTo(existingRoster, lockedStatus);
-            existingRoster.setRosterstatus(lockedStatus);
+            rosterState.transitionTo(existingRoster, targetRosterStatus);
+            existingRoster.setRosterstatus(targetRosterStatus);
 
             // ---- Assignment state transition ----
-            Rosterassignementstatus confirmedStatus =
-                    rosterAssignmentStatusRepository.findByName("Confirmed");
+            Rosterassignementstatus targetAssignmentStatus =
+                    rosterAssignmentStatusRepository.findByName(targetAssignmentStatusName);
 
             existingRoster.getRosterassignements().forEach(assignment -> {
-
                 RosterAssignmentState assignmentState =
                         rosterAssignmentStateFactory.getState(
                                 assignment.getRosterassignementstatus().getName()
                         );
 
-                // Validate transition
-                assignmentState.transitionTo(assignment, confirmedStatus);
-
-                // Apply transition
-                assignment.setRosterassignementstatus(confirmedStatus);
+                assignmentState.transitionTo(assignment, targetAssignmentStatus);
+                assignment.setRosterassignementstatus(targetAssignmentStatus);
             });
         }
 
+        // 3. Build response
         return RosterConfirmationResponseDto.builder()
                 .rosterId(existingRoster.getId())
                 .branchId(existingRoster.getBranch().getId())
                 .date(existingRoster.getDoroster())
-                .message("Roster confirmed successfully")
+                .message(message)
                 .build();
     }
+
 }
 

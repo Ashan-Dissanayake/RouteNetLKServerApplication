@@ -58,14 +58,24 @@ public class RosterController {
         return APIResponseBuilder.postResponse(solution, solution.getTotalSlots());
     }
 
-    @PostMapping(value = "/confirm")
+    @PostMapping("/confirm")
     public ResponseEntity<APISuccessResponse<RosterConfirmationResponseDto>> confirm(
             @RequestBody @Valid RosterConfirmationRequestDto confirmationRequestDto
     ) {
-
         RosterConfirmationResponseDto response =
                 rosterService.confirmRoster(confirmationRequestDto);
-        return APIResponseBuilder.putResponse(response,response.getRosterId());
+
+        return APIResponseBuilder.putResponse(response, response.getRosterId());
+    }
+
+    @PostMapping("/reject")
+    public ResponseEntity<APISuccessResponse<RosterConfirmationResponseDto>> reject(
+            @RequestBody @Valid RosterConfirmationRequestDto confirmationRequestDto
+    ) {
+        RosterConfirmationResponseDto response =
+                rosterService.rejectRoster(confirmationRequestDto);
+
+        return APIResponseBuilder.putResponse(response, response.getRosterId());
     }
 
 

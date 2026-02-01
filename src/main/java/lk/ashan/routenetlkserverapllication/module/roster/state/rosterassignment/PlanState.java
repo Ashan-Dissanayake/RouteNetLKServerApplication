@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PlanState implements RosterAssignmentState {
     
-    private static final List<String> ALLOWED = List.of("CONFIRMED");
+    private static final List<String> ALLOWED = List.of("CONFIRMED","CANCELLED");
 
     @Override
     public void transitionTo(Rosterassignement rosterassignement, Rosterassignementstatus newStatus) {
