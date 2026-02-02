@@ -18,7 +18,7 @@ public class Licensecategoryallowedbustype {
     private Licensecategory licensecategory;
     @ManyToOne
     @JoinColumn(name = "allowedbustype_id", referencedColumnName = "id", nullable = false)
-    private Allowedbustype allowedbustype;
+    private Bustype bustype;
 
     @Override
     public boolean equals(Object o) {

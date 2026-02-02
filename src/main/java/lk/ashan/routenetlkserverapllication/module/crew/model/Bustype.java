@@ -10,7 +10,7 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-public class Allowedbustype {
+public class Bustype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -18,7 +18,7 @@ public class Allowedbustype {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "allowedbustype")
+    @OneToMany(mappedBy = "bustype")
     private Collection<Licensecategoryallowedbustype> licensecategoryallowedbustypes;
 
 
@@ -26,7 +26,7 @@ public class Allowedbustype {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Allowedbustype that = (Allowedbustype) o;
+        Bustype that = (Bustype) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

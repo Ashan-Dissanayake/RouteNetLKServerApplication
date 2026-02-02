@@ -58,8 +58,8 @@ public class EmployeePlanningMapper {
                     Set<Integer> allowedBusTypes = new HashSet<>();
                     driver.getLicensecategory().getLicensecategoryallowedbustypes()
                             .forEach(lc -> {
-                                if (lc.getAllowedbustype() != null) {
-                                    allowedBusTypes.add(lc.getAllowedbustype().getId());
+                                if (lc.getBustype() != null) {
+                                    allowedBusTypes.add(lc.getBustype().getId());
                                 }
                             });
                     planning.setAllowedBusTypeIds(allowedBusTypes);

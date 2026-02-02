@@ -167,7 +167,7 @@ INSERT INTO routefamiliaritylevel (name) VALUES
 ('Medium'),
 ('High');
 
-INSERT INTO allowedbustype (name) VALUES
+INSERT INTO bustype (name) VALUES
 ('Normal'),
 ('Semi Luxury'),
 ('Luxury'),
