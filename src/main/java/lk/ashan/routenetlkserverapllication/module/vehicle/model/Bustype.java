@@ -2,8 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Licensecategoryallowedbustype;
-import lombok.Getter;
-import lombok.Setter;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Routetypebustype;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -11,6 +11,9 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Bustype {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -23,6 +26,8 @@ public class Bustype {
     private Collection<Licensecategoryallowedbustype> licensecategoryallowedbustypes;
     @OneToMany(mappedBy = "bustype")
     private Collection<Vehicle> vehicles;
+    @OneToMany(mappedBy = "bustype")
+    private Collection<Routetypebustype> routetypebustypes;
 
     @Override
     public boolean equals(Object o) {

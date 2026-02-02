@@ -34,6 +34,9 @@ public class Route {
     @Basic
     @Column(name = "duration")
     private Integer duration;
+    @ManyToOne
+    @JoinColumn(name = "routetype_id", referencedColumnName = "id", nullable = false)
+    private Routetype routetype;
 
     @Override
     public boolean equals(Object o) {
