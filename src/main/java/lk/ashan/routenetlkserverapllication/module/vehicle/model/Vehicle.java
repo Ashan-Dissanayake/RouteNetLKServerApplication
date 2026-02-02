@@ -66,6 +66,9 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "seatingcapacity_id", referencedColumnName = "id", nullable = false)
     private Seatingcapacity seatingcapacity;
+    @ManyToOne
+    @JoinColumn(name = "bustype_id", referencedColumnName = "id", nullable = false)
+    private Bustype bustype;
 
     @Override
     public boolean equals(Object o) {

@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.config.factory;
 
 
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
 
 import java.time.LocalDate;
 
@@ -11,8 +12,8 @@ public class DriverDtoFactory {
         return new LicenseCategoryDto(id, name);
     }
 
-    public static AllowedBusTypeDto allowedBusTypeDto(int id, String name) {
-        return new AllowedBusTypeDto(id, name);
+    public static BusTypeDto allowedBusTypeDto(int id, String name) {
+        return new BusTypeDto(id, name);
     }
 
     public static CrewStatusDto crewStatusDto(int id, String name) {

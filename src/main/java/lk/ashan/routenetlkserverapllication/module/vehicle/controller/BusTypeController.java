@@ -1,7 +1,7 @@
-package lk.ashan.routenetlkserverapllication.module.crew.controller;
+package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.AllowedBusTypeDto;
-import lk.ashan.routenetlkserverapllication.module.crew.service.AllowedBusTypeService;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.service.BusTypeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/allowedbustypes")
 @RequiredArgsConstructor
-public class AllowedBusTypeController {
+public class BusTypeController {
 
-    private final AllowedBusTypeService allowedBusTypeService;
+    private final BusTypeService busTypeService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<AllowedBusTypeDto>>> get() {
-        List<AllowedBusTypeDto>allowedBusTypes =allowedBusTypeService.getAllowedBusTypes();
-        return APIResponseBuilder.getResponse(allowedBusTypes,allowedBusTypes.size());
+    public ResponseEntity<APISuccessResponse<List<BusTypeDto>>> get() {
+        List<BusTypeDto>busTypes = busTypeService.getBusTypes();
+        return APIResponseBuilder.getResponse(busTypes,busTypes.size());
     }
 
 }

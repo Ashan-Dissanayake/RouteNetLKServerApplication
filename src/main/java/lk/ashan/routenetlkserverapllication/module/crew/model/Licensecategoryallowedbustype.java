@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.model;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Bustype;
 import lombok.Getter;
 import lombok.Setter;
 

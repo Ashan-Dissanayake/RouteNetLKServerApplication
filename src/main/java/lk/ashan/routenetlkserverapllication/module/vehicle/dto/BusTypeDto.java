@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.crew.dto;
+package lk.ashan.routenetlkserverapllication.module.vehicle.dto;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class AllowedBusTypeDto {
+public class BusTypeDto {
     Integer id;
     String name;
 }

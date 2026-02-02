@@ -1,6 +1,7 @@
-package lk.ashan.routenetlkserverapllication.module.crew.model;
+package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.crew.model.Licensecategoryallowedbustype;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,8 @@ public class Bustype {
     private String name;
     @OneToMany(mappedBy = "bustype")
     private Collection<Licensecategoryallowedbustype> licensecategoryallowedbustypes;
-
+    @OneToMany(mappedBy = "bustype")
+    private Collection<Vehicle> vehicles;
 
     @Override
     public boolean equals(Object o) {
