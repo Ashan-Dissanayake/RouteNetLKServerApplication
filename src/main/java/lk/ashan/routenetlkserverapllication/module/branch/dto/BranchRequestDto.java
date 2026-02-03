@@ -51,6 +51,8 @@ public class BranchRequestDto {
     @NotNull(message = "Branch status is mandatory")
     private BranchstatusDto branchstatus;
 
-    @NotNull(message = "Branch coverages are mandatory")
-    private Collection<BranchDistrictCoverageDto> branchcoverages;
+    @NotNull(message = "Regional office is mandatory")
+    private RegionalofficeDto regionaloffice;
+
+
 }

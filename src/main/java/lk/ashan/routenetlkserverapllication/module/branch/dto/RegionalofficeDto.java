@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class BranchDistrictCoverageDto {
+public class RegionalofficeDto {
     Integer id;
-    DistrictDto district;
+    String name;
 }

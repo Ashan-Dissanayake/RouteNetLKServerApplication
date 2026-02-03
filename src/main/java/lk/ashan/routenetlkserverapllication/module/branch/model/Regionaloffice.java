@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +9,10 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-public class District {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Regionaloffice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -18,19 +20,16 @@ public class District {
     @Basic
     @Column(name = "name")
     private String name;
-    @JsonIgnore
-    @OneToMany(mappedBy = "district")
-    private Collection<Branchcoverage> branchcoverages;
-    @ManyToOne
-    @JoinColumn(name = "province_id", referencedColumnName = "id", nullable = false)
-    private Province province;
+    @OneToMany(mappedBy = "regionalofficeByRegionalofficeId")
+    private Collection<Branch> branches;
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        District district = (District) o;
-        return Objects.equals(id, district.id) && Objects.equals(name, district.name);
+        Regionaloffice that = (Regionaloffice) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

@@ -10,8 +10,7 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        BranchtypeMapper.class,BranchstatusMapper.class,ProvinceMapper.class,
-        DistrictMapper.class,BranchCoverageMapper.class
+        BranchtypeMapper.class,BranchstatusMapper.class,RegionalofficeMapper.class,
 })
 public interface BranchMapper {
 

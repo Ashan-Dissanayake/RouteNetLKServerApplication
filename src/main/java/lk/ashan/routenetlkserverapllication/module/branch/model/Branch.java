@@ -61,14 +61,6 @@ public class Branch extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
     private Branchstatus branchstatus;
-    @OneToMany(
-            mappedBy = "branch",
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // cascade updates only
-            orphanRemoval = true
-    )
-    private Collection<Branchcoverage> branchcoverages;
-
     @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private Collection<Employee> employees;
@@ -87,6 +79,9 @@ public class Branch extends BaseEntity {
     private Collection<Fleetallocation> fleetallocations;
     @OneToMany(mappedBy = "branch")
     private Collection<Vehicleavailability> vehicleavailabilities;
+    @ManyToOne
+    @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
+    private Regionaloffice regionalofficeByRegionalofficeId;
 
     @Override
     public boolean equals(Object o) {
@@ -101,4 +96,11 @@ public class Branch extends BaseEntity {
         return Objects.hash(id, name, code, address, telephone, email, docreated, remarks);
     }
 
+    public Regionaloffice getRegionalofficeByRegionalofficeId() {
+        return regionalofficeByRegionalofficeId;
+    }
+
+    public void setRegionalofficeByRegionalofficeId(Regionaloffice regionalofficeByRegionalofficeId) {
+        this.regionalofficeByRegionalofficeId = regionalofficeByRegionalofficeId;
+    }
 }

@@ -22,7 +22,7 @@ public class BranchDetailResponseDto {
     String remarks;
     BranchtypeDto branchtype;
     BranchstatusDto branchstatus;
-    Collection<BranchDistrictCoverageDto> branchcoverages;
+    RegionalofficeDto regionaloffice;
 
 }
 

@@ -3,11 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.branch.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
-import lk.ashan.routenetlkserverapllication.module.branch.mapper.DistrictMapper;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchcoverage;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
@@ -31,7 +28,6 @@ public class BranchService {
     private final BranchRepository branchRepository;
     private final BranchstatusRepository branchstatusRepository;
     private final BranchMapper branchMapper;
-    private final DistrictMapper districtMapper;
     private final List<BranchValidationStrategy> validationStrategies;
 
     public List<BranchDetailResponseDto> getBranches(){
@@ -71,10 +67,7 @@ public class BranchService {
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
         
         validationStrategies.forEach(s -> s.validateCreate(request));
-
         Branch branch = branchMapper.toEntity(request);
-        branch.getBranchcoverages().forEach(c -> c.setBranch(branch));
-
         Branch saved = branchRepository.save(branch);
 
         return branchMapper.toDto(saved);
@@ -96,15 +89,6 @@ public class BranchService {
                 .orElseThrow(() -> new EntityNotFoundException("Status not found"));
 
         existing.setBranchstatus(status);
-
-        // Update branch coverages
-        existing.getBranchcoverages().clear();
-        for (BranchDistrictCoverageDto cDto : request.getBranchcoverages()) {
-            Branchcoverage coverage = new Branchcoverage();
-            coverage.setBranch(existing);
-            coverage.setDistrict(districtMapper.toEntity(cDto.getDistrict()));
-            existing.getBranchcoverages().add(coverage);
-        }
 
         return branchMapper.toDto(existing);
     }
