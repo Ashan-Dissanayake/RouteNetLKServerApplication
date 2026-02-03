@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -21,7 +22,7 @@ public class Vehicleavailability {
     private Integer id;
     @Basic
     @Column(name = "doavailability")
-    private Date doavailability;
+    private LocalDate doavailability;
     @Basic
     @Column(name = "inspectionpassed")
     private Boolean inspectionpassed;
