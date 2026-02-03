@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Fleetallocation;
 import lombok.*;
 
 import java.sql.Date;
@@ -38,6 +39,9 @@ public class Roster {
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "id", nullable = false)
     private Route route;
+
+    @OneToMany(mappedBy = "roster")
+    private Collection<Fleetallocation> fleetallocations;
 
     @Override
     public boolean equals(Object o) {

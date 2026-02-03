@@ -3,11 +3,14 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Fleetallocation;
+import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Vehicleavailability;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -69,6 +72,11 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "bustype_id", referencedColumnName = "id", nullable = false)
     private Bustype bustype;
+
+    @OneToMany(mappedBy = "vehicle")
+    private Collection<Fleetallocation> fleetallocations;
+    @OneToMany(mappedBy = "vehicle")
+    private Collection<Vehicleavailability> vehicleavailabilities;
 
     @Override
     public boolean equals(Object o) {

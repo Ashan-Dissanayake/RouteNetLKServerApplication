@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Fleetallocation;
+import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Vehicleavailability;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
@@ -80,6 +82,11 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "branch")
     private Collection<Roster> rosters;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Fleetallocation> fleetallocations;
+    @OneToMany(mappedBy = "branch")
+    private Collection<Vehicleavailability> vehicleavailabilities;
 
     @Override
     public boolean equals(Object o) {
