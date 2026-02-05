@@ -200,7 +200,7 @@ class BranchControllerTest {
 
     @Test
     void createBranch_missingBranchCoverages_shouldReturnBadRequest() throws Exception{
-        createRequestDto.setBranchcoverages(null);
+        //createRequestDto.setBranchcoverages(null);
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)

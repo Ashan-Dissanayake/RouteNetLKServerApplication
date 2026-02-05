@@ -32,4 +32,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("UPDATE Vehicle  v SET v.deleted=false WHERE v.id in :ids")
     void restoreAll(@Param("ids") List<Integer> ids);
 
+    List<Vehicle> findByDeletedFalseAndVehiclestatus_Name(String statusName);
 }
