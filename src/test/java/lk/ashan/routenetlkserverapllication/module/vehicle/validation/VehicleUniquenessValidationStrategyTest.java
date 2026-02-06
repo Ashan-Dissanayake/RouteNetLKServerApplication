@@ -22,16 +22,6 @@ class VehicleUniquenessValidationStrategyTest {
     private VehicleUniquenessValidationStrategy strategy;
 
     @Test
-    void validateCreate_shouldThrow_whenCodeExists() {
-        VehicleCreateRequestDto request = new VehicleCreateRequestDto();
-        request.setCode("TEST-CODE");
-
-        when(vehicleRepository.existsByCode("TEST-CODE")).thenReturn(true);
-
-        assertThrows(ResourceExistsException.class, () -> strategy.validateCreate(request));
-    }
-
-    @Test
     void validateCreate_shouldThrow_whenNumberExists() {
         VehicleCreateRequestDto request = new VehicleCreateRequestDto();
         request.setNumber("TEST-NUMBER");

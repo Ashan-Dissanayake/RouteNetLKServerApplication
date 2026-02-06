@@ -15,23 +15,8 @@ public class VehicleUniquenessValidationStrategy implements VehicleValidationStr
 
     @Override
     public void validateCreate(VehicleCreateRequestDto request) {
-        if (vehicleRepository.existsByCode(request.getCode())) {
-            throw new ResourceExistsException("Vehicle code already exists.");
-        }
         if (vehicleRepository.existsByNumber(request.getNumber())) {
             throw new ResourceExistsException("Vehicle number already exists.");
-        }
-        if (vehicleRepository.existsByChasisnumber(request.getChasisnumber())) {
-            throw new ResourceExistsException("Vehicle chassis number already exists.");
-        }
-        if (vehicleRepository.existsByEnginenumber(request.getEnginenumber())) {
-            throw new ResourceExistsException("Vehicle engine number already exists.");
-        }
-        if (vehicleRepository.existsByCodeOrChasisnumber(request.getCode(), request.getChasisnumber())) {
-            throw new ResourceExistsException("Code cannot reference a chassis number already used by another vehicle");
-        }
-        if (vehicleRepository.existsByCodeOrEnginenumber(request.getCode(), request.getEnginenumber())) {
-            throw new ResourceExistsException("Code cannot reference an engine number already used by another vehicle");
         }
     }
 

@@ -15,19 +15,12 @@ import java.time.Year;
 @ToString
 public class VehicleDetailResponseDto {
     private Integer id;
-    private String code;
     private String number;
-    private Year yom;
-    private LocalDate dob;
     private Integer mileage;
-    private String chasisnumber;
-    private String enginenumber;
     private String remarks;
     private FueltypeDto fueltype;
     private ConditionrateDto conditionrate;
-    private ServicetypeDto servicetype;
     private VehiclestatusDto vehiclestatus;
-    private SeatingcapacityResponseDto seatingcapacity;
-    private EmployeeSummaryResponseDto employee;
     private BranchSummaryResponseDto branch;
+    private ModelDto model;
 }

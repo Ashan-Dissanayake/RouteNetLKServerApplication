@@ -15,13 +15,11 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
         ConditionrateMapper.class,EmployeeMapper.class,VehiclestatusMapper.class,
-        FueltypeMapper.class, ServicetypeMapper.class, MakeMapper.class, BranchMapper.class,
-        SeatingcapacityMapper.class
+        FueltypeMapper.class, ModelMapper.class, MakeMapper.class, BranchMapper.class,
 })
 public interface VehicleMapper {
 
     VehicleDetailResponseDto toDto(Vehicle vehicle);
-    VehicleSummaryResponseDto toSummaryDto(Vehicle vehicle);
     List<VehicleDetailResponseDto> toDtoList(List<Vehicle> vehicleDetailResponses);
 
     Vehicle toEntity(VehicleCreateRequestDto requestDto);

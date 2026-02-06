@@ -24,20 +24,6 @@ public class EntityFactory {
         return bs;
     }
 
-    public static Province province(int id, String name) {
-        Province p = new Province();
-        p.setId(id);
-        p.setName(name);
-        return p;
-    }
-
-    public static District district(int id, String name, Province province) {
-        District d = new District();
-        d.setId(id);
-        d.setName(name);
-        d.setProvince(province);
-        return d;
-    }
 
     public static Branch branch(String name, String code, LocalDate createdDate, Branchtype type, Branchstatus status) {
         return Branch.builder()
@@ -50,18 +36,9 @@ public class EntityFactory {
                 .docreated(createdDate)
                 .branchtype(type)
                 .branchstatus(status)
-                .branchcoverages(Collections.emptyList())
                 .build();
     }
 
-    public static Branch branchWithCoverages(String name, String code, LocalDate createdDate, Branchtype type, Branchstatus status) {
-        Branch branch = branch(name, code, createdDate, type, status);
-        branch.setBranchcoverages(List.of(
-                branchCoverage(branch, district(1,"Colombo", province(1,"Central"))),
-                branchCoverage(branch, district(2,"Gampaha", province(1,"Central")))
-        ));
-        return branch;
-    }
 
     public static List<Branch> buildMockBranches(LocalDate createdDate) {
         Branch colomboBranch = branch(
@@ -83,11 +60,4 @@ public class EntityFactory {
         return List.of(colomboBranch, ratnapuraBranch);
     }
 
-
-    private static Branchcoverage branchCoverage(Branch branch, District district) {
-        Branchcoverage bc = new Branchcoverage();
-        bc.setBranch(branch);
-        bc.setDistrict(district);
-        return bc;
-    }
 }

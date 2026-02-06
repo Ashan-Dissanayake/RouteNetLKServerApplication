@@ -2,11 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Fleetallocation;
-import lk.ashan.routenetlkserverapllication.module.fleetallocation.model.Vehicleavailability;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -72,13 +68,6 @@ public class Branch extends BaseEntity {
     @OneToMany(mappedBy = "branch")
     private Collection<Vehicle> vehicles;
 
-    @OneToMany(mappedBy = "branch")
-    private Collection<Roster> rosters;
-
-    @OneToMany(mappedBy = "branch")
-    private Collection<Fleetallocation> fleetallocations;
-    @OneToMany(mappedBy = "branch")
-    private Collection<Vehicleavailability> vehicleavailabilities;
     @ManyToOne
     @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
     private Regionaloffice regionalofficeByRegionalofficeId;
@@ -96,11 +85,4 @@ public class Branch extends BaseEntity {
         return Objects.hash(id, name, code, address, telephone, email, docreated, remarks);
     }
 
-    public Regionaloffice getRegionalofficeByRegionalofficeId() {
-        return regionalofficeByRegionalofficeId;
-    }
-
-    public void setRegionalofficeByRegionalofficeId(Regionaloffice regionalofficeByRegionalofficeId) {
-        this.regionalofficeByRegionalofficeId = regionalofficeByRegionalofficeId;
-    }
 }

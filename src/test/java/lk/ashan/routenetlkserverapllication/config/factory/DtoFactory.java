@@ -18,18 +18,6 @@ public class DtoFactory {
         return new BranchstatusDto(id, name);
     }
 
-    public static ProvinceDto provinceDto(int id, String name) {
-        return new ProvinceDto(id, name);
-    }
-
-    public static DistrictDto districtDto(int id, String name) {
-        return new DistrictDto(id, name);
-    }
-
-    public static BranchDistrictCoverageDto branchCoverageDto(DistrictDto district) {
-        return new BranchDistrictCoverageDto(null, district);
-    }
-
     public static BranchCreateRequestDto createBranchRequest(String name, String code,String telephone) {
         return BranchCreateRequestDto.builder()
                 .name(name)
@@ -41,9 +29,6 @@ public class DtoFactory {
                 .docreated(FIXED_DATE)
                 .branchtype(branchTypeDto(1, "Region"))
                 .branchstatus(branchStatusDto(1, "Active"))
-                .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(4,"Kandy"))
-                ))
                 .build();
     }
 
@@ -58,9 +43,6 @@ public class DtoFactory {
                 .docreated(FIXED_DATE)
                 .branchtype(branchTypeDto(1, "Region"))
                 .branchstatus(branchStatusDto(1, "Active"))
-                .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(4,"Kandy"))
-                ))
                 .build();
     }
 
@@ -75,9 +57,6 @@ public class DtoFactory {
                 .docreated(FIXED_DATE)
                 .branchtype(branchTypeDto(1, "Region"))
                 .branchstatus(branchStatusDto(1, "Active"))
-                .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(4,"Kandy"))
-                ))
                 .build();
 
     }
@@ -94,11 +73,6 @@ public class DtoFactory {
                 .docreated(FIXED_DATE)
                 .branchtype(branchTypeDto(3, " Local/Sub Depot"))
                 .branchstatus(branchStatusDto(1, "Active"))
-                .branchcoverages(List.of(
-                        branchCoverageDto(districtDto(3,"Kalutara")),
-                        branchCoverageDto(districtDto(4,"Kandy")),
-                        branchCoverageDto(districtDto(1,"Colombo"))
-                ))
                 .build();
 
     }

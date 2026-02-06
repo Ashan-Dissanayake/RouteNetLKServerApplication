@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.ServicetypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.service.ServicetypeService;
+import lk.ashan.routenetlkserverapllication.module.vehicle.dto.ModelDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.service.ModelService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,16 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/servicetypes")
+@RequestMapping(value = "/models")
 @RequiredArgsConstructor
-public class ServicetypeController {
+public class ModelController {
 
-    private final ServicetypeService servicetypeService;
+    private final ModelService modelService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<ServicetypeDto>>> get() {
-        List<ServicetypeDto> servicetypes = servicetypeService.getServicetypes();
-        return APIResponseBuilder.getResponse(servicetypes, servicetypes.size());
+    public ResponseEntity<APISuccessResponse<List<ModelDto>>> get() {
+        List<ModelDto> models = modelService.getModels();
+        return APIResponseBuilder.getResponse(models, models.size());
     }
 
 }

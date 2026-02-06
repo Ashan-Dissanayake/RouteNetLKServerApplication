@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.shared.validation.driver.licensecat
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import lk.ashan.routenetlkserverapllication.shared.validation.vehicle.modelchassis.ModelChassisValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

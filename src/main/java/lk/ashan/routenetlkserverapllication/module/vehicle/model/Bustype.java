@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Licensecategoryallowedbustype;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Routetypebustype;
 import lombok.*;
 
 import java.util.Collection;
@@ -23,11 +22,7 @@ public class Bustype {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "bustype")
-    private Collection<Licensecategoryallowedbustype> licensecategoryallowedbustypes;
-    @OneToMany(mappedBy = "bustype")
     private Collection<Vehicle> vehicles;
-    @OneToMany(mappedBy = "bustype")
-    private Collection<Routetypebustype> routetypebustypes;
 
     @Override
     public boolean equals(Object o) {

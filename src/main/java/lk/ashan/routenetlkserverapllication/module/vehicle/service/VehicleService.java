@@ -41,14 +41,11 @@ public class VehicleService {
 
     public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
 
-        String code = params.get("sscode");
         String servicetypeid = params.get("sservicetype");
         String conditionrateid = params.get("ssconditionrate");
 
         Stream<Vehicle> vehicleStream = vehicleRepository.findAll().stream();
 
-        if (code != null)
-            vehicleStream = vehicleStream.filter(v -> v.getCode().equalsIgnoreCase(code));
         if (servicetypeid != null) vehicleStream = vehicleStream.filter(v->v.getVehiclestatus().getId()==Integer.parseInt(servicetypeid));
         if (conditionrateid != null)
             vehicleStream = vehicleStream.filter(v -> v.getConditionrate().getId() == Integer.parseInt(conditionrateid));
