@@ -8,12 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RouteDto {
+public class RouteSummaryResponseDto {
     private Integer id;
-    private String number;
-    private Integer distancekm;
-    private ScheduleTypeDto scheduletype;
-    private RouteTypeDto routetype;
-
-
+    private String name;
 }

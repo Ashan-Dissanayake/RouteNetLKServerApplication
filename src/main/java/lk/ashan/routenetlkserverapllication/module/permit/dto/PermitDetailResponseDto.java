@@ -21,6 +21,6 @@ public class PermitDetailResponseDto {
     private BranchSummaryResponseDto branch;
     private PermitStatusDto permitestatus;
     private ServiceTypeDto servicetype;
-    private RouteDto route;
+    private RouteSummaryResponseDto route;
 
 }
