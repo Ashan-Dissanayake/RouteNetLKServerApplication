@@ -1,0 +1,31 @@
+package lk.ashan.routenetlkserverapllication.module.permit.controller;
+
+import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.service.PermitService;
+import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
+import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+
+@CrossOrigin
+@RestController
+@RequestMapping(value = "/permits")
+@RequiredArgsConstructor
+public class PermitController {
+    
+    private final PermitService permitService;
+
+    @GetMapping( produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<PermitDetailResponseDto>>> get(
+            @RequestParam HashMap<String, String> params
+    ) {
+        List<PermitDetailResponseDto> permits = params.isEmpty()
+                ?permitService.getPermits()
+                : permitService.searchPermit(params);
+        return APIResponseBuilder.getResponse(permits, permits.size());
+    }
+}

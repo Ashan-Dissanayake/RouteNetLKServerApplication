@@ -2,10 +2,12 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -47,6 +49,9 @@ public class Vehicle extends BaseEntity {
     @JoinColumn(name = "model_id", referencedColumnName = "id", nullable = false)
     private Model model;
 
+    @OneToMany(mappedBy = "vehicle")
+    private Collection<Permite> permites;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,13 +63,5 @@ public class Vehicle extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, number,mileage, remarks);
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
     }
 }

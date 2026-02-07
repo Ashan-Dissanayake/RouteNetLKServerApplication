@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -71,6 +72,9 @@ public class Branch extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
     private Regionaloffice regionalofficeByRegionalofficeId;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Permite> permites;
 
     @Override
     public boolean equals(Object o) {
