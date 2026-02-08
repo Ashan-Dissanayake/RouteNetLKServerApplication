@@ -1,9 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
@@ -15,13 +12,8 @@ import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContext;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Bustype;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.repository.BusTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidVehicleBranchException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
