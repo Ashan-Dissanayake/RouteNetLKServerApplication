@@ -1,5 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.controller;
 
+import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.service.PermitService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -27,5 +29,13 @@ public class PermitController {
                 ?permitService.getPermits()
                 : permitService.searchPermit(params);
         return APIResponseBuilder.getResponse(permits, permits.size());
+    }
+
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>> add(
+            @RequestBody @Valid PermitCreateRequestDto permitCreateRequestDto)
+    {
+        PermitDetailResponseDto savedPermit = permitService.createPermit(permitCreateRequestDto);
+        return APIResponseBuilder.postResponse(savedPermit, savedPermit.getId());
     }
 }

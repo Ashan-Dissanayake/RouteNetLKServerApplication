@@ -2,36 +2,19 @@
 INSERT INTO branchstatus (name) VALUES ('Active'),('Suspended'),('Closed');
 
 -- branchtype
-INSERT INTO branchtype (name) VALUES ('Head'),('Region'),('Local Sub Depot'),('Workshop Depot');
+INSERT INTO branchtype (name) VALUES ('Central'),('General'),('Sub Depot'),('Workshop Depot');
 
--- province
-INSERT INTO province (name) VALUES
-('Western'),('Central'),('Southern'),('Northern'),('Eastern'),
-('North Western'),('North Central'),('Uva'),('Sabaragamuwa');
-
--- district
-INSERT INTO district (name, province_id) VALUES
-('Colombo', 1),('Gampaha', 1),('Kalutara', 1),('Kandy', 2),('Matale', 2),
-('Nuwara Eliya', 2),('Galle', 3),('Matara', 3),('Hambantota', 3),('Jaffna', 4),
-('Kilinochchi', 4),('Mullaitivu', 4),('Vavuniya', 4),('Mannar', 4),('Trincomalee', 5),
-('Batticaloa', 5),('Ampara', 5),('Kurunegala', 6),('Puttalam', 6),('Anuradhapura', 7),
-('Polonnaruwa', 7),('Badulla', 8),('Monaragala', 8),('Ratnapura', 9),('Kegalle', 9);
+-- regionaloffice
+INSERT INTO regionaloffice (name) VALUES
+('Colombo'),('Eastern'),('Gampaha'),('Kalutara'),('Kandy'),('Northern'),('Nuwara-Eliya'),('Rajarata'),('Sabaragamuwa'),('Southern'),('Uva'),('Wayamba');
 
 -- branch
-INSERT INTO branch (name, code, address, telephone, email, docreated, branchtype_id, remarks, branchstatus_id, deleted) VALUES
-('Colombo head office', 'CLM0001', 'Kirula Rd, Colombo 00500', '117706320', 'clm@sltb.lk', '03-10-25', 1, '', 1, 0),
-('Angoda', 'ANG0001', 'WWF7 2H4, Colombo', '117706321', 'ang@sltb.lk', '03-10-25', 3, '', 1, 0),
-('Avissawella', 'AVS0001', 'X644 42W, Road, Avissawella', '362222348', 'avs@sltb.lk', '14-10-25', 2, '', 2, 0),
-('Homagama', 'HMG0001', 'R2V6 9RR Bus Depot, Homagama', '117706330', 'hmg@sltb.lk', '14-10-25', 2, '', 3, 1),
-('Kesbewa Deport', 'KSB0001', 'Piliyandala', '117706360', 'ksb@sltb.lk', '15-10-25', 3, '', 3, 1);
-
--- branchcoverage
-INSERT INTO branchcoverage (branch_id, district_id) VALUES
-(2, 3),(2, 4),(2, 1),(4, 20),(4, 22),(4, 10),(4, 8),(4, 6),(4, 1),(4, 2),
-(4, 3),(4, 24),(5, 1),(5, 2),(5, 3),(3, 1),(3, 2),(3, 3),(3, 4),(3, 5),
-(3, 18),(3, 25),(3, 24),(3, 22),(3, 20),(1, 1),(1, 2),(1, 3),(1, 4),(1, 5),
-(1, 6),(1, 7),(1, 8),(1, 9),(1, 10),(1, 11),(1, 12),(1, 13),(1, 14),(1, 15),
-(1, 16),(1, 17),(1, 18),(1, 19),(1, 20),(1, 21),(1, 22),(1, 23),(1, 24),(1, 25);
+INSERT INTO branch (name, code, address, telephone, email, docreated, branchtype_id, remarks, branchstatus_id,regionaloffice_id, deleted) VALUES
+('Colombo head office', 'CLM0001', 'Kirula Rd, Colombo 00500', '117706320', 'clm@sltb.lk', '03-10-25', 1, '', 1, 1,0),
+('Angoda', 'ANG0001', 'WWF7 2H4, Colombo', '117706321', 'ang@sltb.lk', '03-10-25', 3, '', 1,9, 0),
+('Avissawella', 'AVS0001', 'X644 42W, Road, Avissawella', '362222348', 'avs@sltb.lk', '14-10-25', 2, '', 2,1, 0),
+('Homagama', 'HMG0001', 'R2V6 9RR Bus Depot, Homagama', '117706330', 'hmg@sltb.lk', '14-10-25', 2, '', 3, 1,1),
+('Kesbewa Deport', 'KSB0001', 'Piliyandala', '117706360', 'ksb@sltb.lk', '15-10-25', 3, '', 3, 1,1);
 
 
 -- employeestatus
@@ -85,71 +68,74 @@ VALUES
     ('EMPAVS0004', 'Nadeesha Perera', 'Nadeesha', '200557000000', 2, '701112233', 'nadeesha.EMPAVS0004@sltb.lk', 'No 40, Avissawella', '751223344', NULL, 4, 3, 5, 1, '2011-01-19', 1, 0),
     ('EMPAVS0008', 'Nishantha Peris Gunarathne', 'Nishantha', '199912000000', 1, '775551011', 'nishantha.EMPAVS0008@sltb.lk', 'Perera Rd, Negombo', '771438876', NULL, 4, 1, 2, 2, '2025-12-02', 1, 0);
 
-INSERT INTO make ( name, airconditioned) VALUES
-('Ashok Leyland Viking 193', 0),
-('Ashok Leyland Viking 210 Turbo', 0),
-('Ashok Leyland Viking 222', 0),
-('Ashok Leyland Lynx', 0),
-('Tata LP 12.10/42', 0),
-('Tata LP 15.10/52', 0),
-('Isuzu BF50', 0),
-('Isuzu MT 111L', 0),
-('Isuzu ELR500', 0),
-('Hino (repowered with Ashok Leyland engine)', 0),
-('Mitsubishi UMP', 0),
-('Leyland Tiger TL 11', 0),
-('Leyland MCW double decker', 0),
-('Volvo B7RLE', 1),
-('Fiat 642', 0);
 
-INSERT INTO seatingcapacity (amount, make_id) VALUES
-(42, 1),
-(44, 2),
-(49, 1),
-(54, 2),
-(58, 3),
-(42, 14);
 
-INSERT INTO servicetype (name) VALUES
-('Passenger'),
-('Recovery');
+INSERT INTO make ( name) VALUES
+('Ashok Leyland'),
+('Tata'),
+('Isuzu'),
+('Mercedes-Benz'),
+('Metro'),
+('AEC'),
+('Hino'),
+('Mitsubishi'),
+('Volvo'),
+('Greatewall'),
+('Youtong'),
+('Kinlong');
+
+INSERT INTO model (name, make_id) VALUES
+(' Ashok Leyland 12M RE', 1),
+('Ashok Leyland Viking 193', 1),
+('Ashok Leyland Viking 210 Turbo', 1),
+('Ashok Leyland Comet Minior', 1),
+('Ashok Leyland Viking 222 Hinopower', 1),
+('Ashok Leyland Stag bus', 1),
+('TATA LP 1510/52', 2),
+('TATA LPO 1313/55', 2),
+('TATA LP 1210/36', 2),
+('TATA LP 1210/52', 2),
+('TATA LP 1510/36', 2),
+('TATA LPO 1313/47', 2),
+('TATA LP 909/36', 2);
 
 INSERT INTO conditionrate (name) VALUES
 ('Excellent'),
 ('Good'),
 ('Fair'),
-('Poor'),
-('Critical');
+('Poor');
 
 INSERT INTO vehiclestatus (name) VALUES
 ('Available'),
-('In Service'),
-('Under Maintenance'),
-('Out of Service'),
-('Decommissioned'),
-('Reserved');
+('Allocated'),
+('In Operation'),
+('Maintenance'),
+('Decommissioned');
 
 INSERT INTO fueltype (name) VALUES
 ('Petrol'),
 ('Diesel');
 
+INSERT INTO bustype(name) values ('AA'),('A+'),('A'),('B'),('B+'),('C'),('D'),('E');
+
 INSERT INTO vehicle
-(code, number, yom, dob, mileage, chasisnumber, enginenumber, fueltype_id, conditionrate_id, remarks, servicetype_id, vehiclestatus_id, deleted, employee_id, branch_id, seatingcapacity_id)
+(number,model_id,bustype_id,mileage, fueltype_id, conditionrate_id, remarks, vehiclestatus_id, deleted, branch_id)
 VALUES
-    ('BS-ALV00001', 'ND-1217', 2018, '2018-01-15', 120000, 'KLWT712345ABC6789', 'VLK193A1B2C3', 2, 5, NULL, 1, 1, 0, 1, 1, 1),
-    ('BS-ALV00002', 'ND-9167', 2016, '2016-03-10', 180000, 'JLY/AB12345', 'ABC123XYZ78K', 2, 4, NULL, 1, 1, 0, 2, 2, 1),
-    ('BS-ALV00003', 'NA-7845', 2015, '2015-07-22', 200000, 'MHX98765CD4321', 'AB123CD.123456', 1, 3, NULL, 1, 2, 0, 3, 2, 2),
-    ('BS-ALV00004', 'ND-5623', 2019, '2019-05-05', 80000, 'TBN123456EF', 'ASH123B4C5D6', 2, 5, NULL, 1, 1, 0, 4, 3, 2),
-    ('BS-ALV00005', 'NB-4392', 2014, '2014-11-30', 220000, 'KLX/56789GH12', 'LMN456PQR12X', 1, 2, NULL, 1, 2, 1, 5, 4, 3),
-    ('BS-ALV00006', 'NE-9981', 2020, '2020-02-20', 50000, 'MNB34567JK890', 'XY456ZT.654321', 2, 5, NULL, 1, 1, 0, 6, 5, 2),
-    ('BS-ALV00007', 'NB-3456', 2017, '2017-09-15', 150000, 'JKL/23456AB78', 'SLB987X6Y7Z8', 1, 4, NULL, 1, 2, 1, 6, 1, 2),
-    ('BS-ALV00008', 'NA-1123', 2013, '2013-06-10', 250000, 'HJK98765CD3210', 'XYZ789JKL45M', 2, 1, NULL, 1, 3, 0, 8, 2, 2),
-    ('BS-ALV00009', 'NC-7784', 2018, '2018-12-01', 130000, 'QWE/34567FG89', 'PQ321RS.111222', 1, 4, NULL, 1, 1, 0, 9, 3, 3),
-    ('BS-ALV00010', 'NA-3345', 2012, '2012-03-25', 300000, 'ASD67890HJ123', 'VIK456M7N8O9', 2, 2, NULL, 1, 3, 0, 10, 3, 3),
-    ('BS-ALV00011', 'ND-5566', 2019, '2019-08-18', 90000, 'ZXC/12345KL67', 'DEF321GHY67P', 1, 5, NULL, 1, 1, 1, 1, 5, 1),
-    ('BS-ALV00012', 'NC-8899', 2016, '2016-10-05', 170000, 'RTY98765MN432', 'CD654EF.333444', 2, 3, NULL, 1, 2, 0, 2, 5, 4),
-    ('BS-VLV00014', 'ND-1290', 2017, '2017-10-13', 7654, 'YV3BE7RLEAB012344', 'D7E290L0001I', 2, 2, NULL, 1, 1, 0, 5, 3, 1),
-    ('BS-VLV00013', 'ND-1299', 2017, '2017-10-03', 7654, 'YV3BE7RLEAB012345', 'D7E290L0001A', 2, 3, NULL, 1, 5, 1, 6, 2, 6);
+    ( 'ND-1217',1,1,120000,2, 4, NULL, 1, 0,1),
+    ( 'ND-9167',1,6,180000,2, 4, NULL, 1, 0,2),
+    ( 'NA-7845',2,1,200000,2, 3, NULL, 2, 0,2),
+    ( 'ND-5623',2,1,80000,2, 4, NULL, 1, 0,3),
+    ( 'NB-4392',3,1,220000,2, 2, NULL, 2, 1,4),
+    ( 'NE-9981',2,1,50000, 2, 4, NULL, 1, 0,5),
+    ( 'NB-3456',3,1,150000,2, 4, NULL, 2, 1,1),
+    ( 'NA-1123',1,1,250000,2, 1, NULL, 3, 0, 2),
+    ( 'NC-7784',3,1,130000,2, 4, NULL, 1, 0, 3),
+    ( 'NA-3345',3,1,300000,2, 2, NULL, 3, 0, 3),
+    ( 'ND-5566',5,1,90000,2, 4, NULL, 1, 1, 5),
+    ( 'NC-8899',3,1,170000,2, 3, NULL, 2, 0, 5),
+    ( 'ND-1290',5,3,7654, 2, 2, NULL, 1, 0, 3),
+    ( 'ND-1299',9,4,7654,2, 3, NULL, 5, 1, 2);
+
 
 INSERT INTO licensecategory (name) VALUES
 ('B'),
@@ -166,12 +152,6 @@ INSERT INTO routefamiliaritylevel (name) VALUES
 ('Low'),
 ('Medium'),
 ('High');
-
-INSERT INTO bustype (name) VALUES
-('Normal'),
-('Semi Luxury'),
-('Luxury'),
-('Super Luxury');
 
 INSERT INTO driver (
     employee_id,
@@ -209,12 +189,6 @@ INSERT INTO driver (
  '2025-01-05', '2025-07-05',
  1, 1, 2);
 
-INSERT INTO licensecategoryallowedbustype (licensecategory_id, allowedbustype_id) VALUES
-(1, 1),
-(1, 2),
-(2, 3),
-(2, 4);
-
 INSERT INTO conductor (
     employee_id,
     number,
@@ -227,38 +201,38 @@ INSERT INTO conductor (
      (11,'CON-2025-002','2025-02-01','2025-07-31',2,2),
      (14,'CON-2025-004','2025-08-01','2026-02-01',3,1);
 
-INSERT INTO shiftstatus (name) VALUES ('Active'),('Inactive');
 
-INSERT INTO shifttype (name) VALUES ('Early Morning'),('Morning'),('Day'),('Evening'),('Night'),('Overnight');
+INSERT INTO routetype (name) VALUES ('Inter provincial'), ('Intra provincial');
 
-INSERT INTO shift (tostarted,toend,shifttype_id,shiftstatus_id) VALUES
-    ('04:00:00','06:30:00',1,1),
-    ('03:00:00','13:00:00',1,2),
-    ('08:00:00','16:00:00',2,1),
-    ('14:00:00','22:00:00',3,1),
-    ('18:00:00','02:00:00',3,2),
-    ('20:00:00','06:00:00',4,1),
-    ('05:00:00','17:00:00',5,1);
+INSERT INTO scheduletype (name) VALUES ('Normal'), ('Special');
 
-INSERT INTO rosterstatus(name) VALUES ('Draft'),('Solved'),('Locked');
+INSERT INTO route (number,origin,destination,distancekm,scheduletype_id,routetype_id)VALUES
+    ('4-7','Colombo','Puttalam',137.2,1,1),
+    ('5','Colombo','Kurunegala',95.8,1,1),
+    ('6','Colombo','Kurunegala',93.4,1,1),
+    ('49','Colombo','Trincomalee',258.0	,1,1),
+    ('92-4','Colombo','Kuliyapitiya',86.1,1,1),
+    ('103-3','Pettah','Borella',	4.0,1,2),
+    ('130','Fort','I.D.H.',10.5,1,2),
+    ('130-1','Fort','Kolonnawa',7.3,1,2),
+    ('152-1','Pettah','I.D.H.',9.8,1,2),
+    ('175','Town Hall','Kohilawatte',11.0,1,2),
+    ('175-1','Kollupitiya','I.D.H.',10.1,1,2),
+    ('175-2','Town Hall','I.D.H.',7.9,1,2),
+    ('175-3','Borella','I.D.H.',6.3,1,2),
+    ('187-3','Colombo','Katunayake',35.1,1,2),
+    ('200','Gampaha','Pettah',29.3,1,2),
+    ('201-4','Yakkala','Gampaha',4.8,1,2),
+    ('240','Colombo','Negombo',36.1,1,2),
+    ('896','Trincomalee','Hot Wells',10.0,1,2);
 
-INSERT INTO route(number,source,destination,distance,duration) VALUES
-                                                                   ('G001','Gampaha','Kandy',115,180),
-                                                                   ('C001','Colombo','Gampaha',35,60),
-                                                                   ('C002','Colombo','Galle',130,210);
+INSERT INTO permitestatus (name) values ('Active'),('Expired'),('Suspended'),('Transferred');
 
-INSERT INTO roster (doroster,shift_id,branch_id,rosterstatus_id,route_id) VALUES
-             ('2026-02-02', 1, 1, 2, 2),
-             ('2026-03-01', 1, 1, 1, 2),
-             ('2026-03-05', 1, 1, 2, 2),
-             ('2026-03-10', 1, 1, 2, 2),
-             ('2026-03-15', 1, 1, 3, 2),
-             ('2026-03-20', 1, 1, 2, 2);
+INSERT INTO servicetype (name) values ('Normal'),('Semi luxury'),('Luxury'),('Super luxury');
 
-INSERT INTO rosterassignementstatus(name) VALUES ('Planned'),('Confirmed'),('Cancelled');
-
-INSERT INTO rosterassignement (roster_id,employee_id,rosterassignementstatus_id) VALUES
-(1, 22, 1),(5, 22, 2),(6, 22, 1);
+INSERT INTO permite(number,vehicle_id,doissued,doexpired,branch_id,permitestatus_id,servicetype_id,route_id,deleted) VALUES
+    ('2696',2,'2003-01-13','2027-07-24',2,1,1,1,0),
+    ('ANG-NA7845-103-3',3,'2002-05-01','2026-05-12',2,1,1,6,0);
 
 
 

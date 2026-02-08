@@ -87,6 +87,30 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidBusRouteTypeException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidBusRouteTypeException(
+            InvalidBusRouteTypeException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidBusServiceTypeException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidBusServiceTypeException(
+            InvalidBusServiceTypeException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(InvalidGenderDesignationException.class)
     public ResponseEntity<APIErrorResponse> handleInvalidGenderDesignationException(
             InvalidGenderDesignationException e,
@@ -102,6 +126,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessRuleValidationException.class)
     public ResponseEntity<APIErrorResponse> handleBusinessRuleValidationException(
             BusinessRuleValidationException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.INVALID_DATA,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidDateException(
+            InvalidDateException e,
             HttpServletRequest request
     ) {
         return APIResponseBuilder.error(

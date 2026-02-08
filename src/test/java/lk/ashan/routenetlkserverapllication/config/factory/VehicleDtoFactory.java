@@ -56,4 +56,7 @@ public class VehicleDtoFactory {
     }
 
 
+    public static VehicleSummaryResponseDto vehicleSummaryResponseDto(int id, String number) {
+        return new VehicleSummaryResponseDto(id,number);
+    }
 }

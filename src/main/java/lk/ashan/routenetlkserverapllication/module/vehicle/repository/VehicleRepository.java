@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.repository;
 
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Bustype;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
@@ -26,4 +28,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("UPDATE Vehicle  v SET v.deleted=false WHERE v.id in :ids")
     void restoreAll(@Param("ids") List<Integer> ids);
 
+    Optional<Vehicle> findByNumber(String number);
 }
