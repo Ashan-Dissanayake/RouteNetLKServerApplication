@@ -1,8 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.*;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,5 +114,31 @@ public class PermitService {
         return permitMapper.toDto(saved);
     }
 
+    @Transactional
+    public PermitDetailResponseDto transferPermit(Integer permitId, PermitTransferRequestDto request) {
+        Permite permit = permitRepository.findById(permitId)
+                .orElseThrow(() -> new ResourceNotFoundException("Permit not found"));
+
+        clearDepotResources(permit);
+
+
+        Permitestatus currentStatus = permit.getPermitestatus();
+
+        Permitestatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
+                .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
+
+        PermitState state = permitStatusFactory.getState(currentStatus.getName());
+        state.transitionTo(permit, newStatus);
+        permit.setDeleted(true);
+
+        Permite savedPermite = permitRepository.save(permit);
+
+        return permitMapper.toDto(savedPermite);
+    }
+
+
+    private void clearDepotResources(Permite permit) {
+       //need to clear vehicle status aslo in later
+    }
 
 }
