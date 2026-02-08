@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -25,10 +26,10 @@ public class Permite extends BaseEntity {
     private String number;
     @Basic
     @Column(name = "doissued")
-    private Date doissued;
+    private LocalDate doissued;
     @Basic
     @Column(name = "doexpired")
-    private Date doexpired;
+    private LocalDate doexpired;
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id", nullable = false)
     private Vehicle vehicle;
