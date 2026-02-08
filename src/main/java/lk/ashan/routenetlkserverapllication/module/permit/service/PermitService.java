@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
@@ -20,6 +21,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.BusTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidVehicleBranchException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,14 +86,19 @@ public class PermitService {
         Route route = routeRepository.findByNumber(requestDto.getRoute().getNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
-        Servicetype serviceType = serviceTypeRepository.findByName(requestDto.getServicetype().getName())
+        Servicetype serviceType = serviceTypeRepository
+                .findByName(requestDto.getServicetype().getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Service type not found"));
 
         PermitValidationContext context = PermitValidationContext.builder()
+                .permitNumber(requestDto.getNumber())
+                .vehicleId(vehicle.getId())
+                .routeId(route.getId())
+                .vehicleBranchId(vehicle.getBranch().getId())
+                .requestBranchId(requestDto.getBranch().getId())
                 .busType(vehicle.getBustype())
                 .routeType(route.getRoutetype())
                 .serviceType(serviceType)
-                .permitNumber(requestDto.getNumber())
                 .doissued(requestDto.getDoissued())
                 .doexpired(requestDto.getDoexpired())
                 .build();
@@ -110,8 +118,8 @@ public class PermitService {
         permite.setPermitestatus(requestedStatus);
 
         Permite saved = permitRepository.save(permite);
-
         return permitMapper.toDto(saved);
     }
+
 
 }

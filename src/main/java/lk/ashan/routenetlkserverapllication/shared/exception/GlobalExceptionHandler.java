@@ -123,6 +123,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidVehicleBranchException.class)
+    public ResponseEntity<APIErrorResponse> handleInvalidVehicleBranchException(
+            InvalidVehicleBranchException e,
+            HttpServletRequest request
+    ) {
+        return APIResponseBuilder.error(
+                ErrorCode.DATA_CONFLICT,
+                List.of(e.getMessage()),
+                request
+        );
+    }
+
     @ExceptionHandler(BusinessRuleValidationException.class)
     public ResponseEntity<APIErrorResponse> handleBusinessRuleValidationException(
             BusinessRuleValidationException e,
