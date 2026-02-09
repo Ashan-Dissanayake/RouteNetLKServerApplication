@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -75,6 +76,9 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "branch")
     private Collection<Permite> permites;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Trip> trips;
 
     @Override
     public boolean equals(Object o) {

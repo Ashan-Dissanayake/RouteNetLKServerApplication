@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -51,6 +52,9 @@ public class Vehicle extends BaseEntity {
 
     @OneToMany(mappedBy = "vehicle")
     private Collection<Permite> permites;
+
+    @OneToMany(mappedBy = "vehicle")
+    private Collection<Tripvehicleoverride> tripvehicleoverrides;
 
     @Override
     public boolean equals(Object o) {

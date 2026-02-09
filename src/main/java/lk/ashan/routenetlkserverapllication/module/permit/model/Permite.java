@@ -2,12 +2,14 @@ package lk.ashan.routenetlkserverapllication.module.permit.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -45,6 +47,9 @@ public class Permite extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "id", nullable = false)
     private Route route;
+
+    @OneToMany(mappedBy = "permite")
+    private Collection<Trip> trips;
 
     @Override
     public boolean equals(Object o) {

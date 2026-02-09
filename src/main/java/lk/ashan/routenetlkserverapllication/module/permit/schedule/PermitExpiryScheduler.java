@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.permit.scchedule;
+package lk.ashan.routenetlkserverapllication.module.permit.schedule;
 
 import jakarta.transaction.Transactional;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
