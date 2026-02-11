@@ -12,7 +12,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Direction {
+public class Originterminal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,15 +20,15 @@ public class Direction {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "direction")
+    @OneToMany(mappedBy = "originterminal")
     private Collection<Trip> trips;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Direction direction = (Direction) o;
-        return Objects.equals(id, direction.id) && Objects.equals(name, direction.name);
+        Originterminal that = (Originterminal) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

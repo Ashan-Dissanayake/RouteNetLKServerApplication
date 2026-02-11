@@ -19,7 +19,6 @@ public class ActiveState implements PermitState {
                     "Invalid status transition from ACTIVE to " + newStatusName
             );
         }
-
         permite.setPermitestatus(newStatus);
     }
 

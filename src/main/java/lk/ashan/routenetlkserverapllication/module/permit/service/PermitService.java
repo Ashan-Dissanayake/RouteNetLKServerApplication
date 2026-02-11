@@ -108,6 +108,7 @@ public class PermitService {
         PermitState state = permitStatusFactory.getState(requestedStatus.getName());
         state.validateInitial();
 
+        //due to validate initial calls empty body after processing need explicit set
         permite.setPermitestatus(requestedStatus);
 
         Permite saved = permitRepository.save(permite);

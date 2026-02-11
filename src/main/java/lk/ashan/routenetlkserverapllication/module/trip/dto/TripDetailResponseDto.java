@@ -22,6 +22,6 @@ public class TripDetailResponseDto {
     private Time toarrival;
     private String remarks;
     private Integer notrip;
-    private DirectionDto direction;
+    private OriginTerminalDto originterminal;
     private TripStatusDto tripstatus;
 }

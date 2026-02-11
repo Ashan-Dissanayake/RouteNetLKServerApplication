@@ -8,6 +8,7 @@ import lombok.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -27,10 +28,10 @@ public class Trip {
     private Date doservice;
     @Basic
     @Column(name = "todepature")
-    private Time todepature;
+    private LocalTime todepature;
     @Basic
     @Column(name = "toarrival")
-    private Time toarrival;
+    private LocalTime toarrival;
     @Basic
     @Column(name = "remarks")
     private String remarks;
@@ -38,7 +39,7 @@ public class Trip {
     @Column(name = "notrip")
     private Integer notrip;
     @ManyToOne
-    @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
+    @JoinColumns({@JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false), @JoinColumn(name = "triporigin_id", referencedColumnName = "id", nullable = false)})
     private Branch branch;
     @ManyToOne
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
@@ -47,13 +48,13 @@ public class Trip {
     @JoinColumn(name = "permite_id", referencedColumnName = "id", nullable = false)
     private Permite permite;
     @ManyToOne
-    @JoinColumn(name = "direction_id", referencedColumnName = "id", nullable = false)
-    private Direction direction;
-    @ManyToOne
     @JoinColumn(name = "tripstatus_id", referencedColumnName = "id", nullable = false)
     private Tripstatus tripstatus;
     @OneToMany(mappedBy = "trip")
     private Collection<Tripvehicleoverride> tripvehicleoverrides;
+    @ManyToOne
+    @JoinColumn(name = "originterminal_id", referencedColumnName = "id", nullable = false)
+    private Originterminal originterminal;
 
     @Override
     public boolean equals(Object o) {
@@ -67,4 +68,5 @@ public class Trip {
     public int hashCode() {
         return Objects.hash(id, doservice, todepature, toarrival, remarks, notrip);
     }
+
 }

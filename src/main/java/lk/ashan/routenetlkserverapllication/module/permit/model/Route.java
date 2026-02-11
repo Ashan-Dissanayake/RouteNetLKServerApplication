@@ -29,6 +29,9 @@ public class Route {
     @Basic
     @Column(name = "distancekm")
     private Integer distancekm;
+    @Basic
+    @Column(name = "mingapminutes")
+    private Integer mingapminutes;
 
     @OneToMany(mappedBy = "route")
     private Collection<Permite> permites;
