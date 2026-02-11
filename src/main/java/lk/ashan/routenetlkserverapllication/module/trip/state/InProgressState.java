@@ -1,27 +1,28 @@
-package lk.ashan.routenetlkserverapllication.module.permit.state;
-
+package lk.ashan.routenetlkserverapllication.module.trip.state;
 
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
 
 import java.util.List;
 
-public class SuspendedState implements TripState {
+public class InProgressState implements TripState {
 
-    private static final List<String> ALLOWED = List.of("ACTIVE", "EXPIRED");
+    private static final List<String> ALLOWED =
+            List.of("DELAYED", "SUSPENDED", "COMPLETED");
 
     @Override
     public void transitionTo(Trip trip, Tripstatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
-        if ("SUSPENDED".equals(newStatusName)) return;
+
+        if ("IN_PROGRESS".equals(newStatusName)) return;
 
         if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStatusTransitionException(
-                    "Invalid status transition from SUSPENDED to " + newStatusName
+                    "Invalid status transition from IN_PROGRESS to " + newStatusName
             );
         }
+
         trip.setTripstatus(newStatus);
     }
 }

@@ -3,11 +3,17 @@ package lk.ashan.routenetlkserverapllication.module.trip.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
+import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
+import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
+import lk.ashan.routenetlkserverapllication.module.trip.state.TripStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripValidationContext;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
@@ -27,9 +33,12 @@ public class TripService {
 
     private final TripRepository tripRepository;
     private final RouteRepository routeRepository;
+    private final TripStatusRepository tripStatusRepository;
     private final TripMapper tripMapper;
 
     private final List<TripValidationStrategy> validationStrategies;
+    private final TripStatusFactory tripStatusFactory;
+
 
     public List<TripDetailResponseDto> getTrips(){
         return tripMapper.toDetailList(tripRepository.findAll());
@@ -89,6 +98,17 @@ public class TripService {
         validationStrategies.forEach(strategy -> strategy.validate(context));
 
         Trip trip = tripMapper.toEntity(createRequestDto);
+
+        Tripstatus reqestTripStatus = tripStatusRepository.findByName(createRequestDto.getTripstatus().getName())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trp status not found: " + createRequestDto.getTripstatus().getName()));
+
+        TripState state = tripStatusFactory.getState(reqestTripStatus.getName());
+        state.validateInitial();
+
+        //due to validate initial calls empty body after processing need explicit set
+        trip.setTripstatus(reqestTripStatus);
+
         Trip savedTrip = tripRepository.save(trip);
 
         return tripMapper.toDto(savedTrip);
