@@ -52,19 +52,19 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>org.optaplanner</groupId>-->
-<!--			<artifactId>optaplanner-spring-boot-starter</artifactId>-->
-<!--			<version>10.1.0</version>-->
-<!--			<scope>compile</scope>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.optaplanner</groupId>
+			<artifactId>optaplanner-spring-boot-starter</artifactId>
+			<version>10.1.0</version>
+			<scope>compile</scope>
+		</dependency>
 
-<!--		<dependency>-->
-<!--			<groupId>org.optaplanner</groupId>-->
-<!--			<artifactId>optaplanner-test</artifactId>-->
-<!--			<version>10.1.0</version>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.optaplanner</groupId>
+			<artifactId>optaplanner-test</artifactId>
+			<version>10.1.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.h2database</groupId>

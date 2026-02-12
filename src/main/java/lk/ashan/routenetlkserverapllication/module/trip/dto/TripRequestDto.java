@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryRespo
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitSummaryRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.annotation.ValidTimeRange;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.sql.Time;
 import java.time.LocalDate;
@@ -16,9 +17,8 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-@ValidTimeRange
+@SuperBuilder
 public class TripRequestDto {
     @NotNull(message = "Branch is mandatory")
     private BranchSummaryResponseDto branch;

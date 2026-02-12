@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.state;
 
-import lk.ashan.routenetlkserverapllication.module.permit.state.SuspendedState;
+import lk.ashan.routenetlkserverapllication.module.trip.state.SuspendedState;
 import lk.ashan.routenetlkserverapllication.module.permit.state.*;
 import org.springframework.stereotype.Component;
 

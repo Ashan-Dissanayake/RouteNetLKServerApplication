@@ -39,11 +39,11 @@ public class Trip {
     @Column(name = "notrip")
     private Integer notrip;
     @ManyToOne
-    @JoinColumns({@JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false), @JoinColumn(name = "triporigin_id", referencedColumnName = "id", nullable = false)})
-    private Branch branch;
-    @ManyToOne
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
     private Triptype triptype;
+    @ManyToOne
+    @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
+    private Branch branch;
     @ManyToOne
     @JoinColumn(name = "permite_id", referencedColumnName = "id", nullable = false)
     private Permite permite;

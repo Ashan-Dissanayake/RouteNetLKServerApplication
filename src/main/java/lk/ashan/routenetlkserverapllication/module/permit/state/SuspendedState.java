@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.permit.state;
 
 
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permitestatus;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
@@ -8,12 +10,12 @@ import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransi
 
 import java.util.List;
 
-public class SuspendedState implements TripState {
+public class SuspendedState implements PermitState {
 
     private static final List<String> ALLOWED = List.of("ACTIVE", "EXPIRED");
 
     @Override
-    public void transitionTo(Trip trip, Tripstatus newStatus) {
+    public void transitionTo(Permite permite, Permitestatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
         if ("SUSPENDED".equals(newStatusName)) return;
 
@@ -22,7 +24,7 @@ public class SuspendedState implements TripState {
                     "Invalid status transition from SUSPENDED to " + newStatusName
             );
         }
-        trip.setTripstatus(newStatus);
+        permite.setPermitestatus(newStatus);
     }
 }
 

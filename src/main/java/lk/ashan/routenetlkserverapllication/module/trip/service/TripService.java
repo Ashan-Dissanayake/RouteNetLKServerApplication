@@ -3,8 +3,6 @@ package lk.ashan.routenetlkserverapllication.module.trip.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
-import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
-import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
@@ -38,7 +36,6 @@ public class TripService {
 
     private final List<TripValidationStrategy> validationStrategies;
     private final TripStatusFactory tripStatusFactory;
-
 
     public List<TripDetailResponseDto> getTrips(){
         return tripMapper.toDetailList(tripRepository.findAll());

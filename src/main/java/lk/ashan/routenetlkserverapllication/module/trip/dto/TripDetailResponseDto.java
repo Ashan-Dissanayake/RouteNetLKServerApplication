@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -18,8 +19,8 @@ public class TripDetailResponseDto {
     private TripTypeDto triptype;
     private PermitSummaryResponseDto permite;
     private LocalDate doservice;
-    private Time todepature;
-    private Time toarrival;
+    private LocalTime todepature;
+    private LocalTime toarrival;
     private String remarks;
     private Integer notrip;
     private OriginTerminalDto originterminal;
