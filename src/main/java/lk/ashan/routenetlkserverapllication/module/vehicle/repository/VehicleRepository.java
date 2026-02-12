@@ -30,4 +30,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     void restoreAll(@Param("ids") List<Integer> ids);
 
     Optional<Vehicle> findByNumber(String number);
+
+    List<Vehicle> findByBranch_IdAndDeletedFalse(Integer id);
 }

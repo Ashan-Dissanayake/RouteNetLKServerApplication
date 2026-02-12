@@ -3,17 +3,23 @@ package lk.ashan.routenetlkserverapllication.module.trip.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripValidationContext;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,16 +37,22 @@ public class TripService {
 
     private final TripRepository tripRepository;
     private final RouteRepository routeRepository;
+    private final VehicleRepository vehicleRepository;
     private final TripStatusRepository tripStatusRepository;
     private final TripMapper tripMapper;
+
+    private final TripOverrideSolverService tripOverrideSolverService;
+    private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
 
     private final List<TripValidationStrategy> validationStrategies;
     private final TripStatusFactory tripStatusFactory;
 
+    @Transactional(readOnly = true)
     public List<TripDetailResponseDto> getTrips(){
         return tripMapper.toDetailList(tripRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<TripDetailResponseDto> searchTrips(@NotNull HashMap<String, String> params) {
 
         List<Trip> trips = tripRepository.findAll();
@@ -111,4 +123,110 @@ public class TripService {
         return tripMapper.toDto(savedTrip);
     }
 
+    @Transactional
+    public OverrideSuggestionResponse triggerOverrideSolver(Integer tripId) {
+
+        // Load trip
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
+
+        //Validate status
+        if (trip.getTripstatus().getName().equalsIgnoreCase("NEEDS VEHICLE OVERRIDE")) {
+            throw new IllegalStateException(
+                    "Override solver can only run for NEEDS_VEHICLE_OVERRIDE trips"
+            );
+        }
+
+        //Ensure trip not cancelled/completed
+        if (trip.getTripstatus().getName().equalsIgnoreCase("CANCELLED") ||
+                trip.getTripstatus().getName().equalsIgnoreCase("COMPLETED")) {
+            throw new IllegalStateException("Trip already closed");
+        }
+
+        //Load candidate vehicles (same depot, not soft deleted)
+        List<Vehicle> candidateVehicles =
+                vehicleRepository.findByBranch_IdAndDeletedFalse(
+                        trip.getBranch().getId()
+                );
+
+        if (candidateVehicles.isEmpty()) {
+            return new OverrideSuggestionResponse(tripId, null);
+        }
+
+        //Load existing trips on same service date
+        List<Trip> existingTrips =
+                tripRepository.findByServiceDateAndStatusIn(
+                        trip.getDoservice(),
+                        List.of(
+                                "Ready",
+                               "In progress",
+                                "Delayed",
+                                "Suspended"
+                        )
+                );
+
+        //Remove current trip from conflict list
+        existingTrips.removeIf(t -> t.getId().equals(trip.getId()));
+
+        //Call solver
+        Vehicle suggestedVehicle =
+                tripOverrideSolverService.solveForTrip(trip, candidateVehicles, existingTrips);
+
+        //Return suggestion (do NOT persist yet)
+        return new OverrideSuggestionResponse(
+                trip.getId(),
+                suggestedVehicle != null ? suggestedVehicle.getId() : null
+        );
+    }
+
+    @Transactional
+    public TripDetailResponseDto approveOverride(Integer tripId,Integer vehicleId){
+
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
+
+        if (!trip.getTripstatus().getName().equalsIgnoreCase("NEEDS VEHICLE OVERRIDE")) {
+            throw new IllegalStateException(
+                    "Override approval allowed only for NEEDS_VEHICLE_OVERRIDE trips"
+            );
+        }
+
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found"));
+
+        if (!vehicle.getBranch().getId().equals(trip.getBranch().getId())) {
+            throw new IllegalStateException("Vehicle must belong to same depot");
+        }
+
+        if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("AVAILABLE")) {
+            throw new IllegalStateException("Vehicle not available");
+        }
+
+        boolean conflictExists =
+                tripRepository.existsVehicleConflictForOverride(
+                        vehicle.getId(),
+                        trip.getTodepature(),
+                        trip.getToarrival(),
+                        trip.getId()
+                );
+
+        if (conflictExists) {
+            throw new IllegalStateException(
+                    "Vehicle already assigned to another overlapping trip"
+            );
+        }
+
+        Tripvehicleoverride override = new Tripvehicleoverride();
+        override.setTrip(trip);
+        override.setVehicle(vehicle);
+        tripVehicleOverrideRepository.save(override);
+
+        Tripstatus readyStatus = tripStatusRepository.findByName("Ready")
+                .orElseThrow(()-> new ResourceNotFoundException("Status not found"));
+
+        trip.setTripstatus(readyStatus);
+        tripRepository.save(trip);
+
+        return tripMapper.toDto(trip);
+    }
 }

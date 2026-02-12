@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Builder
 @ToString
 public class TripDetailResponseDto {
+    private Integer id;
     private BranchSummaryResponseDto branch;
     private TripTypeDto triptype;
     private PermitSummaryResponseDto permite;
