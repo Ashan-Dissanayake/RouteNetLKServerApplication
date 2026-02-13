@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -23,7 +24,7 @@ public class Tripvehicleoverride {
     private String reason;
     @Basic
     @Column(name = "dooverride")
-    private Date dooverride;
+    private LocalDate dooverride;
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;

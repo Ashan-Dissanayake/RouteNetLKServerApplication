@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,9 @@ public class TripValidationContext {
     private final List<Trip> permitDoServiceExTrips;
     private final Integer minGapMinutes;
     private final LocalTime requestedDeparture;
+
+    private final Permite permit;
+    private final LocalDate serviceDate;
 
     private final int tripNo;
 }
