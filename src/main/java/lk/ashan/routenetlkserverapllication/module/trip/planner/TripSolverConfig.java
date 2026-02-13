@@ -9,17 +9,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RosterSolverConfig {
+public class TripSolverConfig {
 
     @Bean
-    public SolverFactory<TripOverrideAssignment> solverFactory() {
+    public SolverFactory<TripSchedule> solverFactory() {
         SolverConfig solverConfig = new SolverConfig()
                 .withSolutionClass(TripSchedule.class)
                 .withEntityClasses(TripOverrideAssignment.class)
                 .withConstraintProviderClass(TripConstraintProvider.class)
                 .withTerminationConfig(new TerminationConfig()
-                        .withSecondsSpentLimit(120L) // Maximum 2 minutes
-                        .withBestScoreLimit("0hard/*soft") // Stop if perfect hard score achieved
+                        .withSecondsSpentLimit(120L)
+                        .withBestScoreLimit("0hard/*soft")
                 )
                 .withPhases(
                         new ConstructionHeuristicPhaseConfig(),
@@ -28,5 +28,4 @@ public class RosterSolverConfig {
 
         return SolverFactory.create(solverConfig);
     }
-
 }

@@ -16,7 +16,6 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStatusFactory;

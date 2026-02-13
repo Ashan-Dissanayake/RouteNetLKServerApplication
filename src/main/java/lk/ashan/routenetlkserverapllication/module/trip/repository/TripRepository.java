@@ -22,8 +22,6 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
 
     List<Trip> findByPermite_IdAndDoservice(Integer permitId,LocalDate doService);
 
-    List<Trip> findByDoserviceAndTripstatus_Name(LocalDate   doservice, String statusName);
-
     @Query("""
     SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END
     FROM Trip t
@@ -43,8 +41,6 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
             LocalTime arrival,
             Integer currentTripId
     );
-
-    int findRouteMinGap(Integer routeId);
 
     List<Trip> findByDoserviceAndTripstatus_NameIn(LocalDate doservice, List<String> statusNames);
 }
