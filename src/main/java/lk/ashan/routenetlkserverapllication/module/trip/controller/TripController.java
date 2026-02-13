@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.dto.TripUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.service.TripService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -57,5 +58,14 @@ public class TripController {
 
         return APIResponseBuilder.postResponse(response,response.getId());
     }
+
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> updateTrip(
+            @RequestBody @Valid TripUpdateRequestDto updateRequestDto
+    ){
+        TripDetailResponseDto savedTrip = tripService.updateTrip(updateRequestDto);
+        return APIResponseBuilder.putResponse(savedTrip,savedTrip.getId());
+    }
+
 
 }

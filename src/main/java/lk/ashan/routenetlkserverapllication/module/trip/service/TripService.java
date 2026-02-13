@@ -1,11 +1,15 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
+import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.dto.TripUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.mapper.OriginTerminalMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
@@ -25,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +45,17 @@ public class TripService {
     private final RouteRepository routeRepository;
     private final VehicleRepository vehicleRepository;
     private final TripStatusRepository tripStatusRepository;
+    private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
+    private final PermitRepository permitRepository;
+
     private final TripMapper tripMapper;
+    private final OriginTerminalMapper originTerminalMapper;
 
     private final TripOverrideSolverService tripOverrideSolverService;
-    private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
 
     private final List<TripValidationStrategy> validationStrategies;
     private final TripStatusFactory tripStatusFactory;
+
 
     @Transactional(readOnly = true)
     public List<TripDetailResponseDto> getTrips(){
@@ -155,7 +165,7 @@ public class TripService {
 
         //Load existing trips on same service date
         List<Trip> existingTrips =
-                tripRepository.findByServiceDateAndStatusIn(
+                tripRepository.findByDoserviceAndTripstatus_NameIn(
                         trip.getDoservice(),
                         List.of(
                                 "Ready",
@@ -229,4 +239,112 @@ public class TripService {
 
         return tripMapper.toDto(trip);
     }
+
+    @Transactional
+    public TripDetailResponseDto  updateTrip(@NotNull TripUpdateRequestDto requestDto){
+
+        Trip trip = tripRepository.findById(requestDto.getId())
+                .orElseThrow(()-> new ResourceNotFoundException("Trip not found"));
+
+
+        Tripstatus tripstatus = trip.getTripstatus();
+
+        if (tripstatus.getName().equalsIgnoreCase("CANCELLED") || tripstatus.getName().equalsIgnoreCase("COMPLETED")){
+            throw new IllegalArgumentException("Closed trips can not be edit");
+        }
+
+        if (tripstatus.getName().equalsIgnoreCase("READY")) {
+
+            // Permit cannot change
+            if (!trip.getPermite().getId().equals(requestDto.getPermite().getId())) {
+                throw new IllegalStateException("Permit cannot be changed once READY");
+            }
+        }
+
+        validateMinGap(
+                trip.getPermite().getRoute().getId(),
+                requestDto.getOriginterminal().getId(),
+                requestDto.getDoservice(),
+                requestDto.getTodepature(),
+                trip.getId()
+        );
+
+        trip.setTodepature(requestDto.getTodepature());
+        trip.setDoservice(requestDto.getDoservice());
+        trip.setOriginterminal(originTerminalMapper.toEntity(requestDto.getOriginterminal()));
+
+         /*
+        Permite reqestPermite =  permitRepository.findById(requestDto.getPermite().getId())
+                .orElseThrow(()-> new ResourceNotFoundException("Permit not found"));
+
+
+        Vehicle permitVehicle = vehicleRepository.findByNumber(reqestPermite.getVehicle().getNumber())
+                .orElseThrow(()-> new ResourceNotFoundException("Vehicle not found"));
+
+
+        if (!permitVehicle.getVehiclestatus().getName().equalsIgnoreCase("AVAILABLE")) {
+
+
+            Tripstatus needVehicleOverrideStatus = tripStatusRepository.findByName("Need vehicle override")
+                    .orElseThrow(()-> new ResourceNotFoundException("Status not found"));
+
+            trip.setTripstatus(needVehicleOverrideStatus);
+
+            Vehicle suggested =
+                    tripOverrideSolverService.solveForTrip(
+                            trip,
+                            vehicleRepository.findByBranch_IdAndDeletedFalse(
+                                    trip.getBranch().getId()
+                            ),
+                                    tripRepository.findByDoserviceAndTripstatus_Name(
+                                    trip.getDoservice(),
+                                    "Planned"
+                            )
+                    );
+
+            return tripMapper.toDto(trip);
+        }
+*/
+
+        Trip updatedTrip = tripRepository.save(trip);
+        return  tripMapper.toDto(updatedTrip);
+    }
+
+
+    private void validateMinGap(
+            Integer routeId,
+            Integer terminalId,
+            LocalDate serviceDate,
+            LocalTime departureTime,
+            Integer currentTripId
+    ) {
+
+        List<Trip> trips =
+                tripRepository.findByPermite_Route_IdAndOriginterminal_IdAndDoservice(
+                        routeId,
+                        terminalId,
+                        serviceDate
+                );
+
+        int minGap = tripRepository.findRouteMinGap(routeId);
+
+        for (Trip existing : trips) {
+
+            if (existing.getId().equals(currentTripId)) continue;
+
+            long diff = Math.abs(
+                    Duration.between(
+                            existing.getTodepature(),
+                            departureTime
+                    ).toMinutes()
+            );
+
+            if (diff < minGap) {
+                throw new IllegalStateException(
+                        "Minimum gap violation between trips"
+                );
+            }
+        }
+    }
+
 }

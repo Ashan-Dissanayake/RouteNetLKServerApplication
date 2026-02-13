@@ -25,7 +25,7 @@ public class Trip {
     private Integer id;
     @Basic
     @Column(name = "doservice")
-    private Date doservice;
+    private LocalDate doservice;
     @Basic
     @Column(name = "todepature")
     private LocalTime todepature;
