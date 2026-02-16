@@ -57,11 +57,11 @@ public class DriverService {
         validationStrategies.forEach(s -> s.validateCreate(dto));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-            throw new InvalidStatusException("New driver must have status 'ELIGIBLE'");
+            throw new ValidationException("New driver must have status 'ELIGIBLE'");
         }
 
         if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-            throw new InvalidStatusException("New driver route familiarity must have 'LOW'");
+            throw new ValidationException("New driver route familiarity must have 'LOW'");
         }
 
         Driver driver = driverMapper.toEntity(dto);

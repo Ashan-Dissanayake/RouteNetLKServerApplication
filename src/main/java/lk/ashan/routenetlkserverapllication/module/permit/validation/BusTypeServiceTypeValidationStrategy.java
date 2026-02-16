@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidBusServiceTypeException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class BusTypeServiceTypeValidationStrategy implements PermitValidationStr
 
         List<String> allowed = VALID_COMBINATIONS.get(serviceType);
         if (allowed == null || !allowed.contains(busType)) {
-            throw new InvalidBusServiceTypeException(
+            throw new BusinessRuleViolationException(
                     String.format("Invalid combination: %s cannot be used for %s service.", busType, serviceType)
             );
         }

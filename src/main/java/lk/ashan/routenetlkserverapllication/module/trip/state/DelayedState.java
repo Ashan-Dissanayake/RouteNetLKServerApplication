@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.state;
 
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class DelayedState implements TripState {
         if ("DELAYED".equals(newStatusName)) return;
 
         if (!ALLOWED.contains(newStatusName)) {
-            throw new InvalidStatusTransitionException(
+            throw new InvalidStateTransitionException(
                     "Invalid status transition from DELAYED to " + newStatusName
             );
         }

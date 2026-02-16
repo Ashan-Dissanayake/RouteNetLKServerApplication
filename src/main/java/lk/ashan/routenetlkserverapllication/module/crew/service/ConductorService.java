@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.ConductorMapper;
@@ -57,11 +56,11 @@ public class ConductorService {
         validationStrategies.forEach(s -> s.validateCreate(dto));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-            throw new InvalidStatusException("New conductor must have status 'ELIGIBLE'");
+            throw new ValidationException("New conductor must have status 'ELIGIBLE'");
         }
 
         if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-            throw new InvalidStatusException("New conductor route familiarity must have 'LOW'");
+            throw new ValidationException("New conductor route familiarity must have 'LOW'");
         }
 
         Conductor conductor = conductorMapper.toEntity(dto);

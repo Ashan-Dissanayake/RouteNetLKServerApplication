@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,14 +18,7 @@ public class TripCancellationStrategy {
     
     private final TripStatusRepository tripStatusRepository;
     private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
-    
-    /**
-     * Cancels a trip, removing overrides and updating status
-     * 
-     * @param trip The trip to cancel
-     * @param requireAuthorization Whether authorization is required (for IN_PROGRESS trips)
-     * @throws IllegalStateException if trip cannot be cancelled
-     */
+
     public void cancelTrip(Trip trip, boolean requireAuthorization) {
         
         // Validate current status
@@ -32,21 +26,21 @@ public class TripCancellationStrategy {
         
         // Cannot cancel completed trips
         if ("COMPLETED".equalsIgnoreCase(currentStatus)) {
-            throw new IllegalStateException(
+            throw new BusinessRuleViolationException(
                 "Cannot cancel a completed trip"
             );
         }
         
         // Cannot cancel already cancelled trips
         if ("CANCELLED".equalsIgnoreCase(currentStatus)) {
-            throw new IllegalStateException(
+            throw new BusinessRuleViolationException(
                 "Trip is already cancelled"
             );
         }
         
         // IN_PROGRESS trips require authorization
         if ("IN PROGRESS".equalsIgnoreCase(currentStatus) && !requireAuthorization) {
-            throw new IllegalStateException(
+            throw new BusinessRuleViolationException(
                 "Cancellation of IN_PROGRESS trips requires authorization"
             );
         }
@@ -84,24 +78,5 @@ public class TripCancellationStrategy {
             trip.getTripvehicleoverrides().removeAll(activeOverrides);
         }
     }
-    
-    /**
-     * Checks if a trip can be cancelled
-     */
-    public boolean canCancel(Trip trip, boolean hasAuthorization) {
-        String currentStatus = trip.getTripstatus().getName();
-        
-        // Cannot cancel completed or already cancelled
-        if ("COMPLETED".equalsIgnoreCase(currentStatus) || 
-            "CANCELLED".equalsIgnoreCase(currentStatus)) {
-            return false;
-        }
-        
-        // IN_PROGRESS requires authorization
-        if ("IN PROGRESS".equalsIgnoreCase(currentStatus)) {
-            return hasAuthorization;
-        }
-        
-        return true;
-    }
+
 }

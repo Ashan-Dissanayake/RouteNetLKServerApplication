@@ -24,7 +24,7 @@ public class GenderController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<GenderDto>>> get() {
         List<GenderDto> genders = genderService.getGenders();
-        return APIResponseBuilder.getResponse(genders, genders.size());
+        return APIResponseBuilder.list(genders, genders.size());
     }
 
 }

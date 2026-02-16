@@ -24,7 +24,7 @@ public class LicenseCategoryController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<LicenseCategoryDto>>> get() {
         List<LicenseCategoryDto> licenseCategories =licenseCategoryService.getLicenseCategories();
-        return APIResponseBuilder.getResponse(licenseCategories,licenseCategories.size());
+        return APIResponseBuilder.list(licenseCategories,licenseCategories.size());
     }
 
 }

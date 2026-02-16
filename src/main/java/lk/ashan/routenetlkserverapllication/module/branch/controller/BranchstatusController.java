@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
-import lk.ashan.routenetlkserverapllication.module.branch.service.BranchstatusService;
+import lk.ashan.routenetlkserverapllication.module.branch.service.BranchStatusService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BranchstatusController {
 
-    private final BranchstatusService branchstatusService;
+    private final BranchStatusService branchstatusService;
 
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchstatusDto>>> get() {
         List<BranchstatusDto> branchstatuses = branchstatusService.getBranchstatuses();
-        return APIResponseBuilder.getResponse(branchstatuses, branchstatuses.size());
+        return APIResponseBuilder.list(branchstatuses, branchstatuses.size());
     }
 
 }

@@ -80,13 +80,13 @@ public class BranchService {
         validationStrategies.forEach(s -> s.validateUpdate(request));
 
         Branch existing = branchRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Branch not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
 
         // Update basic attributes using MapStruct
         branchMapper.updateEntityFromDto(request, existing);
 
         Branchstatus status = branchstatusRepository.findById(request.getBranchstatus().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Status not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
 
         existing.setBranchstatus(status);
 

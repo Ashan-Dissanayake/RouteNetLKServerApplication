@@ -18,10 +18,9 @@ public class TripOverrideSolverService {
     public Vehicle solveForTrip(
             Trip trip,
             List<Vehicle> candidateVehicles,
-            List<Trip> existingTrips
-    ) {
+            List<Trip> existingTrips) {
 
-        //Convert Vehicle → VehicleFact
+        // Convert Vehicle → VehicleFact
         List<VehicleFact> vehicleFacts = candidateVehicles.stream()
                 .map(v -> new VehicleFact(
                         v.getId(),
@@ -31,23 +30,23 @@ public class TripOverrideSolverService {
                 ))
                 .toList();
 
-        //Create planning entity
-        TripOverrideAssignment assignment =
-                new TripOverrideAssignment(
-                        trip.getId(),
-                        trip,
-                        null
-                );
 
-        //Build problem
+        // Create planning entity
+        TripOverrideAssignment assignment = new TripOverrideAssignment(
+                trip.getId(),
+                trip,
+                null  // No vehicle assigned yet
+        );
+
+        // Build problem
         TripSchedule problem = new TripSchedule(
                 List.of(assignment),
                 vehicleFacts,
                 existingTrips,
-                null
+                null  // No score yet
         );
 
-        //Solve
+        // Solve
         Solver<TripSchedule> solver = solverFactory.buildSolver();
         TripSchedule solved = solver.solve(problem);
 
@@ -55,11 +54,6 @@ public class TripOverrideSolverService {
                 .get(0)
                 .getAssignedVehicle();
 
-        if (selected == null) {
-            return null; // No feasible solution
-        }
-
-        //Map back VehicleFact → Vehicle entity
         return candidateVehicles.stream()
                 .filter(v -> v.getId().equals(selected.getId()))
                 .findFirst()

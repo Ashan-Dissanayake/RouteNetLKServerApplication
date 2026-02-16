@@ -144,7 +144,7 @@ class PermitControllerTest {
     @Sql(scripts = "/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void createPermit_shouldFail_whenRouteNotExists() throws Exception {
         PermitCreateRequestDto dto = PermitDtoFactory.createUniquePermitRequestDto();
-        dto.setRoute(PermitDtoFactory.routeSummaryRequestDto(19,"15"));
+        dto.setRoute(PermitDtoFactory.routeSummaryRequestDto(19,"15",30));
 
         mockMvc.perform(post(apiUrl)
                         .contentType(MediaType.APPLICATION_JSON)

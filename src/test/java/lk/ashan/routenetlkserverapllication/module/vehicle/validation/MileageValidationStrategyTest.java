@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.validation;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidMileageException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +34,7 @@ class MileageValidationStrategyTest {
 
         when(vehicleRepository.findByMyId(1)).thenReturn(existing);
 
-        assertThrows(InvalidMileageException.class, () -> strategy.validateUpdate(request));
+        assertThrows(BusinessRuleViolationException.class, () -> strategy.validateUpdate(request));
     }
 
     @Test

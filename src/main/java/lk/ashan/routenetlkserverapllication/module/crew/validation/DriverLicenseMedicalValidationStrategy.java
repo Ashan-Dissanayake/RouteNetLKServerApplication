@@ -4,7 +4,8 @@ import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestD
 import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,31 +38,31 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
 
     private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("License issued date cannot be in the future");
+            throw new BusinessRuleViolationException("License issued date cannot be in the future");
         }
         // Expiry can be in the past (expired license), but logic usually requires valid license for active drivers.
         // The original code enforced expiry > issued.
         if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("License expiry must be after issued date");
+            throw new BusinessRuleViolationException("License expiry must be after issued date");
         }
 
         long years = ChronoUnit.YEARS.between(issued, expiry);
         if (years > 4) {
-            throw new BusinessRuleValidationException("Invalid license validity period (Max 4 years)");
+            throw new BusinessRuleViolationException("Invalid license validity period (Max 4 years)");
         }
     }
 
     private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
+            throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
         }
         if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
+            throw new BusinessRuleViolationException("Medical expiry must be after issued date");
         }
 
         long months = ChronoUnit.MONTHS.between(issued, expiry);
         if (months > 6) {
-            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
+            throw new BusinessRuleViolationException("Medical validity cannot exceed 6 months");
         }
     }
 
@@ -75,7 +76,7 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
         }
 
         if (!existingDriver.getDolicenseexpired().isBefore(LocalDate.now())) {
-            throw new BusinessRuleValidationException(
+            throw new BusinessRuleViolationException(
                     "License category can only be changed when the existing license is expired"
             );
         }

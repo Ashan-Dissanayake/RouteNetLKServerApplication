@@ -8,13 +8,15 @@ INSERT INTO branchtype (name) VALUES ('Central'),('General'),('Sub Depot'),('Wor
 INSERT INTO regionaloffice (name) VALUES
 ('Colombo'),('Eastern'),('Gampaha'),('Kalutara'),('Kandy'),('Northern'),('Nuwara-Eliya'),('Rajarata'),('Sabaragamuwa'),('Southern'),('Uva'),('Wayamba');
 
--- branch
-INSERT INTO branch (name, code, address, telephone, email, docreated, branchtype_id, remarks, branchstatus_id,regionaloffice_id, deleted) VALUES
-('Colombo head office', 'CLM0001', 'Kirula Rd, Colombo 00500', '117706320', 'clm@sltb.lk', '03-10-25', 1, '', 1, 1,0),
-('Angoda', 'ANG0001', 'WWF7 2H4, Colombo', '117706321', 'ang@sltb.lk', '03-10-25', 3, '', 1,9, 0),
-('Avissawella', 'AVS0001', 'X644 42W, Road, Avissawella', '362222348', 'avs@sltb.lk', '14-10-25', 2, '', 2,1, 0),
-('Homagama', 'HMG0001', 'R2V6 9RR Bus Depot, Homagama', '117706330', 'hmg@sltb.lk', '14-10-25', 2, '', 3, 1,1),
-('Kesbewa Deport', 'KSB0001', 'Piliyandala', '117706360', 'ksb@sltb.lk', '15-10-25', 3, '', 3, 1,1);
+INSERT INTO branch
+(name, code, address, telephone, email, docreated, branchtype_id, remarks, branchstatus_id, regionaloffice_id, deleted)
+VALUES
+    ('Colombo head office', 'CLM0001', 'Kirula Rd, Colombo 00500', '117706320', 'clm@sltb.lk', '2025-10-03', 1, '', 1, 1, 0),
+    ('Angoda', 'ANG0001', 'WWF7 2H4, Colombo', '117706321', 'ang@sltb.lk', '2025-10-03', 3, '', 1, 9, 0),
+    ('Avissawella', 'AVS0001', 'X644 42W, Road, Avissawella', '362222348', 'avs@sltb.lk', '2025-10-14', 2, '', 2, 1, 0),
+    ('Homagama', 'HMG0001', 'R2V6 9RR Bus Depot, Homagama', '117706330', 'hmg@sltb.lk', '2025-10-14', 2, '', 3, 1, 1),
+    ('Kesbewa Deport', 'KSB0001', 'Piliyandala', '117706360', 'ksb@sltb.lk', '2025-10-15', 3, '', 3, 1, 1);
+
 
 
 -- employeestatus
@@ -68,8 +70,6 @@ VALUES
     ('EMPAVS0004', 'Nadeesha Perera', 'Nadeesha', '200557000000', 2, '701112233', 'nadeesha.EMPAVS0004@sltb.lk', 'No 40, Avissawella', '751223344', NULL, 4, 3, 5, 1, '2011-01-19', 1, 0),
     ('EMPAVS0008', 'Nishantha Peris Gunarathne', 'Nishantha', '199912000000', 1, '775551011', 'nishantha.EMPAVS0008@sltb.lk', 'Perera Rd, Negombo', '771438876', NULL, 4, 1, 2, 2, '2025-12-02', 1, 0);
 
-
-
 INSERT INTO make ( name) VALUES
 ('Ashok Leyland'),
 ('Tata'),
@@ -110,6 +110,7 @@ INSERT INTO vehiclestatus (name) VALUES
 ('Allocated'),
 ('In Operation'),
 ('Maintenance'),
+('Breakdown'),
 ('Decommissioned');
 
 INSERT INTO fueltype (name) VALUES
@@ -121,21 +122,12 @@ INSERT INTO bustype(name) values ('AA'),('A+'),('A'),('B'),('B+'),('C'),('D'),('
 INSERT INTO vehicle
 (number,model_id,bustype_id,mileage, fueltype_id, conditionrate_id, remarks, vehiclestatus_id, deleted, branch_id)
 VALUES
-    ( 'ND-1217',1,1,120000,2, 4, NULL, 1, 0,1),
-    ( 'ND-9167',1,6,180000,2, 4, NULL, 1, 0,2),
-    ( 'NA-7845',2,1,200000,2, 3, NULL, 2, 0,2),
-    ( 'ND-5623',2,1,80000,2, 4, NULL, 1, 0,3),
-    ( 'NB-4392',3,1,220000,2, 2, NULL, 2, 1,4),
-    ( 'NE-9981',2,1,50000, 2, 4, NULL, 1, 0,5),
-    ( 'NB-3456',3,1,150000,2, 4, NULL, 2, 1,1),
-    ( 'NA-1123',1,1,250000,2, 1, NULL, 3, 0, 2),
-    ( 'NC-7784',3,1,130000,2, 4, NULL, 1, 0, 3),
-    ( 'NA-3345',3,1,300000,2, 2, NULL, 3, 0, 3),
-    ( 'ND-5566',5,1,90000,2, 4, NULL, 1, 1, 5),
-    ( 'NC-8899',3,1,170000,2, 3, NULL, 2, 0, 5),
-    ( 'ND-1290',5,3,7654, 2, 2, NULL, 1, 0, 3),
-    ( 'ND-1299',9,4,7654,2, 3, NULL, 5, 1, 2);
-
+    ('ND-9167',1,6,180000,2, 4, NULL, 1, 0, 1),
+    ('NA-7845',2,1,200000,2, 3, NULL, 1, 0, 1),
+    ('ND-5623',2,1,80000,2, 4, NULL, 4, 0, 1),
+    ('NB-4392',3,1,220000,2, 2, NULL, 5, 1, 1),
+    ('NA-1111', 2, 1,50000, 2, 2, null, 1, 0, 1),
+    ('NA-2222', 2, 1,60000, 2, 3, null, 1, 0, 1);
 
 INSERT INTO licensecategory (name) VALUES
 ('B'),
@@ -206,33 +198,50 @@ INSERT INTO routetype (name) VALUES ('Inter provincial'), ('Intra provincial');
 
 INSERT INTO scheduletype (name) VALUES ('Normal'), ('Special');
 
-INSERT INTO route (number,origin,destination,distancekm,scheduletype_id,routetype_id)VALUES
-    ('4-7','Colombo','Puttalam',137.2,1,1),
-    ('5','Colombo','Kurunegala',95.8,1,1),
-    ('6','Colombo','Kurunegala',93.4,1,1),
-    ('49','Colombo','Trincomalee',258.0	,1,1),
-    ('92-4','Colombo','Kuliyapitiya',86.1,1,1),
-    ('103-3','Pettah','Borella',	4.0,1,2),
-    ('130','Fort','I.D.H.',10.5,1,2),
-    ('130-1','Fort','Kolonnawa',7.3,1,2),
-    ('152-1','Pettah','I.D.H.',9.8,1,2),
-    ('175','Town Hall','Kohilawatte',11.0,1,2),
-    ('175-1','Kollupitiya','I.D.H.',10.1,1,2),
-    ('175-2','Town Hall','I.D.H.',7.9,1,2),
-    ('175-3','Borella','I.D.H.',6.3,1,2),
-    ('187-3','Colombo','Katunayake',35.1,1,2),
-    ('200','Gampaha','Pettah',29.3,1,2),
-    ('201-4','Yakkala','Gampaha',4.8,1,2),
-    ('240','Colombo','Negombo',36.1,1,2),
-    ('896','Trincomalee','Hot Wells',10.0,1,2);
+INSERT INTO route (number,origin,destination,distancekm,scheduletype_id,routetype_id,mingapminutes)VALUES
+    ('4-7','Colombo','Puttalam',137.2,1,1,30),
+    ('5','Colombo','Kurunegala',95.8,1,1,30),
+    ('6','Colombo','Kurunegala',93.4,1,1,30),
+    ('49','Colombo','Trincomalee',258.0,1,1,45),
+    ('92-4','Colombo','Kuliyapitiya',86.1,1,1,30),
+    ('103-3','Pettah','Borella',4.0,1,2,15),
+    ('130','Fort','I.D.H.',10.5,1,2,20),
+    ('130-1','Fort','Kolonnawa',7.3,1,2,20),
+    ('152-1','Pettah','I.D.H.',9.8,1,2,20),
+    ('175','Town Hall','Kohilawatte',11.0,1,2,20),
+    ('175-1','Kollupitiya','I.D.H.',10.1,1,2,20),
+    ('175-2','Town Hall','I.D.H.',7.9,1,2,20),
+    ('175-3','Borella','I.D.H.',6.3,1,2,20),
+    ('187-3','Colombo','Katunayake',35.1,1,2,25),
+    ('200','Gampaha','Pettah',29.3,1,2,25),
+    ('201-4','Yakkala','Gampaha',4.8,1,2,15),
+    ('240','Colombo','Negombo',36.1,1,2,30),
+    ('896','Trincomalee','Hot Wells',10.0,1,2,20);
 
 INSERT INTO permitestatus (name) values ('Active'),('Expired'),('Suspended'),('Transferred');
 
 INSERT INTO servicetype (name) values ('Normal'),('Semi luxury'),('Luxury'),('Super luxury');
 
 INSERT INTO permite(number,vehicle_id,doissued,doexpired,branch_id,permitestatus_id,servicetype_id,route_id,deleted) VALUES
-    ('2696',2,'2003-01-13','2027-07-24',2,1,1,1,0),
-    ('ANG-NA7845-103-3',3,'2002-05-01','2026-05-12',2,1,1,6,0);
+         ('2696',1,'2003-01-13','2027-07-24', 1,1,1,1,0),
+         ('2697',3,'2003-01-13','2027-07-24', 1,1,1,1,0),
+         ('ANG-NA7845-103-3',2,'2002-05-01','2026-05-12', 1,1,1,6,0);
 
+insert into triptype (name) values ('Daily'),('Weekday'),('Weekend'),('Special');
 
+insert into originterminal (name) values ('pettah'),('Rajagiriya'),('Kirindiwela'),('Sigiriya'),('Gampaha');
+
+insert into overridestatus (name) values ('Active'),('Cancelled');
+
+insert into tripstatus (name)
+values ('Planned'),('Ready'),('Need vehicle override'),('In progress'),('Delayed'),('Suspended'),('Completed'),('Cancelled');
+
+insert into trip (branch_id,triptype_id,permite_id,doservice,todepature,toarrival,notrip,tripstatus_id,originterminal_id) values
+            (1,2,1,'2026-02-16','08:00:00','10:00:00',1,2,1),
+            (1,2,2,'2026-02-15','09:00:00','11:00:00',1,3,1),
+            (1,2,1,'2026-02-15','12:00:00','14:00:00',2,1,1),
+            (1,2,1,'2026-02-14','14:00:00','16:00:00',3,4,1),
+            (1,2,1,'2026-02-14','06:00:00','08:00:00',4,7,1),
+            (1,2,2,'2026-02-16','10:00:00','12:00:00',2,3,1),
+            (1,2,1,'2026-02-16','09:00:00','13:00:00',5,2,1);
 

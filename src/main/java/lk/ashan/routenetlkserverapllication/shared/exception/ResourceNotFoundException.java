@@ -1,7 +1,10 @@
 package lk.ashan.routenetlkserverapllication.shared.exception;
 
-public class ResourceNotFoundException extends RuntimeException{
+import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 
-    public ResourceNotFoundException(){}
-    public ResourceNotFoundException(String message){super(message);}
+public class ResourceNotFoundException extends BusinessException {
+    public ResourceNotFoundException(String message) {
+        super(message, ErrorCode.RESOURCE_NOT_FOUND);
+
+          }
 }

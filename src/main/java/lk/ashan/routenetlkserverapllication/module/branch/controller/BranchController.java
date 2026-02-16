@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/branches")
@@ -30,39 +32,43 @@ public class BranchController {
                 ? branchService.getBranches()
                 : branchService.searchBranch(params);
 
-        return APIResponseBuilder.getResponse(branches, branches.size());
+        return APIResponseBuilder.list(branches, branches.size());
     }
 
     @GetMapping(value = "/list",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchSummaryResponseDto>>> get() {
         List<BranchSummaryResponseDto> branches =  branchService.getSummaryBranches();
-        return APIResponseBuilder.getResponse(branches, branches.size());
+        return APIResponseBuilder.list(branches, branches.size());
     }
 
     @PostMapping
     public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> add(
             @RequestBody @Valid BranchCreateRequestDto branchCreateRequest) {
         BranchDetailResponseDto savedBranch = branchService.createBranch(branchCreateRequest);
-        return APIResponseBuilder.postResponse(savedBranch, savedBranch.getId());
+        return APIResponseBuilder.created(savedBranch, savedBranch.getId());
     }
 
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = branchService.deactivateBranches(ids);
-        return APIResponseBuilder.postResponse(null,deactivatedIds);
-    }
+        return APIResponseBuilder.ok(
+                deactivatedIds,
+                Map.of("status", "deactivated", "count", deactivatedIds.size())
+        );    }
 
     @PostMapping("/activate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
-        List<Integer> deactivatedIds = branchService.activateBranches(ids);
-        return APIResponseBuilder.deleteResponse(deactivatedIds);
-    }
+        List<Integer> activatedIds = branchService.activateBranches(ids);
+        return APIResponseBuilder.ok(
+                activatedIds,
+                Map.of("status", "activated", "count", activatedIds.size())
+        );    }
 
     @PutMapping
     public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(
             @RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
         BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
-        return APIResponseBuilder.putResponse(updatedBranch, updatedBranch.getId());
+        return APIResponseBuilder.updated(updatedBranch, updatedBranch.getId());
     }
 
 }

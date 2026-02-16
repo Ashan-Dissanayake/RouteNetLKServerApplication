@@ -2,8 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidGenderDesignationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class DesignationRulesValidationStrategy implements EmployeeValidationStr
 
         List<String> allowed = VALID_COMBINATIONS.get(dept);
         if (allowed == null || !allowed.contains(desig)) {
-            throw new InvalidDepartmentDesignationException(
+            throw new BusinessRuleViolationException(
                     String.format("Invalid combination: %s cannot belong to %s department.", designation, department)
             );
         }
@@ -54,7 +53,7 @@ public class DesignationRulesValidationStrategy implements EmployeeValidationStr
         boolean isDriver = designation.equalsIgnoreCase("driver");
 
         if (isFemale && isDriver){
-            throw new InvalidGenderDesignationException("Female employees are not allowed to be a driver.");
+            throw new BusinessRuleViolationException("Female employees are not allowed to be a driver.");
         }
     }
 }

@@ -3,15 +3,17 @@ package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 import jakarta.validation.ValidationException;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripCreateContext;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Component
-public class PermitValidationStrategy implements TripValidationStrategy {
+public class PermitCreationValidationStrategy implements TripCreationValidationStrategy {
     
     @Override
-    public void validate(TripValidationContext context) {
+    public void validate(TripCreateContext context) {
         Permite permit = context.getPermit();
         LocalDate serviceDate = context.getServiceDate();
         
@@ -23,7 +25,7 @@ public class PermitValidationStrategy implements TripValidationStrategy {
         // Check permit status - must be ACTIVE
         String permitStatus = permit.getPermitestatus().getName();
         if (!"ACTIVE".equalsIgnoreCase(permitStatus)) {
-            throw new ValidationException(
+            throw new BusinessRuleViolationException(
                 "Permit is not active. Current status: " + permitStatus
             );
         }
@@ -33,13 +35,13 @@ public class PermitValidationStrategy implements TripValidationStrategy {
         LocalDate expiryDate = permit.getDoexpired();
         
         if (issueDate != null && serviceDate.isBefore(issueDate)) {
-            throw new ValidationException(
+            throw new BusinessRuleViolationException(
                 "Service date is before permit issue date"
             );
         }
         
         if (expiryDate != null && serviceDate.isAfter(expiryDate)) {
-            throw new ValidationException(
+            throw new BusinessRuleViolationException(
                 "Permit has expired. Expiry date: " + expiryDate
             );
         }

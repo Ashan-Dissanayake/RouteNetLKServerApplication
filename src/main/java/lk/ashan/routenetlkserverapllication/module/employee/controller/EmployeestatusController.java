@@ -23,8 +23,8 @@ public class EmployeestatusController {
 
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeestatusDto>>> get() {
-        List<EmployeestatusDto> employeestatuses = employeestatusService.getEmployeestatuses();
-        return APIResponseBuilder.getResponse(employeestatuses, employeestatuses.size());
+        List<EmployeestatusDto> employeeStatuses = employeestatusService.getEmployeestatuses();
+        return APIResponseBuilder.list(employeeStatuses, employeeStatuses.size());
     }
 
 }

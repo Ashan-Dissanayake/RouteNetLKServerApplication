@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.validation;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.ContactConflictException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,10 +32,10 @@ public class EmployeeUniquenessValidationStrategy implements EmployeeValidationS
         validateMobileAndEmergencyContact(request.getMobile(), request.getEmergencycontact());
         
         if (employeeRepository.existsByEmergencycontact(request.getMobile())) {
-            throw new ContactConflictException("Mobile number already used as emergency contact by another employee.");
+            throw new BusinessRuleViolationException("Mobile number already used as emergency contact by another employee.");
         }
         if (employeeRepository.existsByMobile(request.getEmergencycontact())) {
-             throw new ContactConflictException("Emergency contact already used as another employee’s mobile number.");
+             throw new BusinessRuleViolationException("Emergency contact already used as another employee’s mobile number.");
         }
     }
 
@@ -57,16 +57,16 @@ public class EmployeeUniquenessValidationStrategy implements EmployeeValidationS
         validateMobileAndEmergencyContact(request.getMobile(), request.getEmergencycontact());
 
         if (employeeRepository.existsByEmergencycontactAndIdNot(request.getMobile(), request.getId())) {
-             throw new ContactConflictException("Mobile number already used as emergency contact by another employee.");
+             throw new BusinessRuleViolationException("Mobile number already used as emergency contact by another employee.");
         }
         if (employeeRepository.existsByMobileAndIdNot(request.getEmergencycontact(), request.getId())) {
-             throw new ContactConflictException("Emergency contact already used as another employee’s mobile number.");
+             throw new BusinessRuleViolationException("Emergency contact already used as another employee’s mobile number.");
         }
     }
 
     private void validateMobileAndEmergencyContact(String mobile, String emergency) {
         if (mobile.equals(emergency)) {
-            throw new ContactConflictException("Employee mobile number and emergency contact cannot be the same.");
+            throw new BusinessRuleViolationException("Employee mobile number and emergency contact cannot be the same.");
         }
     }
 }

@@ -57,7 +57,7 @@ public class TripStateTransitionHandler {
         switch (normalizedStatus) {
             case "READY" -> onExitReady(trip);
             case "IN PROGRESS" -> onExitInProgress(trip);
-            case "NEEDS VEHICLE OVERRIDE", "NEED VEHICLE OVERRIDE" -> onExitNeedsVehicleOverride(trip);
+            case "NEED VEHICLE OVERRIDE" -> onExitNeedsVehicleOverride(trip);
             default -> {
             }
             // No exit behavior needed

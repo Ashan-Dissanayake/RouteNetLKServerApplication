@@ -24,7 +24,7 @@ public class DepartmentController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DepartmentDto>>> get() {
         List<DepartmentDto> departments = departmentService.getDepartments();
-        return APIResponseBuilder.getResponse(departments, departments.size());
+        return APIResponseBuilder.list(departments, departments.size());
     }
 
 }

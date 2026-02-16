@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.validation;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidMileageException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class MileageValidationStrategy implements VehicleValidationStrategy {
     public void validateUpdate(VehicleUpdateRequestDto request) {
         Integer currentMileage = vehicleRepository.findByMyId(request.getId()).getMileage();
         if (request.getMileage() < currentMileage) {
-             throw new InvalidMileageException("Mileage cannot be less than current value.");
+             throw new BusinessRuleViolationException("Mileage cannot be less than current value.");
         }
     }
 }

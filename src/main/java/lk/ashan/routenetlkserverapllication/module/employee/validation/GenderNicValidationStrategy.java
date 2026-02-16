@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidNICGenderException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class GenderNicValidationStrategy implements EmployeeValidationStrategy {
     public void validateCreate(EmployeeCreateRequestDto request) {
          String gender = extractGender(request.getNic());
          if (!request.getGender().getName().equalsIgnoreCase(gender)) {
-            throw new InvalidNICGenderException("Gender not match with given NIC");
+            throw new BusinessRuleViolationException("Gender not match with given NIC");
         }
     }
 
@@ -24,7 +24,7 @@ public class GenderNicValidationStrategy implements EmployeeValidationStrategy {
         // but looking at usage, it seems full object is passed. Assuming Gender object is present in Request.
         if (request.getGender() != null && request.getGender().getName() != null) {
              if (!request.getGender().getName().equalsIgnoreCase(gender)) {
-                throw new InvalidNICGenderException("Gender not match with given NIC");
+                throw new BusinessRuleViolationException("Gender not match with given NIC");
             }
         }
     }

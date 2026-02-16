@@ -12,11 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class APIErrorResponse {
-
-    private String type;           // URI of the error
-    private String title;          // Human-readable error title
-    private HttpStatus status;     // HTTP status
-    private ErrorCode code;        // Enum error code
-    private List<String> details;   // for multiple error details
-    private String instance;       // URI of the request
+    private String type;
+    private String title;
+    private HttpStatus status;
+    private ErrorCode code;
+    private List<String> details;
+    private String instance;
 }

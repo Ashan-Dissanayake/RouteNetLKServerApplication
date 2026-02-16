@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidEmploymentDateException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -17,11 +17,11 @@ public class EmploymentDateValidationStrategy implements EmployeeValidationStrat
         int currentYear = LocalDate.now().getYear();
 
         if (doj == null) {
-            throw new InvalidEmploymentDateException("Date of Joining is required.");
+            throw new BusinessRuleViolationException("Date of Joining is required.");
         }
 
         if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
-            throw new InvalidEmploymentDateException(
+            throw new BusinessRuleViolationException(
                     String.format("%s employees cannot have a Date of Joining older than the current year (%d).",
                             request.getEmployeetype().getName(), currentYear)
             );

@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.state;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class OnLeaveState implements EmployeeState {
         if ("ON LEAVE".equals(newStatusName)) return;
 
         if (!ALLOWED.contains(newStatusName)) {
-             throw new InvalidStatusTransitionException(
+             throw new InvalidStateTransitionException(
                 "Invalid status transition from ON LEAVE to " + newStatusName
             );
         }

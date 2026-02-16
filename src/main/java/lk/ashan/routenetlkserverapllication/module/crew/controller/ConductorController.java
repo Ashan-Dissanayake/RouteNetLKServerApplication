@@ -27,7 +27,7 @@ public class ConductorController {
         List<ConductorDetailResponseDto> conductors = params.isEmpty()
                 ?conductorService.getConductors()
                 : conductorService.searchConductor(params);
-        return APIResponseBuilder.getResponse(conductors, conductors.size());
+        return APIResponseBuilder.list(conductors, conductors.size());
     }
 
     @PostMapping
@@ -35,7 +35,7 @@ public class ConductorController {
             @RequestBody @Valid ConductorCreateRequestDto conductorCreateRequestDto)
     {
         ConductorDetailResponseDto savedConductor = conductorService.createConductor(conductorCreateRequestDto);
-        return APIResponseBuilder.postResponse(savedConductor, savedConductor.getId());
+        return APIResponseBuilder.created(savedConductor, savedConductor.getId());
     }
     
     @PutMapping
@@ -43,7 +43,7 @@ public class ConductorController {
             @RequestBody @Valid ConductorUpdateRequestDto conductorUpdateRequestDto)
     {
         ConductorDetailResponseDto updateConductor = conductorService.updateConductor(conductorUpdateRequestDto);
-        return APIResponseBuilder.postResponse(updateConductor, updateConductor.getId());
+        return APIResponseBuilder.updated(updateConductor, updateConductor.getId());
     }
 
 }

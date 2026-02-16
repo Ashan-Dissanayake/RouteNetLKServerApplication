@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
+package lk.ashan.routenetlkserverapllication.module.trip.validation.context;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TripValidationContext {
+public class TripCreateContext {
     private final List<Trip> permitRouteOriginExTrips;
     private final List<Trip> permitDoServiceExTrips;
     private final Integer minGapMinutes;
@@ -19,6 +19,4 @@ public class TripValidationContext {
 
     private final Permite permit;
     private final LocalDate serviceDate;
-
-    private final int tripNo;
 }

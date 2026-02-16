@@ -19,7 +19,7 @@ public class TripConstraintProvider implements ConstraintProvider {
         };
     }
 
-    // 1️⃣ No two override assignments use same vehicle at overlapping time
+    //No two override assignments use same vehicle at overlapping time
     private Constraint vehicleNotInUseAtSameTime(ConstraintFactory factory) {
         return factory.forEachUniquePair(TripOverrideAssignment.class,
                         Joiners.equal(TripOverrideAssignment::getAssignedVehicle),
@@ -31,26 +31,41 @@ public class TripConstraintProvider implements ConstraintProvider {
                 .asConstraint("Vehicle conflict within override assignments");
     }
 
-    // 2️⃣ Vehicle must be AVAILABLE
+    //Vehicle must be AVAILABLE
     private Constraint vehicleMustBeAvailable(ConstraintFactory factory) {
         return factory.forEach(TripOverrideAssignment.class)
-                .filter(a -> a.getAssignedVehicle() != null &&
-                        !"AVAILABLE".equals(a.getAssignedVehicle().getStatus()))
+                .filter(a -> {
+                    if (a.getAssignedVehicle() == null) {
+                        return false;  // Skip unassigned
+                    }
+
+                    String status = a.getAssignedVehicle().getStatus();
+
+                    return !"Available".equalsIgnoreCase(status);
+                })
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Vehicle not available");
     }
 
-    // 3️⃣ Depot must match
+    //Depot must match
     private Constraint vehicleDepotMatch(ConstraintFactory factory) {
         return factory.forEach(TripOverrideAssignment.class)
-                .filter(a -> a.getAssignedVehicle() != null &&
-                        !a.getAssignedVehicle().getDepotId()
-                                .equals(a.getTrip().getBranch().getId()))
+                .filter(a -> {
+                    if (a.getAssignedVehicle() == null) return false;
+
+                    Integer vehicleDepot = a.getAssignedVehicle().getDepotId();
+                    Integer tripDepot = a.getTrip().getBranch().getId();
+
+                    System.out.println("Checking depot: vehicle depot=" + vehicleDepot +
+                            ", trip depot=" + tripDepot);
+
+                    return !vehicleDepot.equals(tripDepot);
+                })
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Vehicle must belong to same depot");
     }
 
-    // 4️⃣ Prevent conflict with already scheduled trips
+    //Prevent conflict with already scheduled trips
     private Constraint noConflictWithExistingTrips(ConstraintFactory factory) {
         return factory.forEach(TripOverrideAssignment.class)
                 .join(Trip.class,

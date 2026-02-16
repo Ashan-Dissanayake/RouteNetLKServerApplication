@@ -13,7 +13,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRep
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleState;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
 import lk.ashan.routenetlkserverapllication.module.vehicle.validation.VehicleValidationStrategy;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -142,7 +142,7 @@ public class VehicleService {
         }
 
         if (!allowedRates.contains(newRate)) {
-            throw new InvalidStatusTransitionException(
+            throw new InvalidStateTransitionException(
                     "Invalid Rate transition from " + currentRate + " to " + newRate
             );
         }

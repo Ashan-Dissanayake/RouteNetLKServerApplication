@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidBusRouteTypeException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidDepartmentDesignationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class BusTypeRouteTypeValidationStrategy implements PermitValidationStrat
 
         List<String> allowed = VALID_COMBINATIONS.get(routeType);
         if (allowed == null || !allowed.contains(busType)) {
-            throw new InvalidBusRouteTypeException(
+            throw new BusinessRuleViolationException(
                     String.format("Invalid combination: Type %s buses cannot be used on %s route.", busType, routeType)
             );
         }

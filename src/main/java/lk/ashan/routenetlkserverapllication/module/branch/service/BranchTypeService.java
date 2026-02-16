@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BranchtypeService {
+public class BranchTypeService {
 
     private final BranchtypeRepository branchtypeRepository;
     private final BranchtypeMapper branchtypeMapper;

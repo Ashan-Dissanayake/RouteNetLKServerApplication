@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Integer> {
@@ -43,4 +44,8 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     );
 
     List<Trip> findByDoserviceAndTripstatus_NameIn(LocalDate doservice, List<String> statusNames);
+
+
+    @Query("SELECT MAX(t.notrip) FROM Trip t WHERE t.permite.id = :permitId AND t.doservice = :serviceDate")
+    Optional<Integer> findMaxTripNumberForPermitAndDate(Integer permitId, LocalDate serviceDate);
 }

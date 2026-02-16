@@ -29,7 +29,7 @@ public class PermitController {
         List<PermitDetailResponseDto> permits = params.isEmpty()
                 ?permitService.getPermits()
                 : permitService.searchPermit(params);
-        return APIResponseBuilder.getResponse(permits, permits.size());
+        return APIResponseBuilder.list(permits, permits.size());
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class PermitController {
             @RequestBody @Valid PermitCreateRequestDto permitCreateRequestDto)
     {
         PermitDetailResponseDto savedPermit = permitService.createPermit(permitCreateRequestDto);
-        return APIResponseBuilder.postResponse(savedPermit, savedPermit.getId());
+        return APIResponseBuilder.list(savedPermit, savedPermit.getId());
     }
 
     @PostMapping("/{permitId}/transfer")
@@ -46,6 +46,6 @@ public class PermitController {
             @RequestBody PermitTransferRequestDto requestDto
     ) {
         PermitDetailResponseDto updatedPermit = permitService.transferPermit(permitId, requestDto);
-        return APIResponseBuilder.postResponse(updatedPermit, updatedPermit.getId());
+        return APIResponseBuilder.created(updatedPermit, updatedPermit.getId());
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RegionalofficeService {
+public class RegionalOfficeService {
 
     private final RegionalofficeRepository regionalofficeRepository;
     private final RegionalofficeMapper regionalofficeMapper;

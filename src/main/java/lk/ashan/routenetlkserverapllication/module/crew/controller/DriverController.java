@@ -30,7 +30,7 @@ public class DriverController {
         List<DriverDetailResponseDto> drivers = params.isEmpty()
                 ?driverService.getDrivers()
                 : driverService.searchDriver(params);
-        return APIResponseBuilder.getResponse(drivers, drivers.size());
+        return APIResponseBuilder.list(drivers, drivers.size());
     }
 
     @PostMapping
@@ -38,7 +38,7 @@ public class DriverController {
             @RequestBody @Valid DriverCreateRequestDto driverCreateRequestDto)
     {
         DriverDetailResponseDto savedDriver = driverService.createDriver(driverCreateRequestDto);
-        return APIResponseBuilder.postResponse(savedDriver, savedDriver.getId());
+        return APIResponseBuilder.created(savedDriver, savedDriver.getId());
     }
 
     @PutMapping
@@ -46,7 +46,7 @@ public class DriverController {
             @RequestBody @Valid DriverUpdateRequestDto driverUpdateRequestDto)
     {
         DriverDetailResponseDto updateDriver = driverService.updateDriver(driverUpdateRequestDto);
-        return APIResponseBuilder.postResponse(updateDriver, updateDriver.getId());
+        return APIResponseBuilder.updated(updateDriver, updateDriver.getId());
     }
 
 }

@@ -34,9 +34,9 @@ public class TripRequestDto {
     @NotNull(message = "Arrival time is mandatory")
     private LocalTime toarrival;
     private String remarks;
-    @NotBlank(message = "Number is mandatory")
+    //@NotNull(message = "Number is mandatory")
     private Integer notrip;
-    @NotNull(message = "Trip status is mandatory")
+    //@NotNull(message = "Trip status is mandatory")
     private TripStatusDto tripstatus;
     @NotNull(message = "Origin terminal is mandatory")
     private OriginTerminalDto originterminal;

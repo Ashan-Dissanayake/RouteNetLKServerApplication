@@ -18,12 +18,9 @@ public class TripExecutionStrategy {
     
     private final TripStatusRepository tripStatusRepository;
     private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
-    
+
     /**
      * Validates that trip can be executed and transitions it to IN_PROGRESS
-     * 
-     * @param trip The trip to execute
-     * @throws IllegalStateException if trip cannot be executed
      */
     public void executeTrip(Trip trip) {
         
@@ -78,27 +75,5 @@ public class TripExecutionStrategy {
         // Use permit vehicle
         return trip.getPermite().getVehicle();
     }
-    
-    /**
-     * Validates if trip can be executed without actually executing it
-     */
-    public boolean canExecute(Trip trip) {
-        try {
-            String currentStatus = trip.getTripstatus().getName();
-            if (!"READY".equalsIgnoreCase(currentStatus)) {
-                return false;
-            }
-            
-            Vehicle effectiveVehicle = getEffectiveVehicle(trip);
-            if (effectiveVehicle == null) {
-                return false;
-            }
-            
-            String vehicleStatus = effectiveVehicle.getVehiclestatus().getName();
-            return "AVAILABLE".equalsIgnoreCase(vehicleStatus) || 
-                   "IN OPERATION".equalsIgnoreCase(vehicleStatus);
-        } catch (Exception e) {
-            return false;
-        }
-    }
+
 }

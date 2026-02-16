@@ -2,6 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +27,7 @@ public class TripUpdateTimeChangeValidation implements TripUpdateValidationStrat
         
         // Validate departure before arrival
         if (!context.getNewDeparture().isBefore(context.getNewArrival())) {
-            throw new IllegalStateException(
+            throw new BusinessRuleViolationException(
                 "Departure time must be before arrival time"
             );
         }
@@ -51,7 +53,7 @@ public class TripUpdateTimeChangeValidation implements TripUpdateValidationStrat
                     existingTrip.getTodepature(),
                     context.getNewDeparture(),
                     minGapMinutes)) {
-                throw new IllegalStateException(
+                throw new BusinessRuleViolationException(
                     "Updated departure time violates minimum gap rule. " +
                     "Required gap: " + minGapMinutes + " minutes. " +
                     "Conflict with trip departing at: " + existingTrip.getTodepature()

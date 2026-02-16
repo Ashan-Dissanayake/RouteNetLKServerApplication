@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -31,20 +32,20 @@ public class EmployeeController {
                 ?employeeService.getEmployees()
                 : employeeService.searchEmployee(params);
 
-        return APIResponseBuilder.getResponse(employees, employees.size());
+        return APIResponseBuilder.list(employees, employees.size());
     }
 
     @GetMapping(value = "/list",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get() {
         List<EmployeeSummaryResponseDto> employees =  employeeService.getSummaryEmployees();
-        return APIResponseBuilder.getResponse(employees, employees.size());
+        return APIResponseBuilder.list(employees, employees.size());
     }
 
     @GetMapping(value = "/list/{designation}")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get(
             @PathVariable String designation) {
         List<EmployeeSummaryResponseDto> employees = employeeService.getEmployeesByDesignation(designation);
-        return APIResponseBuilder.getResponse(employees, employees.size());
+        return APIResponseBuilder.list(employees, employees.size());
     }
 
 
@@ -54,7 +55,7 @@ public class EmployeeController {
             @RequestBody @Valid EmployeeCreateRequestDto employeeCreateRequest)
     {
         EmployeeDetailResponseDto savedEmployee = employeeService.createEmployee(employeeCreateRequest);
-        return APIResponseBuilder.postResponse(savedEmployee, savedEmployee.getId());
+        return APIResponseBuilder.created(savedEmployee, savedEmployee.getId());
     }
 
     @PutMapping
@@ -62,19 +63,23 @@ public class EmployeeController {
             @RequestBody @Valid EmployeeUpdateRequestDto employeeUpdateRequestDto)
     {
         EmployeeDetailResponseDto updatedEmployee = employeeService.updateEmployee(employeeUpdateRequestDto);
-        return APIResponseBuilder.putResponse(updatedEmployee,updatedEmployee.getId());
+        return APIResponseBuilder.updated(updatedEmployee,updatedEmployee.getId());
     }
 
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = employeeService.deactivateEmployee(ids);
-        return APIResponseBuilder.deleteResponse(deactivatedIds);
-    }
+        return APIResponseBuilder.ok(
+                deactivatedIds,
+                Map.of("status", "deactivated", "count", deactivatedIds.size())
+        );    }
 
     @PostMapping("/activate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
         List<Integer> activatedIds = employeeService.activateEmployees(ids);
-        return APIResponseBuilder.postResponse(null,activatedIds);
-    }
+        return APIResponseBuilder.ok(
+                activatedIds,
+                Map.of("status", "activated", "count", activatedIds.size())
+        );    }
 
 }

@@ -7,8 +7,8 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -94,15 +94,15 @@ public class CrewEligibilityService {
 
     public void validateMedicalDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
+            throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
         }
         if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
+            throw new BusinessRuleViolationException("Medical expiry must be after issued date");
         }
 
         long months = ChronoUnit.MONTHS.between(issued, expiry);
         if (months > 6) {
-            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
+            throw new BusinessRuleViolationException("Medical validity cannot exceed 6 months");
         }
     }
 
@@ -123,7 +123,7 @@ public class CrewEligibilityService {
         }
 
         if (!allowedUpgrades.contains(newLevel)) {
-            throw new InvalidStatusTransitionException(
+            throw new InvalidStateTransitionException(
                     "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
             );
         }

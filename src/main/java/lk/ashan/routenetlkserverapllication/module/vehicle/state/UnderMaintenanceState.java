@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.state;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class UnderMaintenanceState implements VehicleState {
         if ("UNDER MAINTENANCE".equals(newStatusName)) return;
 
         if (!ALLOWED.contains(newStatusName)) {
-             throw new InvalidStatusTransitionException(
+             throw new InvalidStateTransitionException(
                 "Invalid status transition from UNDER MAINTENANCE to " + newStatusName
             );
         }

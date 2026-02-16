@@ -15,8 +15,16 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * Updated to use centralized VehicleConflictDetectionStrategy
- * ISSUE #2: Now leverages conflict detection strategy
+ * Determines initial trip status - always PLANNED
+ * Trips can only become READY after crew assignment (not part of creation)
+ *
+ * LOGICAL CORRECTION: Vehicle availability alone is not enough for READY status.
+ * A trip needs BOTH vehicle AND crew (driver + conductor) to be READY for execution.
+ *
+ * Initial creation workflow:
+ * 1. Create trip → PLANNED (always)
+ * 2. If vehicle unavailable → remains PLANNED (note: needs override)
+ * 3. Crew assignment (separate process) → PLANNED → READY
  */
 @Component
 @RequiredArgsConstructor
@@ -26,7 +34,9 @@ public class InitialTripStatusDeterminationStrategy {
     private final VehicleConflictDetectionStrategy conflictDetectionStrategy;
 
     /**
-     * Determines the appropriate initial status for a trip based on permit vehicle availability
+     * Determines initial status:
+     * - PLANNED: Vehicle is available (but still needs crew assignment)
+     * - NEEDS VEHICLE OVERRIDE: Vehicle unavailable (maintenance/breakdown/conflict)
      */
     public Tripstatus determineInitialStatus(
             Permite permit,
@@ -36,7 +46,7 @@ public class InitialTripStatusDeterminationStrategy {
 
         Vehicle permitVehicle = permit.getVehicle();
 
-        // Use centralized conflict detection to check vehicle availability
+        // Check if permit vehicle is available
         boolean isAvailable = conflictDetectionStrategy.isVehicleAvailable(
                 permitVehicle,
                 serviceDate,
@@ -46,19 +56,19 @@ public class InitialTripStatusDeterminationStrategy {
         );
 
         if (isAvailable) {
-            return getReadyStatus();
+            return getPlannedStatus();  // Vehicle OK, needs crew later
         } else {
-            return getNeedsVehicleOverrideStatus();
+            return getNeedsVehicleOverrideStatus();  // Vehicle problem
         }
     }
 
-    private Tripstatus getReadyStatus() {
-        return tripStatusRepository.findByName("READY")
-                .orElseThrow(() -> new ResourceNotFoundException("READY status not found"));
+    private Tripstatus getPlannedStatus() {
+        return tripStatusRepository.findByName("Planned")
+                .orElseThrow(() -> new ResourceNotFoundException("PLANNED status not found"));
     }
 
     private Tripstatus getNeedsVehicleOverrideStatus() {
-        return tripStatusRepository.findByName("NEEDS VEHICLE OVERRIDE")
+        return tripStatusRepository.findByName("Need vehicle override")
                 .orElseThrow(() -> new ResourceNotFoundException("NEEDS VEHICLE OVERRIDE status not found"));
     }
 }

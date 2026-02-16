@@ -2,7 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.crew.validation;
 
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleValidationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -23,15 +24,15 @@ public class ConductorMedicalValidationStrategy implements ConductorValidationSt
 
     private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleValidationException("Medical issued date cannot be in the future");
+            throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
         }
         if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleValidationException("Medical expiry must be after issued date");
+            throw new BusinessRuleViolationException("Medical expiry must be after issued date");
         }
 
         long months = ChronoUnit.MONTHS.between(issued, expiry);
         if (months > 6) {
-            throw new BusinessRuleValidationException("Medical validity cannot exceed 6 months");
+            throw new BusinessRuleViolationException("Medical validity cannot exceed 6 months");
         }
     }
 }

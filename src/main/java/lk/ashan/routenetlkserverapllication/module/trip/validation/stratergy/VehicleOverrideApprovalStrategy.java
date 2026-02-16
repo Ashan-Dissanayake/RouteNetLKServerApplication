@@ -32,14 +32,13 @@ public class VehicleOverrideApprovalStrategy {
     
     /**
      * Approves a vehicle override with full validation and atomic persistence
-     * 
-     * @param trip The trip requiring override
+     *
+     * @param trip      The trip requiring override
      * @param vehicleId The vehicle to assign
-     * @return The created override record
      * @throws IllegalStateException if approval fails validation
      */
     @Transactional
-    public Tripvehicleoverride approveOverride(Trip trip, Integer vehicleId) {
+    public void approveOverride(Trip trip, Integer vehicleId) {
         
         // Step 1: Validate trip status
         validateTripStatus(trip);
@@ -58,8 +57,7 @@ public class VehicleOverrideApprovalStrategy {
         
         // Step 6: Transition trip to READY status
         transitionToReady(trip);
-        
-        return override;
+
     }
     
     /**

@@ -3,10 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.permit.state;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permitestatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ public class SuspendedState implements PermitState {
         if ("SUSPENDED".equals(newStatusName)) return;
 
         if (!ALLOWED.contains(newStatusName)) {
-            throw new InvalidStatusTransitionException(
+            throw new InvalidStateTransitionException(
                     "Invalid status transition from SUSPENDED to " + newStatusName
             );
         }

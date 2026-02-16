@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.state;
 
-import lk.ashan.routenetlkserverapllication.module.trip.state.SuspendedState;
-import lk.ashan.routenetlkserverapllication.module.permit.state.*;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -51,7 +50,6 @@ public class TripStatusFactory {
      * - Converts to uppercase
      * - Removes all whitespace
      * - Handles common variations
-     *
      * Examples:
      * "Need vehicle override" → "NEEDVEHICLEOVERRIDE"
      * "NEEDS VEHICLE OVERRIDE" → "NEEDVEHICLEOVERRIDE"
@@ -78,36 +76,5 @@ public class TripStatusFactory {
         return normalized;
     }
 
-    /**
-     * Checks if a status name is valid (can be mapped to a state)
-     */
-    public boolean isValidStatus(String statusName) {
-        try {
-            String normalized = normalizeStatusName(statusName);
-            return stateMap.containsKey(normalized);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Gets the canonical (normalized) status name
-     * Useful for logging or display purposes
-     */
-    public String getCanonicalStatusName(String statusName) {
-        String normalized = normalizeStatusName(statusName);
-
-        // Map back to readable format
-        return switch (normalized) {
-            case "PLANNED" -> "PLANNED";
-            case "NEEDVEHICLEOVERRIDE" -> "NEEDS VEHICLE OVERRIDE";
-            case "READY" -> "READY";
-            case "INPROGRESS" -> "IN_PROGRESS";
-            case "DELAYED" -> "DELAYED";
-            case "SUSPENDED" -> "SUSPENDED";
-            case "COMPLETED" -> "COMPLETED";
-            case "CANCELLED" -> "CANCELLED";
-            default -> statusName;
-        };
-    }
 }
+

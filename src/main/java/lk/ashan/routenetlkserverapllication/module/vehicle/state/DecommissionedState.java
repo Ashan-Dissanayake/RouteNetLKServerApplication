@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.state;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,7 @@ public class DecommissionedState implements VehicleState {
         if ("DECOMMISSIONED".equals(newStatusName)) return;
 
         // No transitions allowed from DECOMMISSIONED
-        throw new InvalidStatusTransitionException(
+        throw new InvalidStateTransitionException(
             "Invalid status transition from DECOMMISSIONED to " + newStatusName
         );
     }

@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -30,7 +32,7 @@ public class TripController {
         List<TripDetailResponseDto> trips = params.isEmpty()
                 ? tripService.getTrips()
                 : tripService.searchTrips(params);
-        return APIResponseBuilder.getResponse(trips, trips.size());
+        return APIResponseBuilder.list(trips, trips.size());
     }
 
     @PostMapping
@@ -38,15 +40,17 @@ public class TripController {
             @RequestBody @Valid TripCreateRequestDto createRequestDto
             ){
         TripDetailResponseDto savedTrip = tripService.createTrip(createRequestDto);
-        return APIResponseBuilder.postResponse(savedTrip,savedTrip.getId());
+        return APIResponseBuilder.created(savedTrip,savedTrip.getId());
     }
 
-    @PostMapping("/{tripId}/suggest-override")
+    @PostMapping("/{tripId}/override/suggest")
     public ResponseEntity<APISuccessResponse<OverrideSuggestionResponse>> suggestOverride(
             @PathVariable Integer tripId) {
         OverrideSuggestionResponse response = tripService.triggerOverrideSolver(tripId);
-        return APIResponseBuilder.postResponse(response,response.getTripId());
-    }
+        return APIResponseBuilder.ok(
+                response,
+                Map.of("action", "suggestion_generated")
+        );    }
 
     @PostMapping("/{tripId}/approve-override")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> approveOverride(
@@ -56,16 +60,62 @@ public class TripController {
         TripDetailResponseDto response =
                 tripService.approveOverride(tripId, vehicleId);
 
-        return APIResponseBuilder.postResponse(response,response.getId());
-    }
+        return APIResponseBuilder.ok(
+                response,
+                Map.of("action", "override_approved")
+        );    }
 
     @PutMapping
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> updateTrip(
             @RequestBody @Valid TripUpdateRequestDto updateRequestDto
     ){
-        TripDetailResponseDto savedTrip = tripService.updateTrip(updateRequestDto);
-        return APIResponseBuilder.putResponse(savedTrip,savedTrip.getId());
+        TripDetailResponseDto updatedTrip = tripService.updateTrip(updateRequestDto);
+        return APIResponseBuilder.updated(updatedTrip, updatedTrip.getId());
     }
 
+    @PostMapping("/{tripId}/execute-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> executeTrip(
+            @PathVariable Integer tripId) {
+
+        TripDetailResponseDto response =
+                tripService.executeTrip(tripId);
+
+        return APIResponseBuilder.ok(
+                response,
+                Map.of("action", "trip_executed", "status", response.getTripstatus().getName())
+        );    }
+
+    @PostMapping("/{tripId}/cancel-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> cancelTrip(
+            @PathVariable Integer tripId) {
+
+        TripDetailResponseDto response =
+                tripService.cancelTrip(tripId);
+
+        System.out.println("Trip " + tripId + " cancelled. Current status: " + response.getTripstatus().getName());
+
+        return APIResponseBuilder.ok(
+                response,
+                Map.of("action", "trip_cancelled", "status", "CANCELLED")
+        );    }
+
+    @PostMapping("/{tripId}/complete-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> completeTrip(
+            @PathVariable Integer tripId,
+            @RequestParam(required = false) LocalTime actualTime) {
+
+        TripDetailResponseDto response;
+
+        if (actualTime != null) {
+            response = tripService.completeTrip(tripId, actualTime);
+        } else {
+            response = tripService.completeTrip(tripId);
+        }
+
+        return APIResponseBuilder.ok(
+                response,
+                Map.of("action", "trip_completed", "status", "COMPLETED")
+        );
+    }
 
 }

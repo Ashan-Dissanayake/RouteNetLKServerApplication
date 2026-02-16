@@ -11,4 +11,5 @@ import lombok.*;
 public class RouteSummaryRequestDto {
     private Integer id;
     private String number;
+    private Integer mingapminutes;
 }

@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.crew.state;
 
 import lk.ashan.routenetlkserverapllication.module.crew.model.Routefamiliaritylevel;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 public class MediumFamiliarityState implements RouteFamiliarityState {
     
@@ -13,7 +13,7 @@ public class MediumFamiliarityState implements RouteFamiliarityState {
         if ("MEDIUM".equals(newName)) return;
         if ("HIGH".equals(newName)) return; // Allowed upgrade
 
-        throw new InvalidStatusTransitionException(
+        throw new InvalidStateTransitionException(
              "Invalid route familiarity transition from MEDIUM to " + newName
         );
     }

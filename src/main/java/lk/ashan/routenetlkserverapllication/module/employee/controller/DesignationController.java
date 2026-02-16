@@ -24,7 +24,7 @@ public class DesignationController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DesignationDto>>> get() {
         List<DesignationDto> designations = designationService.getDesignations();
-        return APIResponseBuilder.getResponse(designations, designations.size());
+        return APIResponseBuilder.list(designations, designations.size());
     }
 
 }

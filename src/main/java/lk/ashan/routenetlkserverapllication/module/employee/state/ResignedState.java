@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.state;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStatusTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,7 @@ public class ResignedState implements EmployeeState {
         String newStatusName = newStatus.getName().trim().toUpperCase();
         if ("RESIGNED".equals(newStatusName)) return;
 
-        throw new InvalidStatusTransitionException(
+        throw new InvalidStateTransitionException(
             "Invalid status transition from RESIGNED to " + newStatusName
         );
     }

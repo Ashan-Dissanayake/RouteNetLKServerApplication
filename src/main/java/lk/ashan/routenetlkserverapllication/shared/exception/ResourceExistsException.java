@@ -1,7 +1,9 @@
 package lk.ashan.routenetlkserverapllication.shared.exception;
 
-public class ResourceExistsException extends RuntimeException{
+import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 
-    public ResourceExistsException(){}
-    public ResourceExistsException(String message){super(message);}
+public class ResourceExistsException extends BusinessException {
+    public ResourceExistsException(String message) {
+        super(message, ErrorCode.RESOURCE_ALREADY_EXISTS);
+    }
 }

@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.state;
 
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class RouteFamiliarityStateFactory {
     public RouteFamiliarityState getState(String levelName) {
         Supplier<RouteFamiliarityState> supplier = stateMap.get(levelName.toUpperCase());
         if (supplier == null) {
-            throw new IllegalArgumentException("Unknown route familiarity level: " + levelName);
+            throw new ResourceNotFoundException("Unknown route familiarity level: " + levelName);
         }
         return supplier.get();
     }

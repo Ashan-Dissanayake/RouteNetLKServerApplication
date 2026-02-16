@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidVehicleBranchException;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,7 +15,7 @@ public class VehicleBranchValidationStrategy implements PermitValidationStrategy
         if (!context.getVehicleBranchId()
                 .equals(context.getRequestBranchId())) {
 
-            throw new InvalidVehicleBranchException(
+            throw new BusinessRuleViolationException(
                     "Vehicle is not in corresponding branch"
             );
         }

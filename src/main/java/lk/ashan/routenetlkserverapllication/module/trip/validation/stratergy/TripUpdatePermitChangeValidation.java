@@ -1,11 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
+import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
 import org.springframework.stereotype.Component;
 
-/**
- * Validates permit change restrictions during update
- * ISSUE #5: Consistent validation for updates
- */
+
 @Component
 public class TripUpdatePermitChangeValidation implements TripUpdateValidationStrategy {
     
@@ -41,17 +39,6 @@ public class TripUpdatePermitChangeValidation implements TripUpdateValidationStr
             throw new IllegalStateException("New permit not found");
         }
 
-        /*
-        // Ensure route consistency if needed
-        Integer existingRouteId = context.getExistingTrip().getPermite().getRoute().getId();
-        Integer newRouteId = context.getNewPermit().getRoute().getId();
-
-        // Optional: Enforce route consistency (can be relaxed based on business rules)
-        if (!existingRouteId.equals(newRouteId)) {
-            // Warning: Changing route may affect terminal and time validations
-            // This could be logged or validated separately
-        }
-        */
 
     }
 }
