@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
@@ -10,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.*;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
+import lk.ashan.routenetlkserverapllication.module.permit.repository.ServiceTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContext;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

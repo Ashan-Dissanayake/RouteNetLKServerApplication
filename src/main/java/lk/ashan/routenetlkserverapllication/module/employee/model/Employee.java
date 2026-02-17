@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -78,6 +79,9 @@ public class Employee extends BaseEntity {
 
     @OneToOne(mappedBy = "employee")
     private Conductor conductor;
+
+    @OneToMany(mappedBy = "employee")
+    private Collection<Shiftrosterassignment> shiftrosterassignments;
 
     @Override
     public boolean equals(Object o) {
