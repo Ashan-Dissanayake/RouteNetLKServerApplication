@@ -245,3 +245,4 @@ insert into trip (branch_id,triptype_id,permite_id,doservice,todepature,toarriva
             (1,2,2,'2026-02-16','10:00:00','12:00:00',2,3,1),
             (1,2,1,'2026-02-16','09:00:00','13:00:00',5,2,1);
 
+insert into rosterstatus (name) values ('Active'),('Cancelled');

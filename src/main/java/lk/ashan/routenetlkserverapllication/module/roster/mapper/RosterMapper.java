@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import org.mapstruct.Mapper;
@@ -16,4 +17,6 @@ uses = {
 public interface RosterMapper {
     RosterDetailResponseDto toDto(Roster roster);
     List<RosterDetailResponseDto> toDtoList(List<Roster> rosters);
+
+    Roster toEntity(RosterCreateRequestDto rosterCreateRequestDto);
 }

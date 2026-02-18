@@ -60,7 +60,6 @@ public class TripStateTransitionHandler {
             case "NEED VEHICLE OVERRIDE" -> onExitNeedsVehicleOverride(trip);
             default -> {
             }
-            // No exit behavior needed
         }
     }
     
@@ -77,7 +76,6 @@ public class TripStateTransitionHandler {
             case "READY" -> onEnterReady(trip);
             default -> {
             }
-            // No entry behavior needed
         }
     }
     
@@ -115,8 +113,7 @@ public class TripStateTransitionHandler {
             trip.getTripvehicleoverrides().removeAll(activeOverrides);
         }
         
-        // Vehicle is implicitly released - no explicit status change needed
-        // Future queries will exclude cancelled trips from conflict detection
+
     }
     
     private void onEnterCompleted(Trip trip) {
@@ -138,27 +135,7 @@ public class TripStateTransitionHandler {
     
     private void onEnterReady(Trip trip) {
         log.info("Entering READY state for trip {}", trip.getId());
-        
         // Trip is now ready for execution
         // Ensure effective vehicle is assigned (either permit vehicle or override)
-    }
-    
-    /**
-     * Validates if a transition is possible without executing it
-     */
-    public boolean canTransitionTo(Trip trip, Tripstatus newStatus) {
-        try {
-            String currentStatusName = trip.getTripstatus().getName();
-            TripState currentState = tripStatusFactory.getState(currentStatusName);
-            
-            // Create a temporary trip clone to test transition
-            Trip testTrip = new Trip();
-            testTrip.setTripstatus(trip.getTripstatus());
-            
-            currentState.transitionTo(testTrip, newStatus);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

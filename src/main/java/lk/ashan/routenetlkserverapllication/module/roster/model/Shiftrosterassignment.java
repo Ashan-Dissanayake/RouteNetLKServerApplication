@@ -33,6 +33,9 @@ public class Shiftrosterassignment {
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
+    @ManyToOne
+    @JoinColumn(name = "shiftrosterassignmentstatus_id", referencedColumnName = "id", nullable = false)
+    private Shiftrosterassignmentstatus shiftrosterassignmentstatus;
 
     @Override
     public boolean equals(Object o) {

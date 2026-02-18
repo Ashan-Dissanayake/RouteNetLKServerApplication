@@ -14,7 +14,8 @@ import java.util.List;
 uses = {
         ShiftMapper.class,
         RoleMapper.class,
-        EmployeeMapper.class
+        EmployeeMapper.class,
+        ShiftRosterAssignmentStatusMapper.class
 })
 public interface ShiftRosterAssignmentMapper {
     ShiftRosterAssignmentDto toDto(Shiftrosterassignment shiftRosterAssignment);
