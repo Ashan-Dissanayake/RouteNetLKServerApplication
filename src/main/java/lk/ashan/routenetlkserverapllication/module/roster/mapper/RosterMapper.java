@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -19,4 +20,5 @@ public interface RosterMapper {
     List<RosterDetailResponseDto> toDtoList(List<Roster> rosters);
 
     Roster toEntity(RosterCreateRequestDto rosterCreateRequestDto);
+    Roster toEntity(RosterUpdateRequestDto rosterUpdateRequestDto);
 }

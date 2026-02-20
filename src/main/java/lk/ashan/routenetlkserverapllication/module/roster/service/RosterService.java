@@ -3,10 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterAssignmentSuggestionResponse;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.ShiftRosterAssignmentDto;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.*;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftRosterAssignmentMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.*;
@@ -15,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.panner.RosterAssignmen
 import lk.ashan.routenetlkserverapllication.module.roster.panner.RosterScheduleSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.*;
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterState;
+import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.context.RosterContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.context.RosterCreationContext;
@@ -36,7 +34,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Slf4j
 public class RosterService {
-    private final ShiftRosterAssignmentStatusRepository shiftRosterAssignmentStatusRepository;
 
     private final RosterRepository rosterRepository;
     private final RosterStatusRepository rosterStatusRepository;
@@ -44,12 +41,14 @@ public class RosterService {
     private final ShiftRepository shiftRepository;
     private final RoleRepository roleRepository;
     private final ShiftRosterAssignmentRepository shiftRosterAssignmentRepository;
+    private final ShiftRosterAssignmentStatusRepository shiftRosterAssignmentStatusRepository;
 
     private final RosterMapper rosterMapper;
     private final ShiftRosterAssignmentMapper shiftRosterAssignmentMapper;
 
     private final RosterContextBuilder rosterContextBuilder;
     private final RosterStatusFactory rosterStatusFactory;
+    private final RosterStateTransitionHandler rosterTransitionHandler;
     private final List<RosterCreationStrategy> validationStrategies;
 
     private final RosterAssignmentSolverService solverService;
@@ -60,10 +59,12 @@ public class RosterService {
     private final AssignmentClearAllValidationStrategy clearAllValidationStrategy;
 
 
+    @Transactional(readOnly = true)
     public List<RosterDetailResponseDto> getRosters(){
         return rosterMapper.toDtoList(rosterRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<RosterDetailResponseDto> searchRosters(@NotNull HashMap<String, String> params) {
 
         List<Roster> rosters = rosterRepository.findAll();
@@ -104,8 +105,88 @@ public class RosterService {
         return rosterMapper.toDto(rosterRepository.save(savedRoster));
     }
 
+    /**
+     * Lock roster (DRAFT → LOCKED)
+     * Employees can now confirm/reject assignments
+     */
     @Transactional
-    public RosterAssignmentSuggestionResponse rosterAssigmentSuggestion(Integer rosterId) {
+    public RosterDetailResponseDto lockRoster(Integer rosterId) {
+
+        Roster roster = rosterRepository.findById(rosterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Roster not found"));
+
+        Rosterstatus lockedStatus = rosterStatusRepository
+                .findByName("Locked")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Roster status not found: Locked"
+                ));
+
+        // Use transition handler (validates and executes side effects)
+        rosterTransitionHandler.transitionTo(roster, lockedStatus);
+
+        Roster savedRoster = rosterRepository.save(roster);
+
+        log.info("Locked roster {} - employees can now confirm assignments",
+                savedRoster.getId());
+
+        return rosterMapper.toDto(savedRoster);
+    }
+
+    /**
+     * Unlock roster (LOCKED → DRAFT)
+     * Resets all CONFIRMED assignments back to SUGGESTED
+     */
+    @Transactional
+    public RosterDetailResponseDto unlockRoster(Integer rosterId) {
+
+        Roster roster = rosterRepository.findById(rosterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Roster not found"));
+
+        Rosterstatus draftStatus = rosterStatusRepository
+                .findByName("Draft")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Roster status not found: Draft"
+                ));
+
+        // Use transition handler (automatically resets confirmations)
+        rosterTransitionHandler.transitionTo(roster, draftStatus);
+
+        Roster savedRoster = rosterRepository.save(roster);
+
+        log.info("Unlocked roster {} back to DRAFT - confirmations reset to SUGGESTED",
+                savedRoster.getId());
+
+        return rosterMapper.toDto(savedRoster);
+    }
+
+    /**
+     * Archive roster (LOCKED → ARCHIVED)
+     * Final state, no further modifications allowed
+     */
+    @Transactional
+    public RosterDetailResponseDto archiveRoster(Integer rosterId) {
+
+        Roster roster = rosterRepository.findById(rosterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Roster not found"));
+
+        Rosterstatus archivedStatus = rosterStatusRepository
+                .findByName("Archived")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Roster status not found: Archived"
+                ));
+
+        // Use transition handler (validates all assignments confirmed)
+        rosterTransitionHandler.transitionTo(roster, archivedStatus);
+
+        Roster savedRoster = rosterRepository.save(roster);
+
+        log.info("Archived roster {} - now read-only", savedRoster.getId());
+
+        return rosterMapper.toDto(savedRoster);
+    }
+
+    @Transactional
+    public RosterAssignmentSuggestionResponse rosterAssignmentSuggestion(Integer rosterId) {
 
         log.info("========== GENERATING SUGGESTIONS FOR ROSTER {} ==========", rosterId);
 
@@ -260,97 +341,153 @@ public class RosterService {
         return shiftRosterAssignmentMapper.toDtoList(suggestions);
     }
 
+    /**
+     * Approve a suggested assignment (keep it for final roster)
+     */
     @Transactional
     public ShiftRosterAssignmentDto approveSuggestion(Integer assignmentId) {
 
+        //Run approval validation
         approvalValidationStrategy.validate(assignmentId);
 
+        //No duplicate validation - trust the strategy
         Shiftrosterassignment assignment = shiftRosterAssignmentRepository
                 .findById(assignmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Assignment not found"
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
 
-        // Validate it's a suggestion
-        if (!"SUGGESTED".equalsIgnoreCase(
-                assignment.getShiftrosterassignmentstatus().getName())) {
-            throw new BusinessRuleViolationException(
-                    "Can only approve SUGGESTED assignments. " +
-                            "Current status: " + assignment.getShiftrosterassignmentstatus().getName()
-            );
-        }
-
-        // Validate roster is still DRAFT
-        if (!"DRAFT".equalsIgnoreCase(
-                assignment.getRoster().getRosterstatus().getName())) {
-            throw new BusinessRuleViolationException(
-                    "Can only approve suggestions for DRAFT rosters"
-            );
-        }
-
-        // Keep status as SUGGESTED (will be CONFIRMED later when roster is LOCKED)
-        // Just mark as approved by user
         log.info("Approved suggestion {}", assignmentId);
 
         return shiftRosterAssignmentMapper.toDto(assignment);
     }
 
+    /**
+     * Reject a suggested assignment (delete it)
+     */
     @Transactional
     public void rejectSuggestion(Integer assignmentId) {
 
+        //Run rejection validation
         rejectionValidationStrategy.validate(assignmentId);
 
+        //No duplicate validation - trust the strategy
         Shiftrosterassignment assignment = shiftRosterAssignmentRepository
                 .findById(assignmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Assignment not found"
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("Assignment not found"));
 
-        // Validate it's a suggestion
-        if (!"SUGGESTED".equalsIgnoreCase(
-                assignment.getShiftrosterassignmentstatus().getName())) {
-            throw new BusinessRuleViolationException(
-                    "Can only reject SUGGESTED assignments"
-            );
-        }
-
-        // Validate roster is still DRAFT
-        if (!"DRAFT".equalsIgnoreCase(
-                assignment.getRoster().getRosterstatus().getName())) {
-            throw new BusinessRuleViolationException(
-                    "Can only reject suggestions for DRAFT rosters"
-            );
-        }
-
-        // Delete the suggestion
         shiftRosterAssignmentRepository.delete(assignment);
 
         log.info("Rejected and deleted suggestion {}", assignmentId);
     }
 
+    /**
+     * Clear all suggestions for a roster
+     */
     @Transactional
     public void clearAllSuggestions(Integer rosterId) {
 
+        //Run clear validation
         clearAllValidationStrategy.validate(rosterId);
 
-        Roster roster = rosterRepository.findById(rosterId)
-                .orElseThrow(() -> new ResourceNotFoundException("Roster not found"));
-
-        // Guard: Can only clear for DRAFT rosters
-        if (!"DRAFT".equalsIgnoreCase(roster.getRosterstatus().getName())) {
-            throw new BusinessRuleViolationException(
-                    "Can only clear suggestions for DRAFT rosters"
-            );
-        }
-
+        //No duplicate validation - trust the strategy
         List<Shiftrosterassignment> suggestions = shiftRosterAssignmentRepository
                 .findByRoster_IdAndShiftrosterassignmentstatus_Name(rosterId, "Suggested");
 
         shiftRosterAssignmentRepository.deleteAll(suggestions);
 
-        log.info("Cleared {} suggestions for roster {}",
-                suggestions.size(), rosterId);
+        log.info("Cleared {} suggestions for roster {}", suggestions.size(), rosterId);
     }
+
+
+    /**
+     * Update existing roster
+     * Can only update when roster is in DRAFT status
+     * Branch cannot be changed
+     */
+    @Transactional
+    @DisableSoftDeleteFilter
+    public RosterDetailResponseDto updateRoster(@NotNull RosterUpdateRequestDto updateRequestDto) {
+
+        // Load existing roster
+        Roster roster = rosterRepository.findById(updateRequestDto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Roster not found with ID: " + updateRequestDto.getId()
+                ));
+
+        // Guard: Can only update DRAFT rosters
+        if (!"DRAFT".equalsIgnoreCase(roster.getRosterstatus().getName())) {
+            throw new BusinessRuleViolationException(
+                    "Cannot update roster. Only DRAFT rosters can be edited. " +
+                            "Current status: " + roster.getRosterstatus().getName()
+            );
+        }
+
+        // Run validation strategies for the updated dates
+        RosterCreationContext validationContext = rosterContextBuilder.buildForUpdate(updateRequestDto);
+        validationStrategies.forEach(strategy -> strategy.validate(validationContext));
+
+        // Update fields (only dates can be changed, branch is immutable)
+        roster.setDostartofweek(updateRequestDto.getDostartofweek());
+        roster.setDoendofweek(updateRequestDto.getDoendofweek());
+
+        Roster updatedRoster = rosterRepository.save(roster);
+
+        log.info("Updated roster {} - new week: {} to {}",
+                updatedRoster.getId(),
+                updatedRoster.getDostartofweek(),
+                updatedRoster.getDoendofweek()
+        );
+
+        return rosterMapper.toDto(updatedRoster);
+    }
+
+    /**
+     * Soft delete roster
+     * Can only delete DRAFT rosters
+     */
+    @Transactional
+    public void deleteRoster(Integer rosterId) {
+
+        Roster roster = rosterRepository.findById(rosterId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Roster not found with ID: " + rosterId
+                ));
+
+        // Guard: Can only delete DRAFT rosters
+        if (!"DRAFT".equalsIgnoreCase(roster.getRosterstatus().getName())) {
+            throw new BusinessRuleViolationException(
+                    "Cannot delete roster. Only DRAFT rosters can be deleted. " +
+                            "Current status: " + roster.getRosterstatus().getName()
+            );
+        }
+
+        // Soft delete
+        roster.setDeleted(true);
+        rosterRepository.save(roster);
+
+        log.info("Soft deleted roster {}", rosterId);
+    }
+
+    /**
+     * Regenerate suggestions (clear old + generate new)
+     * Convenience method that combines clear and generate
+     */
+    @Transactional
+    public RosterAssignmentSuggestionResponse regenerateSuggestions(Integer rosterId) {
+
+        log.info("Regenerating suggestions for roster {}", rosterId);
+
+        // Clear old suggestions
+        clearAllSuggestions(rosterId);
+
+        // Generate new suggestions
+        RosterAssignmentSuggestionResponse response = rosterAssignmentSuggestion(rosterId);
+
+        log.info("Successfully regenerated {} suggestions for roster {}",
+                response.getAssignmentsFilled(), rosterId);
+
+        return response;
+    }
+
 
     private Shiftrosterassignment convertToEntity(
             RosterAssignmentPlanning planning,
