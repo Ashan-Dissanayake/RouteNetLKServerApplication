@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
+import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterAssignmentSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.ShiftRosterAssignmentDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
 import org.mapstruct.Mapper;
@@ -19,7 +20,7 @@ uses = {
 })
 public interface ShiftRosterAssignmentMapper {
     ShiftRosterAssignmentDto toDto(Shiftrosterassignment shiftRosterAssignment);
-    List<ShiftRosterAssignmentDto> toDtoList(List<Shiftrosterassignment> shiftRosterAssignments);
+    List<RosterAssignmentSuggestionResponse> toDtoList(List<Shiftrosterassignment> shiftRosterAssignments);
 
     Shiftrosterassignment toEntity(ShiftRosterAssignmentDto shiftRosterAssignmentDto);
 

@@ -110,14 +110,7 @@ public class TripService {
     @Transactional
     public TripDetailResponseDto createTrip(@NotNull TripCreateRequestDto createRequestDto) {
 
-        TripCreateContext context = validationContextBuilder.buildForCreation(
-                createRequestDto.getPermite().getId(),
-                createRequestDto.getDoservice(),
-                createRequestDto.getTodepature(),
-                createRequestDto.getOriginterminal().getId()
-        );
-
-        // Run all validation strategies
+        TripCreateContext context = validationContextBuilder.buildForCreation(createRequestDto );
         creationValidationStrategies.forEach(strategy -> strategy.validate(context));
 
         Trip trip = tripMapper.toEntity(createRequestDto);

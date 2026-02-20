@@ -8,6 +8,6 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class RosterCreateRequestDto {
+public class RosterCreateRequestDto extends RosterRequestDto{
 
 }

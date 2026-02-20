@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.repository;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -58,5 +59,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     );
 
 
-
-}
+    List<Employee> findByBranch_IdAndEmployeestatus_NameAndDeletedFalse(
+            Integer branchId,
+            String statusName
+    );}

@@ -6,12 +6,14 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassig
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignmentstatus;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftRosterAssignmentRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftRosterAssignmentStatusRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -75,7 +77,19 @@ public class RosterStateTransitionHandler {
 
     private void onExitDraft(Roster roster) {
         log.debug("Exiting DRAFT state for roster {}", roster.getId());
-        // Could validate roster has minimum assignments before leaving DRAFT
+
+        // Validate roster has at least one assignment before leaving DRAFT
+        List<Shiftrosterassignment> assignments =
+                shiftRosterAssignmentRepository.findByRoster_Id(roster.getId());
+
+        if (assignments.isEmpty()) {
+            throw new BusinessRuleViolationException(
+                    "Cannot lock roster without any shift assignments"
+            );
+        }
+
+        log.info("Roster {} has {} assignments, ready to lock",
+                roster.getId(), assignments.size());
     }
 
     private void onExitLocked(Roster roster) {
@@ -86,25 +100,23 @@ public class RosterStateTransitionHandler {
     // ==================== ENTRY BEHAVIORS ====================
 
     private void onEnterDraft(Roster roster) {
-        log.info("Entering DRAFT state for roster {} - editing allowed",
-                roster.getId());
+        log.info("Entering DRAFT state for roster {} - editing allowed", roster.getId());
 
-        // When unlocking back to DRAFT:
-        // Reset all CONFIRMED assignments back to SUGGESTED
-        // so they can be re-evaluated
+        //When unlocking back to DRAFT: Reset CONFIRMED assignments to SUGGESTED
+        Shiftrosterassignmentstatus suggestedStatus = shiftRosterAssignmentStatusRepository
+                .findByName("Suggested")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Assignment status not found: Suggested"
+                ));
+
         List<Shiftrosterassignment> confirmedAssignments =
-                roster.getShiftrosterassignments().stream()
+                shiftRosterAssignmentRepository.findByRoster_Id(roster.getId())
+                        .stream()
                         .filter(a -> "CONFIRMED".equalsIgnoreCase(
                                 a.getShiftrosterassignmentstatus().getName()))
-                        .toList();
+                        .collect(Collectors.toList());
 
         if (!confirmedAssignments.isEmpty()) {
-            Shiftrosterassignmentstatus suggestedStatus =
-                    shiftRosterAssignmentStatusRepository.findByName("Suggested")
-                            .orElseThrow(() -> new ResourceNotFoundException(
-                                    "Assignment status not found: Suggested"
-                            ));
-
             confirmedAssignments.forEach(a ->
                     a.setShiftrosterassignmentstatus(suggestedStatus)
             );
@@ -117,28 +129,49 @@ public class RosterStateTransitionHandler {
     }
 
     private void onEnterLocked(Roster roster) {
-        log.info("Entering LOCKED state for roster {} - no edits allowed",
-                roster.getId());
+        log.info("Entering LOCKED state for roster {} - no edits allowed", roster.getId());
 
-        // Could send notifications to all assigned employees
-        // notificationService.notifyRosterLocked(roster);
+        // When locking: All SUGGESTED assignments remain SUGGESTED
+        // Employees will confirm/reject them
+        // No automatic status change here
 
-        // Could trigger shift confirmation requests for all assignments
-        // roster.getAssignments().forEach(a ->
-        //     notificationService.requestConfirmation(a)
-        // );
+        // Could send notifications to employees here
+        List<Shiftrosterassignment> suggestedAssignments =
+                shiftRosterAssignmentRepository
+                        .findByRoster_IdAndShiftrosterassignmentstatus_Name(
+                                roster.getId(),
+                                "Suggested"
+                        );
+
+        log.info("Roster locked with {} suggested assignments awaiting confirmation",
+                suggestedAssignments.size());
+
+        // TODO: Send notifications to employees
+        // notificationService.notifyEmployeesOfAssignments(suggestedAssignments);
     }
 
     private void onEnterArchived(Roster roster) {
-        log.info("Entering ARCHIVED state for roster {} - read only",
-                roster.getId());
+        log.info("Entering ARCHIVED state for roster {} - read only", roster.getId());
 
-        // Historical data preserved
-        // Could trigger archival report generation
+        //Validate all assignments are CONFIRMED before archiving
+        List<Shiftrosterassignment> unconfirmedAssignments =
+                shiftRosterAssignmentRepository.findByRoster_Id(roster.getId())
+                        .stream()
+                        .filter(a -> !"CONFIRMED".equalsIgnoreCase(
+                                a.getShiftrosterassignmentstatus().getName()))
+                        .toList();
+
+        if (!unconfirmedAssignments.isEmpty()) {
+            throw new BusinessRuleViolationException(
+                    "Cannot archive roster with " + unconfirmedAssignments.size() +
+                            " unconfirmed assignment(s). All assignments must be confirmed first."
+            );
+        }
+
+        log.info("All {} assignments confirmed, roster ready for archival",
+                shiftRosterAssignmentRepository.findByRoster_Id(roster.getId()).size());
+
+        // Could trigger archival report generation here
         // reportService.generateRosterReport(roster);
-
-        // Could send summary to management
-        // notificationService.notifyManagement(roster);
     }
-
 }

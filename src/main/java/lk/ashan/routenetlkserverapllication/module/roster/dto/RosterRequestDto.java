@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
@@ -19,6 +20,7 @@ public class RosterRequestDto{
     @NotNull(message = "Branch is mandatory")
     private BranchSummaryResponseDto branch;
     @NotNull(message = "Date of week start is mandatory")
+    @FutureOrPresent(message = "Date of week start must be in the today or future date")
     private LocalDate dostartofweek;
     @NotNull(message = "Date of week end is mandatory")
     private LocalDate doendofweek;

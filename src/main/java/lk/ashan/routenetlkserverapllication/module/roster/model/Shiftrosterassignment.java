@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Setter
@@ -20,7 +21,7 @@ public class Shiftrosterassignment {
     private Integer id;
     @Basic
     @Column(name = "doassigned")
-    private Date doassigned;
+    private LocalDate doassigned;
     @ManyToOne
     @JoinColumn(name = "shift_id", referencedColumnName = "id", nullable = false)
     private Shift shift;

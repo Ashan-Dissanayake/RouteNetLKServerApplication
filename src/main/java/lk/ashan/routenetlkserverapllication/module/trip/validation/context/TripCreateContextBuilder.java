@@ -4,14 +4,13 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -22,15 +21,11 @@ public class TripCreateContextBuilder {
     private final PermitRepository permitRepository;
     private final RouteRepository routeRepository;
 
-    public TripCreateContext buildForCreation(
-            Integer permitId,
-            LocalDate serviceDate,
-            LocalTime departureTime,
-            Integer originTerminalId) {
+    public TripCreateContext buildForCreation(TripCreateRequestDto createRequestDto) {
         
         // Fetch permit
-        Permite permit = permitRepository.findById(permitId)
-            .orElseThrow(() -> new ResourceNotFoundException("Permit not found: " + permitId));
+        Permite permit = permitRepository.findById(createRequestDto.getPermite().getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Permit not found: " + createRequestDto.getPermite().getId()));
         
         // Fetch route
         Route route = routeRepository.findById(permit.getRoute().getId())
@@ -40,19 +35,19 @@ public class TripCreateContextBuilder {
         List<Trip> permitRouteOriginExTrips = tripRepository
             .findByPermite_Route_IdAndOriginterminal_IdAndDoservice(
                 route.getId(),
-                originTerminalId,
-                serviceDate
+                createRequestDto.getOriginterminal().getId(),
+                createRequestDto.getDoservice()
             );
         
         // Fetch existing trips for permit/date validation
         List<Trip> permitDoServiceExTrips = tripRepository
-            .findByPermite_IdAndDoservice(permitId, serviceDate);
+            .findByPermite_IdAndDoservice(permit.getId(), createRequestDto.getDoservice());
         
         // Build context
         return TripCreateContext.builder()
             .permit(permit)
-            .serviceDate(serviceDate)
-            .requestedDeparture(departureTime)
+            .serviceDate(createRequestDto.getDoservice())
+            .requestedDeparture(createRequestDto.getTodepature())
             .minGapMinutes(route.getMingapminutes())
             .permitRouteOriginExTrips(permitRouteOriginExTrips)
             .permitDoServiceExTrips(permitDoServiceExTrips)
