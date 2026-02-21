@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.panner;
+package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.constructionheuristic.ConstructionHeuristicPhaseConfig;

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.panner;
+package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Role;

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.panner;
+package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.Role;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
@@ -32,33 +32,5 @@ public class RosterAssignmentPlanning {
     @PlanningVariable(valueRangeProviderRefs = "employeeRange")
     private EmployeeFact assignedEmployee;
 
-    public long getShiftDurationHours() {
-        if (shift == null) return 0;
-
-        var start = shift.getTostart();
-        var end = shift.getToend();
-
-        // Handle overnight shifts
-        if (end.isBefore(start)) {
-            return java.time.Duration.between(start, java.time.LocalTime.MAX).toHours() +
-                    java.time.Duration.between(java.time.LocalTime.MIN, end).toHours() + 1;
-        }
-
-        return java.time.Duration.between(start, end).toHours();
-    }
-
-    public boolean isWeekend() {
-        if (doassigned == null) return false;
-        var dayOfWeek = doassigned.getDayOfWeek();
-        return dayOfWeek == java.time.DayOfWeek.SATURDAY ||
-                dayOfWeek == java.time.DayOfWeek.SUNDAY;
-    }
-
-    public boolean isNightShift() {
-        if (shift == null) return false;
-        var start = shift.getTostart();
-        return start.isAfter(java.time.LocalTime.of(20, 0)) ||
-                start.isBefore(java.time.LocalTime.of(6, 0));
-    }
 }
 

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.panner;
+package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

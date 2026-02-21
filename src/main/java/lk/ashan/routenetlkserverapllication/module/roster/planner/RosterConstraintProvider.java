@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.roster.panner;
+package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
@@ -20,7 +20,7 @@ public class RosterConstraintProvider implements ConstraintProvider {
                 employeeMustBelongToSameBranch(factory),   // Employee must be from same branch
                 roleAssignedOncePerShift(factory),         // Each role filled once per shift
                 assignmentWithinRosterWeek(factory),       // Assignment date within roster's week
-                employeeMustHaveQualification(factory),    // Employee qualified for role
+                //employeeMustHaveQualification(factory),    // Employee qualified for role
                 maxDailyHours(factory),                    // Max hours per day not exceeded
                 maxWeeklyHours(factory),                   // Max hours per week not exceeded
 
@@ -45,11 +45,11 @@ public class RosterConstraintProvider implements ConstraintProvider {
      */
     private Constraint noOverlappingShifts(ConstraintFactory factory) {
         return factory.forEachUniquePair(
-                        Shiftrosterassignment.class,
+                        RosterAssignmentPlanning.class,
                         // Same employee
-                        Joiners.equal(Shiftrosterassignment::getEmployee),
+                        Joiners.equal(RosterAssignmentPlanning::getAssignedEmployee),
                         // Same date
-                        Joiners.equal(Shiftrosterassignment::getDoassigned),
+                        Joiners.equal(RosterAssignmentPlanning::getDoassigned),
                         // Time overlap
                         Joiners.overlapping(
                                 a -> a.getShift().getTostart(),
@@ -67,9 +67,9 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * - Employee from Angoda branch assigned
      */
     private Constraint employeeMustBelongToSameBranch(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null &&
-                        !a.getEmployee().getBranch().getId()
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null &&
+                        !a.getAssignedEmployee().getBranchId()
                                 .equals(a.getShift().getBranch().getId()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Employee must belong to same branch");
@@ -83,13 +83,13 @@ public class RosterConstraintProvider implements ConstraintProvider {
      */
     private Constraint roleAssignedOncePerShift(ConstraintFactory factory) {
         return factory.forEachUniquePair(
-                        Shiftrosterassignment.class,
+                        RosterAssignmentPlanning.class,
                         // Same shift
-                        Joiners.equal(Shiftrosterassignment::getShift),
+                        Joiners.equal(RosterAssignmentPlanning::getShift),
                         // Same role
-                        Joiners.equal(Shiftrosterassignment::getRole),
+                        Joiners.equal(RosterAssignmentPlanning::getRole),
                         // Same date
-                        Joiners.equal(Shiftrosterassignment::getDoassigned)
+                        Joiners.equal(RosterAssignmentPlanning::getDoassigned)
                 )
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Role assigned once per shift");
@@ -102,9 +102,9 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * - Assignment date is Feb 10 (before roster start)
      */
     private Constraint assignmentWithinRosterWeek(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
+        return factory.forEach(RosterAssignmentPlanning.class)
                 .filter(a -> {
-                    if (a.getEmployee() == null) return false;
+                    if (a.getAssignedEmployee() == null) return false;
 
                     return a.getDoassigned().isBefore(a.getRoster().getDostartofweek()) ||
                             a.getDoassigned().isAfter(a.getRoster().getDoendofweek());
@@ -121,10 +121,10 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * Note: Requires EmployeeFact to have `qualifiedRoles` field
      */
     private Constraint employeeMustHaveQualification(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null &&
-                        !a.getEmployee().getDesignation().getName()
-                                .equalsIgnoreCase(a.getRole().getName()))
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null &&
+                        !a.getAssignedEmployee().getQualifiedRoles()
+                                .contains(a.getRole().getId()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Employee must be qualified for role");
     }
@@ -137,11 +137,11 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * - Total: 16 hours > 12 hour max
      */
     private Constraint maxDailyHours(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null)
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null)
                 .groupBy(
-                        Shiftrosterassignment::getEmployee,
-                        Shiftrosterassignment::getDoassigned,
+                        RosterAssignmentPlanning::getAssignedEmployee,
+                        RosterAssignmentPlanning::getDoassigned,
                         // Sum total hours for this employee on this date
                         ConstraintCollectors.sum(a -> {
                             LocalTime start = a.getShift().getTostart();
@@ -171,11 +171,11 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * - Total: 48 hours > 48 hour max (example limit)
      */
     private Constraint maxWeeklyHours(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null)
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null)
                 .groupBy(
-                        Shiftrosterassignment::getEmployee,
-                        Shiftrosterassignment::getRoster,
+                        RosterAssignmentPlanning::getAssignedEmployee,
+                        RosterAssignmentPlanning::getRoster,
                         // Sum total hours for this employee in this roster (week)
                         ConstraintCollectors.sum(a -> {
                             LocalTime start = a.getShift().getTostart();
@@ -206,11 +206,11 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * Penalize: Employee works 45 hours (5 hours overtime)
      */
     private Constraint minimizeOvertime(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null)
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null)
                 .groupBy(
-                        Shiftrosterassignment::getEmployee,
-                        Shiftrosterassignment::getRoster,
+                        RosterAssignmentPlanning::getAssignedEmployee,
+                        RosterAssignmentPlanning::getRoster,
                         // Calculate total hours for this employee in this week
                         ConstraintCollectors.sum(a -> {
                             LocalTime start = a.getShift().getTostart();
@@ -238,11 +238,11 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * Simple implementation: Penalize employees with significantly high hours
      */
     private Constraint balanceWorkloadAcrossEmployees(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null)
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null)
                 .groupBy(
-                        Shiftrosterassignment::getEmployee,
-                        Shiftrosterassignment::getRoster,
+                        RosterAssignmentPlanning::getAssignedEmployee,
+                        RosterAssignmentPlanning::getRoster,
                         ConstraintCollectors.sum(a -> {
                             LocalTime start = a.getShift().getTostart();
                             LocalTime end = a.getShift().getToend();
@@ -268,24 +268,24 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * Penalize: 4+ consecutive night shifts
      */
     private Constraint minimizeConsecutiveNightShifts(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null &&
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null &&
                         isNightShift(a.getShift().getTostart()))
-                .join(Shiftrosterassignment.class,
-                        Joiners.equal(Shiftrosterassignment::getEmployee),
+                .join(RosterAssignmentPlanning.class,
+                        Joiners.equal(RosterAssignmentPlanning::getAssignedEmployee),
                         Joiners.equal(a1 -> a1.getDoassigned().plusDays(1),
-                                Shiftrosterassignment::getDoassigned)
+                                RosterAssignmentPlanning::getDoassigned)
                 )
                 .filter((a1, a2) -> isNightShift(a2.getShift().getTostart()))
                 .join(Shiftrosterassignment.class,
-                        Joiners.equal((a1, a2) -> a1.getEmployee(),
+                        Joiners.equal((a1, a2) -> a1.getAssignedEmployee(),
                                 Shiftrosterassignment::getEmployee),
                         Joiners.equal((a1, a2) -> a1.getDoassigned().plusDays(2),
                                 Shiftrosterassignment::getDoassigned)
                 )
                 .filter((a1, a2, a3) -> isNightShift(a3.getShift().getTostart()))
                 .join(Shiftrosterassignment.class,
-                        Joiners.equal((a1, a2, a3) -> a1.getEmployee(),
+                        Joiners.equal((a1, a2, a3) -> a1.getAssignedEmployee(),
                                 Shiftrosterassignment::getEmployee),
                         Joiners.equal((a1, a2, a3) -> a1.getDoassigned().plusDays(3),
                                 Shiftrosterassignment::getDoassigned)
@@ -301,13 +301,13 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * Penalize: One employee works every weekend, others never
      */
     private Constraint fairWeekendDistribution(ConstraintFactory factory) {
-        return factory.forEach(Shiftrosterassignment.class)
-                .filter(a -> a.getEmployee() != null &&
+        return factory.forEach(RosterAssignmentPlanning.class)
+                .filter(a -> a.getAssignedEmployee() != null &&
                         (a.getDoassigned().getDayOfWeek() == DayOfWeek.SATURDAY ||
                                 a.getDoassigned().getDayOfWeek() == DayOfWeek.SUNDAY))
                 .groupBy(
-                        Shiftrosterassignment::getEmployee,
-                        Shiftrosterassignment::getRoster
+                        RosterAssignmentPlanning::getAssignedEmployee,
+                        RosterAssignmentPlanning::getRoster
                 )
                 // Penalize if same employee has too many weekend shifts
                 .filter((employee, roster) -> true) // Placeholder

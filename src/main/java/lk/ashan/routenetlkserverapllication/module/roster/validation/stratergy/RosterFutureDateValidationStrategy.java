@@ -22,7 +22,7 @@ public class RosterFutureDateValidationStrategy implements RosterCreationStrateg
         }
 
         //Cannot create roster too far in advance (e.g., max 2 weeks)
-        LocalDate maxFutureDate = today.plusWeeks(1);
+        LocalDate maxFutureDate = today.plusWeeks(2);
         if (startDate.isAfter(maxFutureDate)) {
             throw new BusinessRuleViolationException(
                     "Cannot create roster more than 1 weeks in advance"

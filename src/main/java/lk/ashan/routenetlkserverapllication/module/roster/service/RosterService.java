@@ -7,9 +7,9 @@ import lk.ashan.routenetlkserverapllication.module.roster.dto.*;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftRosterAssignmentMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.*;
-import lk.ashan.routenetlkserverapllication.module.roster.panner.RosterAssignmentPlanning;
-import lk.ashan.routenetlkserverapllication.module.roster.panner.RosterAssignmentSolverService;
-import lk.ashan.routenetlkserverapllication.module.roster.panner.RosterScheduleSolution;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentPlanning;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolverService;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterScheduleSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.*;
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterState;
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStateTransitionHandler;
@@ -95,8 +95,11 @@ public class RosterService {
                         "Roster status not found: Draft"
                 ));
 
+
         RosterState state = rosterStatusFactory.getState(draftStatus.getName());
         state.validateInitial();
+
+
 
         roster.setRosterstatus(draftStatus);
 

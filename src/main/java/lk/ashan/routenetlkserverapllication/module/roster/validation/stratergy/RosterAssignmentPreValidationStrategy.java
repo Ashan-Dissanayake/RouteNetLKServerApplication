@@ -14,11 +14,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class RosterAssignmentPreValidationStrategy implements RosterCreationStrategy {
+public class RosterAssignmentPreValidationStrategy{
     
     private final RosterRepository rosterRepository;
     
-    @Override
     public void validate(RosterCreationContext context) {
         
         // 1. Roster must exist and be in DRAFT status

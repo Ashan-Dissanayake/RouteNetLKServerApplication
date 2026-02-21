@@ -17,6 +17,6 @@ public class RosterDetailResponseDto {
     private BranchSummaryResponseDto branch;
     private LocalDate dostartofweek;
     private LocalDate doendofweek;
-    private RosterStatusDto rosterStatus;
+    private RosterStatusDto rosterstatus;
     private Collection<ShiftRosterAssignmentDto> shiftrosterassignments;
 }
