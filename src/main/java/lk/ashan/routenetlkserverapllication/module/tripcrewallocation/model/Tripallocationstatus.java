@@ -1,11 +1,11 @@
-package lk.ashan.routenetlkserverapllication.module.roster.model;
+package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import lombok.*;
 
 import java.util.Collection;
 import java.util.Objects;
+
 
 @Setter
 @Getter
@@ -13,7 +13,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class Tripallocationstatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -21,24 +21,20 @@ public class Role {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "role")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
-
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "tripallocationstatus")
     private Collection<Tripcrewallocation> tripcrewallocations;
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
+        Tripallocationstatus that = (Tripallocationstatus) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
     }
-    
+
 }

@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import lombok.*;
 
 import java.sql.Time;
@@ -40,6 +41,9 @@ public class Shift {
     private Shiftstatus shiftstatus;
     @OneToMany(mappedBy = "shift")
     private Collection<Shiftrosterassignment> shiftrosterassignments;
+
+    @OneToMany(mappedBy = "shift")
+    private Collection<Tripcrewallocation> tripcrewallocations;
 
     @Override
     public boolean equals(Object o) {

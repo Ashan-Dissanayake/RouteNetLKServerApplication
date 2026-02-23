@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.model;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import lombok.*;
 
 import java.sql.Date;
@@ -55,6 +56,10 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "originterminal_id", referencedColumnName = "id", nullable = false)
     private Originterminal originterminal;
+
+    @OneToMany(mappedBy = "trip")
+    private Collection<Tripcrewallocation> tripcrewallocations;
+
 
     @Override
     public boolean equals(Object o) {

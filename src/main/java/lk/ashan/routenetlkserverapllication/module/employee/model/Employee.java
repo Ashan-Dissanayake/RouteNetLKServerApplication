@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -82,6 +83,9 @@ public class Employee extends BaseEntity {
 
     @OneToMany(mappedBy = "employee")
     private Collection<Shiftrosterassignment> shiftrosterassignments;
+
+    @OneToMany(mappedBy = "employee")
+    private Collection<Tripcrewallocation> tripcrewallocations;
 
     @Override
     public boolean equals(Object o) {
