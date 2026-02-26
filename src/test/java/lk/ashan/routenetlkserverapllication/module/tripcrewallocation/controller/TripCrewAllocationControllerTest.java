@@ -19,24 +19,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 @TestPropertySource(properties = "spring.sql.init.mode=never")
 class TripCrewAllocationControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String apiUrl = "/trip-crew-allocations";
+    private final String apiUrl = "/trip-crew-allocations";
+
+    // ==================== UAT 1: GENERATE ====================
 
     @Test
     @Sql(scripts = "/data-tripcrewallocation.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void generateSuggestions_shouldSucceed_whenRosterExists() throws Exception {
 
-        Integer tripId = 2;
+        Integer tripId = 1;
 
         mockMvc.perform(post(apiUrl + "/" + tripId + "/generate"))
                 .andExpect(status().isOk())
@@ -57,6 +58,8 @@ class TripCrewAllocationControllerTest {
         mockMvc.perform(post(apiUrl + "/999/generate"))
                 .andExpect(status().isNotFound());
     }
+
+    // ==================== UAT 2: APPROVE ====================
 
     @Test
     @Sql(scripts = "/data-tripcrewallocation.sql",
@@ -100,6 +103,8 @@ class TripCrewAllocationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    // ==================== UAT 3: REJECT ====================
+
     @Test
     @Sql(scripts = "/data-tripcrewallocation.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -141,6 +146,8 @@ class TripCrewAllocationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    // ==================== UAT 4: CLEAR REJECTED ====================
+
     @Test
     @Sql(scripts = "/data-tripcrewallocation.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -174,5 +181,5 @@ class TripCrewAllocationControllerTest {
         mockMvc.perform(post(apiUrl + "/2/generate"))
                 .andExpect(status().isOk());
     }
-
+    
 }
