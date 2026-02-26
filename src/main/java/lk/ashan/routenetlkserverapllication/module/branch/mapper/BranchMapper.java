@@ -15,7 +15,7 @@ import java.util.List;
 public interface BranchMapper {
 
   BranchDetailResponseDto toDto(Branch branch);
-  List<BranchDetailResponseDto> toDetailList(List<Branch> branches);
+  List<BranchDetailResponseDto> toDtolList(List<Branch> branches);
 
   List<BranchSummaryResponseDto> toSummaryDetailList(List<Branch> branches);
 

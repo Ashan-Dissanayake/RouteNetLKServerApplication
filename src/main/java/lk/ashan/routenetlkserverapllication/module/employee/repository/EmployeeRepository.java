@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -62,4 +63,50 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByBranch_IdAndEmployeestatus_NameAndDeletedFalse(
             Integer branchId,
             String statusName
-    );}
+    );
+
+    /**
+     * CRITICAL FOR TRIP CREW ALLOCATION:
+     * Fetch employees with crew qualifications eagerly loaded.
+     *
+     * This prevents lazy loading issues when converting to EmployeeFact.
+     * Must eagerly fetch:
+     * - driver (and driver.crewstatus, driver.licensecategory)
+     * - conductor (and conductor.crewstatus, conductor.routefamiliaritylevel)
+     *
+     * @param ids List of employee IDs to fetch
+     * @return Employees with crew data eagerly loaded
+     */
+    @EntityGraph(attributePaths = {
+            "driver",
+            "driver.crewstatus",
+            "driver.licensecategory",
+            "conductor",
+            "conductor.crewstatus",
+            "conductor.routefamiliaritylevel"
+    })
+    @Query("SELECT DISTINCT e FROM Employee e WHERE e.id IN :ids")
+    List<Employee> findByIdInWithCrewData(@Param("ids") List<Integer> ids);
+
+    /**
+     * Alternative: Find by branch with crew data (for loading all employees at once)
+     */
+    @EntityGraph(attributePaths = {
+            "driver",
+            "driver.crewstatus",
+            "driver.licensecategory",
+            "conductor",
+            "conductor.crewstatus",
+            "conductor.routefamiliaritylevel"
+    })
+    @Query("SELECT DISTINCT e FROM Employee e " +
+            "WHERE e.branch.id = :branchId " +
+            "AND e.employeestatus.name = :statusName " +
+            "AND e.deleted = false")
+    List<Employee> findByBranch_IdAndEmployeestatus_NameAndDeletedFalseWithCrewData(
+            @Param("branchId") Integer branchId,
+            @Param("statusName") String statusName
+    );
+
+
+}

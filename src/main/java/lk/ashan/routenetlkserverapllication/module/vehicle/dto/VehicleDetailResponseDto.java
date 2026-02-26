@@ -16,11 +16,12 @@ import java.time.Year;
 public class VehicleDetailResponseDto {
     private Integer id;
     private String number;
+    private ModelDto model;
+    private BusTypeDto bustype;
     private Integer mileage;
-    private String remarks;
     private FueltypeDto fueltype;
     private ConditionrateDto conditionrate;
+    private String remarks;
     private VehiclestatusDto vehiclestatus;
     private BranchSummaryResponseDto branch;
-    private ModelDto model;
 }

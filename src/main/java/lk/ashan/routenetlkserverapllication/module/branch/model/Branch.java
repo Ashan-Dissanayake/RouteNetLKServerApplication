@@ -74,7 +74,7 @@ public class Branch extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
-    private Regionaloffice regionalofficeByRegionalofficeId;
+    private Regionaloffice regionaloffice;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Permite> permites;
@@ -84,6 +84,7 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "branch")
     private Collection<Roster> rosters;
+
     @OneToMany(mappedBy = "branch")
     private Collection<Shift> shifts;
 

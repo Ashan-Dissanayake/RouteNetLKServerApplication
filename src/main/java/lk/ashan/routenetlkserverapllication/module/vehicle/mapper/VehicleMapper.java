@@ -15,7 +15,7 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
         ConditionrateMapper.class,EmployeeMapper.class,VehiclestatusMapper.class,
-        FueltypeMapper.class, ModelMapper.class, MakeMapper.class, BranchMapper.class,
+        FueltypeMapper.class, ModelMapper.class, MakeMapper.class, BranchMapper.class, BusTypeMapper.class
 })
 public interface VehicleMapper {
 

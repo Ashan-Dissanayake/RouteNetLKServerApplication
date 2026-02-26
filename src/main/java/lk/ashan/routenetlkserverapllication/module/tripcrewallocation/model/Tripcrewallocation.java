@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lombok.*;
 
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Setter
@@ -23,6 +24,9 @@ public class Tripcrewallocation {
     @Basic
     @Column(name = "remarks")
     private String remarks;
+    @Basic
+    @Column(name = "toallocated")
+    private LocalTime toallocated;
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;
@@ -34,7 +38,7 @@ public class Tripcrewallocation {
     private Role role;
     @ManyToOne
     @JoinColumn(name = "derivedshift_id", referencedColumnName = "id", nullable = false)
-    private Shift shift;
+    private Shift derivedshift;
     @ManyToOne
     @JoinColumn(name = "tripallocationstatus_id", referencedColumnName = "id", nullable = false)
     private Tripallocationstatus tripallocationstatus;

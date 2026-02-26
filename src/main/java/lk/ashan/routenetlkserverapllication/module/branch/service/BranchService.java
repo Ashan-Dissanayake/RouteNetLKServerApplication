@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
@@ -31,7 +30,7 @@ public class BranchService {
     private final List<BranchValidationStrategy> validationStrategies;
 
     public List<BranchDetailResponseDto> getBranches(){
-        return branchMapper.toDetailList(branchRepository.findAll());
+        return branchMapper.toDtolList(branchRepository.findAll());
     }
 
     public List<BranchSummaryResponseDto> getSummaryBranches(){
@@ -54,11 +53,11 @@ public class BranchService {
         if(branchcode!=null)branchStream = branchStream.filter(i-> i.getCode().equalsIgnoreCase(branchcode));
         if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
 
-        return branchMapper.toDetailList( branchStream.collect(Collectors.toList()));
+        return branchMapper.toDtolList( branchStream.collect(Collectors.toList()));
 
         }
 
-        return branchMapper.toDetailList(branches);
+        return branchMapper.toDtolList(branches);
 
     }
 

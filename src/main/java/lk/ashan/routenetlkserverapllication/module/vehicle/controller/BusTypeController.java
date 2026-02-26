@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/allowedbustypes")
+@RequestMapping(value = "/bustypes")
 @RequiredArgsConstructor
 public class BusTypeController {
 
@@ -24,7 +24,9 @@ public class BusTypeController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BusTypeDto>>> get() {
         List<BusTypeDto>busTypes = busTypeService.getBusTypes();
-        return APIResponseBuilder.getResponse(busTypes,busTypes.size());
+        return APIResponseBuilder.list(busTypes,busTypes.size());
     }
+
+
 
 }

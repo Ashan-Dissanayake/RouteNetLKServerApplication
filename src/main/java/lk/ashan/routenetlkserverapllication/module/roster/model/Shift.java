@@ -42,7 +42,7 @@ public class Shift {
     @OneToMany(mappedBy = "shift")
     private Collection<Shiftrosterassignment> shiftrosterassignments;
 
-    @OneToMany(mappedBy = "shift")
+    @OneToMany(mappedBy = "derivedshift")
     private Collection<Tripcrewallocation> tripcrewallocations;
 
     @Override

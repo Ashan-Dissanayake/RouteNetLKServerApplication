@@ -29,7 +29,7 @@ public class VehicleController {
         List<VehicleDetailResponseDto> vehicles = params.isEmpty()
                 ?vehicleService.getVehicles()
                 : vehicleService.searchVehicle(params);
-        return APIResponseBuilder.getResponse(vehicles, vehicles.size());
+        return APIResponseBuilder.list(vehicles, vehicles.size());
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class VehicleController {
             @RequestBody @Valid VehicleCreateRequestDto vehicleCreateRequest)
     {
         VehicleDetailResponseDto savedVehicle = vehicleService.createVehicle(vehicleCreateRequest);
-        return APIResponseBuilder.postResponse(savedVehicle, savedVehicle.getId());
+        return APIResponseBuilder.list(savedVehicle, savedVehicle.getId());
     }
 
     @PutMapping
@@ -45,19 +45,19 @@ public class VehicleController {
             @RequestBody @Valid VehicleUpdateRequestDto vehicleUpdateRequestDto)
     {
         VehicleDetailResponseDto updatedVehicle = vehicleService.updateVehicle(vehicleUpdateRequestDto);
-        return APIResponseBuilder.putResponse(updatedVehicle,updatedVehicle.getId());
+        return APIResponseBuilder.updated(updatedVehicle,updatedVehicle.getId());
     }
 
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = vehicleService.deactivateVehicle(ids);
-        return APIResponseBuilder.deleteResponse(deactivatedIds);
+        return APIResponseBuilder.deleted(deactivatedIds);
     }
 
     @PostMapping("/activate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
         List<Integer> activatedIds = vehicleService.activateVehicle(ids);
-        return APIResponseBuilder.postResponse(null,activatedIds);
+        return APIResponseBuilder.created(null,activatedIds);
     }
 
 }

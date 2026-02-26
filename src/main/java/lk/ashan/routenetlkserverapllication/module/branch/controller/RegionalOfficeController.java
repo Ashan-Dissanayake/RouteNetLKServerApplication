@@ -16,13 +16,13 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/regionaloffices")
 @RequiredArgsConstructor
-public class RegionalofficeController {
+public class RegionalOfficeController {
 
     private final RegionalOfficeService regionalofficeService;
 
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RegionalofficeDto>>> get() {
-        List<RegionalofficeDto> regionalOffices = regionalofficeService.getRegionaloffices();
+        List<RegionalofficeDto> regionalOffices = regionalofficeService.getRegionalOffices();
         return APIResponseBuilder.list(regionalOffices, regionalOffices.size());
     }
 

@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.mapper.RoleMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationSuggestionResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -21,6 +22,6 @@ uses = {
         TripAllocationStatusMapper.class
 })
 public interface TripCrewAllocationMapper {
-    TripCrewAllocationDetailResponseDto toDto(Tripcrewallocation tripCrewAllocation);
     List<TripCrewAllocationDetailResponseDto> toDtoList(List<Tripcrewallocation> tripCrewAllocations);
+    TripCrewAllocationDetailResponseDto toDto(Tripcrewallocation tripcrewallocation);
 }

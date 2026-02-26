@@ -48,4 +48,6 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
 
     @Query("SELECT MAX(t.notrip) FROM Trip t WHERE t.permite.id = :permitId AND t.doservice = :serviceDate")
     Optional<Integer> findMaxTripNumberForPermitAndDate(Integer permitId, LocalDate serviceDate);
+
+    List<Trip> findByDoserviceBetween(LocalDate startDate, LocalDate endDate);
 }

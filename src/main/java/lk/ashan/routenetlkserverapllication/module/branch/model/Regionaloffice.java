@@ -20,7 +20,7 @@ public class Regionaloffice {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "regionalofficeByRegionalofficeId")
+    @OneToMany(mappedBy = "regionaloffice")
     private Collection<Branch> branches;
 
 

@@ -15,7 +15,7 @@ public class RegionalOfficeService {
     private final RegionalofficeRepository regionalofficeRepository;
     private final RegionalofficeMapper regionalofficeMapper;
 
-    public List<RegionalofficeDto> getRegionaloffices() {
+    public List<RegionalofficeDto> getRegionalOffices() {
         return regionalofficeMapper.toDtoList(regionalofficeRepository.findAll());
     }
 }
