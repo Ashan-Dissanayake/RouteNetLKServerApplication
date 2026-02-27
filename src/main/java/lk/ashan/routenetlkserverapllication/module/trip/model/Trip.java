@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Tripcrewattendance;
 import lombok.*;
 
 import java.sql.Date;
@@ -59,6 +60,9 @@ public class Trip {
 
     @OneToMany(mappedBy = "trip")
     private Collection<Tripcrewallocation> tripcrewallocations;
+
+    @OneToMany(mappedBy = "trip")
+    private Collection<Tripcrewattendance> tripcrewattendances;
 
 
     @Override

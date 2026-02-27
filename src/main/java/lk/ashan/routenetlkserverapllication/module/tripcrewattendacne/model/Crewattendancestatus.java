@@ -1,8 +1,6 @@
-package lk.ashan.routenetlkserverapllication.module.roster.model;
+package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Tripcrewattendance;
 import lombok.*;
 
 import java.util.Collection;
@@ -14,7 +12,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+public class Crewattendancestatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -22,28 +20,20 @@ public class Role {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "role")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
-
-    @OneToMany(mappedBy = "role")
-    private Collection<Tripcrewallocation> tripcrewallocations;
-
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "crewattendancestatus")
     private Collection<Tripcrewattendance> tripcrewattendances;
-
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(id, role.id) && Objects.equals(name, role.name);
+        Crewattendancestatus that = (Crewattendancestatus) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, name);
     }
-    
+
 }

@@ -12,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationSuggestionResponseDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.event.CrewAllocationConfirmedEvent;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.mapper.TripCrewAllocationMapper;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripallocationstatus;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
@@ -26,6 +27,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,8 @@ public class TripCrewAllocationService {
     private final TripCrewAllocationSolverService solverService;
     private final TripAllocationStatusRepository tripAllocationStatusRepository;
     private final TripCrewAllocationStateFactory tripCrewAllocationStateFactory;
+    private ApplicationEventPublisher eventPublisher;
+
 
 
     @Transactional(readOnly = true)
@@ -261,7 +265,13 @@ public class TripCrewAllocationService {
 
         // Save
         Tripcrewallocation saved = tripCrewAllocationRepository.save(allocation);
-
+        eventPublisher.publishEvent(
+                new CrewAllocationConfirmedEvent(
+                        saved.getTrip().getId(),
+                        saved.getRole().getId(),
+                        saved.getEmployee().getId()
+                )
+        );
         log.info("Allocation approved: {} - {} for trip {}",
                 saved.getEmployee().getNumber(), saved.getRole().getName(), saved.getTrip().getId());
 
