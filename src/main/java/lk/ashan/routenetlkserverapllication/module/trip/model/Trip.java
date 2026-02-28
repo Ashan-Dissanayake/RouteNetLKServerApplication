@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Tripcrewattendance;
@@ -63,6 +64,10 @@ public class Trip {
 
     @OneToMany(mappedBy = "trip")
     private Collection<Tripcrewattendance> tripcrewattendances;
+
+    @OneToMany(mappedBy = "trip")
+    private Collection<Incident> incidents;
+
 
 
     @Override
