@@ -119,6 +119,7 @@ public class TripService {
                 createRequestDto.getPermite().getId(),
                 createRequestDto.getDoservice()
         );
+
         trip.setNotrip(nextTripNo);
 
 

@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.controller;
 
 
+import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.service.IncidentService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -30,4 +31,21 @@ public class IncidentController {
         return APIResponseBuilder.list(incidents, incidents.size());
     }
 
+    @PostMapping
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> create(
+            @RequestBody IncidentCreateRequestDto createRequestDto
+    ) {
+        IncidentDetailResponseDto savedIncident = incidentService.create(createRequestDto);
+        return APIResponseBuilder.created(savedIncident,savedIncident.getId());
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> changeStatus(
+            @PathVariable Integer id,
+            @RequestParam String status
+    ) {
+        IncidentDetailResponseDto updatedIncident =
+                incidentService.update(id, status);
+        return APIResponseBuilder.updated(updatedIncident,updatedIncident.getId());
+    }
 }
