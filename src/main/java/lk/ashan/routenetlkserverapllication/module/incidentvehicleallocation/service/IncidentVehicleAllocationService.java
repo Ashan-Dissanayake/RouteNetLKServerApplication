@@ -1,0 +1,164 @@
+package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.service;
+
+import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
+import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentState;
+import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationDetailsResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mapper.IncidentVehicleAllocationMapper;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state.AllocationStateTransitionHandler;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state.IncidentVehicleAllocationState;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state.IncidentVehicleAllocationStatusFactory;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation.AllocationContext;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation.AllocationValidationExecutor;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Service
+@RequiredArgsConstructor
+public class IncidentVehicleAllocationService {
+
+    private final IncidentVehicleAllocationRepository incidentVehicleAllocationRepository;
+    private final IncidentVehicleAllocationStatusRepository incidentVehicleAllocationStatusRepository;
+    private final IncidentRepository incidentRepository;
+    private final VehicleRepository vehicleRepository;
+    private final BranchRepository branchRepository;
+
+    private final IncidentVehicleAllocationMapper incidentVehicleAllocationMapper;
+    private final AllocationValidationExecutor validationExecutor;
+    private final IncidentVehicleAllocationStatusFactory incidentVehicleAllocationStatusFactory;
+    private final IncidentStatusFactory incidentStatusFactory;
+    private final AllocationStateTransitionHandler allocationStateTransitionHandler;
+    private final IncidentStatusRepository incidentStatusRepository;
+
+
+    @Transactional(readOnly = true)
+    public List<IncidentVehicleAllocationDetailsResponseDto> getIncidentVehicleAllocations() {
+        return incidentVehicleAllocationMapper.toDtoList(incidentVehicleAllocationRepository.findAll());
+    }
+
+    @Transactional(readOnly = true)
+    public List<IncidentVehicleAllocationDetailsResponseDto> searchIncidentAllocations(@NotNull HashMap<String, String> params) {
+
+        List<Incidentvehicleallocation> incidentVehicleAllocations = incidentVehicleAllocationRepository.findAll();
+
+        if (!params.isEmpty()) {
+
+            String incidentId = params.get("ssincident");
+            String doReleased = params.get("ssdoreleased");
+
+            Stream<Incidentvehicleallocation> incidentvehicleallocationStream = incidentVehicleAllocations.stream();
+
+            if (incidentId != null)
+                incidentvehicleallocationStream = incidentvehicleallocationStream.filter(t -> t.getIncident().getId() == Integer.parseInt(incidentId));
+            if (doReleased != null)
+                incidentvehicleallocationStream = incidentvehicleallocationStream.filter(t -> t.getDoreleased() == LocalDateTime.parse(doReleased));
+
+            return incidentVehicleAllocationMapper.toDtoList(incidentvehicleallocationStream.collect(Collectors.toList()));
+        }
+
+        return incidentVehicleAllocationMapper.toDtoList(incidentVehicleAllocations);
+    }
+
+    public IncidentVehicleAllocationDetailsResponseDto createAllocation(
+            IncidentVehicleAllocationCreateRequestDto request
+    ) {
+        Incident incident = incidentRepository.findById(request.getIncident().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Incident not found"));
+
+        Vehicle vehicle = vehicleRepository.findById(request.getVehicle().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+
+        Branch branch = branchRepository.findById(request.getProvidebranch().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+
+        AllocationContext context = AllocationContext.builder()
+                .incident(incident)
+                .vehicle(vehicle)
+                .providingBranch(branch)
+                .build();
+
+        validationExecutor.validate(context);
+
+        Incidentvehicleallocation allocation = incidentVehicleAllocationMapper.toEntity(request);
+
+        IncidentVehicleAllocationState state = incidentVehicleAllocationStatusFactory
+                .getState(request.getIncidentvehicleallocationstatus().getName());
+        state.validateInitial();
+
+        Incidentvehicleallocationstatus incidentvehicleallocationstatus = incidentVehicleAllocationStatusRepository
+                .findByName(request.getIncidentvehicleallocationstatus().getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+        allocation.setIncidentvehicleallocationstatus(incidentvehicleallocationstatus);
+
+        Incidentvehicleallocation savedIncidentVehicleAllocation = incidentVehicleAllocationRepository.save(allocation);
+
+        return incidentVehicleAllocationMapper.toDto(savedIncidentVehicleAllocation);
+
+    }
+
+    @Transactional
+    public IncidentVehicleAllocationDetailsResponseDto startHandling(@NotNull Integer allocationId) {
+
+        Incidentvehicleallocation allocation = incidentVehicleAllocationRepository.findById(allocationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
+
+        Incidentvehicleallocationstatus inProgress = incidentVehicleAllocationStatusRepository
+                .findByName("In progress")
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+        allocationStateTransitionHandler.transitionTo(allocation, inProgress);
+
+        Vehicle vehicle = vehicleRepository.findById(allocation.getVehicle().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+
+        if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("AVAILABLE")) {
+            throw new BusinessRuleViolationException("Vehicle is not available to start handling");
+        }
+
+        //step-x need to update vehicle status using vehicle status transition handler.
+        //currently its with old architecture so need to refine the status and its transiton with handler
+
+        Incident incident = allocation.getIncident();
+
+        if (!incident.getIncidentstatus().getName().equalsIgnoreCase("IN PROGRESS")) {
+
+            IncidentState incidentState = incidentStatusFactory
+                    .getState(incident.getIncidentstatus().getName());
+
+            Incidentstatus incidentstatus = incidentStatusRepository.findByName("IN PROGRESS")
+                    .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+
+            incidentState.transitionTo(incident,incidentstatus);
+        }
+
+        vehicleRepository.save(vehicle);
+        incidentRepository.save(incident);
+      Incidentvehicleallocation savedIncidentVehicleAllocation =  incidentVehicleAllocationRepository.save(allocation);
+      return incidentVehicleAllocationMapper.toDto(savedIncidentVehicleAllocation);
+    }
+
+
+    }

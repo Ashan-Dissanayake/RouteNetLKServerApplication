@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
@@ -87,6 +88,9 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "branch")
     private Collection<Shift> shifts;
+
+    @OneToMany(mappedBy = "providbranch")
+    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
 
     @Override
     public boolean equals(Object o) {

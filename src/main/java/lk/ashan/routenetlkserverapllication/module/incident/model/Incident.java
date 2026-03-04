@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.model;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -39,6 +41,9 @@ public class Incident {
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;
+
+    @OneToMany(mappedBy = "incident")
+    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
 
     @Override
     public boolean equals(Object o) {
