@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository;
 
+import com.github.javaparser.ast.Node;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,4 +12,6 @@ public interface IncidentVehicleAllocationRepository extends JpaRepository<Incid
     boolean existsByVehicle_IdAndIncidentvehicleallocationstatus_NameIn(Integer vehicleId, List<String> statuses);
     boolean existsByIncident_IdAndVehicle_IdAndIncidentvehicleallocationstatus_NameIn(Integer incidentId, Integer vehicleId, List<String> statuses);
     long countByIncident_IdAndIncidentvehicleallocationstatus_NameIn(Integer id,List<String> statuses);
+
+    List<Incidentvehicleallocation> findByIncident_Id(Integer id);
 }

@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,13 +45,14 @@ public class IncidentVehicleAllocationService {
     private final IncidentRepository incidentRepository;
     private final VehicleRepository vehicleRepository;
     private final BranchRepository branchRepository;
+    private final IncidentStatusRepository incidentStatusRepository;
 
     private final IncidentVehicleAllocationMapper incidentVehicleAllocationMapper;
     private final AllocationValidationExecutor validationExecutor;
     private final IncidentVehicleAllocationStatusFactory incidentVehicleAllocationStatusFactory;
     private final IncidentStatusFactory incidentStatusFactory;
     private final AllocationStateTransitionHandler allocationStateTransitionHandler;
-    private final IncidentStatusRepository incidentStatusRepository;
+
 
 
     @Transactional(readOnly = true)
@@ -160,5 +162,49 @@ public class IncidentVehicleAllocationService {
       return incidentVehicleAllocationMapper.toDto(savedIncidentVehicleAllocation);
     }
 
+    @Transactional
+    public IncidentVehicleAllocationDetailsResponseDto releaseAllocation(@NotNull Integer allocationId) {
+        Incidentvehicleallocation allocation = incidentVehicleAllocationRepository.findById(allocationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
+
+        Incidentvehicleallocationstatus releasedStatus = incidentVehicleAllocationStatusRepository
+                .findByName("Released")
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+        allocationStateTransitionHandler.transitionTo(
+                allocation,releasedStatus
+        );
+
+        Vehicle vehicle = vehicleRepository.findById(allocation.getVehicle().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+
+
+        //step-x need to update vehicle status using vehicle status transition handler.
+        //currently its with old architecture so need to refine the status and its transiton with handler
+
+        Incident incident = allocation.getIncident();
+
+        boolean allReleased = incidentVehicleAllocationRepository
+                .findByIncident_Id(incident.getId())
+                .stream()
+                .allMatch(a -> Objects.equals(a.getIncidentvehicleallocationstatus().getName(), "Released"));
+
+        if (allReleased && !incident.getIncidentstatus().getName().equals("Resolved")) {
+
+            IncidentState incidentState = incidentStatusFactory
+                    .getState(incident.getIncidentstatus().getName());
+
+            Incidentstatus resolveStatus = incidentStatusRepository.findByName("Resolved")
+                    .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+            incidentState.transitionTo(incident,resolveStatus);
+        }
+
+        vehicleRepository.save(vehicle);
+        incidentRepository.save(incident);
+        Incidentvehicleallocation saved = incidentVehicleAllocationRepository.save(allocation);
+        return incidentVehicleAllocationMapper.toDto(saved);
+
+    }
 
     }
