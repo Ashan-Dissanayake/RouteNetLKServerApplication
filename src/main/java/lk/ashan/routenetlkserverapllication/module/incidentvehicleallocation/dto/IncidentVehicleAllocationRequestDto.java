@@ -16,18 +16,18 @@ import java.time.LocalDateTime;
 @ToString
 @SuperBuilder
 public class IncidentVehicleAllocationRequestDto {
-    @NotNull(message = "Incident is required")
+    @NotNull(message = "Incident is mandatory")
     private IncidentSummaryResponseDto incident;
-    @NotNull(message = "Vehicle is required")
+    @NotNull(message = "Vehicle is mandatory")
     private VehicleSummaryResponseDto vehicle;
-    @NotNull(message = "Branch is required")
+    @NotNull(message = "Branch is mandatory")
     private BranchSummaryResponseDto providebranch;
-    @NotNull(message = "Type is required")
+    @NotNull(message = "Type is mandatory")
     private IncidentVehicleAllocationTypeDto incidentvehicleallocationtype;
-    @NotNull(message = "Status is required")
+    @NotNull(message = "Status is mandatory")
     private IncidentVehicleAllocationStatusDto incidentvehicleallocationstatus;
-    @NotNull(message = "Assigned date is required")
+    @NotNull(message = "Assigned date is mandatory")
     private LocalDateTime doassigned;
-    @NotNull(message = "Released date is required")
+    @NotNull(message = "Released date is mandatory")
     private LocalDateTime doreleased;
 }

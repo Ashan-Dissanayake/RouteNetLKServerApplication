@@ -24,6 +24,7 @@ import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.val
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -207,4 +208,59 @@ public class IncidentVehicleAllocationService {
 
     }
 
+    @Transactional
+    public IncidentVehicleAllocationDetailsResponseDto cancelAllocation(@NotNull Integer allocationId) {
+
+        Incidentvehicleallocation allocation = incidentVehicleAllocationRepository.findById(allocationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
+
+        Incidentvehicleallocationstatus currentStatus = allocation.getIncidentvehicleallocationstatus();
+
+        if (currentStatus.getName().equalsIgnoreCase( "RELEASED") || currentStatus.getName().equalsIgnoreCase("CANCELLED")) {
+            throw new InvalidStateTransitionException("Cannot cancel allocation in state: " + currentStatus);
+        }
+
+        Incidentvehicleallocationstatus canceledStatus = incidentVehicleAllocationStatusRepository
+                .findByName("Cancelled")
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+
+        allocationStateTransitionHandler.transitionTo(allocation, canceledStatus);
+
+        Vehicle vehicle = vehicleRepository.findById(allocation.getVehicle().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+//
+//        if (currentStatus.getName().equalsIgnoreCase("IN PROGRESS")) {
+//            vehicleStateTransitionHandler.transition(
+//                    vehicle,
+//                    OperationalStatus.AVAILABLE
+//            );
+//        }
+
+        Incident incident = allocation.getIncident();
+
+        boolean activeAllocationsExist = incidentVehicleAllocationRepository
+                .findByIncident_Id(incident.getId())
+                .stream()
+                .anyMatch(a -> a.getIncidentvehicleallocationstatus().getName().equalsIgnoreCase("ASSIGNED")
+                        || a.getIncidentvehicleallocationstatus().getName().equalsIgnoreCase("IN PROGRESS"));
+
+        if (!activeAllocationsExist) {
+            // No more active allocations → incident may resolve
+            if (!incident.getIncidentstatus().getName().equalsIgnoreCase("RESOLVED")) {
+                Incidentstatus resolveStatus = incidentStatusRepository.findByName("Resolved")
+                        .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+                IncidentState incidentState = incidentStatusFactory.getState(incident.getIncidentstatus().getName());
+                incidentState.transitionTo(incident,resolveStatus);
+            }
+        }
+
+        vehicleRepository.save(vehicle);
+        incidentRepository.save(incident);
+        Incidentvehicleallocation saved = incidentVehicleAllocationRepository.save(allocation);
+
+        return incidentVehicleAllocationMapper.toDto(saved);
     }
+
+
+
+}

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-public class InProgressState implements IncidentVehicleAllocationState {
+public class InProgressIncidentVehicleAllocationState implements IncidentVehicleAllocationState {
 
     private static final List<String> ALLOWED = List.of("RELEASED", "CANCELLED");
 

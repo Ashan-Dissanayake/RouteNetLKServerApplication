@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class InProgressState implements IncidentState {
+public class InProgressIncidentState implements IncidentState {
 
     private static final List<String> ALLOWED = List.of("RESOLVED", "CLOSED");
 
