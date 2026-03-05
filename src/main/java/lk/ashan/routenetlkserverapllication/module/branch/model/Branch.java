@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mod
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
@@ -91,6 +92,9 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "providbranch")
     private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Part> parts;
 
     @Override
     public boolean equals(Object o) {
