@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -55,6 +57,9 @@ public class Part extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "partstatus_id", referencedColumnName = "id", nullable = false)
     private Partstatus partstatus;
+
+    @OneToMany(mappedBy = "part")
+    private Collection<Partrequestitem> partrequestitems;
 
     @Override
     public boolean equals(Object o) {

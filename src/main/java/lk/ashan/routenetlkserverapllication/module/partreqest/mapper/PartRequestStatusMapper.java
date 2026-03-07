@@ -1,0 +1,15 @@
+package lk.ashan.routenetlkserverapllication.module.partreqest.mapper;
+
+import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestStatusDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequeststatus;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+
+import java.util.List;
+
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+public interface  PartRequestStatusMapper {
+    PartRequestStatusDto toDto(Partrequeststatus partRequestStatus);
+    List<PartRequestStatusDto> toDtoList(List<Partrequeststatus> partRequestStatuses);
+}
