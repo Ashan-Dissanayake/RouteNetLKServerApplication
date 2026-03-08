@@ -3,11 +3,10 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.mapper;
 import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestStatusDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequeststatus;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -20,4 +19,14 @@ public interface PartRequestMapper {
     List<PartRequestDetailResponseDto> toDtoList(List<Partrequest> partRequests);
 
     Partrequest toEntity(PartRequestCreateRequestDto createRequestDto);
+    Partrequest toEntity(PartRequestUpdateRequestDto updateRequestDto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "number", ignore = true)
+    @Mapping(target = "requeststatus", ignore = true)
+    @Mapping(target = "requestparts", ignore = true)
+    void updateEntity(
+            @MappingTarget Partrequest request,
+            PartRequestUpdateRequestDto dto
+    );
 }

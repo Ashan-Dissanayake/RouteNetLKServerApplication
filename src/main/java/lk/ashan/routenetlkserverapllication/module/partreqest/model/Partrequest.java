@@ -36,7 +36,11 @@ public class Partrequest {
     @JoinColumn(name = "partrequeststatus_id", referencedColumnName = "id", nullable = false)
     private Partrequeststatus partrequeststatus;
 
-    @OneToMany(mappedBy = "partrequest")
+    @OneToMany(
+            mappedBy = "partrequest",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Collection<Partrequestitem> partrequestitems;
 
     @Override

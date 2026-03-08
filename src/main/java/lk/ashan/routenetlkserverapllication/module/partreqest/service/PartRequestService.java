@@ -3,14 +3,20 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestItemMapper;
 import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestMapper;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequeststatus;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestState;
+import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStatusFactory;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +34,10 @@ public class PartRequestService {
     private final PartRequestRepository partRequestRepository;
     private final PartRequestStatusRepository partRequestStatusRepository;
     private final PartRequestStatusFactory partRequestStatusFactory;
+    private final PartRequestStateTransitionHandler partRequestStateTransitionHandler;
+
     private final PartRequestMapper partRequestMapper;
+    private final PartRequestItemMapper partRequestItemMapper;
 
     @Transactional(readOnly = true)
     public List<PartRequestDetailResponseDto> getPartRequests(){
@@ -86,5 +95,107 @@ public class PartRequestService {
         return partRequestMapper.toDto(saved);
     }
 
+    @Transactional
+    public PartRequestDetailResponseDto updateRequest(@NotNull PartRequestUpdateRequestDto dto) {
+
+        Partrequest request = partRequestRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Request not found with id " + dto.getId()
+                ));
+
+        String currentStatus = request.getPartrequeststatus().getName();
+
+        if (!"PENDING".equalsIgnoreCase(currentStatus)) {
+            throw new InvalidStateTransitionException(
+                    "Only PENDING requests can be updated"
+            );
+        }
+
+        if (dto.getPartrequestitems() == null || dto.getPartrequestitems().isEmpty()) {
+            throw new BusinessRuleViolationException(
+                    "Request must contain at least one part"
+            );
+        }
+
+        dto.getPartrequestitems().forEach(item -> {
+            if (item.getQuantity() == null ||
+                    item.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessRuleViolationException(
+                        "Requested quantity must be greater than zero"
+                );
+            }
+        });
+
+        partRequestMapper.updateEntity(request, dto);
+
+        request.getPartrequestitems().clear();
+
+        dto.getPartrequestitems().forEach(itemDto -> {
+            Partrequestitem item = partRequestItemMapper.toEntity(itemDto);
+            item.setPartrequest(request);
+            request.getPartrequestitems().add(item);
+        });
+
+        Partrequest saved = partRequestRepository.save(request);
+
+        return partRequestMapper.toDto(saved);
+    }
+
+    @Transactional
+    public PartRequestDetailResponseDto approveRequest(@NotNull Integer id) {
+
+        Partrequest request = partRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Request not found with id " + id
+                ));
+
+        Partrequeststatus approvedStatus = partRequestStatusRepository
+                .findByName("Approved")
+                .orElseThrow(() -> new IllegalStateException(
+                        "Status APPROVED not found"
+                ));
+
+        partRequestStateTransitionHandler.transitionTo(request, approvedStatus);
+
+        return partRequestMapper.toDto(request);
+    }
+
+    @Transactional
+    public PartRequestDetailResponseDto rejectRequest(@NotNull Integer id) {
+
+        Partrequest request = partRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Request not found with id " + id
+                ));
+
+        Partrequeststatus rejectedStatus = partRequestStatusRepository
+                .findByName("Rejected")
+                .orElseThrow(() -> new IllegalStateException(
+                        "Status REJECTED not found"
+                ));
+
+        partRequestStateTransitionHandler.transitionTo(request, rejectedStatus);
+
+        return partRequestMapper.toDto(request);
+    }
+
+    @Transactional
+    public PartRequestDetailResponseDto completeRequest(@NotNull Integer id) {
+
+        Partrequest request = partRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Request not found with id " + id
+                ));
+
+        Partrequeststatus completedStatus = partRequestStatusRepository
+                .findByName("Completed")
+                .orElseThrow(() -> new IllegalStateException(
+                        "Status COMPLETED not found"
+                ));
+
+        partRequestStateTransitionHandler.transitionTo(request, completedStatus);
+
+        return partRequestMapper.toDto(request);
+    }
 
 }
