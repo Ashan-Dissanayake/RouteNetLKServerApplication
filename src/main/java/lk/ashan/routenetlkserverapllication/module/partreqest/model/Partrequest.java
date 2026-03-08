@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class Partrequest {
     private String number;
     @Basic
     @Column(name = "dorequested")
-    private Date dorequested;
+    private LocalDate dorequested;
     @Basic
     @Column(name = "remarks")
     private String remarks;

@@ -1,9 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,13 +12,17 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class PartRequestDetailResponseDto {
-    private Integer id;
+@SuperBuilder
+public class PartRequestDto {
+    @NotNull(message = "Branch is mandatory")
     private BranchSummaryResponseDto branch;
+    @NotNull(message = "Number is mandatory")
     private String number;
-    private String remarks;
+    @NotNull(message = "Requested date is mandatory")
     private LocalDate dorequested;
+    private String remarks;
+    @NotNull(message = "Status is mandatory")
     private PartRequestStatusDto partrequeststatus;
+    @NotNull(message = "Request items are mandatory")
     private List<PartRequestItemDto> partrequestitems;
 }
