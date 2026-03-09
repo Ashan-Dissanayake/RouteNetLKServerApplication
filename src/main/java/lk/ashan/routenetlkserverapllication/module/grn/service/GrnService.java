@@ -3,14 +3,20 @@ package lk.ashan.routenetlkserverapllication.module.grn.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnMapper;
+import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnPartMapper;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grn;
+import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grnstatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;
+import lk.ashan.routenetlkserverapllication.module.grn.state.GrnStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.grn.state.GrnStatusFactory;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +35,10 @@ public class GrnService {
     private final GrnStatusRepository grnStatusRepository;
 
     private final GrnMapper grnMapper;
+    private final GrnPartMapper grnPartMapper;
+
     private final GrnStatusFactory grnStatusFactory;
+    private final GrnStateTransitionHandler grnStateTransitionHandler;
 
     @Transactional(readOnly = true)
     public List<GrnDetailResponseDto> getGrns(){
@@ -80,6 +89,102 @@ public class GrnService {
 
         grn.setGrnstatus(initialStatus);
 
+        Grn saved = grnRepository.save(grn);
+
+        return grnMapper.toDto(saved);
+    }
+
+    @Transactional
+    public GrnDetailResponseDto updateGrn(@NotNull GrnUpdateRequestDto dto) {
+
+        Grn grn = grnRepository.findById(dto.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "GRN not found with id " + dto.getId()
+                ));
+
+        String currentStatus = grn.getGrnstatus().getName();
+
+        // Only PENDING GRNs are editable
+        if (!"PENDING".equalsIgnoreCase(currentStatus)) {
+            throw new InvalidStateTransitionException(
+                    "Only PENDING GRNs can be updated"
+            );
+        }
+
+        // Validate GRN items
+        if (dto.getGrnparts() == null || dto.getGrnparts().isEmpty()) {
+            throw new BusinessRuleViolationException(
+                    "GRN must contain at least one part"
+            );
+        }
+
+        dto.getGrnparts().forEach(item -> {
+            if (item.getQuantity() == null || item.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessRuleViolationException(
+                        "Received quantity must be greater than zero"
+                );
+            }
+        });
+
+        // Map allowed fields from DTO → entity
+        grnMapper.updateEntity(grn, dto);
+
+        // Clear existing items and map new ones
+        grn.getGrnparts().clear();
+        dto.getGrnparts().forEach(itemDto -> {
+            Grnpart part = grnPartMapper.toEntity(itemDto);
+            part.setGrn(grn);
+            grn.getGrnparts().add(part);
+        });
+
+        // Save updated GRN
+        Grn saved = grnRepository.save(grn);
+
+        return grnMapper.toDto(saved);
+    }
+
+    @Transactional
+    public GrnDetailResponseDto completeGrn(@NotNull Integer grnId) {
+        Grn grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id " + grnId));
+
+        // Ensure only PENDING can be completed
+        if (!"PENDING".equalsIgnoreCase(grn.getGrnstatus().getName())) {
+            throw new InvalidStateTransitionException("Only PENDING GRNs can be completed");
+        }
+
+        // Transition state via handler
+        Grnstatus completedStatus = grnStatusRepository.findByName("Completed")
+                .orElseThrow(() -> new IllegalStateException("COMPLETED status not found"));
+
+        grnStateTransitionHandler.transitionTo(grn, completedStatus);
+
+        // Update stock for each part
+        grn.getGrnparts().forEach(part -> {
+            part.getPart().setQoh(part.getPart().getQoh().add(part.getQuantity()));
+        });
+
+        Grn saved = grnRepository.save(grn);
+
+        return grnMapper.toDto(saved);
+    }
+
+    @Transactional
+    public GrnDetailResponseDto cancelGrn(@NotNull Integer grnId) {
+        Grn grn = grnRepository.findById(grnId)
+                .orElseThrow(() -> new ResourceNotFoundException("GRN not found with id " + grnId));
+
+        // Only PENDING can be cancelled
+        if (!"PENDING".equalsIgnoreCase(grn.getGrnstatus().getName())) {
+            throw new InvalidStateTransitionException("Only PENDING GRNs can be cancelled");
+        }
+
+        Grnstatus cancelledStatus = grnStatusRepository.findByName("Cancelled")
+                .orElseThrow(() -> new IllegalStateException("CANCELLED status not found"));
+
+        grnStateTransitionHandler.transitionTo(grn, cancelledStatus);
+
+        // No stock update for cancelled GRN
         Grn saved = grnRepository.save(grn);
 
         return grnMapper.toDto(saved);

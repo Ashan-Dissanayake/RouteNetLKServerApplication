@@ -4,8 +4,11 @@ import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnPartDto;
 import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnStatusDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grnstatus;
+import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestItemDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
 import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 
@@ -16,4 +19,7 @@ uses = {PartMapper.class})
 public interface GrnPartMapper {
     GrnPartDto toDto(Grnpart grnPart);
     List<GrnPartDto> toDtoList(List<Grnpart> grnParts);
+
+    @Mapping(target = "grn", ignore = true)
+    Grnpart toEntity(GrnPartDto dto);
 }

@@ -2,10 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.grn.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grn;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -16,5 +15,11 @@ public interface GrnMapper {
     List<GrnDetailResponseDto> toDtoList(List<Grn> grns);
 
     Grn toEntity(GrnCreateRequestDto createRequestDto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "number", ignore = true)
+    @Mapping(target = "grnstatus", ignore = true)
+    @Mapping(target = "grnparts", ignore = true)
+    void updateEntity(@MappingTarget Grn grn, GrnUpdateRequestDto dto);
 
 }
