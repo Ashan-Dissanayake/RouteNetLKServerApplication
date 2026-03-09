@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.grn.model.Grn;
 import lombok.*;
 
 import java.sql.Date;
@@ -42,6 +43,9 @@ public class Partrequest {
             orphanRemoval = true
     )
     private Collection<Partrequestitem> partrequestitems;
+
+    @OneToMany(mappedBy = "partrequest")
+    private Collection<Grn> grns;
 
     @Override
     public boolean equals(Object o) {

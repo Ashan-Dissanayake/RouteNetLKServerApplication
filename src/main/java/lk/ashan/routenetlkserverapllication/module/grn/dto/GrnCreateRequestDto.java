@@ -1,13 +1,14 @@
-package lk.ashan.routenetlkserverapllication.module.partreqest.dto;
+package lk.ashan.routenetlkserverapllication.module.grn.dto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
 
 @Getter
 @Setter
 @ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
-public class PartRequestCreateRequestDto extends PartRequestDto{
+public class GrnCreateRequestDto extends GrnRequestDto{
 
 }

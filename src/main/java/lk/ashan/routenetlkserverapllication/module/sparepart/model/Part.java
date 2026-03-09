@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -60,6 +61,9 @@ public class Part extends BaseEntity {
 
     @OneToMany(mappedBy = "part")
     private Collection<Partrequestitem> partrequestitems;
+
+    @OneToMany(mappedBy = "part")
+    private Collection<Grnpart> grnparts;
 
     @Override
     public boolean equals(Object o) {

@@ -23,8 +23,8 @@ public interface PartRequestMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "number", ignore = true)
-    @Mapping(target = "requeststatus", ignore = true)
-    @Mapping(target = "requestparts", ignore = true)
+    @Mapping(target = "partrequeststatus", ignore = true)
+    @Mapping(target = "partrequestitems", ignore = true)
     void updateEntity(
             @MappingTarget Partrequest request,
             PartRequestUpdateRequestDto dto

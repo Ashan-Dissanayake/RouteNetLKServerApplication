@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.grn.model.Grn;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
@@ -99,6 +100,9 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "branch")
     private Collection<Partrequest> partrequests;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Grn> grns;
 
     @Override
     public boolean equals(Object o) {
