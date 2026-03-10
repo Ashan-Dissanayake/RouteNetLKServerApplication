@@ -1,6 +1,6 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.repository;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository;
 
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservicetype;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicetype;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

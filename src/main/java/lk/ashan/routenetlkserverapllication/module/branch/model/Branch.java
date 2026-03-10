@@ -9,13 +9,12 @@ import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.*;
 
 import java.time.LocalDate;
 import java.util.Collection;

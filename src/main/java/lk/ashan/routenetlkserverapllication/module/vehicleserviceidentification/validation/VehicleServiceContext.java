@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.validation;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation;
 
 import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;

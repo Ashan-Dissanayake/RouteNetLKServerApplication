@@ -1,6 +1,5 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.validation;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation;
 
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,12 +2,10 @@ package lk.ashan.routenetlkserverapllication.module.incident.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lombok.*;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.model;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
@@ -6,7 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
 @Setter
@@ -22,13 +22,13 @@ public class Vehicleservice {
     private Integer id;
     @Basic
     @Column(name = "dosuggestedstart")
-    private Date dosuggestedstart;
+    private LocalDate dosuggestedstart;
     @Basic
     @Column(name = "dosuggestedend")
-    private Date dosuggestedend;
+    private LocalDate dosuggestedend;
     @Basic
     @Column(name = "docreated")
-    private Date docreated;
+    private LocalDate docreated;
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;

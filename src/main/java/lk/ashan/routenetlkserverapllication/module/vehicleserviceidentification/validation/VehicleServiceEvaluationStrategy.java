@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.validation;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation;
 
 public interface VehicleServiceEvaluationStrategy {
 

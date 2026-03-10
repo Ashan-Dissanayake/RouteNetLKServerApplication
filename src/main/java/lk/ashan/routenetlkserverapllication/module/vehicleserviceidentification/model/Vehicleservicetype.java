@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.model;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model;
 
 import jakarta.persistence.*;
 import lombok.*;

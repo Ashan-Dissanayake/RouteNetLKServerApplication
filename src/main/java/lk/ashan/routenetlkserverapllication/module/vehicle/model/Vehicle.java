@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
 import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;

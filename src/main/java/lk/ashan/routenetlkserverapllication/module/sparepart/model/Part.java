@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
 import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservicepart;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicepart;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;

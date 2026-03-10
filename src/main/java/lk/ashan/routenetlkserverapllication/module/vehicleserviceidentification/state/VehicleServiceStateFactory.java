@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.state;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
 import org.springframework.stereotype.Component;
 

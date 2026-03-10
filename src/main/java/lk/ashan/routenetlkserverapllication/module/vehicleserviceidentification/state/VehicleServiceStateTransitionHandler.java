@@ -1,8 +1,8 @@
-package lk.ashan.routenetlkserverapllication.module.serviceshcedule.state;
+package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservicestatus;
-import lk.ashan.routenetlkserverapllication.module.serviceshcedule.repository.VehicleServiceRepository;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
