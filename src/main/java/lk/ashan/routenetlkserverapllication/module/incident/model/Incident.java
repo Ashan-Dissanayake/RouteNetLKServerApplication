@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.incident.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.serviceshcedule.model.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
 import lombok.*;
 
@@ -44,6 +45,9 @@ public class Incident {
 
     @OneToMany(mappedBy = "incident")
     private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+
+    @OneToMany(mappedBy = "incident")
+    private Collection<Vehicleservice> vehicleservices;
 
     @Override
     public boolean equals(Object o) {
