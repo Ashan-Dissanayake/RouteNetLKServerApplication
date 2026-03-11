@@ -17,6 +17,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRep
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -39,6 +40,7 @@ public class VehicleServiceIdentificationService {
     private static final Set<String> ELIGIBLE_STATUSES =
             Set.of("AVAILABLE", "IN SERVICE", "RESERVED");
 
+    @Transactional
     public void evaluateVehicles() {
 
         List<Vehicle> vehicles = vehicleRepository.findAll();
@@ -103,7 +105,7 @@ public class VehicleServiceIdentificationService {
         service.setDocreated(LocalDate.now());
 
         service.setDosuggestedstart(LocalDate.now());
-        service.setDosuggestedend(LocalDate.now().plusDays(1));
+        service.setDosuggestedend(LocalDate.now().plusDays(5));
 
         Vehicleservicestatus initialStatus =
                 statusRepository.findByName("Available");

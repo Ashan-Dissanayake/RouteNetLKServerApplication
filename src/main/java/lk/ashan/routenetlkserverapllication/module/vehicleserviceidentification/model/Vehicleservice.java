@@ -21,6 +21,9 @@ public class Vehicleservice {
     @Column(name = "id")
     private Integer id;
     @Basic
+    @Column(name = "number")
+    private String number;
+    @Basic
     @Column(name = "dosuggestedstart")
     private LocalDate dosuggestedstart;
     @Basic

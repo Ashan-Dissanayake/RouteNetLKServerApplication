@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PartRequestSummaryDetailResponseDto {
+public class PartRequestSummaryResponseDto {
     private Integer id;
     private String number;
 }
