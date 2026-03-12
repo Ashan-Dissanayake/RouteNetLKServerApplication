@@ -12,9 +12,9 @@ public class GrnStatusFactory {
 
     public GrnStatusFactory() {
         stateMap = Map.of(
-                "PENDING", PendingState::new,
-                "COMPLETED", CompletedState::new,
-                "CANCELLED", CancelledState::new
+                "PENDING", GrnPendingState::new,
+                "COMPLETED", GrnCompletedState::new,
+                "CANCELLED", GrnCancelledState::new
         );
     }
 

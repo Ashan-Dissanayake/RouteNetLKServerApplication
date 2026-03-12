@@ -17,14 +17,14 @@ public class TripStatusFactory {
 
     public TripStatusFactory() {
         stateMap = Map.of(
-                "PLANNED", PlannedState::new,
-                "NEEDVEHICLEOVERRIDE", NeedVehicleOverrideState::new,
-                "READY", ReadyState::new,
-                "INPROGRESS", InProgressState::new,
-                "DELAYED", DelayedState::new,
-                "SUSPENDED", SuspendedState::new,
-                "COMPLETED", CompletedState::new,
-                "CANCELLED", CancelledState::new
+                "PLANNED", TripPlannedState::new,
+                "NEEDVEHICLEOVERRIDE", TripNeedVehicleOverrideState::new,
+                "READY", TripReadyState::new,
+                "INPROGRESS", TripInProgressState::new,
+                "DELAYED", TripDelayedState::new,
+                "SUSPENDED", TripSuspendedState::new,
+                "COMPLETED", TripCompletedState::new,
+                "CANCELLED", TripCancelledState::new
         );
     }
 

@@ -12,7 +12,7 @@ class VehicleStateTest {
 
     @Test
     void availableState_shouldAllow_inService() {
-        AvailableState state = new AvailableState();
+        VehicleAvailableState state = new VehicleAvailableState();
         Vehicle vehicle = new Vehicle();
         Vehiclestatus newStatus = new Vehiclestatus();
         newStatus.setName("IN SERVICE");
@@ -22,7 +22,7 @@ class VehicleStateTest {
 
     @Test
     void availableState_shouldThrow_decommissioned() {
-        AvailableState state = new AvailableState();
+        VehicleAvailableState state = new VehicleAvailableState();
         Vehicle vehicle = new Vehicle();
         Vehiclestatus newStatus = new Vehiclestatus();
         newStatus.setName("DECOMMISSIONED");
@@ -32,7 +32,7 @@ class VehicleStateTest {
 
     @Test
     void inServiceState_shouldAllow_available() {
-        InServiceState state = new InServiceState();
+        VehicleInServiceState state = new VehicleInServiceState();
         Vehicle vehicle = new Vehicle();
         Vehiclestatus newStatus = new Vehiclestatus();
         newStatus.setName("AVAILABLE");

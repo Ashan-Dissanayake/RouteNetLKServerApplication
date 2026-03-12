@@ -25,7 +25,7 @@ public class PartStateTransitionHandler {
 
         executeOnExit(part, currentStatus);
 
-        PartState currentState = partStatusFactory.getState(currentStatus);
+        SparePartState currentState = partStatusFactory.getState(currentStatus);
         currentState.transitionTo(part, newStatus);
 
         executeOnEnter(part, targetStatus);

@@ -8,20 +8,20 @@ import java.util.function.Supplier;
 @Component
 public class PartStatusFactory {
 
-    private final Map<String, Supplier<PartState>> stateMap;
+    private final Map<String, Supplier<SparePartState>> stateMap;
 
     public PartStatusFactory() {
         stateMap = Map.of(
-                "AVAILABLE", AvailableState::new,
-                "LOW_STOCK", LowStockState::new,
-                "OUT_OF_STOCK", OutOfStockState::new,
-                "DECOMMISSIONED", DecommissionedState::new
+                "AVAILABLE", SparePartAvailableState::new,
+                "LOW_STOCK", SparePartLowStockState::new,
+                "OUT_OF_STOCK", SparePartOutOfStockState::new,
+                "DECOMMISSIONED", SparePartDecommissionedState::new
         );
     }
 
-    public PartState getState(String statusName) {
+    public SparePartState getState(String statusName) {
         String normalized = statusName.trim().toUpperCase();
-        Supplier<PartState> supplier = stateMap.get(normalized);
+        Supplier<SparePartState> supplier = stateMap.get(normalized);
 
         if (supplier == null) {
             throw new IllegalArgumentException("Unknown part status: " + statusName);

@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.roster.state.rosterassigment;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,9 +12,9 @@ public class ShiftRosterAssignmentStatusFactory {
 
     public ShiftRosterAssignmentStatusFactory() {
         stateMap = Map.of(
-                "SUGGESTED", SuggestedState::new,
-                "CONFIRMED", ConfirmedState::new,
-                "REJECTED",  RejectedState::new
+                "SUGGESTED", RosterAssignmentSuggestedState::new,
+                "CONFIRMED", RosterAssignmentConfirmedState::new,
+                "REJECTED",  RosterAssignmentRejectedState::new
         );
     }
 

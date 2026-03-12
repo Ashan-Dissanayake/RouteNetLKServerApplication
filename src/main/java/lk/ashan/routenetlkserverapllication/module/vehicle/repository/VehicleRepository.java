@@ -33,7 +33,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     Optional<Vehicle> findByNumber(String number);
 
+
     List<Vehicle> findByBranch_IdAndDeletedFalse(Integer id);
 
     List<Vehicle> findByVehiclestatus_NameIn(Set<String> eligibleStatuses);
+
+    List<Vehicle> findByVehiclestatus_Name(String statusName);
 }

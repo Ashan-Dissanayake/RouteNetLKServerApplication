@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AttendanceStateFactory {
 
-    private final PendingAttendanceState pendingState;
-    private final PresentAttendanceState presentState;
+    private final TripCrewAttendancePendingState pendingState;
+    private final TripCrewAttendancePresentState presentState;
 
     public AttendanceState getState(String statusName) {
 

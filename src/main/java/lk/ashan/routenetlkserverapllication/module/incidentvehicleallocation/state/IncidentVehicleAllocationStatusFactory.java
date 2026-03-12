@@ -13,10 +13,10 @@ public class IncidentVehicleAllocationStatusFactory {
 
     public IncidentVehicleAllocationStatusFactory() {
         stateMap = Map.of(
-                "ASSIGNED", AssignedState::new,
-                "IN_PROGRESS", InProgressIncidentVehicleAllocationState::new,
-                "RELEASED", ReleasedState::new,
-                "CANCELLED", CancelledState::new
+                "ASSIGNED", IncidentVehicleAllocationAssignedState::new,
+                "IN_PROGRESS", IncidentVehicleAllocationInProgressState::new,
+                "RELEASED", IncidentVehiclellocationReleasedState::new,
+                "CANCELLED", IncidentVehicleCancelledState::new
         );
     }
 

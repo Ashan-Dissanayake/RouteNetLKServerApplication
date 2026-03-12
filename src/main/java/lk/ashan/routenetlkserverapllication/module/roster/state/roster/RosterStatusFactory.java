@@ -13,9 +13,9 @@ public class RosterStatusFactory {
 
     public RosterStatusFactory() {
         stateMap = Map.of(
-                "DRAFT",    DraftState::new,
-                "LOCKED",   LockedState::new,
-                "ARCHIVED", ArchivedState::new
+                "DRAFT",    RosterDraftState::new,
+                "LOCKED",   RosterLockedState::new,
+                "ARCHIVED", RosterArchivedState::new
         );
     }
 

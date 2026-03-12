@@ -13,11 +13,11 @@ public class VehicleServiceStateFactory {
     public VehicleServiceStateFactory() {
 
         stateMap = Map.of(
-                "CREATED", CreatedState::new,
-                "SCHEDULED", ScheduledState::new,
-                "IN PROGRESS", InProgressState::new,
-                "COMPLETED", CompletedState::new,
-                "CANCELLED", CancelledState::new
+                "CREATED", VehicleServiceCreatedState::new,
+                "SCHEDULED", VehicleServiceScheduledState::new,
+                "IN PROGRESS", VehicleServiceInProgressState::new,
+                "COMPLETED", VehicleServiceCompletedState::new,
+                "CANCELLED", VehicleServiceCancelledState::new
         );
     }
 

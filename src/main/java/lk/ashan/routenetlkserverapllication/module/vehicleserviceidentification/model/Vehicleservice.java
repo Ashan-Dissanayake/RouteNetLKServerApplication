@@ -25,24 +25,6 @@ public class Vehicleservice {
     @Column(name = "number")
     private String number;
     @Basic
-    @Column(name = "dosuggestedstart")
-    private LocalDate dosuggestedstart;
-    @Basic
-    @Column(name = "lastservicemileage")
-    private Integer lastservicemileage;
-    @Basic
-    @Column(name = "lastservicedate")
-    private LocalDate lastservicedate;
-    @Basic
-    @Column(name = "dosuggestedend")
-    private LocalDate dosuggestedend;
-    @Basic
-    @Column(name = "doscheduledstart")
-    private LocalDate doscheduledstart;
-    @Basic
-    @Column(name = "doscheduledend")
-    private LocalDate doscheduledend;
-    @Basic
     @Column(name = "docreated")
     private LocalDate docreated;
     @ManyToOne
@@ -68,16 +50,20 @@ public class Vehicleservice {
     @JoinColumn(name = "vehicleservicestatus_id", referencedColumnName = "id", nullable = false)
     private Vehicleservicestatus vehicleservicestatus;
 
+    @OneToMany(mappedBy = "vehicleservice")
+    private Collection<Vehicleserviceschedule> vehicleserviceschedules;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vehicleservice that = (Vehicleservice) o;
-        return Objects.equals(id, that.id) && Objects.equals(dosuggestedstart, that.dosuggestedstart) && Objects.equals(dosuggestedend, that.dosuggestedend);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dosuggestedstart, dosuggestedend);
+        return Objects.hash(id);
     }
+
 }

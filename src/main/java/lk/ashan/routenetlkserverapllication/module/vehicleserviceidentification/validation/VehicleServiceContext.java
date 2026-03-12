@@ -15,9 +15,8 @@ public class VehicleServiceContext {
     private Vehicle vehicle;
     private Incident incident;
     private Integer odometer;
-    private LocalDate lastServiceDate;
     private boolean preTripRequired;
     private Integer mileage;
-    private Integer lastServiceMileage; // mileage at last service (for preventive)
+    private Integer lastServiceMileage;
 
 }

@@ -1,8 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartUpdateRequestDto;
@@ -11,7 +9,7 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.Partstatus;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartState;
+import lk.ashan.routenetlkserverapllication.module.sparepart.state.SparePartState;
 import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartCreationContext;
@@ -78,7 +76,7 @@ public class PartService {
 
         Partstatus determinedStatus = partStatusStrategy.determineStatus(context);
 
-        PartState initialState = partStatusFactory.getState(determinedStatus.getName());
+        SparePartState initialState = partStatusFactory.getState(determinedStatus.getName());
         initialState.validateInitial();
 
         part.setPartstatus(determinedStatus);

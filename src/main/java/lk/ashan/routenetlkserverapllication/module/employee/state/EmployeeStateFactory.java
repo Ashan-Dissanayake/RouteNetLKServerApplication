@@ -12,10 +12,10 @@ public class EmployeeStateFactory {
 
     public EmployeeStateFactory() {
         stateMap = Map.of(
-            "ACTIVE", ActiveState::new,
-            "SUSPEND", SuspendState::new,
-            "ON LEAVE", OnLeaveState::new,
-            "RESIGNED", ResignedState::new
+            "ACTIVE", EmployeeActiveState::new,
+            "SUSPEND", EmployeeSuspendState::new,
+            "ON LEAVE", EmployeeOnLeaveState::new,
+            "RESIGNED", EmployeeResignedState::new
         );
     }
 

@@ -12,10 +12,10 @@ public class PermitStatusFactory {
 
     public PermitStatusFactory() {
         stateMap = Map.of(
-                "ACTIVE", ActiveState::new,
-                "EXPIRED", ExpiredState::new,
-                "SUSPENDED", SuspendedState::new,
-                "TRANSFERRED", TransferredState::new
+                "ACTIVE", PermiteActiveState::new,
+                "EXPIRED", PermiteExpiredState::new,
+                "SUSPENDED", PermiteSuspendedState::new,
+                "TRANSFERRED", PermiteTransferredState::new
         );
     }
 

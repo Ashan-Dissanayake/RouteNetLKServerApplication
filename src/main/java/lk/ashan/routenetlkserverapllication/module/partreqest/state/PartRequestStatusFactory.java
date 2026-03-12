@@ -12,10 +12,10 @@ public class PartRequestStatusFactory {
 
     public PartRequestStatusFactory() {
         stateMap = Map.of(
-                "PENDING", PendingState::new,
-                "APPROVED", ApprovedState::new,
-                "REJECTED", RejectedState::new,
-                "COMPLETED", CompletedState::new
+                "PENDING", PartRequestPendingState::new,
+                "APPROVED", PartRequestApprovedState::new,
+                "REJECTED", PartRequestRejectedState::new,
+                "COMPLETED", PartRequestCompletedState::new
         );
     }
 

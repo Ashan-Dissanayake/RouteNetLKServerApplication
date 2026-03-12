@@ -88,7 +88,6 @@ public class VehicleServiceIdentificationService {
                 .vehicle(vehicle)
                 .incident(incident)
                 .mileage(vehicle.getMileage())
-                .lastServiceMileage(lastServiceMileage)
                 .preTripRequired(preTripRequired)
                 .build();
     }
@@ -98,30 +97,25 @@ public class VehicleServiceIdentificationService {
                                       VehicleServiceContext context) {
 
         Vehicleservice service = new Vehicleservice();
+
         service.setVehicle(vehicle);
         service.setBranch(vehicle.getBranch());
 
-        // Assign service type
         Vehicleservicetype type =
                 serviceTypeRepository.getReferenceById(strategy.getServiceTypeId());
+
         service.setVehicleservicetype(type);
 
-        // Assign priority dynamically
         Vehicleservicepriority priority = resolvePriority(type.getName());
         service.setVehicleservicepriority(priority);
 
-        // Assign status = CREATED
-        Vehicleservicestatus initialStatus = statusRepository.findByName("CREATED");
+        Vehicleservicestatus initialStatus = statusRepository.findByName("Created");
         service.setVehicleservicestatus(initialStatus);
 
-        // Assign unique service number
         service.setNumber(generateServiceNumber());
 
-        // Assign suggested start/end dates based on strategy
-        service.setDosuggestedstart(strategy.getSuggestedStartDate(context));
-        service.setDosuggestedend(strategy.getSuggestedEndDate(context));
+        service.setDocreated(LocalDate.now());
 
-        // Assign incident if applicable
         if (strategy instanceof PostIncidentServiceStrategy) {
             service.setIncident(context.getIncident());
         }

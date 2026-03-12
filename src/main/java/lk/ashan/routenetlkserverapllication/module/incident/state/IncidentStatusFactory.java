@@ -12,10 +12,10 @@ public class IncidentStatusFactory {
 
     public IncidentStatusFactory() {
         stateMap = Map.of(
-                "REPORTED", ReportedState::new,
-                "IN_PROGRESS", InProgressIncidentState::new,
-                "RESOLVED", ResolvedState::new,
-                "CLOSED", ClosedState::new
+                "REPORTED", IncidentReportedState::new,
+                "IN_PROGRESS", IncidentInProgressState::new,
+                "RESOLVED", IncidentResolvedState::new,
+                "CLOSED", IncidentClosedState::new
         );
     }
 

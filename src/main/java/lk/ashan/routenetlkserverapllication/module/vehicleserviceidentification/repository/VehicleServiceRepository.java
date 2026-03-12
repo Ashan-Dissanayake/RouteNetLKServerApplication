@@ -38,5 +38,6 @@ public interface VehicleServiceRepository extends JpaRepository<Vehicleservice, 
 """)
     long countByDate(@Param("date") LocalDate date);
 
+    List<Vehicleservice> findByVehicleservicestatus_Name(String statusName);
 
 }
