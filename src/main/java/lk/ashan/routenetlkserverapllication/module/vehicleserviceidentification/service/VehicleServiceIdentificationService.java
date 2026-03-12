@@ -10,16 +10,19 @@ import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceTypeRepository;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.PostIncidentServiceStrategy;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.VehicleServiceContext;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.VehicleServiceEvaluationStrategy;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -37,29 +40,36 @@ public class VehicleServiceIdentificationService {
 
     private final List<VehicleServiceEvaluationStrategy> strategies;
 
+    // Eligible vehicle statuses
     private static final Set<String> ELIGIBLE_STATUSES =
             Set.of("AVAILABLE", "IN SERVICE", "RESERVED");
 
     @Transactional
     public void evaluateVehicles() {
+        // Fetch only vehicles with eligible statuses
+        List<Vehicle> vehicles = vehicleRepository.findByVehiclestatus_NameIn(ELIGIBLE_STATUSES);
 
-        List<Vehicle> vehicles = vehicleRepository.findAll();
+        List<Integer> vehiclesWithOpenServices = vehicleServiceRepository.findVehicleIdsWithOpenServices();
 
-        for (Vehicle vehicle : vehicles) {
-            String status = vehicle.getVehiclestatus().getName().toUpperCase();
-
-            if (!ELIGIBLE_STATUSES.contains(status)) continue;
-
-            if (hasOpenService(vehicle)) continue;
+        for ( Vehicle vehicle : vehicles){
+            if (vehiclesWithOpenServices.contains(vehicle.getId())) continue;
 
             VehicleServiceContext context = buildContext(vehicle);
 
             for (VehicleServiceEvaluationStrategy strategy : strategies) {
                 if (strategy.isServiceRequired(context)) {
-                    createVehicleService(vehicle, strategy);
+
+                    // Prevent duplicate PostIncident services
+                    if (strategy instanceof PostIncidentServiceStrategy &&
+                            vehicleServiceRepository.existsOpenServiceForIncident(context.getIncident().getId())) {
+                        continue;
+                    }
+
+                    createVehicleService(vehicle, strategy, context);
                     break;
                 }
             }
+
         }
     }
 
@@ -67,68 +77,74 @@ public class VehicleServiceIdentificationService {
 
         Incident incident =
                 incidentRepository.findLatestIncidentByTrip_Permite_Vehicle_Id(vehicle.getId())
-                        .orElse(null);
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Incident not found with vehicle " + vehicle.getNumber()));
 
-        boolean preTripRequired = vehicle.getVehiclestatus()
-                .getName()
-                .equalsIgnoreCase("AVAILABLE");
+        boolean preTripRequired = ELIGIBLE_STATUSES.contains(vehicle.getVehiclestatus().getName());
 
-        return new VehicleServiceContext(
-                vehicle,
-                incident,
-                vehicle.getMileage(),
-                null,
-                preTripRequired
-        );
+        Integer lastServiceMileage = vehicleServiceRepository.findLastServiceMileage(vehicle.getId());
+
+        return VehicleServiceContext.builder()
+                .vehicle(vehicle)
+                .incident(incident)
+                .mileage(vehicle.getMileage())
+                .lastServiceMileage(lastServiceMileage)
+                .preTripRequired(preTripRequired)
+                .build();
     }
 
     private void createVehicleService(Vehicle vehicle,
-                                      VehicleServiceEvaluationStrategy strategy) {
+                                      VehicleServiceEvaluationStrategy strategy,
+                                      VehicleServiceContext context) {
 
         Vehicleservice service = new Vehicleservice();
-
         service.setVehicle(vehicle);
         service.setBranch(vehicle.getBranch());
 
+        // Assign service type
         Vehicleservicetype type =
-                serviceTypeRepository.getReferenceById(
-                        strategy.getServiceTypeId()
-                );
-
+                serviceTypeRepository.getReferenceById(strategy.getServiceTypeId());
         service.setVehicleservicetype(type);
 
-        Vehicleservicepriority priority =
-                resolvePriority(type.getName());
-
+        // Assign priority dynamically
+        Vehicleservicepriority priority = resolvePriority(type.getName());
         service.setVehicleservicepriority(priority);
 
-        service.setDocreated(LocalDate.now());
-
-        service.setDosuggestedstart(LocalDate.now());
-        service.setDosuggestedend(LocalDate.now().plusDays(5));
-
-        Vehicleservicestatus initialStatus =
-                statusRepository.findByName("Available");
-
+        // Assign status = CREATED
+        Vehicleservicestatus initialStatus = statusRepository.findByName("CREATED");
         service.setVehicleservicestatus(initialStatus);
+
+        // Assign unique service number
+        service.setNumber(generateServiceNumber());
+
+        // Assign suggested start/end dates based on strategy
+        service.setDosuggestedstart(strategy.getSuggestedStartDate(context));
+        service.setDosuggestedend(strategy.getSuggestedEndDate(context));
+
+        // Assign incident if applicable
+        if (strategy instanceof PostIncidentServiceStrategy) {
+            service.setIncident(context.getIncident());
+        }
 
         vehicleServiceRepository.save(service);
 
-        log.info("Vehicle service created for vehicle {} type {}",
+        log.info("Vehicle service created: {} | Vehicle: {} | Type: {} | Priority: {}",
+                service.getNumber(),
                 vehicle.getNumber(),
-                type.getName());
+                type.getName(),
+                priority.getName());
     }
 
     private Vehicleservicepriority resolvePriority(String serviceType) {
-
         return switch (serviceType.toUpperCase()) {
-            case "POST_INCIDENT" -> priorityRepository.findByName("CRITICAL");
-            case "PREVENTIVE" -> priorityRepository.findByName("HIGH");
-            default -> priorityRepository.findByName("NORMAL");
+            case "POST_INCIDENT" -> priorityRepository.findByName("Critical");
+            case "PREVENTIVE" -> priorityRepository.findByName("High");
+            default -> priorityRepository.findByName("Normal");
         };
     }
 
-    private boolean hasOpenService(Vehicle vehicle) {
-        return vehicleServiceRepository.existsOpenService(vehicle.getId());
+    private String generateServiceNumber() {
+        long count = vehicleServiceRepository.countByDate(LocalDate.now()) + 1;
+        return String.format("VS-%s-%04d", LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE), count);
     }
 }

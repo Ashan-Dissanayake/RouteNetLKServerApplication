@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
 import lombok.*;
 
+import javax.ejb.Local;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Objects;
@@ -27,8 +28,20 @@ public class Vehicleservice {
     @Column(name = "dosuggestedstart")
     private LocalDate dosuggestedstart;
     @Basic
+    @Column(name = "lastservicemileage")
+    private Integer lastservicemileage;
+    @Basic
+    @Column(name = "lastservicedate")
+    private LocalDate lastservicedate;
+    @Basic
     @Column(name = "dosuggestedend")
     private LocalDate dosuggestedend;
+    @Basic
+    @Column(name = "doscheduledstart")
+    private LocalDate doscheduledstart;
+    @Basic
+    @Column(name = "doscheduledend")
+    private LocalDate doscheduledend;
     @Basic
     @Column(name = "docreated")
     private LocalDate docreated;
@@ -60,11 +73,11 @@ public class Vehicleservice {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vehicleservice that = (Vehicleservice) o;
-        return Objects.equals(id, that.id) && Objects.equals(dosuggestedstart, that.dosuggestedstart) && Objects.equals(dosuggestedend, that.dosuggestedend) && Objects.equals(docreated, that.docreated);
+        return Objects.equals(id, that.id) && Objects.equals(dosuggestedstart, that.dosuggestedstart) && Objects.equals(dosuggestedend, that.dosuggestedend);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dosuggestedstart, dosuggestedend, docreated);
+        return Objects.hash(id, dosuggestedstart, dosuggestedend);
     }
 }

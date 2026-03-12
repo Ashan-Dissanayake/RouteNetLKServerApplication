@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
@@ -33,4 +35,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     List<Vehicle> findByBranch_IdAndDeletedFalse(Integer id);
 
+    List<Vehicle> findByVehiclestatus_NameIn(Set<String> eligibleStatuses);
 }
