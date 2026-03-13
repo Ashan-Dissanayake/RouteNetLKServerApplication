@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.permit.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitTransferRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.service.PermitService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

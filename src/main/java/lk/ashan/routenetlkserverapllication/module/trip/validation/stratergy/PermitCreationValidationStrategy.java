@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 
 import jakarta.validation.ValidationException;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripCreateContext;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;

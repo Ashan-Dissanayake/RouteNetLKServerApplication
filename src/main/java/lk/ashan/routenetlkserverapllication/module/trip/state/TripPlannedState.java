@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.state;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;

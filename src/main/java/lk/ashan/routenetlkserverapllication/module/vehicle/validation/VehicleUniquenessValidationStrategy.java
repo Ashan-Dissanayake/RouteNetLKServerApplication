@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.validation;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.GenderDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.GenderDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.GenderMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.GenderRepository;
 import lombok.RequiredArgsConstructor;

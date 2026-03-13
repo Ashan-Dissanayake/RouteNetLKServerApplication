@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;

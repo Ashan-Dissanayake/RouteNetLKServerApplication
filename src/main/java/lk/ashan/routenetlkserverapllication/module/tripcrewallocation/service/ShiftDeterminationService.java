@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.service;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;

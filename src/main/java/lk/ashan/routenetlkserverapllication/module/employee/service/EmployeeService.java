@@ -1,16 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Crewstatus;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employeestatus;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeState;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;

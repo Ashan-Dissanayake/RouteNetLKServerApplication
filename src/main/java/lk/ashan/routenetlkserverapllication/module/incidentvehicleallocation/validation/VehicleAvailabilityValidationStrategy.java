@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation;
 
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.shared.validation;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.validation.driver.seed.DriverValidationData;

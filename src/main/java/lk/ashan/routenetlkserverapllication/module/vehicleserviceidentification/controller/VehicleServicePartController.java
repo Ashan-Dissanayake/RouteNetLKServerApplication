@@ -1,6 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.controller;
 
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartBulkCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartBulkUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.service.VehicleServicePartService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -9,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController

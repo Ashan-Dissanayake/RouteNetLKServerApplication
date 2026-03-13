@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.ModelDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.ModelDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.ModelMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.ModelRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.state.roster;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Rosterstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Rosterstatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;

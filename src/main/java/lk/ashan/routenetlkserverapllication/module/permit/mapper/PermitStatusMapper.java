@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitStatusDto;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permitestatus;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitStatusDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

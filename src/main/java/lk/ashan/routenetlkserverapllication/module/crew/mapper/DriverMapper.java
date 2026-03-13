@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

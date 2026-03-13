@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripStatusDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripStatusDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripStatusMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
 import lombok.RequiredArgsConstructor;

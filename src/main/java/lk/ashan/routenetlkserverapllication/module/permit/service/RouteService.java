@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
-import lk.ashan.routenetlkserverapllication.module.permit.dto.RouteSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.RouteSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.RouteMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;

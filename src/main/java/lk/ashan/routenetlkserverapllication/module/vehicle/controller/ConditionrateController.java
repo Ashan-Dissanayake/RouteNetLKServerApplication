@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.ConditionrateDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.ConditionrateDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.ConditionrateService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

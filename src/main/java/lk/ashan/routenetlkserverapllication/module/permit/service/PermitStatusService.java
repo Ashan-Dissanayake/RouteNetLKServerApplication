@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitStatusDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitStatusDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitStatusMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lombok.RequiredArgsConstructor;

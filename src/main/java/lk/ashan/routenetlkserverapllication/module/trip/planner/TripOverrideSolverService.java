@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.planner;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;

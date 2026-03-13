@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.repository;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

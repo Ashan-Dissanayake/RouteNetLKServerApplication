@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.validation;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Partstatus;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partstatus;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStatusRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

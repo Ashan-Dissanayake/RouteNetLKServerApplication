@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository;
 
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Crewattendancestatus;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Crewattendancestatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

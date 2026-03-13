@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository;
 
-import com.github.javaparser.ast.Node;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

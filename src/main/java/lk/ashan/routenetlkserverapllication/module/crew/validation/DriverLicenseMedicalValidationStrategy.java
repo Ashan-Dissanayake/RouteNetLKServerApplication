@@ -1,10 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.crew.validation;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessException;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

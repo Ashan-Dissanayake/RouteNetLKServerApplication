@@ -1,13 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Overridestatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Overridestatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.OverrideStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

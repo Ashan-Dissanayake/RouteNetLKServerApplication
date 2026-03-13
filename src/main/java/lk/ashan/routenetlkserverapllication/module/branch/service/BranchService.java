@@ -2,11 +2,15 @@ package lk.ashan.routenetlkserverapllication.module.branch.service;
 
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchstatus;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branchstatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;

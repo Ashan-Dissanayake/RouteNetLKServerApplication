@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.RouteFamiliarityLevelDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Routefamiliaritylevel;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.RouteFamiliarityLevelDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Routefamiliaritylevel;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

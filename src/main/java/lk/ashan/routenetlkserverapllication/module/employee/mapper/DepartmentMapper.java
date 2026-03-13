@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.DepartmentDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Department;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.DepartmentDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Department;
 import org.mapstruct.*;
 
 import java.util.List;

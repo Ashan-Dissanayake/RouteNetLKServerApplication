@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchtypeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchtypeMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchtypeRepository;
 import lombok.RequiredArgsConstructor;

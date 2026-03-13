@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.validation;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;

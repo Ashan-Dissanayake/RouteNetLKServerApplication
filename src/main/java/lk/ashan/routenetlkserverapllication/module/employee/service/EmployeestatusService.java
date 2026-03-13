@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeestatusDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeestatusDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeestatusMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeestatusRepository;
 import lombok.RequiredArgsConstructor;

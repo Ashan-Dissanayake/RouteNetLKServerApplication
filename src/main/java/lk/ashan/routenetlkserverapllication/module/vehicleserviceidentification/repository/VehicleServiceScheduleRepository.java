@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleserviceschedule;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleserviceschedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

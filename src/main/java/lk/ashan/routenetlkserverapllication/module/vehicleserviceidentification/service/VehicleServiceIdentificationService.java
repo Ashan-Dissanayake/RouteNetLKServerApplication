@@ -1,11 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.service;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicepriority;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicestatus;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicetype;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepriority;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicetype;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServicePriorityRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceStatusRepository;
@@ -13,7 +13,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.PostIncidentServiceStrategy;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.VehicleServiceContext;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation.VehicleServiceEvaluationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.RouteFamiliarityLevelDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.RouteFamiliarityLevelDto;
 import lk.ashan.routenetlkserverapllication.module.crew.service.RouteFamiliarityLevelService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

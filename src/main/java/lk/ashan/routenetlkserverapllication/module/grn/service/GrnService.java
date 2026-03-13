@@ -1,14 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.grn.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnMapper;
 import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnPartMapper;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grn;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grnstatus;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnpart;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnstatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;

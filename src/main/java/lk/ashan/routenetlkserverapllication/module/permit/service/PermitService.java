@@ -1,11 +1,15 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitTransferRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
-import lk.ashan.routenetlkserverapllication.module.permit.model.*;
+import lk.ashan.routenetlkserverapllication.module.permit.entity.*;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Servicetype;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
@@ -14,7 +18,7 @@ import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContext;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;

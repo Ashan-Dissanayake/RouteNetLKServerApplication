@@ -1,14 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideSuggestionResponse;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OverrideSuggestionResponse;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.OriginTerminalMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
@@ -20,7 +20,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripC
 import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;

@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface VehicleServiceRepository extends JpaRepository<Vehicleservice, Integer> {

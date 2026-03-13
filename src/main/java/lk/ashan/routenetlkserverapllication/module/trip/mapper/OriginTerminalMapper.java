@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.OriginTerminalDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripTypeDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Originterminal;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Triptype;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OriginTerminalDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Originterminal;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

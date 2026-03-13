@@ -3,8 +3,9 @@ package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper.VehicleServicePartMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicepart;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServicePartRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;

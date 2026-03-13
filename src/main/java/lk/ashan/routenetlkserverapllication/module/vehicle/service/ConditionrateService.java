@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.ConditionrateDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.ConditionrateDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.ConditionrateMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.ConditionRateRepository;
 import lombok.RequiredArgsConstructor;

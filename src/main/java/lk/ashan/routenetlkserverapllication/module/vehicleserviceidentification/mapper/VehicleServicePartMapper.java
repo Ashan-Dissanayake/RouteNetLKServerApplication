@@ -1,11 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.VehicleServicePartCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.VehicleServicePartRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.VehicleServicePartDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.VehicleServicePartUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicepart;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
 import org.mapstruct.*;
 
 import java.util.List;

@@ -2,8 +2,10 @@ package lk.ashan.routenetlkserverapllication.config.factory;
 
 
 import lk.ashan.routenetlkserverapllication.module.permit.dto.*;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.dto.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

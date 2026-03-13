@@ -1,11 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.trip.repository;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Triptype;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Repository

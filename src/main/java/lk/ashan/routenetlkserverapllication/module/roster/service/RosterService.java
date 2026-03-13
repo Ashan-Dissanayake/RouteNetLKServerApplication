@@ -1,12 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.dto.*;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftRosterAssignmentMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.model.*;
+import lk.ashan.routenetlkserverapllication.module.roster.entity.*;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.*;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentPlanning;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterAssignmentSolverService;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterScheduleSolution;

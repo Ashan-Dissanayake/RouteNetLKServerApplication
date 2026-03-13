@@ -2,9 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.DriverUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.service.DriverService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripVehicleOverrideDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripVehicleOverrideDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
 import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {

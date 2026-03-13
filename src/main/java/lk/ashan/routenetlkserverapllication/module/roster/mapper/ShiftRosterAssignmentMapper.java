@@ -2,9 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterAssignmentSuggestionResponse;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.ShiftRosterAssignmentDto;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterAssignmentSuggestionResponse;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.ShiftRosterAssignmentDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

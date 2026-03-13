@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Role;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

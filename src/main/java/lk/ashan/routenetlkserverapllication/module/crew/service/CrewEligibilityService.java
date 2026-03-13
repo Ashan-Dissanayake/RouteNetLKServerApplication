@@ -1,12 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.transaction.Transactional;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Crewstatus;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lombok.RequiredArgsConstructor;

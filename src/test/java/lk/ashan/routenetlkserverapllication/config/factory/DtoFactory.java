@@ -1,10 +1,11 @@
 package lk.ashan.routenetlkserverapllication.config.factory;
 
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.employee.dto.*;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class DtoFactory {
 
@@ -18,7 +19,7 @@ public class DtoFactory {
         return new BranchstatusDto(id, name);
     }
 
-    public static BranchCreateRequestDto createBranchRequest(String name, String code,String telephone) {
+    public static BranchCreateRequestDto createBranchRequest(String name, String code, String telephone) {
         return BranchCreateRequestDto.builder()
                 .name(name)
                 .code(code)
@@ -32,7 +33,7 @@ public class DtoFactory {
                 .build();
     }
 
-    public static BranchUpdateRequestDto updateBranchRequest(String name, String code,String telephone) {
+    public static BranchUpdateRequestDto updateBranchRequest(String name, String code, String telephone) {
         return BranchUpdateRequestDto.builder()
                 .name(name)
                 .code(code)

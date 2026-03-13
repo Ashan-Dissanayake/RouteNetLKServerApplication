@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

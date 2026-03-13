@@ -1,19 +1,19 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentState;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationDetailsResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationDetailsResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mapper.IncidentVehicleAllocationMapper;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocation;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.Incidentvehicleallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocationstatus;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state.AllocationStateTransitionHandler;
@@ -21,7 +21,7 @@ import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.sta
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state.IncidentVehicleAllocationStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation.AllocationContext;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation.AllocationValidationExecutor;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;

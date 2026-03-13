@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.trip.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideSuggestionResponse;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OverrideSuggestionResponse;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.service.TripService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

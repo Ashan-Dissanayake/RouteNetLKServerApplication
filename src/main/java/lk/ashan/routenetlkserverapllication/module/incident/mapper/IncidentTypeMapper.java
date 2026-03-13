@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentTypeDto;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidenttype;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentTypeDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidenttype;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.state;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Partstatus;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partstatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import org.springframework.stereotype.Component;
 

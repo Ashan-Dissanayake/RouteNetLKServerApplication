@@ -2,12 +2,12 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.co
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationStatusDto;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.dto.IncidentVehicleAllocationTypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationStatusDto;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationTypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

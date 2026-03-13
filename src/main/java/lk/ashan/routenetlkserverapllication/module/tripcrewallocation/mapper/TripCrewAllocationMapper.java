@@ -4,9 +4,8 @@ import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMappe
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RoleMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripCrewAllocationSuggestionResponseDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripCrewAllocationDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

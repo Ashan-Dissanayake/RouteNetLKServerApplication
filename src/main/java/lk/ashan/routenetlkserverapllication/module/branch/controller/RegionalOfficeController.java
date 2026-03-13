@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.RegionalofficeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalofficeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.RegionalOfficeService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;

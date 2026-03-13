@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.permit.repository;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

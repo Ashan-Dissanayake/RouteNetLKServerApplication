@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartCategoryDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Partcategory;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCategoryDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partcategory;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

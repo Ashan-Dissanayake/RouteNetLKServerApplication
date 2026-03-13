@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.state;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.GenderDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.GenderDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.GenderService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

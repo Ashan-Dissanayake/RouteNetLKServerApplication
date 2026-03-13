@@ -2,7 +2,8 @@ package lk.ashan.routenetlkserverapllication.config.factory;
 
 
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.BusTypeDto;
 
 import java.time.LocalDate;
 

@@ -1,11 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.grn.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnPartDto;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnStatusDto;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grnpart;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grnstatus;
-import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestItemDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequestitem;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnPartDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnpart;
 import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

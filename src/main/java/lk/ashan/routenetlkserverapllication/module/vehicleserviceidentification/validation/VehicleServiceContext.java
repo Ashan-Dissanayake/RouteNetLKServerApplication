@@ -1,12 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.validation;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor

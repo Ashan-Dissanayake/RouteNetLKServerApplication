@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;

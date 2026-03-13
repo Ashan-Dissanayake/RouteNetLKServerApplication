@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

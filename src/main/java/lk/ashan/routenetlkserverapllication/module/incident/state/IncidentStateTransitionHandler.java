@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.state;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

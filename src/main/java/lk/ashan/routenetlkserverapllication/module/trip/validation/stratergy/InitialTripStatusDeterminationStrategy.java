@@ -1,18 +1,15 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 /**
  * Determines initial trip status - always PLANNED

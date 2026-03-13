@@ -1,12 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.incident.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.mapper.IncidentMapper;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidenttype;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidenttype;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentTypeRepository;
@@ -15,7 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStateT
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationContext;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationStrategy;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

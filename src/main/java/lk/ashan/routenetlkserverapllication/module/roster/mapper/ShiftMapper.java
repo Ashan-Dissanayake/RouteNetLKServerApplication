@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 
-import lk.ashan.routenetlkserverapllication.module.roster.dto.ShiftSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.ShiftSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

@@ -2,24 +2,20 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.VehicleDtoFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 

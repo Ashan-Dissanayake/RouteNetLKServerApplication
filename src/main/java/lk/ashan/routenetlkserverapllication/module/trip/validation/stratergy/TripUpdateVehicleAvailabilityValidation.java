@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 
 import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

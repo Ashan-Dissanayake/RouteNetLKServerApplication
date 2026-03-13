@@ -1,9 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.repository;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
-import org.jetbrains.annotations.NotNull;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

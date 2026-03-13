@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.DesignationDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.DesignationDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.DesignationService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

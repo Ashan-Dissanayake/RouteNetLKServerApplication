@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.context;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lombok.Builder;
 import lombok.Getter;
 

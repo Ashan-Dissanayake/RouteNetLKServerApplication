@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branchtype;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchtypeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branchtype;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

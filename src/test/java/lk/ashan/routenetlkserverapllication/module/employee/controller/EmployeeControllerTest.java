@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.DtoFactory;
 import org.junit.jupiter.api.Test;

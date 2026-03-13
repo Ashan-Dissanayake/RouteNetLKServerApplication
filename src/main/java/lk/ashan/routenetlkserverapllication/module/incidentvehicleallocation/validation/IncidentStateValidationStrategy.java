@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 

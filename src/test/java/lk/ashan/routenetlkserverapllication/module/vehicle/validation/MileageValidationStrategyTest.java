@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.validation;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

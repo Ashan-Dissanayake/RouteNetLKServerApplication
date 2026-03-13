@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

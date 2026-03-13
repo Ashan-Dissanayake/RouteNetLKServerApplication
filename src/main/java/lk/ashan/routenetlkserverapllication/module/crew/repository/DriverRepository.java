@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.repository;
 
-import lk.ashan.routenetlkserverapllication.module.crew.model.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

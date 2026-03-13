@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchtypeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchtypeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchTypeService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;

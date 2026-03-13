@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripTypeDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Triptype;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripTypeDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Triptype;
 import org.mapstruct.*;
 
 import java.util.List;

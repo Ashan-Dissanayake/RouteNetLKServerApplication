@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.service.PartService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

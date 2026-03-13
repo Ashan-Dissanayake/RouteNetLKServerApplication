@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.state;
 
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripallocationstatus;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;

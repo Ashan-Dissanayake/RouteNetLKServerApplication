@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.RegionalofficeDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Regionaloffice;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalofficeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Regionaloffice;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import org.mapstruct.*;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

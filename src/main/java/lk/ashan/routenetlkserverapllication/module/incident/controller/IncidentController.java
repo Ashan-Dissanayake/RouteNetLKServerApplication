@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.incident.controller;
 
 
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.service.IncidentService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

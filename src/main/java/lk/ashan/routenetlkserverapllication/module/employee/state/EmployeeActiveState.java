@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.state;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employeestatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 import java.util.List;

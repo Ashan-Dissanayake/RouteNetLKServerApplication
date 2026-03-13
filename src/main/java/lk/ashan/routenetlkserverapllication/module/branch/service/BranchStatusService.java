@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchstatusDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchstatusDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchstatusMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
 import lombok.RequiredArgsConstructor;

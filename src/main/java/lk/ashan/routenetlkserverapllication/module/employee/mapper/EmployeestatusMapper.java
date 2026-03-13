@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeestatusDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employeestatus;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeestatusDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employeestatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

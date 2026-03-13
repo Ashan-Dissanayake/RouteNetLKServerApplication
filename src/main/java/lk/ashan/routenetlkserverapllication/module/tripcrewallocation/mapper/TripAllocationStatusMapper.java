@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.TripAllocationStatusDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripAllocationStatusDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripallocationstatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

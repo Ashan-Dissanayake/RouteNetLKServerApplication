@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.repository;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.FueltypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Fueltype;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.FueltypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Fueltype;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

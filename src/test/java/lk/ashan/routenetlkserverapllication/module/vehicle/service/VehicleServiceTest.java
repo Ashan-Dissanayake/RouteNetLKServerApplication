@@ -2,9 +2,10 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Conditionrate;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Conditionrate;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleState;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
@@ -16,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

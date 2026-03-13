@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.permit.dto.ScheduleTypeDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.ServiceTypeDto;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Scheduletype;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Servicetype;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.ScheduleTypeDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Scheduletype;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

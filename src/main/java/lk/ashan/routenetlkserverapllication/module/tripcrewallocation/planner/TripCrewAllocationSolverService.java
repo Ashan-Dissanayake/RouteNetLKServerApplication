@@ -1,13 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.planner;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Role;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.optaplanner.core.api.solver.Solver;

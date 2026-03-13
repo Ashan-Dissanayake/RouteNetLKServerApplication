@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.service;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleserviceschedule;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleserviceschedule;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceScheduleRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceStatusRepository;

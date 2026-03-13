@@ -1,9 +1,9 @@
     package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.planner;
 
-    import lk.ashan.routenetlkserverapllication.module.roster.model.Role;
-    import lk.ashan.routenetlkserverapllication.module.roster.model.Shift;
+    import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+    import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
     import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
-    import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+    import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
     import lombok.AllArgsConstructor;
     import lombok.Data;
     import lombok.NoArgsConstructor;

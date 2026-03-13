@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.CrewStatusDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.CrewStatusDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Crewstatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

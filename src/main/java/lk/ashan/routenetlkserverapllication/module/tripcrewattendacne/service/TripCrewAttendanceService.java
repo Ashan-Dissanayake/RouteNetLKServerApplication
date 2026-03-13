@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.service;
 
 import jakarta.transaction.Transactional;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.dto.CrewCheckInRequestDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Tripcrewattendance;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.CrewCheckInRequestDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Tripcrewattendance;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.TripCrewAttendanceRepository;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state.AttendanceState;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state.AttendanceStateFactory;

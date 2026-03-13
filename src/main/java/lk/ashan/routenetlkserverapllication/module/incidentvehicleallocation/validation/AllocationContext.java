@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.Builder;
 import lombok.Getter;
 

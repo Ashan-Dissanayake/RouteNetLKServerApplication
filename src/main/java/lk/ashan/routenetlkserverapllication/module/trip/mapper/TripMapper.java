@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

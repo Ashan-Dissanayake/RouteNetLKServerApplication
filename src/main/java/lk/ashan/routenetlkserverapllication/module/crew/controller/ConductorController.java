@@ -2,6 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.crew.dto.*;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.service.ConductorService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

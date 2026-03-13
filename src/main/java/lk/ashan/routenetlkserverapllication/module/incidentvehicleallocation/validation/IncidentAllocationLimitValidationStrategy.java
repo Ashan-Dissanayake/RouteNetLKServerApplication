@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation;
 
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;

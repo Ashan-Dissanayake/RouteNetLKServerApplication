@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.planner;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

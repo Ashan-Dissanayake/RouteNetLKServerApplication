@@ -1,11 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestStatusDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.dto.PartRequestUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequeststatus;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
 import org.mapstruct.*;
 
 import java.util.List;

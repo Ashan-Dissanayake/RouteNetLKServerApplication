@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftRosterAssignmentRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;

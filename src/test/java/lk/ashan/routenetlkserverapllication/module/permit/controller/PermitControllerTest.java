@@ -2,11 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.permit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
-import lk.ashan.routenetlkserverapllication.config.factory.ConductorDtoFactory;
 import lk.ashan.routenetlkserverapllication.config.factory.PermitDtoFactory;
 import lk.ashan.routenetlkserverapllication.config.factory.VehicleDtoFactory;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.permit.dto.PermitCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

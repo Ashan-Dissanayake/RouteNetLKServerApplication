@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentStatusDto;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentStatusDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;

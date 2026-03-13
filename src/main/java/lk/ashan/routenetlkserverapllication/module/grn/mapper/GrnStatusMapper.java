@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.grn.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnStatusDto;
-import lk.ashan.routenetlkserverapllication.module.grn.model.Grnstatus;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnStatusDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnstatus;
 import org.mapstruct.*;
 
 import java.util.List;

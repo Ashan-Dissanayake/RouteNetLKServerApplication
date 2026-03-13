@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.FueltypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.FueltypeDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.FueltypeMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.FuelTypeRepository;
 import lombok.RequiredArgsConstructor;

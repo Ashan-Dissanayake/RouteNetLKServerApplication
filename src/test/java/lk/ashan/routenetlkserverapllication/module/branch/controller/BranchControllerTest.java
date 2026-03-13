@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.config.ValidationResultMatcher;
 import lk.ashan.routenetlkserverapllication.config.factory.DtoFactory;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.employee.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.dto.EmployeeUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 import java.util.List;

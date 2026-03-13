@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehiclestatusDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehiclestatusDto;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

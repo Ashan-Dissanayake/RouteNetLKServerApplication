@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.state.rosterassigment;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignment;
-import lk.ashan.routenetlkserverapllication.module.roster.model.Shiftrosterassignmentstatus;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignmentstatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

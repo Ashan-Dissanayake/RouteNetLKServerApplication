@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.branch.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.BranchUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import org.mapstruct.*;
 
 import java.util.List;

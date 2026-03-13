@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.permit.dto.ServiceTypeDto;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Servicetype;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Bustype;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.ServiceTypeDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Servicetype;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

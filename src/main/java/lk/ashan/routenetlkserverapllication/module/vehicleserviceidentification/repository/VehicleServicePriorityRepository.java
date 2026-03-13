@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.Vehicleservicepriority;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepriority;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

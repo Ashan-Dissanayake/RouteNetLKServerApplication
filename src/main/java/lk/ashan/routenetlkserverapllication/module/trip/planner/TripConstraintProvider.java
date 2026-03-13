@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.planner;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;

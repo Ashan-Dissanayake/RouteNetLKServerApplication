@@ -1,10 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.roster.validation.context;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.dto.RosterUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

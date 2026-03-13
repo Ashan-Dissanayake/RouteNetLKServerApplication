@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.controller;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.CrewStatusDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.CrewStatusDto;
 import lk.ashan.routenetlkserverapllication.module.crew.service.CrewStatusService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

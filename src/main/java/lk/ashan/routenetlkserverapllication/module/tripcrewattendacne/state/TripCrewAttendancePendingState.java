@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.Employee;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.Tripcrewattendance;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Tripcrewattendance;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.CrewAttendanceStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.grn.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.grn.dto.GrnUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.service.GrnService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

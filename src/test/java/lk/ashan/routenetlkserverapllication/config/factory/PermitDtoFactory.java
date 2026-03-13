@@ -2,7 +2,10 @@ package lk.ashan.routenetlkserverapllication.config.factory;
 
 
 import lk.ashan.routenetlkserverapllication.module.permit.dto.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitStatusDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.RouteSummaryRequestDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.ServiceTypeDto;
 
 import java.time.LocalDate;
 
@@ -16,7 +19,7 @@ public class PermitDtoFactory {
         return new PermitStatusDto(id, name);
     }
 
-    public static RouteSummaryRequestDto routeSummaryRequestDto(int id, String number,Integer mingapminutes) {
+    public static RouteSummaryRequestDto routeSummaryRequestDto(int id, String number, Integer mingapminutes) {
         return new RouteSummaryRequestDto(id, number,mingapminutes);
     }
 

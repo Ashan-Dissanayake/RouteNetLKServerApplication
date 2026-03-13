@@ -1,11 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.context;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Route;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
-import lk.ashan.routenetlkserverapllication.module.trip.dto.TripCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

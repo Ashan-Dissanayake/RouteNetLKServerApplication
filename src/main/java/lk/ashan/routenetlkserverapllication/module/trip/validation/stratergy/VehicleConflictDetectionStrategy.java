@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.Trip;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

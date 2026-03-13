@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.dto.BusTypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.BusTypeDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.BusTypeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

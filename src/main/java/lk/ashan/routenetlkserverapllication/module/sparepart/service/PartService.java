@@ -1,12 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.sparepart.dto.PartUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Partstatus;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partstatus;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.sparepart.state.SparePartState;

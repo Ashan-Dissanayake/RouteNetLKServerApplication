@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.state;
 
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequest;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.Partrequeststatus;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequeststatus;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

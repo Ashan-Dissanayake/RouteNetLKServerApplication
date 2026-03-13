@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.employee.dto.GenderDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.Gender;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.GenderDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Gender;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

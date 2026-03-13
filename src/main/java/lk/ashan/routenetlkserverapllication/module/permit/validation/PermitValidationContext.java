@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.Routetype;
-import lk.ashan.routenetlkserverapllication.module.permit.model.Servicetype;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.Bustype;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Routetype;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Servicetype;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Bustype;
 import lombok.Builder;
 import lombok.Getter;
 

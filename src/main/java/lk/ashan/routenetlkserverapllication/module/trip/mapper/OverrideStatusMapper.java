@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.trip.dto.OverrideStatusDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.Overridestatus;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OverrideStatusDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Overridestatus;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)

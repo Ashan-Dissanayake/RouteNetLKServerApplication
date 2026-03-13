@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.repository;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Role;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

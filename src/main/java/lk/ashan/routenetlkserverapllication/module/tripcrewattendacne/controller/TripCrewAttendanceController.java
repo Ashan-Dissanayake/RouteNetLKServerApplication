@@ -1,8 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.controller;
 
-import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.dto.CrewCheckInRequestDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.TripCrewAttendanceRepository;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.CrewCheckInRequestDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.service.TripCrewAttendanceService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;

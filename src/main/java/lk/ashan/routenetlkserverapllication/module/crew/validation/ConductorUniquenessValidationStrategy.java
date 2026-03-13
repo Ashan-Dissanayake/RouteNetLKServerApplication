@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.crew.validation;
 
 import jakarta.validation.ValidationException;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.dto.ConductorUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
-import lk.ashan.routenetlkserverapllication.module.crew.dto.RouteFamiliarityLevelDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.RouteFamiliarityLevelDto;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.RouteFamiliarityLevelMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.RouteFamiliarityLevelRepository;
 import lombok.RequiredArgsConstructor;

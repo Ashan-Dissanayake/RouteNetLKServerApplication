@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.repository;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.Roster;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

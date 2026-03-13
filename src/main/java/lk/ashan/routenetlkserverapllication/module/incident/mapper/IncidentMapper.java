@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.incident.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.incident.dto.IncidentDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.incident.model.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

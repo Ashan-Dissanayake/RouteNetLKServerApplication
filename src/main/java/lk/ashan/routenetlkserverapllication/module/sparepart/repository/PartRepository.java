@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.repository;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.Part;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
