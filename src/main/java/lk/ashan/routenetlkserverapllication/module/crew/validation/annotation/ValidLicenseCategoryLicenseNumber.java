@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.crew.validation;
+package lk.ashan.routenetlkserverapllication.module.crew.validation.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

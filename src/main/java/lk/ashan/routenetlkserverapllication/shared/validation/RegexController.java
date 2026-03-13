@@ -7,7 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeRe
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.DriverValidationData;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.annotation.DriverValidationData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

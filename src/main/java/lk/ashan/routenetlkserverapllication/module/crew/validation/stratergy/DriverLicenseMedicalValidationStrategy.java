@@ -1,7 +1,5 @@
-package lk.ashan.routenetlkserverapllication.module.crew.validation;
+package lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -19,58 +17,67 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
     private final DriverRepository driverRepository;
 
     @Override
-    public void validateCreate(DriverCreateRequestDto request) {
-        validateLicenseDates(request.getDolicenseissued(), request.getDolicenseexpired());
-        validateMedicalDates(request.getDomedicalissued(), request.getDomedicalexpired());
+    public void validateCreate(DriverValidationContext context) {
+
+        validateLicenseDates(context.getLicenseIssued(), context.getLicenseExpired());
+        validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
+
     }
 
     @Override
-    public void validateUpdate(DriverUpdateRequestDto request) {
-        // Fetch existing driver to check for License Category changes if any logic depends on it
-        Driver existingDriver = driverRepository.findById(request.getId())
+    public void validateUpdate(DriverValidationContext context) {
+
+        Driver existingDriver = driverRepository.findById(context.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
-        
-        validateLicenseCategoryChange(existingDriver, request);
-        validateLicenseDates(request.getDolicenseissued(), request.getDolicenseexpired());
-        validateMedicalDates(request.getDomedicalissued(), request.getDomedicalexpired());
+
+        validateLicenseCategoryChange(existingDriver, context);
+
+        validateLicenseDates(context.getLicenseIssued(), context.getLicenseExpired());
+        validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
+
     }
 
     private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
+
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException("License issued date cannot be in the future");
         }
-        // Expiry can be in the past (expired license), but logic usually requires valid license for active drivers.
-        // The original code enforced expiry > issued.
+
         if (!expiry.isAfter(issued)) {
             throw new BusinessRuleViolationException("License expiry must be after issued date");
         }
 
         long years = ChronoUnit.YEARS.between(issued, expiry);
+
         if (years > 4) {
             throw new BusinessRuleViolationException("Invalid license validity period (Max 4 years)");
         }
     }
 
     private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
+
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
         }
+
         if (!expiry.isAfter(issued)) {
             throw new BusinessRuleViolationException("Medical expiry must be after issued date");
         }
 
         long months = ChronoUnit.MONTHS.between(issued, expiry);
+
         if (months > 6) {
             throw new BusinessRuleViolationException("Medical validity cannot exceed 6 months");
         }
     }
 
-    private void validateLicenseCategoryChange(Driver existingDriver, DriverUpdateRequestDto request) {
-        if (request.getLicensecategory() == null) {
+    private void validateLicenseCategoryChange(Driver existingDriver, DriverValidationContext context) {
+
+        if (context.getLicenseCategoryName() == null) {
             throw new IllegalArgumentException("New license category cannot be null");
         }
 
-        if (existingDriver.getLicensecategory().getId().equals(request.getLicensecategory().getId())) {
+        if (existingDriver.getLicensecategory().getName().equals(context.getLicenseCategoryName())) {
             return;
         }
 

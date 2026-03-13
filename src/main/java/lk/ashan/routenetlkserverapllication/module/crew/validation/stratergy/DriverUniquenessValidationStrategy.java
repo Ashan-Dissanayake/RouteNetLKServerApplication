@@ -1,7 +1,5 @@
-package lk.ashan.routenetlkserverapllication.module.crew.validation;
+package lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
@@ -14,24 +12,28 @@ public class DriverUniquenessValidationStrategy implements DriverValidationStrat
     private final DriverRepository driverRepository;
 
     @Override
-    public void validateCreate(DriverCreateRequestDto request) {
-        if (driverRepository.existsByLicensenumber(request.getLicensenumber())) {
+    public void validateCreate(DriverValidationContext context) {
+
+        if (driverRepository.existsByLicensenumber(context.getLicenseNumber())) {
             throw new ResourceExistsException("License number already exists");
         }
 
-        if (driverRepository.existsByNumber(request.getNumber())) {
+        if (driverRepository.existsByNumber(context.getNumber())) {
             throw new ResourceExistsException("Driver number already exists");
         }
+
     }
 
     @Override
-    public void validateUpdate(DriverUpdateRequestDto request) {
-        if (driverRepository.existsByLicensenumberAndIdNot(request.getLicensenumber(), request.getId())) {
+    public void validateUpdate(DriverValidationContext context) {
+
+        if (driverRepository.existsByLicensenumberAndIdNot(context.getLicenseNumber(), context.getId())) {
             throw new ResourceExistsException("License number already exists");
         }
 
-        if (driverRepository.existsByNumberAndIdNot(request.getNumber(), request.getId())) {
+        if (driverRepository.existsByNumberAndIdNot(context.getNumber(), context.getId())) {
             throw new ResourceExistsException("Driver number already exists");
         }
+
     }
 }

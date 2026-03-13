@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.crew.validation;
+package lk.ashan.routenetlkserverapllication.module.crew.validation.annotation;
 
 import java.util.Map;
 

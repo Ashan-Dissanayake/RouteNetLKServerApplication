@@ -11,7 +11,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamili
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.DriverValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
