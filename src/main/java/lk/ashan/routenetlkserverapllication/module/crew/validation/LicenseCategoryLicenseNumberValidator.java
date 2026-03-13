@@ -1,9 +1,8 @@
-package lk.ashan.routenetlkserverapllication.shared.validation.driver.licensecategorylicensenumber;
+package lk.ashan.routenetlkserverapllication.module.crew.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverRequestDto;
-import lk.ashan.routenetlkserverapllication.shared.validation.driver.seed.DriverValidationData;
 
 public class LicenseCategoryLicenseNumberValidator implements ConstraintValidator<ValidLicenseCategoryLicenseNumber, DriverRequestDto> {
 

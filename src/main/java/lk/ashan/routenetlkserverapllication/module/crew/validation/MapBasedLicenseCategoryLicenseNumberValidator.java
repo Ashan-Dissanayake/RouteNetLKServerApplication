@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.shared.validation.driver.licensecategorylicensenumber;
+package lk.ashan.routenetlkserverapllication.module.crew.validation;
 
 import java.util.Map;
 
