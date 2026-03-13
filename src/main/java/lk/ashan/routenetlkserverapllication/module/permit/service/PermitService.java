@@ -5,7 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreate
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
-import lk.ashan.routenetlkserverapllication.module.permit.entity.*;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;

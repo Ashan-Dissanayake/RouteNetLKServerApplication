@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.service;
 
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper.VehicleServicePartMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;

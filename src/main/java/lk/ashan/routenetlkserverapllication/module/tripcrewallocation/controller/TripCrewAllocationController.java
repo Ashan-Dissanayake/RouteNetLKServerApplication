@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.controller;
 
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.dto.*;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripCrewAllocationDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripCrewAllocationSuggestionResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.service.TripCrewAllocationService;

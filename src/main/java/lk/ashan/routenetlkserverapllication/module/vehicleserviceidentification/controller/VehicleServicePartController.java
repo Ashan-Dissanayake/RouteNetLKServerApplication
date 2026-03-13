@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartBulkCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartBulkUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartDetailResponseDto;
