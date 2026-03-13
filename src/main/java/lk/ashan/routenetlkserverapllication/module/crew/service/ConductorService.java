@@ -7,7 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreat
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Routefamiliaritylevel;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
@@ -76,7 +76,7 @@ public class ConductorService {
         Conductor existingConductor =  conductorRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
 
-        Routefamiliaritylevel currentLevel = existingConductor.getRoutefamiliaritylevel();
+        RouteFamiliarityLevel currentLevel = existingConductor.getRoutefamiliaritylevel();
 
         // State Pattern Transition
         if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {

@@ -7,7 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRe
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Routefamiliaritylevel;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
 import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
@@ -77,7 +77,7 @@ public class DriverService {
         Driver existingDriver =  driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        Routefamiliaritylevel currentLevel = existingDriver.getRoutefamiliaritylevel();
+        RouteFamiliarityLevel currentLevel = existingDriver.getRoutefamiliaritylevel();
 
         // State Pattern Transition
         if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {

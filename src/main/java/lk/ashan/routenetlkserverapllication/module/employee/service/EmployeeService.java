@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
@@ -126,7 +126,7 @@ public class EmployeeService {
 
         List<Driver> drivers = driverRepository.findAllByEmployeeIds(employeeIds);
         for (Driver driver : drivers) {
-            driver.setCrewstatus(new Crewstatus(4,"Inactive"));
+            driver.setCrewstatus(new CrewStatus(4,"Inactive"));
         }
         driverRepository.saveAll(drivers);
 

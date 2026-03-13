@@ -10,7 +10,8 @@ import java.util.Objects;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Crewstatus {
+@Table(name = "crewstatus", schema = "routenetlk")
+public class CrewStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -23,7 +24,7 @@ public class Crewstatus {
     @OneToMany(mappedBy = "crewstatus")
     private Collection<Conductor> conductors;
 
-    public Crewstatus(int id, String name) {
+    public CrewStatus(int id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -32,7 +33,7 @@ public class Crewstatus {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Crewstatus that = (Crewstatus) o;
+        CrewStatus that = (CrewStatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

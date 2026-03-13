@@ -39,13 +39,13 @@ public class Driver {
     private Employee employee;
     @ManyToOne
     @JoinColumn(name = "licensecategory_id", referencedColumnName = "id", nullable = false)
-    private Licensecategory licensecategory;
+    private LicenseCategory licensecategory;
     @ManyToOne
     @JoinColumn(name = "crewstatus_id", referencedColumnName = "id", nullable = false)
-    private Crewstatus crewstatus;
+    private CrewStatus crewstatus;
     @ManyToOne
     @JoinColumn(name = "routefamiliaritylevel_id", referencedColumnName = "id", nullable = false)
-    private Routefamiliaritylevel routefamiliaritylevel;
+    private RouteFamiliarityLevel routefamiliaritylevel;
 
     @Override
     public boolean equals(Object o) {

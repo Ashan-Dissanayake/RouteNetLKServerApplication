@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.LicenseCategoryDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Licensecategory;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.LicenseCategory;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.BusTypeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -13,6 +13,6 @@ import java.util.List;
         BusTypeMapper.class
 })
 public interface LicenseCategoryMapper {
-    LicenseCategoryDto toDto(Licensecategory licenseCategory);
-    List<LicenseCategoryDto> toDtoList(List<Licensecategory> licenseCategories);
+    LicenseCategoryDto toDto(LicenseCategory licenseCategory);
+    List<LicenseCategoryDto> toDtoList(List<LicenseCategory> licenseCategories);
 }

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.repository;
 
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Licensecategory;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.LicenseCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LicenseCategoryRepository extends JpaRepository<Licensecategory, Integer> {
+public interface LicenseCategoryRepository extends JpaRepository<LicenseCategory, Integer> {
 }

@@ -6,10 +6,12 @@ import lombok.Setter;
 
 import java.util.Collection;
 import java.util.Objects;
-@Setter
+
 @Getter
+@Setter
 @Entity
-public class Routefamiliaritylevel {
+@Table(name = "licensecategory", schema = "routenetlk")
+public class LicenseCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -17,16 +19,14 @@ public class Routefamiliaritylevel {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "routefamiliaritylevel")
+    @OneToMany(mappedBy = "licensecategory")
     private Collection<Driver> drivers;
-    @OneToMany(mappedBy = "routefamiliaritylevel")
-    private Collection<Conductor> conductors;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Routefamiliaritylevel that = (Routefamiliaritylevel) o;
+        LicenseCategory that = (LicenseCategory) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
@@ -35,11 +35,4 @@ public class Routefamiliaritylevel {
         return Objects.hash(id, name);
     }
 
-    public Collection<Conductor> getConductors() {
-        return conductors;
-    }
-
-    public void setConductors(Collection<Conductor> conductors) {
-        this.conductors = conductors;
-    }
 }

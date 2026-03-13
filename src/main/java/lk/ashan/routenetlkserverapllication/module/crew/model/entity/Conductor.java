@@ -32,10 +32,10 @@ public class Conductor {
     private Employee employee;
     @ManyToOne
     @JoinColumn(name = "routefamiliaritylevel_id", referencedColumnName = "id", nullable = false)
-    private Routefamiliaritylevel routefamiliaritylevel;
+    private RouteFamiliarityLevel routefamiliaritylevel;
     @ManyToOne
     @JoinColumn(name = "crewstatus_id", referencedColumnName = "id", nullable = false)
-    private Crewstatus crewstatus;
+    private CrewStatus crewstatus;
 
     @Override
     public boolean equals(Object o) {

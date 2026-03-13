@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.transaction.Transactional;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Crewstatus;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
@@ -31,7 +31,7 @@ public class CrewEligibilityService {
 
         for (Driver driver : drivers) {
             Employee emp = driver.getEmployee();
-            Crewstatus newStatus = calculateDriverStatus(emp,driver);
+            CrewStatus newStatus = calculateDriverStatus(emp,driver);
             if (!Objects.equals(driver.getCrewstatus(), newStatus)) {
                 driver.setCrewstatus(newStatus);
             }
@@ -45,7 +45,7 @@ public class CrewEligibilityService {
 
         for (Conductor conductor : conductors) {
             Employee emp = conductor.getEmployee();
-            Crewstatus newStatus = calculateConductorStatus(emp,conductor);
+            CrewStatus newStatus = calculateConductorStatus(emp,conductor);
             if (!Objects.equals(conductor.getCrewstatus(), newStatus)) {
                 conductor.setCrewstatus(newStatus);
             }
@@ -53,11 +53,11 @@ public class CrewEligibilityService {
         conductorRepository.saveAll(conductors);
     }
 
-    private Crewstatus calculateDriverStatus(Employee emp, Driver driver) {
+    private CrewStatus calculateDriverStatus(Employee emp, Driver driver) {
         LocalDate today = LocalDate.now();
 
         if (!emp.getEmployeestatus().getName().equalsIgnoreCase("active")) {
-            return new Crewstatus(4,"Inactive");
+            return new CrewStatus(4,"Inactive");
         }
 
         // Check license validity
@@ -70,26 +70,26 @@ public class CrewEligibilityService {
 
         // If either is invalid, driver is ineligible
         if (licenseInvalid || medicalInvalid) {
-            return new Crewstatus(2, "Ineligible");
+            return new CrewStatus(2, "Ineligible");
         }
 
-        return new Crewstatus(1,"Eligible");
+        return new CrewStatus(1,"Eligible");
     }
 
-    private Crewstatus calculateConductorStatus(Employee emp, Conductor conductor) {
+    private CrewStatus calculateConductorStatus(Employee emp, Conductor conductor) {
         LocalDate today = LocalDate.now();
 
         if (!emp.getEmployeestatus().getName().equalsIgnoreCase("active")) {
-            return new Crewstatus(4,"Inactive");
+            return new CrewStatus(4,"Inactive");
         }
 
         // Check license expiry
         if (conductor.getDomedicalexpired().isBefore(today)
                 || conductor.getDomedicalissued().isAfter(today)) {
-            return new Crewstatus(2,"Ineligible");
+            return new CrewStatus(2,"Ineligible");
         }
 
-        return new Crewstatus(1,"Eligible");
+        return new CrewStatus(1,"Eligible");
     }
 
     public void validateMedicalDates(LocalDate issued, LocalDate expiry) {
