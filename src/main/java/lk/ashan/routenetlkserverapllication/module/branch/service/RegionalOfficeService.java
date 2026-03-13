@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalofficeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalOfficeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.RegionalofficeMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.RegionalofficeRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class RegionalOfficeService {
     private final RegionalofficeRepository regionalofficeRepository;
     private final RegionalofficeMapper regionalofficeMapper;
 
-    public List<RegionalofficeDto> getRegionalOffices() {
+    public List<RegionalOfficeDto> getRegionalOffices() {
         return regionalofficeMapper.toDtoList(regionalofficeRepository.findAll());
     }
 }

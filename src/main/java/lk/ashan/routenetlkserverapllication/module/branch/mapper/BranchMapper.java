@@ -10,19 +10,16 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        BranchtypeMapper.class,BranchstatusMapper.class,RegionalofficeMapper.class,
+        BranchTypeMapper.class,BranchStatusMapper.class,RegionalOfficeMapper.class,
 })
 public interface BranchMapper {
 
   BranchDetailResponseDto toDto(Branch branch);
-  List<BranchDetailResponseDto> toDtolList(List<Branch> branches);
-
+  List<BranchDetailResponseDto> toDtoList(List<Branch> branches);
   List<BranchSummaryResponseDto> toSummaryDetailList(List<Branch> branches);
 
   Branch toEntity(BranchCreateRequestDto request);
-
   Branch toEntity(BranchUpdateRequestDto request);
-
 
   // This method updates an existing entity with values from DTO
   @Mapping(target = "id", ignore = true)

@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.branch.validation;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
@@ -14,33 +12,34 @@ public class BranchUniquenessValidationStrategy implements BranchValidationStrat
     private final BranchRepository branchRepository;
 
     @Override
-    public void validateCreate(BranchCreateRequestDto request) {
-        if (branchRepository.existsByCode(request.getCode())) {
+    public void validateCreate(BranchContext context) {
+        if (branchRepository.existsByCode(context.getCode())) {
             throw new ResourceExistsException("Branch code already exists.");
         }
-        if (branchRepository.existsByName(request.getName())) {
+        if (branchRepository.existsByName(context.getName())) {
             throw new ResourceExistsException("Branch name already exists.");
         }
-        if (branchRepository.existsByEmail(request.getEmail())) {
+        if (branchRepository.existsByEmail(context.getEmail())) {
             throw new ResourceExistsException("Branch email already exists.");
         }
-        if (branchRepository.existsByTelephone(request.getTelephone())) {
+        if (branchRepository.existsByTelephone(context.getTelephone())) {
             throw new ResourceExistsException("Branch telephone already exists.");
         }
     }
 
     @Override
-    public void validateUpdate(BranchUpdateRequestDto request) {
-        if (branchRepository.existsByCodeAndIdNot(request.getCode(), request.getId())) {
+    public void validateUpdate(BranchContext context) {
+        Integer id = context.getId();
+        if (branchRepository.existsByCodeAndIdNot(context.getCode(), id)) {
             throw new ResourceExistsException("Another branch already uses this code.");
         }
-        if (branchRepository.existsByNameAndIdNot(request.getName(), request.getId())) {
+        if (branchRepository.existsByNameAndIdNot(context.getName(), id)) {
             throw new ResourceExistsException("Another branch already uses this name.");
         }
-        if (branchRepository.existsByEmailAndIdNot(request.getEmail(), request.getId())) {
+        if (branchRepository.existsByEmailAndIdNot(context.getEmail(), id)) {
             throw new ResourceExistsException("Another branch already uses this email.");
         }
-        if (branchRepository.existsByTelephoneAndIdNot(request.getTelephone(), request.getId())) {
+        if (branchRepository.existsByTelephoneAndIdNot(context.getTelephone(), id)) {
             throw new ResourceExistsException("Another branch already uses this telephone.");
         }
     }

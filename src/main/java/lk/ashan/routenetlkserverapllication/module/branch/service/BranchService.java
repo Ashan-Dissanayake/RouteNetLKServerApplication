@@ -1,13 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.dto.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branchstatus;
-import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchstatusRepository;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
+import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchStatusRepository;
+import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFactory;
+import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
+import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
+import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContextBuilder;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
@@ -29,18 +32,25 @@ import java.util.stream.Stream;
 public class BranchService {
 
     private final BranchRepository branchRepository;
-    private final BranchstatusRepository branchstatusRepository;
+    private final BranchStatusService branchStatusService;
     private final BranchMapper branchMapper;
-    private final List<BranchValidationStrategy> validationStrategies;
 
+    private final BranchContextBuilder branchContextBuilder;
+    private final List<BranchValidationStrategy> validationStrategies;
+    private final BranchStateFactory branchStateFactory;
+    private final BranchStateTransitionHandler branchStateTransitionHandler;
+
+    @Transactional(readOnly = true)
     public List<BranchDetailResponseDto> getBranches(){
-        return branchMapper.toDtolList(branchRepository.findAll());
+        return branchMapper.toDtoList(branchRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<BranchSummaryResponseDto> getSummaryBranches(){
         return branchMapper.toSummaryDetailList(branchRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
 
         List<Branch> branches = branchRepository.findAll();
@@ -57,43 +67,46 @@ public class BranchService {
         if(branchcode!=null)branchStream = branchStream.filter(i-> i.getCode().equalsIgnoreCase(branchcode));
         if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
 
-        return branchMapper.toDtolList( branchStream.collect(Collectors.toList()));
-
+        return branchMapper.toDtoList( branchStream.collect(Collectors.toList()));
         }
-
-        return branchMapper.toDtolList(branches);
-
+        return branchMapper.toDtoList(branches);
     }
 
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
-        
-        validationStrategies.forEach(s -> s.validateCreate(request));
-        Branch branch = branchMapper.toEntity(request);
-        Branch saved = branchRepository.save(branch);
+        BranchContext context = branchContextBuilder.buildForCreate(request);
+        validationStrategies.forEach(s -> s.validateCreate(context));
 
+        Branch branch = branchMapper.toEntity(request);
+
+        BranchStatus initialStatus = branchStatusService.getByName(request.getBranchstatus().getName());
+
+        branchStateFactory.getState(initialStatus.getName())
+                .validateInitial();
+        branch.setBranchstatus(initialStatus);
+
+        Branch saved = branchRepository.save(branch);
         return branchMapper.toDto(saved);
     }
 
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
-
-        validationStrategies.forEach(s -> s.validateUpdate(request));
+        BranchContext context = branchContextBuilder.buildForUpdate(request);
+        validationStrategies.forEach(s -> s.validateUpdate(context));
 
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
 
-        // Update basic attributes using MapStruct
         branchMapper.updateEntityFromDto(request, existing);
 
-        Branchstatus status = branchstatusRepository.findById(request.getBranchstatus().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
+        BranchStatus targetStatus = branchStatusService.getByName(request.getBranchstatus().getName());
+        branchStateTransitionHandler.transitionTo(existing, targetStatus);
 
-        existing.setBranchstatus(status);
+        Branch updatedBranch = branchRepository.save(existing);
 
-        return branchMapper.toDto(existing);
+        return branchMapper.toDto(updatedBranch);
     }
 
     @Transactional

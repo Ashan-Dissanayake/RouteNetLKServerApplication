@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +9,11 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-public class Branchtype {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "regionaloffice", schema = "routenetlk")
+public class RegionalOffice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -18,15 +21,15 @@ public class Branchtype {
     @Basic
     @Column(name = "name")
     private String name;
-    @JsonIgnore
-    @OneToMany(mappedBy = "branchtype")
+    @OneToMany(mappedBy = "regionaloffice")
     private Collection<Branch> branches;
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Branchtype that = (Branchtype) o;
+        RegionalOffice that = (RegionalOffice) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

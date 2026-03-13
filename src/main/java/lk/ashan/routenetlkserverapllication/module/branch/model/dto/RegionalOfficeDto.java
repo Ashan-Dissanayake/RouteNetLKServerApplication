@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class RegionalofficeDto {
+public class RegionalOfficeDto {
     Integer id;
     String name;
 }

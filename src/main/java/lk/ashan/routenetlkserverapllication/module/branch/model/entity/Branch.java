@@ -26,13 +26,6 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@FilterDef(
-//        name = "softDeleteFilter",
-//        parameters = @ParamDef(name = "is_deleted", type = Boolean.class)
-//)
-//@Filters({
-//        @Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")
-//})
 public class Branch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -61,10 +54,10 @@ public class Branch extends BaseEntity {
     private String remarks;
     @ManyToOne
     @JoinColumn(name = "branchtype_id", referencedColumnName = "id", nullable = false)
-    private Branchtype branchtype;
+    private BranchType branchtype;
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
-    private Branchstatus branchstatus;
+    private BranchStatus branchstatus;
     @JsonIgnore
     @OneToMany(mappedBy = "branch")
     private Collection<Employee> employees;
@@ -78,7 +71,7 @@ public class Branch extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
-    private Regionaloffice regionaloffice;
+    private RegionalOffice regionaloffice;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Permite> permites;

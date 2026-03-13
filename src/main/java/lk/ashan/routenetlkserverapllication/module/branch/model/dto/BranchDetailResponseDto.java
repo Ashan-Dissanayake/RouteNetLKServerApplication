@@ -21,7 +21,7 @@ public class BranchDetailResponseDto {
     String remarks;
     BranchtypeDto branchtype;
     BranchstatusDto branchstatus;
-    RegionalofficeDto regionaloffice;
+    RegionalOfficeDto regionaloffice;
 
 }
 

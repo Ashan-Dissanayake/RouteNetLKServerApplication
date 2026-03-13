@@ -48,13 +48,21 @@ public class BranchController {
         return APIResponseBuilder.created(savedBranch, savedBranch.getId());
     }
 
+    @PutMapping
+    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(
+            @RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
+        BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
+        return APIResponseBuilder.updated(updatedBranch, updatedBranch.getId());
+    }
+
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = branchService.deactivateBranches(ids);
         return APIResponseBuilder.ok(
                 deactivatedIds,
                 Map.of("status", "deactivated", "count", deactivatedIds.size())
-        );    }
+        );
+    }
 
     @PostMapping("/activate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
@@ -62,13 +70,7 @@ public class BranchController {
         return APIResponseBuilder.ok(
                 activatedIds,
                 Map.of("status", "activated", "count", activatedIds.size())
-        );    }
-
-    @PutMapping
-    public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(
-            @RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
-        BranchDetailResponseDto updatedBranch = branchService.updateBranch(branchUpdateRequest);
-        return APIResponseBuilder.updated(updatedBranch, updatedBranch.getId());
+        );
     }
 
 }

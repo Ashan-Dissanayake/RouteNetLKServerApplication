@@ -48,7 +48,7 @@ public class BranchRequestDto {
     private BranchstatusDto branchstatus;
 
     @NotNull(message = "Regional office is mandatory")
-    private RegionalofficeDto regionaloffice;
+    private RegionalOfficeDto regionaloffice;
 
 
 }

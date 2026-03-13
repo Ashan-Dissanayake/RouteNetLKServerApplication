@@ -10,7 +10,11 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-public class Branchstatus {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "branchtype", schema = "routenetlk")
+public class BranchType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -19,14 +23,14 @@ public class Branchstatus {
     @Column(name = "name")
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "branchstatus")
+    @OneToMany(mappedBy = "branchtype")
     private Collection<Branch> branches;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Branchstatus that = (Branchstatus) o;
+        BranchType that = (BranchType) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

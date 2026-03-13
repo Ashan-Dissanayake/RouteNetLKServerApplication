@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalofficeDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalOfficeDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.RegionalOfficeService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/regionaloffices")
+@RequestMapping(value = "/regional-offices")
 @RequiredArgsConstructor
 public class RegionalOfficeController {
 
-    private final RegionalOfficeService regionalofficeService;
+    private final RegionalOfficeService regionalOfficeService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<RegionalofficeDto>>> get() {
-        List<RegionalofficeDto> regionalOffices = regionalofficeService.getRegionalOffices();
+    public ResponseEntity<APISuccessResponse<List<RegionalOfficeDto>>> get() {
+        List<RegionalOfficeDto> regionalOffices = regionalOfficeService.getRegionalOffices();
         return APIResponseBuilder.list(regionalOffices, regionalOffices.size());
     }
 
