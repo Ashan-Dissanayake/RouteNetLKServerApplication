@@ -21,7 +21,6 @@ public class VehicleServiceInProgressState implements VehicleServiceState {
                     "Invalid transition from IN_PROGRESS to " + newStatus.getName()
             );
         }
-
         service.setVehicleservicestatus(newStatus);
     }
 }

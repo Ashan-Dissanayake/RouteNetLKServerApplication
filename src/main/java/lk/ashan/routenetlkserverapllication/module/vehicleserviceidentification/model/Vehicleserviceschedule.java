@@ -24,6 +24,12 @@ public class Vehicleserviceschedule {
     @Basic
     @Column(name = "doscheduledend")
     private LocalDate doscheduledend;
+    @Basic
+    @Column(name = "doactualstarted")
+    private LocalDate doactualstarted;
+    @Basic
+    @Column(name = "doactualend")
+    private LocalDate doactualend;
     @ManyToOne
     @JoinColumn(name = "vehicleservice_id", referencedColumnName = "id", nullable = false)
     private Vehicleservice vehicleservice;

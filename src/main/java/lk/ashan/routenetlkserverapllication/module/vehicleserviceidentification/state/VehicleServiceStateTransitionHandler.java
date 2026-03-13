@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class VehicleServiceStateTransitionHandler {
 
     private final VehicleServiceStateFactory stateFactory;
-    private final VehicleServiceRepository vehicleServiceRepository;
 
     public void transitionTo(Vehicleservice service, Vehicleservicestatus newStatus) {
 
@@ -31,8 +30,6 @@ public class VehicleServiceStateTransitionHandler {
         currentState.transitionTo(service, newStatus);
 
         executeOnEnter(service, targetStatus);
-
-        vehicleServiceRepository.save(service);
     }
 
     private void executeOnExit(Vehicleservice service, String statusName) {
