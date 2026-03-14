@@ -70,10 +70,10 @@ public class Employee extends BaseEntity {
     private Designation designation;
     @ManyToOne
     @JoinColumn(name = "employeetype_id", referencedColumnName = "id", nullable = false)
-    private Employeetype employeetype;
+    private EmployeeType employeetype;
     @ManyToOne
     @JoinColumn(name = "employeestatus_id", referencedColumnName = "id", nullable = false)
-    private Employeestatus employeestatus;
+    private EmployeeStatus employeestatus;
 
     @OneToOne(mappedBy = "employee",fetch = FetchType.EAGER)
     private Driver driver;

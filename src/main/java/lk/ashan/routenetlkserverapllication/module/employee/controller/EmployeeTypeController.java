@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeestatusDto;
-import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeestatusService;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeTypeDto;
+import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeTypeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,16 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/employeestatuses")
+@RequestMapping(value = "/employeetypes")
 @RequiredArgsConstructor
-public class EmployeestatusController {
+public class EmployeeTypeController {
 
-    private final EmployeestatusService employeestatusService;
+    private final EmployeeTypeService employeetypeService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<EmployeestatusDto>>> get() {
-        List<EmployeestatusDto> employeeStatuses = employeestatusService.getEmployeestatuses();
-        return APIResponseBuilder.list(employeeStatuses, employeeStatuses.size());
+    public ResponseEntity<APISuccessResponse<List<EmployeeTypeDto>>> get() {
+        List<EmployeeTypeDto> employeeTypes = employeetypeService.getEmployeetypes();
+        return APIResponseBuilder.list(employeeTypes, employeeTypes.size());
     }
 
 }

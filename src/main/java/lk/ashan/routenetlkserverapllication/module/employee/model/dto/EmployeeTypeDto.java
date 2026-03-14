@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class EmployeestatusDto {
+public class EmployeeTypeDto {
     private  Integer id;
     private  String name;
 }

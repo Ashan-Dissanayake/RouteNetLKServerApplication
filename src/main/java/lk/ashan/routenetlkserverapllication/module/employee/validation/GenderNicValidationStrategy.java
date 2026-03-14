@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
@@ -9,21 +7,18 @@ import org.springframework.stereotype.Component;
 public class GenderNicValidationStrategy implements EmployeeValidationStrategy {
 
     @Override
-    public void validateCreate(EmployeeCreateRequestDto request) {
-         String gender = extractGender(request.getNic());
-         if (!request.getGender().getName().equalsIgnoreCase(gender)) {
+    public void validateCreate(EmployeeValidationContext context) {
+         String gender = extractGender(context.getNic());
+         if (!context.getGenderName().equalsIgnoreCase(gender)) {
             throw new BusinessRuleViolationException("Gender not match with given NIC");
         }
     }
 
     @Override
-    public void validateUpdate(EmployeeUpdateRequestDto request) {
-        // Typically gender/NIC validation is needed on update too if NIC changes
-        String gender = extractGender(request.getNic());
-        // Note: UpdateDTO might not always have the gender object fully populated if it's just an ID reference,
-        // but looking at usage, it seems full object is passed. Assuming Gender object is present in Request.
-        if (request.getGender() != null && request.getGender().getName() != null) {
-             if (!request.getGender().getName().equalsIgnoreCase(gender)) {
+    public void validateUpdate(EmployeeValidationContext context) {
+        String gender = extractGender(context.getNic());
+        if (context.getGenderName() != null) {
+             if (!context.getGenderName().equalsIgnoreCase(gender)) {
                 throw new BusinessRuleViolationException("Gender not match with given NIC");
             }
         }

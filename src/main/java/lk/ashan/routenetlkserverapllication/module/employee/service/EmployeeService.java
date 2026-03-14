@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
@@ -10,10 +12,13 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSu
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employeestatus;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeState;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;
+import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateTransitionHandler;
+import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationContext;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -32,14 +37,20 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final DriverRepository driverRepository;
+    private final EmployeeStatusService employeeStatusService;
     private final EmployeeMapper employeeMapper;
+
+    private final EmployeeContextBuilder employeeContextBuilder;
     private final List<EmployeeValidationStrategy> validationStrategies;
     private final EmployeeStateFactory employeeStateFactory;
+    private final EmployeeStateTransitionHandler employeeStateTransitionHandler;
 
+    @Transactional(readOnly = true)
     public List<EmployeeDetailResponseDto> getEmployees(){
        return employeeMapper.toDtoList(employeeRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeDetailResponseDto> searchEmployee(@NotNull HashMap<String, String> params) {
 
         String fullName = params.get("ssname");
@@ -58,10 +69,12 @@ public class EmployeeService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeSummaryResponseDto> getSummaryEmployees(){
         return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeSummaryResponseDto> getEmployeesByDesignation(String designation) {
         List<Employee> employees;
         if (designation.equalsIgnoreCase("driver")) {
@@ -77,42 +90,39 @@ public class EmployeeService {
     @Transactional
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
+        ensureEmailFormat(request);
 
-        // --- Execute Validations (Strategy Pattern) ---
-        ensureEmailFormat(request); // This is a data transformation, arguably could be in mapper or strategy. Keeping here or moving to a PreProcessStrategy.
-        
-        validationStrategies.forEach(strategy -> strategy.validateCreate(request));
+        EmployeeValidationContext context = employeeContextBuilder.buildForCreate(request);
+        validationStrategies.forEach(strategy -> strategy.validateCreate(context));
 
-        // --- Persist ---
         Employee employee = employeeMapper.toEntity(request);
-        Employee saved = employeeRepository.save(employee);
 
+        EmployeeStatus initialStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
+        employeeStateFactory.getState(initialStatus.getName())
+                .validateInitial();
+        employee.setEmployeestatus(initialStatus);
+
+        Employee saved = employeeRepository.save(employee);
         return employeeMapper.toDto(saved);
     }
 
     @Transactional
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
+        EmployeeValidationContext context = employeeContextBuilder.buildForUpdate(request);
+        validationStrategies.forEach(strategy -> strategy.validateUpdate(context));
 
-        validationStrategies.forEach(strategy -> strategy.validateUpdate(request));
+        Employee existing = employeeRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-        Employee existingEmployee = employeeRepository.findByMyId(request.getId());
-        Employeestatus currentStatus = existingEmployee.getEmployeestatus();
+        employeeMapper.updateEntityFromDto(request, existing);
 
-        // --- Execute Status Transition (State Pattern) ---
-        if (!currentStatus.getName().equalsIgnoreCase(request.getEmployeestatus().getName())) {
-            EmployeeState state = employeeStateFactory.getState(currentStatus.getName());
-            state.transitionTo(existingEmployee, employeeMapper.toEntity(request).getEmployeestatus());
-        }
+        EmployeeStatus targetStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
+        employeeStateTransitionHandler.transitionTo(existing, targetStatus);
 
-        Employee employee = employeeMapper.toEntity(request);
-        // Ensure we are updating the correct ID
-        employee.setId(request.getId());
-        
-        Employee updated = employeeRepository.save(employee);
+        Employee updated = employeeRepository.save(existing);
 
         return employeeMapper.toDto(updated);
-
     }
 
     @Transactional

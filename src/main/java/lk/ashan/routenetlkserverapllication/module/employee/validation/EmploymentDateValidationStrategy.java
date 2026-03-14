@@ -11,9 +11,9 @@ import java.time.LocalDate;
 public class EmploymentDateValidationStrategy implements EmployeeValidationStrategy {
 
     @Override
-    public void validateCreate(EmployeeCreateRequestDto request) {
-        String type = request.getEmployeetype().getName().trim().toLowerCase();
-        LocalDate doj = request.getDoj();
+    public void validateCreate(EmployeeValidationContext context) {
+        String type = context.getEmployeeTypeName().trim().toLowerCase();
+        LocalDate doj = context.getDateOfJoining();
         int currentYear = LocalDate.now().getYear();
 
         if (doj == null) {
@@ -23,13 +23,13 @@ public class EmploymentDateValidationStrategy implements EmployeeValidationStrat
         if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
             throw new BusinessRuleViolationException(
                     String.format("%s employees cannot have a Date of Joining older than the current year (%d).",
-                            request.getEmployeetype().getName(), currentYear)
+                            context.getEmployeeTypeName(), currentYear)
             );
         }
     }
 
     @Override
-    public void validateUpdate(EmployeeUpdateRequestDto request) {
+    public void validateUpdate(EmployeeValidationContext context) {
         // Similar validation for updates if type changes
     }
 }

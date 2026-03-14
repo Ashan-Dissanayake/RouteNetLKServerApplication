@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.crew.state;
+package lk.ashan.routenetlkserverapllication.module.crew.state.routefamility;
 
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;

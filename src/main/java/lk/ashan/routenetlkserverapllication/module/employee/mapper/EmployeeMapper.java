@@ -8,12 +8,13 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUp
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        DepartmentMapper.class, DesignationMapper.class,EmployeestatusMapper.class,
-        EmployeetypeMapper.class,GenderMapper.class, BranchMapper.class
+        DepartmentMapper.class, DesignationMapper.class, EmployeeStatusMapper.class,
+        EmployeeTypeMapper.class,GenderMapper.class, BranchMapper.class
 })
 public interface EmployeeMapper {
 
@@ -25,4 +26,7 @@ public interface EmployeeMapper {
 
     Employee toEntity(EmployeeCreateRequestDto request);
     Employee toEntity(EmployeeUpdateRequestDto request);
+
+    void updateEntityFromDto(EmployeeUpdateRequestDto dto, @MappingTarget Employee entity);
+
 }

@@ -68,8 +68,8 @@ public class EmployeeRequestDto {
     private  DesignationDto designation;
 
     @NotNull(message = "Employee Type is mandatory")
-    private  EmployeetypeDto employeetype;
+    private EmployeeTypeDto employeetype;
 
     @NotNull(message = "Employee Status is mandatory")
-    private  EmployeestatusDto employeestatus;
+    private EmployeeStatusDto employeestatus;
 }

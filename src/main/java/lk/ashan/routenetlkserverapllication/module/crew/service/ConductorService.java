@@ -9,8 +9,10 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdat
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
-import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityState;
+import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationContext;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,11 @@ public class ConductorService {
 
     private final ConductorRepository conductorRepository;
     private final ConductorMapper conductorMapper;
+
     private final List<ConductorValidationStrategy> validationStrategies;
     private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
+    private final ConductorContextBuilder conductorContextBuilder;
+
 
     public List<ConductorDetailResponseDto> getConductors(){
        return conductorMapper.toDtoList(conductorRepository.findAll());
@@ -54,8 +59,10 @@ public class ConductorService {
     }
 
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
-        
-        validationStrategies.forEach(s -> s.validateCreate(dto));
+
+        ConductorValidationContext context = conductorContextBuilder.buildForCreate(dto);
+
+        validationStrategies.forEach(s -> s.validateCreate(context));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new ValidationException("New conductor must have status 'ELIGIBLE'");
@@ -71,7 +78,9 @@ public class ConductorService {
 
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
-        validationStrategies.forEach(s -> s.validateUpdate(dto));
+        ConductorValidationContext context = conductorContextBuilder.buildForUpdate(dto);
+
+        validationStrategies.forEach(s -> s.validateUpdate(context));
 
         Conductor existingConductor =  conductorRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));

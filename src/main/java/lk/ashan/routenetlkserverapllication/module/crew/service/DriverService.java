@@ -9,8 +9,8 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRe
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityState;
-import lk.ashan.routenetlkserverapllication.module.crew.state.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityState;
+import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityStateFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;

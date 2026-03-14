@@ -12,7 +12,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Employeestatus {
+@Table(name = "employeestatus", schema = "routenetlk")
+public class EmployeeStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -29,7 +30,7 @@ public class Employeestatus {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Employeestatus that = (Employeestatus) o;
+        EmployeeStatus that = (EmployeeStatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

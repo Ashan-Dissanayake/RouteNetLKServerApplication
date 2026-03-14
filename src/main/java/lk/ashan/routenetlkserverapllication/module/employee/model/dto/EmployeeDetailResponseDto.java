@@ -28,6 +28,6 @@ public class EmployeeDetailResponseDto{
     private  BranchSummaryResponseDto branch;
     private  DepartmentDto department;
     private  DesignationDto designation;
-    private  EmployeetypeDto employeetype;
-    private  EmployeestatusDto employeestatus;
+    private EmployeeTypeDto employeetype;
+    private EmployeeStatusDto employeestatus;
 }

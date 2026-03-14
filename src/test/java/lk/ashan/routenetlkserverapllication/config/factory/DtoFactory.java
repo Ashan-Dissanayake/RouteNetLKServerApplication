@@ -95,12 +95,12 @@ public class DtoFactory {
         return new DesignationDto(id, name);
     }
 
-    public static EmployeetypeDto employeetypeDto(int id, String name) {
-        return new EmployeetypeDto(id, name);
+    public static EmployeeTypeDto employeetypeDto(int id, String name) {
+        return new EmployeeTypeDto(id, name);
     }
 
-    public static EmployeestatusDto employeestatusDto(int id, String name) {
-        return new EmployeestatusDto(id, name);
+    public static EmployeeStatusDto employeestatusDto(int id, String name) {
+        return new EmployeeStatusDto(id, name);
     }
 
     public static EmployeeCreateRequestDto createUniqueEmployeeRequestNoImage(){

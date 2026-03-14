@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
@@ -15,51 +13,51 @@ public class EmployeeUniquenessValidationStrategy implements EmployeeValidationS
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public void validateCreate(EmployeeCreateRequestDto request) {
-        if (employeeRepository.existsByNumber(request.getNumber())) {
+    public void validateCreate(EmployeeValidationContext context) {
+        if (employeeRepository.existsByNumber(context.getNumber())) {
             throw new ResourceExistsException("Employee number already exists.");
         }
-        if (employeeRepository.existsByNic(request.getNic())) {
+        if (employeeRepository.existsByNic(context.getNic())) {
             throw new ResourceExistsException("NIC already exists.");
         }
-        if (employeeRepository.existsByMobile(request.getMobile())) {
+        if (employeeRepository.existsByMobile(context.getMobile())) {
             throw new ResourceExistsException("Mobile number already exists.");
         }
-        if (employeeRepository.existsByEmail(request.getEmail())) {
+        if (employeeRepository.existsByEmail(context.getEmail())) {
             throw new ResourceExistsException("Email already exists.");
         }
 
-        validateMobileAndEmergencyContact(request.getMobile(), request.getEmergencycontact());
+        validateMobileAndEmergencyContact(context.getMobile(), context.getEmergencyContact());
         
-        if (employeeRepository.existsByEmergencycontact(request.getMobile())) {
+        if (employeeRepository.existsByEmergencycontact(context.getMobile())) {
             throw new BusinessRuleViolationException("Mobile number already used as emergency contact by another employee.");
         }
-        if (employeeRepository.existsByMobile(request.getEmergencycontact())) {
+        if (employeeRepository.existsByMobile(context.getEmergencyContact())) {
              throw new BusinessRuleViolationException("Emergency contact already used as another employee’s mobile number.");
         }
     }
 
     @Override
-    public void validateUpdate(EmployeeUpdateRequestDto request) {
-        if (employeeRepository.existsByNumberAndIdNot(request.getNumber(), request.getId())) {
+    public void validateUpdate(EmployeeValidationContext context) {
+        if (employeeRepository.existsByNumberAndIdNot(context.getNumber(), context.getId())) {
              throw new ResourceExistsException("Employee number already exists.");
         }
-        if (employeeRepository.existsByNicAndIdNot(request.getNic(), request.getId())) {
+        if (employeeRepository.existsByNicAndIdNot(context.getNic(), context.getId())) {
              throw new ResourceExistsException("NIC already exists.");
         }
-        if (employeeRepository.existsByMobileAndIdNot(request.getMobile(), request.getId())) {
+        if (employeeRepository.existsByMobileAndIdNot(context.getMobile(), context.getId())) {
              throw new ResourceExistsException("Mobile number already exists.");
         }
-        if (employeeRepository.existsByEmailAndIdNot(request.getEmail(), request.getId())) {
+        if (employeeRepository.existsByEmailAndIdNot(context.getEmail(), context.getId())) {
              throw new ResourceExistsException("Email already exists.");
         }
 
-        validateMobileAndEmergencyContact(request.getMobile(), request.getEmergencycontact());
+        validateMobileAndEmergencyContact(context.getMobile(), context.getEmergencyContact());
 
-        if (employeeRepository.existsByEmergencycontactAndIdNot(request.getMobile(), request.getId())) {
+        if (employeeRepository.existsByEmergencycontactAndIdNot(context.getMobile(), context.getId())) {
              throw new BusinessRuleViolationException("Mobile number already used as emergency contact by another employee.");
         }
-        if (employeeRepository.existsByMobileAndIdNot(request.getEmergencycontact(), request.getId())) {
+        if (employeeRepository.existsByMobileAndIdNot(context.getEmergencyContact(), context.getId())) {
              throw new BusinessRuleViolationException("Emergency contact already used as another employee’s mobile number.");
         }
     }

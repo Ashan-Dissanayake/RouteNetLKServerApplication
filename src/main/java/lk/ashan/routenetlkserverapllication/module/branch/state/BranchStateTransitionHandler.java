@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class BranchStateTransitionHandler {
 
     private final BranchStateFactory branchStateFactory;
-    private final BranchRepository branchRepository;
 
     public void transitionTo(Branch branch, BranchStatus targetStatus) {
         String currentStatus = branch.getBranchstatus().getName();
@@ -30,8 +29,6 @@ public class BranchStateTransitionHandler {
 
         // Entry behavior
         executeOnEnter(branch, target);
-
-        branchRepository.save(branch);
     }
 
     private void executeOnExit(Branch branch, String statusName) {

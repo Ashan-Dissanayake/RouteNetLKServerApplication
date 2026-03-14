@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
@@ -20,19 +18,18 @@ public class DesignationRulesValidationStrategy implements EmployeeValidationStr
     );
 
     @Override
-    public void validateCreate(EmployeeCreateRequestDto request) {
-        validateDepartmentDesignation(request.getDepartment().getName(), request.getDesignation().getName());
-        validateFemaleEmployeesNotDriver(request.getGender().getName(), request.getDesignation().getName());
+    public void validateCreate(EmployeeValidationContext context) {
+        validateDepartmentDesignation(context.getDepartmentName(), context.getDesignationName());
+        validateFemaleEmployeesNotDriver(context.getGenderName(), context.getDesignationName());
     }
 
     @Override
-    public void validateUpdate(EmployeeUpdateRequestDto request) {
-        // Assuming Department/Designation/Gender are present in update request
-        if (request.getDepartment() != null && request.getDesignation() != null) {
-             validateDepartmentDesignation(request.getDepartment().getName(), request.getDesignation().getName());
+    public void validateUpdate(EmployeeValidationContext context) {
+        if (context.getDepartmentName() != null && context.getDesignationName() != null) {
+             validateDepartmentDesignation(context.getDepartmentName(), context.getDesignationName());
         }
-        if (request.getGender() != null && request.getDesignation() != null) {
-            validateFemaleEmployeesNotDriver(request.getGender().getName(), request.getDesignation().getName());
+        if (context.getDesignationName() != null) {
+            validateFemaleEmployeesNotDriver(context.getGenderName(), context.getDesignationName());
         }
     }
 
