@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
@@ -59,7 +59,7 @@ public class Vehicle extends BaseEntity {
     private Collection<Tripvehicleoverride> tripvehicleoverrides;
 
     @OneToMany(mappedBy = "vehicle")
-    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "vehicle")
     private Collection<Vehicleservice> vehicleservices;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lombok.*;
@@ -33,16 +33,16 @@ public class Incident {
     private String remarks;
     @ManyToOne
     @JoinColumn(name = "incidenttype_id", referencedColumnName = "id", nullable = false)
-    private Incidenttype incidenttype;
+    private IncidentType incidenttype;
     @ManyToOne
     @JoinColumn(name = "incidentstatus_id", referencedColumnName = "id", nullable = false)
-    private Incidentstatus incidentstatus;
+    private IncidentStatus incidentstatus;
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;
 
     @OneToMany(mappedBy = "incident")
-    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "incident")
     private Collection<Vehicleservice> vehicleservices;

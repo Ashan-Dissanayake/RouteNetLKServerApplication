@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.grn.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lombok.*;
 
 import java.sql.Date;
@@ -34,12 +34,12 @@ public class Grn {
     private Branch branch;
     @ManyToOne
     @JoinColumn(name = "partrequest_id", referencedColumnName = "id", nullable = false)
-    private Partrequest partrequest;
+    private PartRequest partrequest;
     @ManyToOne
     @JoinColumn(name = "grnstatus_id", referencedColumnName = "id", nullable = false)
-    private Grnstatus grnstatus;
+    private GrnStatus grnstatus;
     @OneToMany(mappedBy = "grn")
-    private Collection<Grnpart> grnparts;
+    private Collection<GrnPart> grnParts;
 
     @Override
     public boolean equals(Object o) {

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
+package lk.ashan.routenetlkserverapllication.module.partreqest.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Permitestatus {
+@Table(name = "partrequeststatus", schema = "routenetlk")
+public class PartRequestStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,14 +21,14 @@ public class Permitestatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "permitestatus")
-    private Collection<Permite> permites;
+    @OneToMany(mappedBy = "partrequeststatus")
+    private Collection<PartRequest> partRequests;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Permitestatus that = (Permitestatus) o;
+        PartRequestStatus that = (PartRequestStatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
@@ -35,5 +36,4 @@ public class Permitestatus {
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
 }

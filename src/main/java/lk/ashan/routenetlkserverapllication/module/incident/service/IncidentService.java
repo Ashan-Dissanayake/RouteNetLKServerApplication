@@ -5,17 +5,16 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCr
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.mapper.IncidentMapper;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
-import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
-import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidenttype;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentState;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationContext;
+import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContext;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationStrategy;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,13 @@ public class IncidentService {
     private final TripRepository tripRepository;
     private final IncidentTypeRepository incidentTypeRepository;
     private final IncidentStatusRepository incidentStatusRepository;
+    private final IncidentStatusService incidentStatusService;
     private final IncidentMapper incidentMapper;
+
     private final List<IncidentCreationStrategy> incidentCreationStrategies;
     private final IncidentStatusFactory incidentStatusFactory;
     private final IncidentStateTransitionHandler incidentStateTransitionHandler;
+    private final IncidentContextBuilder incidentContextBuilder;
 
 
     @Transactional(readOnly = true)
@@ -76,33 +78,23 @@ public class IncidentService {
     @Transactional
     public IncidentDetailResponseDto create(IncidentCreateRequestDto dto) {
 
-        Trip trip = tripRepository.findById(dto.getTrip().getId())
+        tripRepository.findById(dto.getTrip().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
 
-        Incidenttype incidentType = incidentTypeRepository.findById(dto.getIncidenttype().getId())
+        incidentTypeRepository.findById(dto.getIncidenttype().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid incident type"));
+
+        IncidentContext context = incidentContextBuilder.buildForCreate(dto);
+        incidentCreationStrategies.forEach(strategy -> strategy.validate(context));
 
         Incident incident = incidentMapper.toEntity(dto);
 
-        IncidentCreationContext context = new IncidentCreationContext(
-                trip,
-                incidentType,
-                dto.getToreported(),
-                dto.getRemarks()
-        );
-
-        incidentCreationStrategies.forEach(strategy -> strategy.validate(context));
-
-        Incidentstatus reportedStatus =
-                incidentStatusRepository.findByName("Reported")
-                        .orElseThrow(() -> new ResourceNotFoundException("Default status not found"));
-
+        IncidentStatus incidentStatus = incidentStatusService.getByName(dto.getIncidentstatus().getName());
         IncidentState initialState =
-                incidentStatusFactory.getState(reportedStatus.getName());
-
+                incidentStatusFactory.getState(incidentStatus.getName());
         initialState.validateInitial();
-        incident.setIncidentstatus(reportedStatus);
 
+        incident.setIncidentstatus(incidentStatus);
         Incident saved = incidentRepository.save(incident);
 
         return incidentMapper.toDto(saved);
@@ -115,7 +107,7 @@ public class IncidentService {
         Incident incident = incidentRepository.findById(incidentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Incident not found"));
 
-        Incidentstatus targetStatus = incidentStatusRepository.findByName(newStatusName.toUpperCase())
+        IncidentStatus targetStatus = incidentStatusRepository.findByName(newStatusName.toUpperCase())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid incident status"));
 
         incidentStateTransitionHandler.transitionTo(incident, targetStatus);

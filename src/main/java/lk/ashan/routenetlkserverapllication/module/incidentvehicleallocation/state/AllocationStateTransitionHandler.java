@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state;
 
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocationStatus;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ public class AllocationStateTransitionHandler {
     private final IncidentVehicleAllocationStatusFactory allocationStateFactory;
     private final IncidentVehicleAllocationRepository allocationRepository;
 
-    public void transitionTo(Incidentvehicleallocation allocation, Incidentvehicleallocationstatus newStatus) {
+    public void transitionTo(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus newStatus) {
 
-        Incidentvehicleallocationstatus currentStatus = allocation.getIncidentvehicleallocationstatus();
+        IncidentVehicleAllocationStatus currentStatus = allocation.getIncidentvehicleallocationstatus();
         log.info("Transitioning allocation {} from {} to {}",
                 allocation.getId(), currentStatus, newStatus);
 
@@ -37,11 +37,11 @@ public class AllocationStateTransitionHandler {
         allocationRepository.save(allocation);
     }
 
-    private void executeOnExit(Incidentvehicleallocation allocation, Incidentvehicleallocationstatus status) {
+    private void executeOnExit(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus status) {
         log.debug("Exiting {} state for allocation {}", status, allocation.getId());
     }
 
-    private void executeOnEnter(Incidentvehicleallocation allocation, Incidentvehicleallocationstatus status) {
+    private void executeOnEnter(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus status) {
         log.debug("Entering {} state for allocation {}", status, allocation.getId());
         if (status.getName().equalsIgnoreCase("ASSIGNED")) {
             allocation.setDoassigned(LocalDateTime.now());

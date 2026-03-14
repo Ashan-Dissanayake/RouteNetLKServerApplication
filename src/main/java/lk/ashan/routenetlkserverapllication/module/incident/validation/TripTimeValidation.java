@@ -9,7 +9,7 @@ import java.time.LocalTime;
 public class TripTimeValidation implements IncidentCreationStrategy {
 
     @Override
-    public void validate(IncidentCreationContext context) {
+    public void validate(IncidentContext context) {
         LocalTime reported = context.getReportedTime();
         if (reported.isBefore(context.getTrip().getTodepature()) ||
                 reported.isAfter(context.getTrip().getToarrival())) {

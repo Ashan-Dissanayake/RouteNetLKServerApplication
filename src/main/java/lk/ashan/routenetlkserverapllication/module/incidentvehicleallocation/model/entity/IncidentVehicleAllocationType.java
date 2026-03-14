@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.grn.model.entity;
+package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Grnstatus {
+@Table(name = "incidentvehicleallocationtype", schema = "routenetlk")
+public class IncidentVehicleAllocationType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,15 +21,15 @@ public class Grnstatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "grnstatus")
-    private Collection<Grn> grns;
+    @OneToMany(mappedBy = "incidentvehicleallocationtype")
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Grnstatus grnstatus = (Grnstatus) o;
-        return Objects.equals(id, grnstatus.id) && Objects.equals(name, grnstatus.name);
+        IncidentVehicleAllocationType that = (IncidentVehicleAllocationType) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

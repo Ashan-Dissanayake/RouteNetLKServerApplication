@@ -39,10 +39,10 @@ public class Permite extends BaseEntity {
     private Branch branch;
     @ManyToOne
     @JoinColumn(name = "permitestatus_id", referencedColumnName = "id", nullable = false)
-    private Permitestatus permitestatus;
+    private PermiteStatus permitestatus;
     @ManyToOne
     @JoinColumn(name = "servicetype_id", referencedColumnName = "id", nullable = false)
-    private Servicetype servicetype;
+    private ServiceType servicetype;
     @ManyToOne
     @JoinColumn(name = "route_id", referencedColumnName = "id", nullable = false)
     private Route route;

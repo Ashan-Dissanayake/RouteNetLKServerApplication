@@ -11,6 +11,8 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamili
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityState;
 import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityStateFactory;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationContext;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,10 @@ public class DriverService {
 
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
+
     private final List<DriverValidationStrategy> validationStrategies;
     private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
+    private final DriverContextBuilder driverContextBuilder;
 
     public List<DriverDetailResponseDto> getDrivers(){
        return driverMapper.toDtoList(driverRepository.findAll());
@@ -56,7 +60,8 @@ public class DriverService {
 
     public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto dto) {
 
-        validationStrategies.forEach(s -> s.validateCreate(dto));
+        DriverValidationContext context = driverContextBuilder.buildForCreate(dto);
+        validationStrategies.forEach(s -> s.validateCreate(context));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
             throw new ValidationException("New driver must have status 'ELIGIBLE'");
@@ -72,7 +77,8 @@ public class DriverService {
 
     public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto dto) {
 
-        validationStrategies.forEach(s -> s.validateUpdate(dto));
+        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto);
+        validationStrategies.forEach(s -> s.validateUpdate(context));
 
         Driver existingDriver =  driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));

@@ -15,7 +15,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Incidentvehicleallocation {
+@Table(name = "incidentvehicleallocation", schema = "routenetlk")
+public class IncidentVehicleAllocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -37,16 +38,16 @@ public class Incidentvehicleallocation {
     private Branch providbranch;
     @ManyToOne
     @JoinColumn(name = "incidentvehicleallocationtype_id", referencedColumnName = "id", nullable = false)
-    private Incidentvehicleallocationtype incidentvehicleallocationtype;
+    private IncidentVehicleAllocationType incidentvehicleallocationtype;
     @ManyToOne
     @JoinColumn(name = "incidentvehicleallocationstatus_id", referencedColumnName = "id", nullable = false)
-    private Incidentvehicleallocationstatus incidentvehicleallocationstatus;
+    private IncidentVehicleAllocationStatus incidentvehicleallocationstatus;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Incidentvehicleallocation that = (Incidentvehicleallocation) o;
+        IncidentVehicleAllocation that = (IncidentVehicleAllocation) o;
         return Objects.equals(id, that.id) && Objects.equals(doassigned, that.doassigned) && Objects.equals(doreleased, that.doreleased);
     }
 

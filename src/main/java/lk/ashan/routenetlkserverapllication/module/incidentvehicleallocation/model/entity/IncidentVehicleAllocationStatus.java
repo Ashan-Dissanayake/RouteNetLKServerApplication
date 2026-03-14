@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
+package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Scheduletype {
+@Table(name = "incidentvehicleallocationstatus", schema = "routenetlk")
+public class IncidentVehicleAllocationStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,14 +21,14 @@ public class Scheduletype {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "scheduletype")
-    private Collection<Route> routes;
+    @OneToMany(mappedBy = "incidentvehicleallocationstatus")
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Scheduletype that = (Scheduletype) o;
+        IncidentVehicleAllocationStatus that = (IncidentVehicleAllocationStatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
@@ -35,4 +36,5 @@ public class Scheduletype {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
 }

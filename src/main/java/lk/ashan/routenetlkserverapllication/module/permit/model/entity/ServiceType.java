@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.partreqest.model.entity;
+package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Partrequeststatus {
+@Table(name = "servicetype", schema = "routenetlk")
+public class ServiceType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,14 +21,14 @@ public class Partrequeststatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "partrequeststatus")
-    private Collection<Partrequest> partrequests;
+    @OneToMany(mappedBy = "servicetype")
+    private Collection<Permite> permites;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Partrequeststatus that = (Partrequeststatus) o;
+        ServiceType that = (ServiceType) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

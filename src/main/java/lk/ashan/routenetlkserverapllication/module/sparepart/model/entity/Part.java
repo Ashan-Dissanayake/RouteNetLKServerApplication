@@ -2,8 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnpart;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequestitem;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnPart;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -60,10 +60,10 @@ public class Part extends BaseEntity {
     private Partstatus partstatus;
 
     @OneToMany(mappedBy = "part")
-    private Collection<Partrequestitem> partrequestitems;
+    private Collection<PartRequestItem> partRequestItems;
 
     @OneToMany(mappedBy = "part")
-    private Collection<Grnpart> grnparts;
+    private Collection<GrnPart> grnParts;
 
     @OneToMany(mappedBy = "part")
     private Collection<Vehicleservicepart> vehicleserviceparts;

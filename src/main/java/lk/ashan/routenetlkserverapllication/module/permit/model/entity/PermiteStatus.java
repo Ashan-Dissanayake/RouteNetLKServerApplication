@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Routetype {
+@Table(name = "permitestatus", schema = "routenetlk")
+public class PermiteStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,15 +21,15 @@ public class Routetype {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "routetype")
-    private Collection<Route> routes;
+    @OneToMany(mappedBy = "permitestatus")
+    private Collection<Permite> permites;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Routetype routetype = (Routetype) o;
-        return Objects.equals(id, routetype.id) && Objects.equals(name, routetype.name);
+        PermiteStatus that = (PermiteStatus) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

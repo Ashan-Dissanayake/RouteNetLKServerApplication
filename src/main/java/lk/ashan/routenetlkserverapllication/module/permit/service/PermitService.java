@@ -6,9 +6,9 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetail
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Servicetype;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.ServiceType;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
@@ -81,7 +81,7 @@ public class PermitService {
         Route route = routeRepository.findByNumber(requestDto.getRoute().getNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
-        Servicetype serviceType = serviceTypeRepository
+        ServiceType serviceType = serviceTypeRepository
                 .findByName(requestDto.getServicetype().getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Service type not found"));
 
@@ -102,7 +102,7 @@ public class PermitService {
 
         Permite permite = permitMapper.toEntity(requestDto);
 
-        Permitestatus requestedStatus = permitStatusRepository
+        PermiteStatus requestedStatus = permitStatusRepository
                 .findByName(requestDto.getPermitestatus().getName())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Permit status not found: " + requestDto.getPermitestatus().getName()));
@@ -125,9 +125,9 @@ public class PermitService {
         clearDepotResources(permit);
 
 
-        Permitestatus currentStatus = permit.getPermitestatus();
+        PermiteStatus currentStatus = permit.getPermitestatus();
 
-        Permitestatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
+        PermiteStatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
                 .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
 
         PermitState state = permitStatusFactory.getState(currentStatus.getName());

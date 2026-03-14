@@ -82,8 +82,6 @@ public class VehicleServiceIdentificationService {
 
         boolean preTripRequired = ELIGIBLE_STATUSES.contains(vehicle.getVehiclestatus().getName());
 
-        Integer lastServiceMileage = vehicleServiceRepository.findLastServiceMileage(vehicle.getId());
-
         return VehicleServiceContext.builder()
                 .vehicle(vehicle)
                 .incident(incident)

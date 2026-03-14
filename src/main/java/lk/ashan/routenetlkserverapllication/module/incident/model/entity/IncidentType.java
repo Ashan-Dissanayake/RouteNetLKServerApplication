@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity;
+package lk.ashan.routenetlkserverapllication.module.incident.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Incidentvehicleallocationtype {
+@Table(name = "incidenttype", schema = "routenetlk")
+public class IncidentType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,14 +21,14 @@ public class Incidentvehicleallocationtype {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "incidentvehicleallocationtype")
-    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+    @OneToMany(mappedBy = "incidenttype")
+    private Collection<Incident> incidents;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Incidentvehicleallocationtype that = (Incidentvehicleallocationtype) o;
+        IncidentType that = (IncidentType) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
@@ -35,4 +36,5 @@ public class Incidentvehicleallocationtype {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
 }

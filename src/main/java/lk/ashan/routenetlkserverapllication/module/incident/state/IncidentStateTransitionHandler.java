@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.state;
 
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
-import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incidentstatus;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class IncidentStateTransitionHandler {
     private final IncidentStatusFactory incidentStatusFactory;
     private final IncidentRepository incidentRepository;
 
-    public void transitionTo(Incident incident, Incidentstatus newStatus) {
+    public void transitionTo(Incident incident, IncidentStatus newStatus) {
         String currentStatus = incident.getIncidentstatus().getName();
         String targetStatus = newStatus.getName();
 

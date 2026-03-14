@@ -6,9 +6,9 @@ import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequ
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestItemMapper;
 import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestMapper;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequestitem;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequeststatus;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestStatus;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestState;
@@ -47,12 +47,12 @@ public class PartRequestService {
     @Transactional(readOnly = true)
     public List<PartRequestDetailResponseDto> searchPartRequests(@NotNull HashMap<String, String> params) {
 
-        List<Partrequest> partRequests = partRequestRepository.findAll();
+        List<PartRequest> partRequests = partRequestRepository.findAll();
 
         String requestNumber = params.get("ssnumber");
         String partRequestStatusId= params.get("sspartrequeststatus");
 
-        Stream<Partrequest> partRequestStream = partRequests.stream();
+        Stream<PartRequest> partRequestStream = partRequests.stream();
 
         if(requestNumber!=null)partRequestStream = partRequestStream.filter(r->r.getNumber().equals(requestNumber));
         if(partRequestStatusId!=null)partRequestStream = partRequestStream.filter(r->r.getPartrequeststatus().getId()==Integer.parseInt(partRequestStatusId));
@@ -63,7 +63,7 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto createRequest(@NotNull PartRequestCreateRequestDto dto) {
 
-        Partrequest request = partRequestMapper.toEntity(dto);
+        PartRequest request = partRequestMapper.toEntity(dto);
 
         if (dto.getPartrequestitems() == null || dto.getPartrequestitems().isEmpty()) {
             throw new BusinessRuleViolationException(
@@ -79,7 +79,7 @@ public class PartRequestService {
             }
         });
 
-        Partrequeststatus initialStatus = partRequestStatusRepository
+        PartRequestStatus initialStatus = partRequestStatusRepository
                 .findByName("Pending")
                 .orElseThrow(() -> new IllegalStateException("Initial status PENDING not found"));
 
@@ -90,7 +90,7 @@ public class PartRequestService {
 
         request.setPartrequeststatus(initialStatus);
 
-        Partrequest saved = partRequestRepository.save(request);
+        PartRequest saved = partRequestRepository.save(request);
 
         return partRequestMapper.toDto(saved);
     }
@@ -98,7 +98,7 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto updateRequest(@NotNull PartRequestUpdateRequestDto dto) {
 
-        Partrequest request = partRequestRepository.findById(dto.getId())
+        PartRequest request = partRequestRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Request not found with id " + dto.getId()
                 ));
@@ -128,15 +128,15 @@ public class PartRequestService {
 
         partRequestMapper.updateEntity(request, dto);
 
-        request.getPartrequestitems().clear();
+        request.getPartRequestItems().clear();
 
         dto.getPartrequestitems().forEach(itemDto -> {
-            Partrequestitem item = partRequestItemMapper.toEntity(itemDto);
+            PartRequestItem item = partRequestItemMapper.toEntity(itemDto);
             item.setPartrequest(request);
-            request.getPartrequestitems().add(item);
+            request.getPartRequestItems().add(item);
         });
 
-        Partrequest saved = partRequestRepository.save(request);
+        PartRequest saved = partRequestRepository.save(request);
 
         return partRequestMapper.toDto(saved);
     }
@@ -144,12 +144,12 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto approveRequest(@NotNull Integer id) {
 
-        Partrequest request = partRequestRepository.findById(id)
+        PartRequest request = partRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Request not found with id " + id
                 ));
 
-        Partrequeststatus approvedStatus = partRequestStatusRepository
+        PartRequestStatus approvedStatus = partRequestStatusRepository
                 .findByName("Approved")
                 .orElseThrow(() -> new IllegalStateException(
                         "Status APPROVED not found"
@@ -163,12 +163,12 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto rejectRequest(@NotNull Integer id) {
 
-        Partrequest request = partRequestRepository.findById(id)
+        PartRequest request = partRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Request not found with id " + id
                 ));
 
-        Partrequeststatus rejectedStatus = partRequestStatusRepository
+        PartRequestStatus rejectedStatus = partRequestStatusRepository
                 .findByName("Rejected")
                 .orElseThrow(() -> new IllegalStateException(
                         "Status REJECTED not found"
@@ -182,12 +182,12 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto completeRequest(@NotNull Integer id) {
 
-        Partrequest request = partRequestRepository.findById(id)
+        PartRequest request = partRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Request not found with id " + id
                 ));
 
-        Partrequeststatus completedStatus = partRequestStatusRepository
+        PartRequestStatus completedStatus = partRequestStatusRepository
                 .findByName("Completed")
                 .orElseThrow(() -> new IllegalStateException(
                         "Status COMPLETED not found"

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.incident.model.entity;
+package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Incidenttype {
+@Table(name = "routetype", schema = "routenetlk")
+public class RouteType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,15 +21,15 @@ public class Incidenttype {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "incidenttype")
-    private Collection<Incident> incidents;
+    @OneToMany(mappedBy = "routetype")
+    private Collection<Route> routes;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Incidenttype that = (Incidenttype) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        RouteType routetype = (RouteType) o;
+        return Objects.equals(id, routetype.id) && Objects.equals(name, routetype.name);
     }
 
     @Override

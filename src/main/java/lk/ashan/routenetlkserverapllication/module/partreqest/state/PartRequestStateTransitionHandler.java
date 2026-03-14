@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.state;
 
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequeststatus;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestStatus;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class PartRequestStateTransitionHandler {
     private final PartRequestStatusFactory requestStatusFactory;
     private final PartRequestRepository requestRepository;
 
-    public void transitionTo(Partrequest request, Partrequeststatus newStatus) {
+    public void transitionTo(PartRequest request, PartRequestStatus newStatus) {
 
         String currentStatus = request.getPartrequeststatus().getName();
         String targetStatus = newStatus.getName();
@@ -35,7 +35,7 @@ public class PartRequestStateTransitionHandler {
         requestRepository.save(request);
     }
 
-    private void executeOnExit(Partrequest request, String statusName) {
+    private void executeOnExit(PartRequest request, String statusName) {
 
         switch (statusName.toUpperCase()) {
 
@@ -47,7 +47,7 @@ public class PartRequestStateTransitionHandler {
         }
     }
 
-    private void executeOnEnter(Partrequest request, String statusName) {
+    private void executeOnEnter(PartRequest request, String statusName) {
 
         switch (statusName.toUpperCase()) {
 

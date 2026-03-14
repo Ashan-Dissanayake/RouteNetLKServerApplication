@@ -1,11 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.permit.state;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 public interface PermitState {
-    void transitionTo(Permite permit, Permitestatus newStatus);
+    void transitionTo(Permite permit, PermiteStatus newStatus);
 
     default void validateInitial() {
         throw new InvalidStateTransitionException(

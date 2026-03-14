@@ -7,8 +7,8 @@ import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnUpdateReques
 import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnMapper;
 import lk.ashan.routenetlkserverapllication.module.grn.mapper.GrnPartMapper;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
-import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnpart;
-import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnstatus;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnStatus;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnPart;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;
@@ -81,7 +81,7 @@ public class GrnService {
 
         Grn grn = grnMapper.toEntity(createRequestDto);
 
-        Grnstatus initialStatus = grnStatusRepository.findByName("Pending")
+        GrnStatus initialStatus = grnStatusRepository.findByName("Pending")
                 .orElseThrow(() -> new IllegalStateException("Initial status PENDING not found"));
 
         GrnState initialState = grnStatusFactory.getState(initialStatus.getName());
@@ -130,11 +130,11 @@ public class GrnService {
         grnMapper.updateEntity(grn, dto);
 
         // Clear existing items and map new ones
-        grn.getGrnparts().clear();
+        grn.getGrnParts().clear();
         dto.getGrnparts().forEach(itemDto -> {
-            Grnpart part = grnPartMapper.toEntity(itemDto);
+            GrnPart part = grnPartMapper.toEntity(itemDto);
             part.setGrn(grn);
-            grn.getGrnparts().add(part);
+            grn.getGrnParts().add(part);
         });
 
         // Save updated GRN
@@ -154,13 +154,13 @@ public class GrnService {
         }
 
         // Transition state via handler
-        Grnstatus completedStatus = grnStatusRepository.findByName("Completed")
+        GrnStatus completedStatus = grnStatusRepository.findByName("Completed")
                 .orElseThrow(() -> new IllegalStateException("COMPLETED status not found"));
 
         grnStateTransitionHandler.transitionTo(grn, completedStatus);
 
         // Update stock for each part
-        grn.getGrnparts().forEach(part -> {
+        grn.getGrnParts().forEach(part -> {
             part.getPart().setQoh(part.getPart().getQoh().add(part.getQuantity()));
         });
 
@@ -179,7 +179,7 @@ public class GrnService {
             throw new InvalidStateTransitionException("Only PENDING GRNs can be cancelled");
         }
 
-        Grnstatus cancelledStatus = grnStatusRepository.findByName("Cancelled")
+        GrnStatus cancelledStatus = grnStatusRepository.findByName("Cancelled")
                 .orElseThrow(() -> new IllegalStateException("CANCELLED status not found"));
 
         grnStateTransitionHandler.transitionTo(grn, cancelledStatus);

@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.permit.schedule;
 
 import jakarta.transaction.Transactional;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permitestatus;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
@@ -32,7 +32,7 @@ public class PermitExpiryScheduler {
         LocalDate today = LocalDate.now();
 
         //Load target EXPIRED status once
-        Permitestatus expiredStatus = permitStatusRepository.findByName(EXPIRED)
+        PermiteStatus expiredStatus = permitStatusRepository.findByName(EXPIRED)
                 .orElseThrow(() -> new IllegalStateException("EXPIRED status not found"));
 
         //Find ACTIVE permits already expired by date

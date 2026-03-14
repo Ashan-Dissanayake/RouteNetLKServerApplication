@@ -17,9 +17,6 @@ public interface VehicleServiceRepository extends JpaRepository<Vehicleservice, 
             "WHERE vs.vehicleservicestatus.name IN ('Created', 'Scheduled', 'In progress')")
     List<Integer> findVehicleIdsWithOpenServices();
 
-    @Query("select vs.lastservicemileage from Vehicleservice vs where vs.vehicle.id=:id")
-    Integer findLastServiceMileage(@Param("id") Integer id);
-
 
     @Query("""
     SELECT CASE WHEN COUNT(vs) > 0 THEN true ELSE false END

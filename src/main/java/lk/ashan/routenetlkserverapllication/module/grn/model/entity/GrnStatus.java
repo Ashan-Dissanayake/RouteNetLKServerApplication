@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.incident.model.entity;
+package lk.ashan.routenetlkserverapllication.module.grn.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Incidentstatus {
+@Table(name = "grnstatus", schema = "routenetlk")
+public class GrnStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -20,15 +21,15 @@ public class Incidentstatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "incidentstatus")
-    private Collection<Incident> incidents;
+    @OneToMany(mappedBy = "grnstatus")
+    private Collection<Grn> grns;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Incidentstatus that = (Incidentstatus) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        GrnStatus grnstatus = (GrnStatus) o;
+        return Objects.equals(id, grnstatus.id) && Objects.equals(name, grnstatus.name);
     }
 
     @Override

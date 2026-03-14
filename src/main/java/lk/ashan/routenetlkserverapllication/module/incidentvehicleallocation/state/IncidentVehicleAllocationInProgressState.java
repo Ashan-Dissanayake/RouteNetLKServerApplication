@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.state;
 
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocationStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class IncidentVehicleAllocationInProgressState implements IncidentVehicle
     private static final List<String> ALLOWED = List.of("RELEASED", "CANCELLED");
 
     @Override
-    public void transitionTo(Incidentvehicleallocation allocation, Incidentvehicleallocationstatus newStatus) {
+    public void transitionTo(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus newStatus) {
         if (!ALLOWED.contains(newStatus.getName())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from IN_PROGRESS to " + newStatus

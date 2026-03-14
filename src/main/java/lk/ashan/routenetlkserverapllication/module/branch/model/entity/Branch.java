@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.Incidentvehicleallocation;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.Partrequest;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
@@ -86,13 +86,13 @@ public class Branch extends BaseEntity {
     private Collection<Shift> shifts;
 
     @OneToMany(mappedBy = "providbranch")
-    private Collection<Incidentvehicleallocation> incidentvehicleallocations;
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Part> parts;
 
     @OneToMany(mappedBy = "branch")
-    private Collection<Partrequest> partrequests;
+    private Collection<PartRequest> partRequests;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Grn> grns;

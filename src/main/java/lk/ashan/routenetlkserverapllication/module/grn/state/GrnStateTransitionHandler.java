@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.grn.state;
 
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
-import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grnstatus;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnStatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class GrnStateTransitionHandler {
     private final GrnStatusFactory grnStatusFactory;
     private final GrnRepository grnRepository;
 
-    public void transitionTo(Grn grn, Grnstatus newStatus) {
+    public void transitionTo(Grn grn, GrnStatus newStatus) {
 
         String currentStatus = grn.getGrnstatus().getName();
         String targetStatus = newStatus.getName();

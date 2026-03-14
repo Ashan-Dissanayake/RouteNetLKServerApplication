@@ -37,10 +37,10 @@ public class Route {
     private Collection<Permite> permites;
     @ManyToOne
     @JoinColumn(name = "scheduletype_id", referencedColumnName = "id", nullable = false)
-    private Scheduletype scheduletype;
+    private ScheduleType scheduletype;
     @ManyToOne
     @JoinColumn(name = "routetype_id", referencedColumnName = "id", nullable = false)
-    private Routetype routetype;
+    private RouteType routetype;
 
     @Override
     public boolean equals(Object o) {
