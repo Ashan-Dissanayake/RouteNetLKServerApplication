@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.validation;
 
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
@@ -13,18 +14,19 @@ import java.util.List;
 public class IncidentAllocationLimitValidationStrategy implements AllocationValidationStrategy {
 
     private final IncidentVehicleAllocationRepository allocationRepository;
+    private final IncidentRepository incidentRepository;
 
     @Override
     public void validate(AllocationContext context) {
-
-        Incident incident = context.getIncident();
+        Incident incident = incidentRepository.findById(context.getIncidentId())
+                .orElseThrow(() -> new BusinessRuleViolationException("Incident not found with id: " + context.getIncidentId()));
         String type = incident.getIncidenttype().getName();
 
         if (type.equalsIgnoreCase("BREAKDOWN")) {
 
             long activeCount =
                     allocationRepository.countByIncident_IdAndIncidentvehicleallocationstatus_NameIn(
-                            incident.getId(),
+                            context.getIncidentId(),
                             List.of("Assigned", "In progress")
                     );
 

@@ -1,18 +1,36 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class BusTypeServiceTypeValidationStrategy implements PermitValidationStrategy {
+
+    private final VehicleRepository vehicleRepository;
+    private final PermitRepository permitRepository;
+
 
     @Override
     public void validate(PermitValidationContext context) {
-        String busType = context.getBusType().getName().toUpperCase();
-        String serviceType = context.getServiceType().getName().toLowerCase();
+
+        Vehicle vehicle = vehicleRepository.findById(context.getVehicleId())
+                .orElseThrow(() -> new BusinessRuleViolationException(
+                        String.format("Vehicle with id %d does not exist", context.getVehicleId())
+                ));
+
+        Permite permite = permitRepository.findByVehicle_Id(vehicle.getId());
+
+        String busType = vehicle.getBustype().getName().toUpperCase();
+        String serviceType = permite.getServicetype().getName().toLowerCase();
 
         List<String> allowed = VALID_COMBINATIONS.get(serviceType);
         if (allowed == null || !allowed.contains(busType)) {

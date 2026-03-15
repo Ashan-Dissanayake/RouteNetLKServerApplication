@@ -11,7 +11,6 @@ import java.time.LocalTime;
 @Builder
 public class IncidentContext {
     private Integer tripId;
-    private Integer incidentTypeId;
     private LocalTime reportedTime;
     private String remarks;
 }

@@ -82,7 +82,6 @@ public class PartService {
         part.setPartstatus(determinedStatus);
 
         Part saved = partRepository.save(part);
-
         return partMapper.toDto(saved);
     }
 
@@ -93,16 +92,12 @@ public class PartService {
         Part part = partRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
 
-        // Use MapStruct to map allowed fields
         partMapper.updateFromDto(dto, part);
 
-        // Handle status transition separately via state pattern
-        if (dto.getPartstatus() != null) {
-            Partstatus newStatus = partStatusRepository.findById(dto.getPartstatus().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Invalid part status"));
+        Partstatus newStatus = partStatusRepository.findById(dto.getPartstatus().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid part status"));
 
-            partStateTransitionHandler.transitionTo(part, newStatus);
-        }
+        partStateTransitionHandler.transitionTo(part, newStatus);
 
         Part saved = partRepository.save(part);
         return partMapper.toDto(saved);
@@ -117,7 +112,7 @@ public class PartService {
         }
 
         // Load DECOMMISSIONED status
-        Partstatus decommissionedStatus = partStatusRepository.findByName("DECOMMISSIONED")
+        Partstatus decommissionedStatus = partStatusRepository.findByName("Decommissioned")
                 .orElseThrow(() -> new ResourceNotFoundException("DECOMMISSIONED status not found"));
 
         // Transition each part using state pattern

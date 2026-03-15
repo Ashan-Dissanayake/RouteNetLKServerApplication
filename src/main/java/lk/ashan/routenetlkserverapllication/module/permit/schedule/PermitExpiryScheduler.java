@@ -6,7 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteSt
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
-import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
+import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStateFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class PermitExpiryScheduler {
 
     private final PermitRepository permitRepository;
     private final PermitStatusRepository permitStatusRepository;
-    private final PermitStatusFactory permitStatusFactory;
+    private final PermitStateFactory permitStateFactory;
 
     private static final String ACTIVE = "Active";
     private static final String EXPIRED = "Expired";
@@ -45,7 +45,7 @@ public class PermitExpiryScheduler {
 
             //Resolve current state dynamically
             String currentStatus = permit.getPermitestatus().getName();
-            PermitState state = permitStatusFactory.getState(currentStatus);
+            PermitState state = permitStateFactory.getState(currentStatus);
 
             //Delegate transition to state machine
             state.transitionTo(permit, expiredStatus);

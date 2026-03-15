@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 
-import jakarta.validation.ValidationException;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripCreateContext;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +17,7 @@ public class PermitCreationValidationStrategy implements TripCreationValidationS
         
         // Check if permit exists
         if (permit == null) {
-            throw new ValidationException("Permit is required");
+            throw new BusinessRuleViolationException("Permit is required");
         }
         
         // Check permit status - must be ACTIVE

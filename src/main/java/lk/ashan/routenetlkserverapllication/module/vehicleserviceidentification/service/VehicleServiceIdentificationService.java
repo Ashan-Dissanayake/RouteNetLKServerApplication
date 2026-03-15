@@ -28,7 +28,6 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class VehicleServiceIdentificationService {
 
     private final VehicleRepository vehicleRepository;
@@ -119,12 +118,6 @@ public class VehicleServiceIdentificationService {
         }
 
         vehicleServiceRepository.save(service);
-
-        log.info("Vehicle service created: {} | Vehicle: {} | Type: {} | Priority: {}",
-                service.getNumber(),
-                vehicle.getNumber(),
-                type.getName(),
-                priority.getName());
     }
 
     private Vehicleservicepriority resolvePriority(String serviceType) {

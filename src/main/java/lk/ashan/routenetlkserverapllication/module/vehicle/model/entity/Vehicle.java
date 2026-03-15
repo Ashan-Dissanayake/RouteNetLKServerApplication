@@ -35,19 +35,19 @@ public class Vehicle extends BaseEntity {
     private String remarks;
     @ManyToOne
     @JoinColumn(name = "fueltype_id", referencedColumnName = "id", nullable = false)
-    private Fueltype fueltype;
+    private FuelType fueltype;
     @ManyToOne
     @JoinColumn(name = "conditionrate_id", referencedColumnName = "id", nullable = false)
-    private Conditionrate conditionrate;
+    private ConditionRate conditionrate;
     @ManyToOne
     @JoinColumn(name = "vehiclestatus_id", referencedColumnName = "id", nullable = false)
-    private Vehiclestatus vehiclestatus;
+    private VehicleStatus vehiclestatus;
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
     @ManyToOne
     @JoinColumn(name = "bustype_id", referencedColumnName = "id", nullable = false)
-    private Bustype bustype;
+    private BusType bustype;
     @ManyToOne
     @JoinColumn(name = "model_id", referencedColumnName = "id", nullable = false)
     private Model model;

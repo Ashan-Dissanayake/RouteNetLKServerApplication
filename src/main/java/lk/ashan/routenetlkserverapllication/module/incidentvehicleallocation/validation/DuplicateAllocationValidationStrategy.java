@@ -18,8 +18,8 @@ public class DuplicateAllocationValidationStrategy implements AllocationValidati
 
         boolean exists =
                 allocationRepository.existsByIncident_IdAndVehicle_IdAndIncidentvehicleallocationstatus_NameIn(
-                        context.getIncident().getId(),
-                        context.getVehicle().getId(),
+                        context.getIncidentId(),
+                        context.getVehicleId(),
                         List.of("Assigned", "In progress")
                 );
 

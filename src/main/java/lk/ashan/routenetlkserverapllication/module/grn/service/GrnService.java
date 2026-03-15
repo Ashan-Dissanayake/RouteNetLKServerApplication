@@ -130,11 +130,11 @@ public class GrnService {
         grnMapper.updateEntity(grn, dto);
 
         // Clear existing items and map new ones
-        grn.getGrnParts().clear();
+        grn.getGrnparts().clear();
         dto.getGrnparts().forEach(itemDto -> {
             GrnPart part = grnPartMapper.toEntity(itemDto);
             part.setGrn(grn);
-            grn.getGrnParts().add(part);
+            grn.getGrnparts().add(part);
         });
 
         // Save updated GRN
@@ -160,7 +160,7 @@ public class GrnService {
         grnStateTransitionHandler.transitionTo(grn, completedStatus);
 
         // Update stock for each part
-        grn.getGrnParts().forEach(part -> {
+        grn.getGrnparts().forEach(part -> {
             part.getPart().setQoh(part.getPart().getQoh().add(part.getQuantity()));
         });
 

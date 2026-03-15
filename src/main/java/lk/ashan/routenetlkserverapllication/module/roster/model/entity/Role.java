@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Tripcrewattendance;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lombok.*;
 
 import java.util.Collection;
@@ -29,7 +29,7 @@ public class Role {
     private Collection<Tripcrewallocation> tripcrewallocations;
 
     @OneToMany(mappedBy = "role")
-    private Collection<Tripcrewattendance> tripcrewattendances;
+    private Collection<TripCrewAttendance> tripCrewAttendances;
 
 
 

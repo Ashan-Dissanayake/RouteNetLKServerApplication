@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Component
-@Order(1) // Highest priority first
+@Order(1)
 public class PostIncidentServiceStrategy implements VehicleServiceEvaluationStrategy {
 
     private static final int SERVICE_TYPE_POST_INCIDENT = 3;
 
     @Override
     public boolean isServiceRequired(VehicleServiceContext context) {
-        return context.getIncident() != null;
+        return context.getIncidentId() != null;
     }
 
     @Override

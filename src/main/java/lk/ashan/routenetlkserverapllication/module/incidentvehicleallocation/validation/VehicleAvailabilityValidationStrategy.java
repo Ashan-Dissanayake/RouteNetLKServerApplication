@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.va
 
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.repository.IncidentVehicleAllocationRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,11 +14,13 @@ import java.util.List;
 public class VehicleAvailabilityValidationStrategy implements AllocationValidationStrategy {
 
     private final IncidentVehicleAllocationRepository allocationRepository;
+    private final VehicleRepository vehicleRepository;
 
     @Override
     public void validate(AllocationContext context) {
 
-        Vehicle vehicle = context.getVehicle();
+        Vehicle vehicle =vehicleRepository.findById(context.getVehicleId())
+                .orElseThrow(() -> new BusinessRuleViolationException("Vehicle not found with id: " + context.getVehicleId()));
 
         if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("ACTIVE")) {
             throw new BusinessRuleViolationException("Vehicle is not ACTIVE");

@@ -42,7 +42,7 @@ public class PartRequest {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Collection<PartRequestItem> partRequestItems;
+    private Collection<PartRequestItem> partrequestitems;
 
     @OneToMany(mappedBy = "partrequest")
     private Collection<Grn> grns;

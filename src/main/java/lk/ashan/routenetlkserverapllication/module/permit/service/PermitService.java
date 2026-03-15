@@ -7,17 +7,15 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransf
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.ServiceType;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.ServiceTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
-import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStatusFactory;
+import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStateFactory;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContext;
+import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
@@ -43,7 +41,8 @@ public class PermitService {
     private final PermitMapper permitMapper;
 
     private final List<PermitValidationStrategy> validationStrategies;
-    private final PermitStatusFactory permitStatusFactory;
+    private final PermitStateFactory permitStateFactory;
+    private final PermitValidationContextBuilder permitValidationContextBuilder;
 
 
     public List<PermitDetailResponseDto> getPermits(){
@@ -75,28 +74,17 @@ public class PermitService {
             throw new ResourceExistsException("Permit number already exists.");
         }
 
-        Vehicle vehicle = vehicleRepository.findByNumber(requestDto.getVehicle().getNumber())
+        vehicleRepository.findByNumber(requestDto.getVehicle().getNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-        Route route = routeRepository.findByNumber(requestDto.getRoute().getNumber())
+        routeRepository.findByNumber(requestDto.getRoute().getNumber())
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
-        ServiceType serviceType = serviceTypeRepository
+         serviceTypeRepository
                 .findByName(requestDto.getServicetype().getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Service type not found"));
 
-        PermitValidationContext context = PermitValidationContext.builder()
-                .permitNumber(requestDto.getNumber())
-                .vehicleId(vehicle.getId())
-                .routeId(route.getId())
-                .vehicleBranchId(vehicle.getBranch().getId())
-                .requestBranchId(requestDto.getBranch().getId())
-                .busType(vehicle.getBustype())
-                .routeType(route.getRoutetype())
-                .serviceType(serviceType)
-                .doissued(requestDto.getDoissued())
-                .doexpired(requestDto.getDoexpired())
-                .build();
+        PermitValidationContext context = permitValidationContextBuilder.buildForCreate(requestDto);
 
         validationStrategies.forEach(strategy -> strategy.validate(context));
 
@@ -107,7 +95,7 @@ public class PermitService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Permit status not found: " + requestDto.getPermitestatus().getName()));
 
-        PermitState state = permitStatusFactory.getState(requestedStatus.getName());
+        PermitState state = permitStateFactory.getState(requestedStatus.getName());
         state.validateInitial();
 
         //due to validate initial calls empty body after processing need explicit set
@@ -122,15 +110,14 @@ public class PermitService {
         Permite permit = permitRepository.findById(permitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Permit not found"));
 
-        clearDepotResources(permit);
-
+        //clearDepotResources(permit);
 
         PermiteStatus currentStatus = permit.getPermitestatus();
 
         PermiteStatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
                 .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
 
-        PermitState state = permitStatusFactory.getState(currentStatus.getName());
+        PermitState state = permitStateFactory.getState(currentStatus.getName());
         state.transitionTo(permit, newStatus);
         permit.setDeleted(true);
 
@@ -140,8 +127,9 @@ public class PermitService {
     }
 
 
+    /*
     private void clearDepotResources(Permite permit) {
        //need to clear vehicle status aslo in later
     }
-
+    */
 }

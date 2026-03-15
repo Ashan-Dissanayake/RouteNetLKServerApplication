@@ -13,6 +13,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "partrequestitem", schema = "routenetlk")
 public class PartRequestItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

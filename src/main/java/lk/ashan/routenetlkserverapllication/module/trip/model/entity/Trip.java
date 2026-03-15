@@ -5,7 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Tripcrewattendance;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -61,7 +61,7 @@ public class Trip {
     private Collection<Tripcrewallocation> tripcrewallocations;
 
     @OneToMany(mappedBy = "trip")
-    private Collection<Tripcrewattendance> tripcrewattendances;
+    private Collection<TripCrewAttendance> tripCrewAttendances;
 
     @OneToMany(mappedBy = "trip")
     private Collection<Incident> incidents;

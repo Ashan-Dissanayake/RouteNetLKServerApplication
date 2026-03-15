@@ -6,11 +6,12 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalTime;
+
 @Getter
 @Builder
 public class AllocationContext {
-
-    private final Incident incident;
-    private final Vehicle vehicle;
-    private final Branch providingBranch;
+    private final Integer incidentId;
+    private final Integer vehicleId;
+    private final Integer branchId;
 }

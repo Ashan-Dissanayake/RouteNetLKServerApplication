@@ -6,14 +6,15 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCrea
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Conditionrate;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.ConditionRate;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleStatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleState;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
-import lk.ashan.routenetlkserverapllication.module.vehicle.validation.VehicleValidationStrategy;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +32,16 @@ import java.util.stream.Stream;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final VehiclestatusService vehiclestatusService;
     private final VehicleMapper vehicleMapper;
-    private final List<VehicleValidationStrategy> validationStrategies;
     private final VehicleStateFactory vehicleStateFactory;
 
+    @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> getVehicles(){
        return vehicleMapper.toDtoList(vehicleRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
 
         String conditionrateid = params.get("ssconditionrate");
@@ -58,10 +61,17 @@ public class VehicleService {
     @DisableSoftDeleteFilter
     public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request){
 
-        // Execute all validation strategies
-        validationStrategies.forEach(strategy -> strategy.validateCreate(request));
+        if (vehicleRepository.existsByNumber(request.getNumber())) {
+            throw new ResourceExistsException("Vehicle number already exists.");
+        }
 
         Vehicle vehicle = vehicleMapper.toEntity(request);
+
+        VehicleStatus initialStatus = vehiclestatusService.getByName(request.getVehiclestatus().getName());
+        vehicleStateFactory.getState(initialStatus.getName())
+                .validateInitial();
+        vehicle.setVehiclestatus(initialStatus);
+
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
         return vehicleMapper.toDto(savedVehicle);
@@ -71,29 +81,23 @@ public class VehicleService {
     @DisableSoftDeleteFilter
     public VehicleDetailResponseDto updateVehicle(@Valid @NotNull VehicleUpdateRequestDto request) {
 
-        validationStrategies.forEach(strategy -> strategy.validateUpdate(request));
-
         Vehicle existingVehicle = vehicleRepository.findByMyId(request.getId());
-        Conditionrate currentConditionrate = existingVehicle.getConditionrate();
-        Vehiclestatus currentStatus = existingVehicle.getVehiclestatus();
 
-        validateConditionRateTransition(currentConditionrate.getName(), request.getConditionrate().getName());
-
-        // State Pattern for Status Transition
-        if (!currentStatus.getName().equalsIgnoreCase(request.getVehiclestatus().getName())) {
-            VehicleState state = vehicleStateFactory.getState(currentStatus.getName());
-            // The State implementation validates the transition
-            // Note: In a full State pattern, the State object might also apply the change,
-            // but here we are using it for validation logic primarily as per requirement to replace the map.
-             // We pass the entity so the State *could* modify it if needed, or just validate.
-            state.transitionTo(existingVehicle, vehicleMapper.toEntity(request).getVehiclestatus());
+        if (request.getMileage() < existingVehicle.getMileage()) {
+            throw new BusinessRuleViolationException("Mileage cannot be less than current value.");
         }
 
-        // Mapping updates to entity
+        ConditionRate currentConditionRate = existingVehicle.getConditionrate();
+        VehicleStatus currentStatus = existingVehicle.getVehiclestatus();
+
+        validateConditionRateTransition(currentConditionRate.getName(), request.getConditionrate().getName());
+
+        if (!currentStatus.getName().equalsIgnoreCase(request.getVehiclestatus().getName())) {
+            VehicleState state = vehicleStateFactory.getState(currentStatus.getName());
+            state.transitionTo(existingVehicle, currentStatus);
+        }
+
         Vehicle vehicle = vehicleMapper.toEntity(request);
-        // Ensure ID is set for update
-        vehicle.setId(request.getId());
-        
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
         return vehicleMapper.toDto(updatedVehicle);

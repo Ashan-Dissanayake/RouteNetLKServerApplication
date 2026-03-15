@@ -39,7 +39,7 @@ public class Grn {
     @JoinColumn(name = "grnstatus_id", referencedColumnName = "id", nullable = false)
     private GrnStatus grnstatus;
     @OneToMany(mappedBy = "grn")
-    private Collection<GrnPart> grnParts;
+    private Collection<GrnPart> grnparts;
 
     @Override
     public boolean equals(Object o) {

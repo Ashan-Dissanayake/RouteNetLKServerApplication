@@ -1,8 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.RouteType;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.ServiceType;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Bustype;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,12 +14,11 @@ public class PermitValidationContext {
    private final Integer vehicleId;
    private final Integer routeId;
 
-   private final Integer vehicleBranchId;
    private final Integer requestBranchId;
 
-   private final Bustype busType;
-   private final RouteType routeType;
-   private final ServiceType serviceType;
+   //private final Integer busTypeId;
+   //private final Integer routeTypeId;
+   private final Integer serviceTypeId;
 
    private final LocalDate doissued;
    private final LocalDate doexpired;

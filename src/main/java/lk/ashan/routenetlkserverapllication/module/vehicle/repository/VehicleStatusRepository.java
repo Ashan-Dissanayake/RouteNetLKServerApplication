@@ -1,10 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.repository;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface VehicleStatusRepository extends JpaRepository<Vehiclestatus, Integer> {
+import java.util.Optional;
 
+@Repository
+public interface VehicleStatusRepository extends JpaRepository<VehicleStatus, Integer> {
+
+    Optional<VehicleStatus> findByName(String name);
 }

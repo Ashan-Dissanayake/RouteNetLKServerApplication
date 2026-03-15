@@ -7,7 +7,7 @@ import java.time.LocalTime;
 
 /**
  * Utility for handling time comparisons that may cross midnight boundary
- * Addresses UAT 12: Midnight boundary trip handling
+ *
  */
 public class MidnightAwareTimeComparator {
     

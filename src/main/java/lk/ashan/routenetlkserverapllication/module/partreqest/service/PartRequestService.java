@@ -128,12 +128,12 @@ public class PartRequestService {
 
         partRequestMapper.updateEntity(request, dto);
 
-        request.getPartRequestItems().clear();
+        request.getPartrequestitems().clear();
 
         dto.getPartrequestitems().forEach(itemDto -> {
             PartRequestItem item = partRequestItemMapper.toEntity(itemDto);
             item.setPartrequest(request);
-            request.getPartRequestItems().add(item);
+            request.getPartrequestitems().add(item);
         });
 
         PartRequest saved = partRequestRepository.save(request);

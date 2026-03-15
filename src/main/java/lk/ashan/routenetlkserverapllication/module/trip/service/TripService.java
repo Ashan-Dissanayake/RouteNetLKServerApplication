@@ -15,10 +15,9 @@ import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRep
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripCreateContext;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripCreateContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContext;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.context.TripUpdateContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripCreateContext;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripUpdateContext;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
@@ -65,18 +64,13 @@ public class TripService {
 
     private final TripUpdateVehicleAvailabilityValidation vehicleAvailabilityValidation;
 
-    private final TripCreateContextBuilder validationContextBuilder;
-    private final TripUpdateContextBuilder updateContextBuilder;
+    private final TripContextBuilder validationContextBuilder;
 
     @Transactional(readOnly = true)
     public List<TripDetailResponseDto> getTrips() {
         return tripMapper.toDetailList(tripRepository.findAll());
     }
 
-    /**
-     * PRESERVED: Original search implementation with HashMap
-     * ISSUE #15: Keeping in-memory filtering as per requirements
-     */
     @Transactional(readOnly = true)
     public List<TripDetailResponseDto> searchTrips(@NotNull HashMap<String, String> params) {
 
@@ -103,10 +97,6 @@ public class TripService {
         return tripMapper.toDetailList(trips);
     }
 
-    /**
-     * ISSUE #19: Now uses TripValidationContextBuilder
-     * Encapsulates all query logic and context building for creation
-     */
     @Transactional
     public TripDetailResponseDto createTrip(@NotNull TripCreateRequestDto createRequestDto) {
 
@@ -122,8 +112,6 @@ public class TripService {
 
         trip.setNotrip(nextTripNo);
 
-
-        // Determine initial status
         Tripstatus determinedStatus = initialStatusStrategy.determineInitialStatus(
                 context.getPermit(),
                 createRequestDto.getDoservice(),
@@ -148,10 +136,7 @@ public class TripService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
 
-        String normalizedStatus = trip.getTripstatus().getName()
-                .trim().toUpperCase().replaceAll("[\\s_-]+", "");
-
-        if (!normalizedStatus.equals("NEEDVEHICLEOVERRIDE")) {
+        if (! trip.getTripstatus().getName().equalsIgnoreCase("NEED VEHICLE OVERRIDE")) {
             throw new IllegalStateException(
                     "Override solver can only run for NEEDS_VEHICLE_OVERRIDE trips"
             );
@@ -162,7 +147,7 @@ public class TripService {
                 .findByBranch_IdAndDeletedFalse(trip.getBranch().getId());
 
         if (candidateVehicles.isEmpty()) {
-            System.out.println("❌ NO CANDIDATES FROM REPOSITORY!");
+            System.out.println("NO CANDIDATES FROM REPOSITORY!");
             return new OverrideSuggestionResponse(tripId, null);
         }
 
@@ -200,10 +185,7 @@ public class TripService {
         return tripMapper.toDto(updatedTrip);
     }
 
-    /**
-     * ISSUE #19: Now uses TripUpdateContextBuilder
-     * Encapsulates all query logic and context building for updates
-     */
+
     @Transactional
     public TripDetailResponseDto updateTrip(@NotNull TripUpdateRequestDto requestDto) {
 
@@ -212,14 +194,12 @@ public class TripService {
 
         Tripstatus currentStatus = trip.getTripstatus();
 
-        // Validate trip is not in terminal state
         if (currentStatus.getName().equalsIgnoreCase("CANCELLED") ||
                 currentStatus.getName().equalsIgnoreCase("COMPLETED")) {
             throw new BusinessRuleViolationException("Closed trips cannot be edited");
         }
 
-        // ISSUE #19: Use context builder - encapsulates all query logic and change detection
-        TripUpdateContext updateContext = updateContextBuilder.buildForUpdate(
+        TripUpdateContext updateContext = validationContextBuilder.buildForUpdate(
                 trip,
                 requestDto.getPermite().getId(),
                 requestDto.getDoservice(),
@@ -228,10 +208,8 @@ public class TripService {
                 requestDto.getOriginterminal().getId()
         );
 
-        // Run all update validation strategies
         updateValidationStrategies.forEach(strategy -> strategy.validate(updateContext));
 
-        // Apply updates to trip entity
         trip.setTodepature(requestDto.getTodepature());
         trip.setToarrival(requestDto.getToarrival());
         trip.setDoservice(requestDto.getDoservice());
@@ -241,7 +219,6 @@ public class TripService {
             trip.setPermite(updateContext.getNewPermit());
         }
 
-        // Check if vehicle override is now required due to update
         if (vehicleAvailabilityValidation.requiresVehicleOverride(updateContext)) {
             Tripstatus needsOverrideStatus = tripStatusRepository.findByName("Need vehicle override'")
                     .orElseThrow(() -> new ResourceNotFoundException("NEEDS VEHICLE OVERRIDE status not found"));

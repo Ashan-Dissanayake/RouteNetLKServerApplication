@@ -3,9 +3,9 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 import lk.ashan.routenetlkserverapllication.module.vehicle.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Conditionrate;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.ConditionRate;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehiclestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleStatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleState;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
@@ -81,9 +81,9 @@ class VehicleServiceTest {
 
         Vehicle existing = new Vehicle();
         existing.setId(1);
-        Conditionrate crExist = new Conditionrate(); crExist.setName("GOOD");
+        ConditionRate crExist = new ConditionRate(); crExist.setName("GOOD");
         existing.setConditionrate(crExist);
-        Vehiclestatus vsExist = new Vehiclestatus(); vsExist.setName("ACTIVE");
+        VehicleStatus vsExist = new VehicleStatus(); vsExist.setName("ACTIVE");
         existing.setVehiclestatus(vsExist);
 
         when(vehicleRepository.findByMyId(1)).thenReturn(existing);

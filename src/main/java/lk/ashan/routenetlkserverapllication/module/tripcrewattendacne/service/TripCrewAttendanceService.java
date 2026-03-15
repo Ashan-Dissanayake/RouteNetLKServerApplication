@@ -1,69 +1,62 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.service;
 
 import jakarta.transaction.Transactional;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.CrewCheckInRequestDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.Tripcrewattendance;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.CrewAttendanceStatus;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.CrewAttendanceStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.TripCrewAttendanceRepository;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state.AttendanceState;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state.AttendanceStateFactory;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.validation.AbsentValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.state.TripCrewAttendanceStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.validation.CrewAttendanceContext;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.validation.CrewAttendanceContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.validation.CrewCheckInValidationStrategy;
+import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TripCrewAttendanceService {
 
-    private final List<CrewCheckInValidationStrategy> validationStrategies;
-    private final AttendanceStateFactory stateFactory;
-    private final AbsentValidationStrategy absentValidationStrategy;
     private final TripCrewAttendanceRepository tripCrewAttendanceRepository;
-    private final EmployeeRepository employeeRepository;
+    private final CrewAttendanceStatusRepository crewAttendanceRepository;
 
+    private final List<CrewCheckInValidationStrategy> validationStrategies;
+    private final CrewAttendanceContextBuilder attendanceContextBuilder;
+    private final TripCrewAttendanceStateTransitionHandler stateTransitionHandler;
 
+    @Transactional
     public void checkIn(CrewCheckInRequestDto requestDto) {
-
-        Tripcrewattendance attendance = tripCrewAttendanceRepository.findById(requestDto.getAttendanceId())
-                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found"));
-
-        Employee actual = employeeRepository.findById(requestDto.getEmployeeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-
-        CrewAttendanceContext context = CrewAttendanceContext.builder()
-                .attendance(attendance)
-                .actualEmployee(actual)
-                .checkInTime(LocalTime.now())
-                .build();
-
+        CrewAttendanceContext context = attendanceContextBuilder.buildForCheckIn(requestDto);
         validationStrategies.forEach(strategy -> strategy.validate(context));
 
-        AttendanceState state = stateFactory.getState(
-                attendance.getCrewattendancestatus().getName()
-        );
+        TripCrewAttendance tripcrewattendance = tripCrewAttendanceRepository.findById(requestDto.getAttendanceId())
+                .orElseThrow(()->new ResourceNotFoundException("Attendance not found"));
 
-        state.checkIn(attendance, actual);
+        CrewAttendanceStatus checkInStatus = crewAttendanceRepository.findByName("Checkin")
+                .orElseThrow(()->new ResourceNotFoundException("Status not found"));
+
+        stateTransitionHandler.transitionTo(tripcrewattendance,checkInStatus);
     }
 
     @Transactional
     public void markAbsent(Integer attendanceId) {
-
-        Tripcrewattendance attendance = tripCrewAttendanceRepository.findById(attendanceId)
+        TripCrewAttendance attendance = tripCrewAttendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Attendance not found"));
 
-        absentValidationStrategy.validate(attendance);
+        String status = attendance.getCrewattendancestatus().getName();
 
-        AttendanceState state = stateFactory.getState(
-                attendance.getCrewattendancestatus().getName()
-        );
+        if (!"PENDING".equalsIgnoreCase(status)) {
+            throw new InvalidStateTransitionException(
+                    "Only PENDING attendance can be marked ABSENT"
+            );
+        }
 
-        state.markAbsent(attendance);
+        CrewAttendanceStatus absentStatus = crewAttendanceRepository.findByName("Absent")
+                .orElseThrow(()->new ResourceNotFoundException("Status not found"));
+
+        stateTransitionHandler.transitionTo(attendance,absentStatus);
     }
 }
