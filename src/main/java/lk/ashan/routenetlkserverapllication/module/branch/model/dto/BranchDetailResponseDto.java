@@ -11,17 +11,17 @@ import java.time.LocalDate;
 @Builder
 @ToString
 public class BranchDetailResponseDto {
-    Integer id;
-    String name;
-    String code;
-    String address;
-    String telephone;
-    String email;
-    LocalDate docreated;
-    String remarks;
-    BranchtypeDto branchtype;
-    BranchstatusDto branchstatus;
-    RegionalOfficeDto regionaloffice;
+    private Integer id;
+    private String name;
+    private String code;
+    private String address;
+    private String telephone;
+    private String email;
+    private LocalDate docreated;
+    private String remarks;
+    private BranchTypeDto branchtype;
+    private BranchStatusDto branchstatus;
+    private RegionalOfficeDto regionaloffice;
 
 }
 

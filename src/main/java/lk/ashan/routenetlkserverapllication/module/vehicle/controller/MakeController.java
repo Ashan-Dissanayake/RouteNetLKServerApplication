@@ -24,7 +24,7 @@ public class MakeController {
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<MakeRequestDto>>> get() {
         List<MakeRequestDto> makes = makeService.getMakes();
-        return APIResponseBuilder.getResponse(makes, makes.size());
+        return APIResponseBuilder.list(makes, makes.size());
     }
 
 }

@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchstatusDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchStatusDto;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchStatusService;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -22,8 +22,8 @@ public class BranchStatusController {
     private final BranchStatusService branchStatusService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<BranchstatusDto>>> get() {
-        List<BranchstatusDto> branchStatuses = branchStatusService.getBranchStatuses();
+    public ResponseEntity<APISuccessResponse<List<BranchStatusDto>>> get() {
+        List<BranchStatusDto> branchStatuses = branchStatusService.getBranchStatuses();
         return APIResponseBuilder.list(branchStatuses, branchStatuses.size());
     }
 

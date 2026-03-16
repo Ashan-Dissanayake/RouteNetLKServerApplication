@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vehicleserviceparts")
+@RequestMapping("/vehicle-service-parts")
 @RequiredArgsConstructor
 @CrossOrigin
 public class VehicleServicePartController {

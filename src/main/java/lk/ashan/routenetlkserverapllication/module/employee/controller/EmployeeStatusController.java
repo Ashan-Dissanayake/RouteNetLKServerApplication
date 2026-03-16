@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/employeestatuses")
+@RequestMapping(value = "/employee-statuses")
 @RequiredArgsConstructor
 public class EmployeeStatusController {
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/routefamiliaritylevels")
+@RequestMapping(value = "/route-familiarity-levels")
 @RequiredArgsConstructor
 public class RouteFamiliarityLevelController {
 

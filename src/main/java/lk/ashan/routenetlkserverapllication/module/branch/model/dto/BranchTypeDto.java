@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class BranchtypeDto {
-    Integer id;
-    String name;
+public class BranchTypeDto {
+   private Integer id;
+   private String name;
 }

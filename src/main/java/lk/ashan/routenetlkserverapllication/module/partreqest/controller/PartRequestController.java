@@ -16,7 +16,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/partrequests")
+@RequestMapping(value = "/part-requests")
 @RequiredArgsConstructor
 public class PartRequestController {
 

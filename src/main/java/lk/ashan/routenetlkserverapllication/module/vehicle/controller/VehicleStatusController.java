@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.FueltypeDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.service.FueltypeService;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehiclestatusDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehiclestatusService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +15,16 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/fueltypes")
+@RequestMapping(value = "/vehicle-statuses")
 @RequiredArgsConstructor
-public class FueltypeController {
+public class VehicleStatusController {
 
-    private final FueltypeService fueltypeService;
+    private final VehiclestatusService vehicleStatusService;
 
     @GetMapping(path ="/list", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<FueltypeDto>>> get() {
-        List<FueltypeDto> fueltypes = fueltypeService.getFueltypes();
-        return APIResponseBuilder.getResponse(fueltypes, fueltypes.size());
+    public ResponseEntity<APISuccessResponse<List<VehiclestatusDto>>> get() {
+        List<VehiclestatusDto> vehicleStatuses = vehicleStatusService.getVehiclestatuss();
+        return APIResponseBuilder.list(vehicleStatuses, vehicleStatuses.size());
     }
 
 }

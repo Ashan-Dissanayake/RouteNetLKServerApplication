@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/bustypes")
+@RequestMapping(value = "/bus-types")
 @RequiredArgsConstructor
 public class BusTypeController {
 

@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.dto.RegionalOffi
 import lk.ashan.routenetlkserverapllication.module.branch.repository.RegionalOfficeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,10 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegionalOfficeService {
 
-    private final RegionalOfficeRepository regionalofficeRepository;
-    private final RegionalOfficeMapper regionalofficeMapper;
+    private final RegionalOfficeRepository regionalOfficeRepository;
+    private final RegionalOfficeMapper regionalOfficeMapper;
 
+    @Transactional(readOnly = true)
     public List<RegionalOfficeDto> getRegionalOffices() {
-        return regionalofficeMapper.toDtoList(regionalofficeRepository.findAll());
+        return regionalOfficeMapper.toDtoList(regionalOfficeRepository.findAll());
     }
+
 }

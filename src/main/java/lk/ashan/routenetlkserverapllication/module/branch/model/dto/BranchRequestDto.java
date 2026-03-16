@@ -42,10 +42,10 @@ public class BranchRequestDto {
     private String remarks;
 
     @NotNull(message = "Branch type is mandatory")
-    private BranchtypeDto branchtype;
+    private BranchTypeDto branchtype;
 
     @NotNull(message = "Branch status is mandatory")
-    private BranchstatusDto branchstatus;
+    private BranchStatusDto branchstatus;
 
     @NotNull(message = "Regional office is mandatory")
     private RegionalOfficeDto regionaloffice;

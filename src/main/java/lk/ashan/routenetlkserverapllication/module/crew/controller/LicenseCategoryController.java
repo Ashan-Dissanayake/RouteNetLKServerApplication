@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/licensecategories")
+@RequestMapping(value = "/license-categories")
 @RequiredArgsConstructor
 public class LicenseCategoryController {
 

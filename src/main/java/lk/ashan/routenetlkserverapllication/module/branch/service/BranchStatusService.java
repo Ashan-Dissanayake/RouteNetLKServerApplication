@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchStatusMapper;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchstatusDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchStatusDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchStatusRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
@@ -19,7 +19,7 @@ public class BranchStatusService {
     private final BranchStatusMapper branchStatusMapper;
 
     @Transactional(readOnly = true)
-    public List<BranchstatusDto> getBranchStatuses() {
+    public List<BranchStatusDto> getBranchStatuses() {
         return branchStatusMapper.toDtoList(branchStatusRepository.findAll());
     }
 
