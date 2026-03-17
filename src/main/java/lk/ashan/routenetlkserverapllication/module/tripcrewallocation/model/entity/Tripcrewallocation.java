@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.ent
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lombok.*;

@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import lombok.*;
 
 import java.time.LocalDate;

@@ -15,6 +15,8 @@ import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterSta
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.roster.state.roster.RosterStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.roster.validation.*;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.user.repository.RoleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;

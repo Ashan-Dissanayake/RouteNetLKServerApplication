@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -92,6 +93,9 @@ public class Employee extends BaseEntity {
 
     @OneToMany(mappedBy = "actualemployee")
     private Collection<TripCrewAttendance> tripcrewattendancesactual;
+
+    @OneToMany(mappedBy = "employee")
+    private Collection<User> users;
 
 
     @Override

@@ -13,7 +13,7 @@ public class PostIncidentServiceStrategy implements VehicleServiceEvaluationStra
 
     @Override
     public boolean isServiceRequired(VehicleServiceContext context) {
-        return context.getIncidentId() != null;
+        return context.getIncident() != null;
     }
 
     @Override

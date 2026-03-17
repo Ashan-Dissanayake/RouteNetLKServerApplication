@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;

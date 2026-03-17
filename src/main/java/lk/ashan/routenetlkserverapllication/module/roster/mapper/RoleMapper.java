@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RoleDto;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Role;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
