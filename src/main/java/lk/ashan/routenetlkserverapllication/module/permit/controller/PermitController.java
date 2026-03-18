@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class PermitController {
     
     private final PermitService permitService;
 
+    @PreAuthorize("hasAuthority('permits-select')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PermitDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -32,6 +34,7 @@ public class PermitController {
         return APIResponseBuilder.list(permits, permits.size());
     }
 
+    @PreAuthorize("hasAuthority('permits-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>> add(
             @RequestBody @Valid PermitCreateRequestDto permitCreateRequestDto)
@@ -40,6 +43,7 @@ public class PermitController {
         return APIResponseBuilder.list(savedPermit, savedPermit.getId());
     }
 
+    @PreAuthorize("hasAuthority('permits-transfer')")
     @PostMapping("/{permitId}/transfer")
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>>  transferPermit(
             @PathVariable Integer permitId,

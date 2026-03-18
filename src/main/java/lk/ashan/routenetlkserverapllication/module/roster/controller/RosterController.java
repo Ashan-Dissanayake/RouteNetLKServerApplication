@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class RosterController {
 
     private final RosterService rosterService;
 
+    @PreAuthorize("hasAuthority('roster-select')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RosterDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -34,6 +36,7 @@ public class RosterController {
         return APIResponseBuilder.list(conductors, conductors.size());
     }
 
+    @PreAuthorize("hasAuthority('roster-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> createRoster(
             @RequestBody @Valid RosterCreateRequestDto createRequestDto
@@ -42,10 +45,7 @@ public class RosterController {
         return APIResponseBuilder.created(savedRoster,savedRoster.getId());
     }
 
-    /**
-     * Lock roster (DRAFT → LOCKED)
-     * POST /rosters/{rosterId}/lock
-     */
+    @PreAuthorize("hasAuthority('roster-lock')")
     @PostMapping("/{rosterId}/lock")
     public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> lockRoster(
             @PathVariable Integer rosterId) {
@@ -63,10 +63,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Unlock roster (LOCKED → DRAFT)
-     * POST /rosters/{rosterId}/unlock
-     */
+    @PreAuthorize("hasAuthority('roster-unlock')")
     @PostMapping("/{rosterId}/unlock")
     public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> unlockRoster(
             @PathVariable Integer rosterId) {
@@ -84,10 +81,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Archive roster (LOCKED → ARCHIVED)
-     * POST /rosters/{rosterId}/archive
-     */
+    @PreAuthorize("hasAuthority('roster-archive')")
     @PostMapping("/{rosterId}/archive")
     public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> archiveRoster(
             @PathVariable Integer rosterId) {
@@ -105,10 +99,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Generate optimized assignment suggestions using AI
-     * POST /rosters/{rosterId}/generate-suggestions
-     */
+    @PreAuthorize("hasAuthority('roster-generate-suggestions')")
     @PostMapping("/{rosterId}/generate-suggestions")
     public ResponseEntity<APISuccessResponse<RosterAssignmentSuggestionResponse>> generateSuggestions(
             @PathVariable Integer rosterId) {
@@ -135,6 +126,7 @@ public class RosterController {
         );
     }
 
+    @PreAuthorize("hasAuthority('roster-approve-suggestions')")
     @PostMapping("/{rosterId}/approve-suggestion")
     public ResponseEntity<APISuccessResponse<ShiftRosterAssignmentDto>> approveOverride(
             @PathVariable Integer rosterId) {
@@ -147,10 +139,8 @@ public class RosterController {
                 Map.of("action", "suggestion_approved")
         );    }
 
-    /**
-     * Get all suggested assignments for a roster
-     * GET /rosters/{rosterId}/suggestions
-     */
+
+    @PreAuthorize("hasAuthority('roster-select')")
     @GetMapping("/{rosterId}/suggestions")
     public ResponseEntity<APISuccessResponse<List<RosterAssignmentSuggestionResponse>>> getSuggestions(
             @PathVariable Integer rosterId) {
@@ -164,10 +154,7 @@ public class RosterController {
     }
 
 
-    /**
-     * Clear all suggestions for a roster
-     * DELETE /rosters/{rosterId}/suggestions
-     */
+    @PreAuthorize("hasAuthority('roster-clear-suggestion')")
     @DeleteMapping("/{rosterId}/suggestions")
     public ResponseEntity<APISuccessResponse<Void>> clearAllSuggestions(
             @PathVariable Integer rosterId) {
@@ -186,10 +173,7 @@ public class RosterController {
     }
 
 
-    /**
-     * Approve a suggested assignment (keep it)
-     * POST /rosters/assignments/{assignmentId}/approve
-     */
+    @PreAuthorize("hasAuthority('roster-assignment-approve')")
     @PostMapping("/assignments/{assignmentId}/approve")
     public ResponseEntity<APISuccessResponse<ShiftRosterAssignmentDto>> approveSuggestion(
             @PathVariable Integer assignmentId) {
@@ -208,10 +192,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Reject a suggested assignment (delete it)
-     * DELETE /rosters/assignments/{assignmentId}/reject
-     */
+    @PreAuthorize("hasAuthority('roster-assignment-reject')")
     @DeleteMapping("/assignments/{assignmentId}/reject")
     public ResponseEntity<APISuccessResponse<Void>> rejectSuggestion(
             @PathVariable Integer assignmentId) {
@@ -230,10 +211,7 @@ public class RosterController {
     }
 
 
-    /**
-     * Update existing roster (DRAFT only)
-     * PUT /rosters/{rosterId}
-     */
+    @PreAuthorize("hasAuthority('roster-update')")
     @PutMapping("/{rosterId}")
     public ResponseEntity<APISuccessResponse<RosterDetailResponseDto>> updateRoster(
             @PathVariable Integer rosterId,
@@ -260,10 +238,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Soft delete roster (DRAFT only)
-     * DELETE /rosters/{rosterId}
-     */
+    @PreAuthorize("hasAuthority('roster-delete')")
     @DeleteMapping("/{rosterId}")
     public ResponseEntity<APISuccessResponse<Void>> deleteRoster(
             @PathVariable Integer rosterId) {
@@ -281,10 +256,7 @@ public class RosterController {
         );
     }
 
-    /**
-     * Regenerate suggestions (clear old + generate new)
-     * POST /rosters/{rosterId}/regenerate-suggestions
-     */
+    @PreAuthorize("hasAuthority('roster-regenerate-suggestion')")
     @PostMapping("/{rosterId}/regenerate-suggestions")
     public ResponseEntity<APISuccessResponse<RosterAssignmentSuggestionResponse>> regenerateSuggestions(
             @PathVariable Integer rosterId) {

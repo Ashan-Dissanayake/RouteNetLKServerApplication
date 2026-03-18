@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class PartRequestController {
 
     private final PartRequestService partRequestService;
 
+    @PreAuthorize("hasAuthority('part-requests-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -33,6 +35,7 @@ public class PartRequestController {
         return APIResponseBuilder.list(requests, requests.size());
     }
 
+    @PreAuthorize("hasAuthority('part-requests-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> create(
             @RequestBody @Valid PartRequestCreateRequestDto dto
@@ -41,7 +44,8 @@ public class PartRequestController {
         return APIResponseBuilder.created(savedRequest, savedRequest.getId());
     }
 
-    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('part-requests-update')")
+    @PutMapping
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> update(
             @RequestBody @Valid PartRequestUpdateRequestDto dto
     ) {
@@ -49,6 +53,7 @@ public class PartRequestController {
         return APIResponseBuilder.updated(updatedRequest, updatedRequest.getId());
     }
 
+    @PreAuthorize("hasAuthority('part-requests-update')")
     @PostMapping("/{id}/approve")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> approve(
             @PathVariable Integer id
@@ -57,6 +62,7 @@ public class PartRequestController {
         return APIResponseBuilder.ok(request);
     }
 
+    @PreAuthorize("hasAuthority('part-requests-update')")
     @PostMapping("/{id}/reject")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> reject(
             @PathVariable Integer id
@@ -65,6 +71,7 @@ public class PartRequestController {
         return APIResponseBuilder.ok(request);
     }
 
+    @PreAuthorize("hasAuthority('part-requests-update')")
     @PostMapping("/{id}/complete")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> complete(
             @PathVariable Integer id

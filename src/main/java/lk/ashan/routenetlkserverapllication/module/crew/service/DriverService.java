@@ -17,6 +17,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Dri
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,12 @@ public class DriverService {
     private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
     private final DriverContextBuilder driverContextBuilder;
 
+    @Transactional(readOnly = true)
     public List<DriverDetailResponseDto> getDrivers(){
        return driverMapper.toDtoList(driverRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<DriverDetailResponseDto> searchDriver(
             @NotNull HashMap<String, String> params) {
 
@@ -58,7 +61,8 @@ public class DriverService {
 
     }
 
-    public DriverDetailResponseDto createDriver(@Valid @NotNull DriverCreateRequestDto dto) {
+    @Transactional
+    public DriverDetailResponseDto createDriver(@NotNull DriverCreateRequestDto dto) {
 
         DriverValidationContext context = driverContextBuilder.buildForCreate(dto);
         validationStrategies.forEach(s -> s.validateCreate(context));
@@ -75,7 +79,8 @@ public class DriverService {
         return driverMapper.toDto(driverRepository.save(driver));
     }
 
-    public DriverDetailResponseDto updateDriver(@Valid @NotNull DriverUpdateRequestDto dto) {
+    @Transactional
+    public DriverDetailResponseDto updateDriver(@NotNull DriverUpdateRequestDto dto) {
 
         DriverValidationContext context = driverContextBuilder.buildForUpdate(dto);
         validationStrategies.forEach(s -> s.validateUpdate(context));
@@ -91,8 +96,8 @@ public class DriverService {
              state.transitionTo(existingDriver.getEmployee(), driverMapper.toEntity(dto).getRoutefamiliaritylevel());
         }
 
-        Driver driver = driverMapper.toEntity(dto);
-        return driverMapper.toDto(driverRepository.save(driver));
+       Driver mappedDriver =  driverMapper.updateEntityFromDto(dto,existingDriver);
+        return driverMapper.toDto(mappedDriver);
     }
 
 }

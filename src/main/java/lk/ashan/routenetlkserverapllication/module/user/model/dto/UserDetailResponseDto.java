@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 public class UserDetailResponseDto {
     private Integer id;
-    private EmployeeSummaryResponseDto employee;
+    private EmployeeSummaryDto employee;
     private String username;
     private String password;
     private UserTypeDto usertype;

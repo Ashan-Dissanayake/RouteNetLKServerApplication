@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class IncidentSummaryResponseDto {
+public class IncidentSummaryDto {
     private Integer id;
     private TripSummaryResponseDto trip;
 

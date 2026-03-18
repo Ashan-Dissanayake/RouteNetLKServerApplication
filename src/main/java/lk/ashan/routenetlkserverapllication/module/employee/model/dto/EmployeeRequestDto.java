@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model.dto;
 
 import jakarta.validation.constraints.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -59,7 +59,7 @@ public class EmployeeRequestDto {
     private LocalDate doj;
 
     @NotNull(message = "Branch is mandatory")
-    private  BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
 
     @NotNull(message = "Department is mandatory")
     private  DepartmentDto department;

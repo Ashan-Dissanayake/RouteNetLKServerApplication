@@ -17,6 +17,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Con
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +36,12 @@ public class ConductorService {
     private final ConductorContextBuilder conductorContextBuilder;
 
 
+    @Transactional(readOnly = true)
     public List<ConductorDetailResponseDto> getConductors(){
        return conductorMapper.toDtoList(conductorRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public List<ConductorDetailResponseDto> searchConductor(@NotNull HashMap<String, String> params) {
 
         String number = params.get("ssnumber");
@@ -58,6 +61,7 @@ public class ConductorService {
 
     }
 
+    @Transactional
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
 
         ConductorValidationContext context = conductorContextBuilder.buildForCreate(dto);
@@ -76,25 +80,26 @@ public class ConductorService {
         return conductorMapper.toDto(conductorRepository.save(conductor));
     }
 
+    @Transactional
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
         ConductorValidationContext context = conductorContextBuilder.buildForUpdate(dto);
 
         validationStrategies.forEach(s -> s.validateUpdate(context));
 
-        Conductor existingConductor =  conductorRepository.findById(dto.getId())
+        Conductor existing =  conductorRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
 
-        RouteFamiliarityLevel currentLevel = existingConductor.getRoutefamiliaritylevel();
+        RouteFamiliarityLevel currentLevel = existing.getRoutefamiliaritylevel();
 
         // State Pattern Transition
         if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {
              RouteFamiliarityState state = routeFamiliarityStateFactory.getState(currentLevel.getName());
-             state.transitionTo(existingConductor.getEmployee(), conductorMapper.toEntity(dto).getRoutefamiliaritylevel());
+             state.transitionTo(existing.getEmployee(), conductorMapper.toEntity(dto).getRoutefamiliaritylevel());
         }
 
-        Conductor conductor = conductorMapper.toEntity(dto);
-        return conductorMapper.toDto(conductorRepository.save(conductor));
+      Conductor mappedConductor =  conductorMapper.updateEntityFromDto(dto,existing);
+        return conductorMapper.toDto(mappedConductor);
     }
 
 }

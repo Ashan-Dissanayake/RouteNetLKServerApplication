@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -36,5 +36,5 @@ public class ConductorRequestDto {
     private RouteFamiliarityLevelDto routefamiliaritylevel;
 
     @NotNull(message = "Employee is mandatory")
-    private EmployeeSummaryResponseDto employee;
+    private EmployeeSummaryDto employee;
 }

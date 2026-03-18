@@ -1,16 +1,13 @@
 package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
-import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.service.IncidentStatusService;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentState;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationStrategy;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.dto.IncidentVehicleAllocationDetailsResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mapper.IncidentVehicleAllocationMapper;
@@ -59,8 +56,6 @@ public class IncidentVehicleAllocationService {
     private final List<AllocationValidationStrategy> allocationValidationStrategies;
 
 
-
-
     @Transactional(readOnly = true)
     public List<IncidentVehicleAllocationDetailsResponseDto> getIncidentVehicleAllocations() {
         return incidentVehicleAllocationMapper.toDtoList(incidentVehicleAllocationRepository.findAll());
@@ -89,6 +84,7 @@ public class IncidentVehicleAllocationService {
         return incidentVehicleAllocationMapper.toDtoList(incidentVehicleAllocations);
     }
 
+    @Transactional
     public IncidentVehicleAllocationDetailsResponseDto createAllocation(
             IncidentVehicleAllocationCreateRequestDto request
     ) {

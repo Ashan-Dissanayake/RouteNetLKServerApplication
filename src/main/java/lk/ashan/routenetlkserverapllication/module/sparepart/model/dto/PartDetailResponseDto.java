@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class PartDetailResponseDto {
     private Integer id;
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     private PartCategoryDto partcategory;
     private String sku;
     private String name;

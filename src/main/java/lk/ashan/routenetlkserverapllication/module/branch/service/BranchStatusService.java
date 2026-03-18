@@ -23,6 +23,7 @@ public class BranchStatusService {
         return branchStatusMapper.toDtoList(branchStatusRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public BranchStatus getByName(String name) {
         return branchStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(

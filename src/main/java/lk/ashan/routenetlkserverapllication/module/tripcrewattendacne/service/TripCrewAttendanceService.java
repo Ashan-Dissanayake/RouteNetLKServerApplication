@@ -1,6 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.service;
 
-import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.mapper.TripCrewAttendanceMapper;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.mapper.TripCrewAttendanceStatusMapper;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.TripCrewAttendanceDetailsResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.CrewAttendanceStatus;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.CrewAttendanceStatusRepository;
@@ -13,8 +19,12 @@ import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransit
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -22,41 +32,32 @@ public class TripCrewAttendanceService {
 
     private final TripCrewAttendanceRepository tripCrewAttendanceRepository;
     private final CrewAttendanceStatusRepository crewAttendanceRepository;
+    private final TripCrewAttendanceMapper tripCrewAttendanceMapper;
 
     private final List<CrewCheckInValidationStrategy> validationStrategies;
     private final CrewAttendanceContextBuilder attendanceContextBuilder;
     private final TripCrewAttendanceStateTransitionHandler stateTransitionHandler;
 
-    @Transactional
-    public void checkIn(CrewCheckInRequestDto requestDto) {
-        CrewAttendanceContext context = attendanceContextBuilder.buildForCheckIn(requestDto);
-        validationStrategies.forEach(strategy -> strategy.validate(context));
 
-        TripCrewAttendance tripcrewattendance = tripCrewAttendanceRepository.findById(requestDto.getAttendanceId())
-                .orElseThrow(()->new ResourceNotFoundException("Attendance not found"));
-
-        CrewAttendanceStatus checkInStatus = crewAttendanceRepository.findByName("Checkin")
-                .orElseThrow(()->new ResourceNotFoundException("Status not found"));
-
-        stateTransitionHandler.transitionTo(tripcrewattendance,checkInStatus);
+    @Transactional(readOnly = true)
+    public List<TripCrewAttendanceDetailsResponseDto> getCrewAttendance(){
+        return tripCrewAttendanceMapper.toDtoList(tripCrewAttendanceRepository.findAll());
     }
 
-    @Transactional
-    public void markAbsent(Integer attendanceId) {
-        TripCrewAttendance attendance = tripCrewAttendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found"));
+    @Transactional(readOnly = true)
+    public List<TripCrewAttendanceDetailsResponseDto> searchTripCrewAttendance(@NotNull HashMap<String, String> params) {
 
-        String status = attendance.getCrewattendancestatus().getName();
+            String tripId = params.get("sstrip");
+            String attendanceStatusId= params.get("ssattendacncestatus");
 
-        if (!"PENDING".equalsIgnoreCase(status)) {
-            throw new InvalidStateTransitionException(
-                    "Only PENDING attendance can be marked ABSENT"
-            );
-        }
+            Stream<TripCrewAttendance> tripCrewAttendanceStream = tripCrewAttendanceRepository.findAll().stream();
 
-        CrewAttendanceStatus absentStatus = crewAttendanceRepository.findByName("Absent")
-                .orElseThrow(()->new ResourceNotFoundException("Status not found"));
+            if(tripId!=null)tripCrewAttendanceStream = tripCrewAttendanceStream.filter(t->t.getTrip().getId() == Integer.parseInt(tripId));
+            if(attendanceStatusId!=null)tripCrewAttendanceStream = tripCrewAttendanceStream.filter(t->t.getCrewattendancestatus().getId() == Integer.parseInt(attendanceStatusId));
 
-        stateTransitionHandler.transitionTo(attendance,absentStatus);
+            return tripCrewAttendanceMapper.toDtoList( tripCrewAttendanceStream.collect(Collectors.toList()));
     }
+
+
+
 }

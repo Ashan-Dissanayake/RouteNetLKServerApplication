@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class PartController {
 
     private final PartService partService;
 
+    @PreAuthorize("hasAuthority('parts-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -34,6 +36,7 @@ public class PartController {
         return APIResponseBuilder.list(parts, parts.size());
     }
 
+    @PreAuthorize("hasAuthority('parts-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> add(
             @RequestBody @Valid PartCreateRequestDto partRequest
@@ -42,6 +45,7 @@ public class PartController {
         return APIResponseBuilder.created(savedPart, savedPart.getId());
     }
 
+    @PreAuthorize("hasAuthority('parts-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> update(
             @RequestBody @Valid PartUpdateRequestDto partUpdateRequest
@@ -50,6 +54,7 @@ public class PartController {
         return APIResponseBuilder.updated(updatedPart, updatedPart.getId());
     }
 
+    @PreAuthorize("hasAuthority('parts-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivate(
             @RequestBody List<Integer> ids

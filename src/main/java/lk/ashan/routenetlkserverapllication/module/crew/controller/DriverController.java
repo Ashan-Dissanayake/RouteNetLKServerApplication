@@ -10,6 +10,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class DriverController {
 
     private final DriverService driverService;
 
+    @PreAuthorize("hasAuthority('driver-select')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DriverDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -33,6 +35,7 @@ public class DriverController {
         return APIResponseBuilder.list(drivers, drivers.size());
     }
 
+    @PreAuthorize("hasAuthority('branch-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> add(
             @RequestBody @Valid DriverCreateRequestDto driverCreateRequestDto)
@@ -41,6 +44,7 @@ public class DriverController {
         return APIResponseBuilder.created(savedDriver, savedDriver.getId());
     }
 
+    @PreAuthorize("hasAuthority('branch-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> update(
             @RequestBody @Valid DriverUpdateRequestDto driverUpdateRequestDto)

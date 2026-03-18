@@ -3,10 +3,9 @@ package lk.ashan.routenetlkserverapllication.module.branch.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
-import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFactory;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
@@ -33,6 +32,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchStatusService branchStatusService;
+
     private final BranchMapper branchMapper;
 
     private final BranchContextBuilder branchContextBuilder;
@@ -46,8 +46,8 @@ public class BranchService {
     }
 
     @Transactional(readOnly = true)
-    public List<BranchSummaryResponseDto> getSummaryBranches(){
-        return branchMapper.toSummaryDetailList(branchRepository.findAll());
+    public List<BranchSummaryDto> getSummaryBranches(){
+        return branchMapper.toSummaryDtolList(branchRepository.findAll());
     }
 
     @Transactional(readOnly = true)
@@ -99,14 +99,12 @@ public class BranchService {
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
 
-        branchMapper.updateEntityFromDto(request, existing);
+       Branch mappedBranch = branchMapper.updateEntityFromDto(request, existing);
 
         BranchStatus targetStatus = branchStatusService.getByName(request.getBranchstatus().getName());
         branchStateTransitionHandler.transitionTo(existing, targetStatus);
 
-        Branch updatedBranch = branchRepository.save(existing);
-
-        return branchMapper.toDto(updatedBranch);
+        return branchMapper.toDto(mappedBranch);
     }
 
     @Transactional
@@ -117,18 +115,6 @@ public class BranchService {
             throw new ResourceNotFoundException("No branches found for the given IDs");
 
         branchRepository.removeAll(branchIds);
-
-        return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<Integer> activateBranches(List<Integer> branchIds) {
-        List<Branch> branches = branchRepository.findAllById(branchIds);
-
-        if (branches.isEmpty())
-            throw new ResourceNotFoundException("No branches found for the given IDs");
-
-        branchRepository.restoreAll(branchIds);
 
         return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
     }

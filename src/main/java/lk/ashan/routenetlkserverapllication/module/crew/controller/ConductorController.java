@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class ConductorController {
 
     private final ConductorService conductorService;
 
+    @PreAuthorize("hasAuthority('conductor-select')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ConductorDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -32,6 +34,7 @@ public class ConductorController {
         return APIResponseBuilder.list(conductors, conductors.size());
     }
 
+    @PreAuthorize("hasAuthority('conductor-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<ConductorDetailResponseDto>> add(
             @RequestBody @Valid ConductorCreateRequestDto conductorCreateRequestDto)
@@ -39,7 +42,8 @@ public class ConductorController {
         ConductorDetailResponseDto savedConductor = conductorService.createConductor(conductorCreateRequestDto);
         return APIResponseBuilder.created(savedConductor, savedConductor.getId());
     }
-    
+
+    @PreAuthorize("hasAuthority('conductor-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<ConductorDetailResponseDto>> update(
             @RequestBody @Valid ConductorUpdateRequestDto conductorUpdateRequestDto)

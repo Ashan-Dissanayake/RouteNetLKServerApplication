@@ -33,7 +33,6 @@ public class GrnService {
 
     private final GrnRepository grnRepository;
     private final GrnStatusRepository grnStatusRepository;
-
     private final GrnMapper grnMapper;
     private final GrnPartMapper grnPartMapper;
 
@@ -97,12 +96,12 @@ public class GrnService {
     @Transactional
     public GrnDetailResponseDto updateGrn(@NotNull GrnUpdateRequestDto dto) {
 
-        Grn grn = grnRepository.findById(dto.getId())
+        Grn existing = grnRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "GRN not found with id " + dto.getId()
                 ));
 
-        String currentStatus = grn.getGrnstatus().getName();
+        String currentStatus = existing.getGrnstatus().getName();
 
         // Only PENDING GRNs are editable
         if (!"PENDING".equalsIgnoreCase(currentStatus)) {
@@ -127,20 +126,17 @@ public class GrnService {
         });
 
         // Map allowed fields from DTO → entity
-        grnMapper.updateEntity(grn, dto);
+       Grn mappedGrn = grnMapper.updateEntityFromDto(existing, dto);
 
         // Clear existing items and map new ones
-        grn.getGrnparts().clear();
+        existing.getGrnparts().clear();
         dto.getGrnparts().forEach(itemDto -> {
             GrnPart part = grnPartMapper.toEntity(itemDto);
-            part.setGrn(grn);
-            grn.getGrnparts().add(part);
+            part.setGrn(existing);
+            existing.getGrnparts().add(part);
         });
 
-        // Save updated GRN
-        Grn saved = grnRepository.save(grn);
-
-        return grnMapper.toDto(saved);
+        return grnMapper.toDto(mappedGrn);
     }
 
     @Transactional

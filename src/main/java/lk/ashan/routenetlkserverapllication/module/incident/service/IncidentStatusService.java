@@ -23,6 +23,7 @@ public class IncidentStatusService {
         return incidentStatusMapper.toDtoList(incidentStatusRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public IncidentStatus getByName(String name) {
         return incidentStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(

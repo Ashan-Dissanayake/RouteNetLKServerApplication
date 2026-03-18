@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.model.dto;
 
 import jakarta.validation.constraints.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -37,7 +37,7 @@ public class VehicleRequestDto {
     private VehiclestatusDto vehiclestatus;
 
     @NotNull(message = "Branch Can Not be Empty")
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
 
     @NotNull(message = "Model can not be Empty")
     private ModelDto model;

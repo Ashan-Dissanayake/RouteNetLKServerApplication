@@ -4,7 +4,9 @@ import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnCreateReques
 import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -18,8 +20,7 @@ public interface GrnMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "number", ignore = true)
-    @Mapping(target = "grnstatus", ignore = true)
     @Mapping(target = "grnparts", ignore = true)
-    void updateEntity(@MappingTarget Grn grn, GrnUpdateRequestDto dto);
+    Grn updateEntityFromDto(@MappingTarget Grn grn, GrnUpdateRequestDto dto);
 
 }

@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class GrnController {
 
     private final GrnService grnService;
 
+    @PreAuthorize("hasAuthority('grn-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<GrnDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -33,6 +35,7 @@ public class GrnController {
         return APIResponseBuilder.list(requests, requests.size());
     }
 
+    @PreAuthorize("hasAuthority('grn-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> create(
             @RequestBody @Valid GrnCreateRequestDto dto
@@ -41,7 +44,8 @@ public class GrnController {
         return APIResponseBuilder.created(saved, saved.getId());
     }
 
-    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('grn-update')")
+    @PutMapping
     public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> update(
             @RequestBody @Valid GrnUpdateRequestDto dto
     ) {
@@ -49,12 +53,14 @@ public class GrnController {
         return APIResponseBuilder.updated(updated, updated.getId());
     }
 
+    @PreAuthorize("hasAuthority('grn-complete')")
     @PostMapping("/{id}/complete")
     public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> complete(@PathVariable Integer id) {
         GrnDetailResponseDto completed = grnService.completeGrn(id);
         return APIResponseBuilder.ok(completed);
     }
 
+    @PreAuthorize("hasAuthority('grn-cancel')")
     @PostMapping("/{id}/cancel")
     public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> cancel(@PathVariable Integer id) {
         GrnDetailResponseDto cancelled = grnService.cancelGrn(id);

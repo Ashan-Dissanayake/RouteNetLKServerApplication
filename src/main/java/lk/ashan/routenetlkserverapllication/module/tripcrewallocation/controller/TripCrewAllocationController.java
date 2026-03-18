@@ -8,6 +8,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class TripCrewAllocationController {
 
     private final TripCrewAllocationService tripCrewAllocationService;
 
+    @PreAuthorize("hasAuthority('trip-crew-allocations-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripCrewAllocationDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -32,10 +34,7 @@ public class TripCrewAllocationController {
         return APIResponseBuilder.list(trips, trips.size());
     }
 
-    /**
-     * POST /trip-crew-allocations/{tripId}/generate
-     * Generate AI-powered crew suggestions using OptaPlanner
-     */
+    @PreAuthorize("hasAuthority('trip-crew-allocations-generate')")
     @PostMapping(value = "/{tripId}/generate", produces = "application/json")
     public ResponseEntity<APISuccessResponse<TripCrewAllocationSuggestionResponseDto>> generateSuggestions(
             @PathVariable Integer tripId
@@ -48,10 +47,7 @@ public class TripCrewAllocationController {
         return APIResponseBuilder.created(response, tripId);
     }
 
-    /**
-     * PUT /trip-crew-allocations/{id}/approve
-     * Approve a suggested allocation (SUGGESTED → CONFIRMED)
-     */
+    @PreAuthorize("hasAuthority('trip-crew-allocations-approve')")
     @PutMapping(value = "/{id}/approve", produces = "application/json")
     public ResponseEntity<APISuccessResponse<TripCrewAllocationDetailResponseDto>> approve(
             @PathVariable Integer id
@@ -64,10 +60,7 @@ public class TripCrewAllocationController {
         return APIResponseBuilder.updated(approved, id);
     }
 
-    /**
-     * PUT /trip-crew-allocations/{id}/reject
-     * Reject a suggested allocation (SUGGESTED → REJECTED)
-     */
+    @PreAuthorize("hasAuthority('trip-crew-allocations-reject')")
     @PutMapping(value = "/{id}/reject", produces = "application/json")
     public ResponseEntity<APISuccessResponse<TripCrewAllocationDetailResponseDto>> reject(
             @PathVariable Integer id
@@ -80,6 +73,7 @@ public class TripCrewAllocationController {
         return APIResponseBuilder.updated(rejected, id);
     }
 
+    @PreAuthorize("hasAuthority('trip-crew-allocations-clear')")
     @DeleteMapping(value = "/rejected/{tripId}")
     public ResponseEntity<APISuccessResponse<Void>> clearRejected(
             @PathVariable Integer tripId

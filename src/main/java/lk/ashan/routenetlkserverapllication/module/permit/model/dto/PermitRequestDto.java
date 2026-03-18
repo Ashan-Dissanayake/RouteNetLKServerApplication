@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.model.dto;
 
 import jakarta.validation.constraints.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,7 +27,7 @@ public class PermitRequestDto {
     @Future(message = "Exp date cannot be in the past or present")
     private LocalDate doexpired;
     @NotNull(message = "Branch is mandatory")
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     @NotNull(message = "Permit status is mandatory")
     private PermitStatusDto permitestatus;
     @NotNull(message = "Service type is mandatory")

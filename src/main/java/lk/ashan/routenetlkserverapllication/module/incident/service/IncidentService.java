@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.mapper.IncidentMapper;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
@@ -102,17 +103,19 @@ public class IncidentService {
 
 
     @Transactional
-    public IncidentDetailResponseDto update(Integer incidentId, String newStatusName) {
+    public IncidentDetailResponseDto update(@NotNull IncidentUpdateRequestDto updateRequestDto) {
 
-        Incident incident = incidentRepository.findById(incidentId)
+        Incident existing = incidentRepository.findById(updateRequestDto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Incident not found"));
 
-        IncidentStatus targetStatus = incidentStatusRepository.findByName(newStatusName.toUpperCase())
+        IncidentStatus targetStatus = incidentStatusRepository.findByName(updateRequestDto.getIncidentstatus().getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid incident status"));
 
-        incidentStateTransitionHandler.transitionTo(incident, targetStatus);
+        Incident mappedIncident = incidentMapper.updateEntityFromDto(updateRequestDto,existing);
 
-        return incidentMapper.toDto(incident);
+        incidentStateTransitionHandler.transitionTo(mappedIncident, targetStatus);
+
+        return incidentMapper.toDto(mappedIncident);
     }
 }
 

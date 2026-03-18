@@ -17,7 +17,7 @@ public class BranchTypeService {
     private final BranchTypeMapper branchTypeMapper;
 
     @Transactional(readOnly = true)
-    public List<BranchTypeDto> getBranchtypes() {
+    public List<BranchTypeDto> getBranchTypes() {
         return branchTypeMapper.toDtoList(branchTypeRepository.findAll());
     }
 

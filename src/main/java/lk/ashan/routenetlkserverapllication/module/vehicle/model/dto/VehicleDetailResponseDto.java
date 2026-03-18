@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 
 @Getter
@@ -19,5 +19,5 @@ public class VehicleDetailResponseDto {
     private ConditionrateDto conditionrate;
     private String remarks;
     private VehiclestatusDto vehiclestatus;
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
 }

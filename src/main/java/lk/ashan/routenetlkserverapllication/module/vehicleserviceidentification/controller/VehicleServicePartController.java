@@ -8,6 +8,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class VehicleServicePartController {
 
     private final VehicleServicePartService vehicleServicePartService;
 
+    @PreAuthorize("hasAuthority('vehicle-service-parts-insert')")
     @PostMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleServicePartDetailResponseDto>>> createParts(
             @RequestBody @Valid VehicleServicePartBulkCreateRequestDto dto) {
@@ -31,6 +33,7 @@ public class VehicleServicePartController {
         return APIResponseBuilder.created(parts,parts.size());
     }
 
+    @PreAuthorize("hasAuthority('vehicle-service-parts-update')")
     @PutMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleServicePartDetailResponseDto>>> updateParts(
             @RequestBody @Valid VehicleServicePartBulkUpdateRequestDto dto) {

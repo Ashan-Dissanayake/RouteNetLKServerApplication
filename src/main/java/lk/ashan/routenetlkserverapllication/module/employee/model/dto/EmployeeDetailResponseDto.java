@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ public class EmployeeDetailResponseDto{
     private  byte[] image;
     private  LocalDate doj;
     private  GenderDto gender;
-    private  BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     private  DepartmentDto department;
     private  DesignationDto designation;
     private EmployeeTypeDto employeetype;

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.grn.model.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryResponseDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +17,7 @@ import java.util.List;
 @ToString
 public class GrnRequestDto {
     @NotNull(message = "Branch is mandatory")
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     @NotNull(message = "Part is mandatory")
     private PartRequestSummaryResponseDto partrequest;
     @NotNull(message = "Number is mandatory")

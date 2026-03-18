@@ -1,20 +1,17 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeState;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeContextBuilder;
@@ -70,12 +67,12 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeSummaryResponseDto> getSummaryEmployees(){
+    public List<EmployeeSummaryDto> getSummaryEmployees(){
         return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeSummaryResponseDto> getEmployeesByDesignation(String designation) {
+    public List<EmployeeSummaryDto> getEmployeesByDesignation(String designation) {
         List<Employee> employees;
         if (designation.equalsIgnoreCase("driver")) {
             employees = employeeRepository.findEmployeesWithoutDriver(designation);
@@ -115,14 +112,12 @@ public class EmployeeService {
         Employee existing = employeeRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-        employeeMapper.updateEntityFromDto(request, existing);
+       Employee mappedEmployee = employeeMapper.updateEntityFromDto(request, existing);
 
         EmployeeStatus targetStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
         employeeStateTransitionHandler.transitionTo(existing, targetStatus);
 
-        Employee updated = employeeRepository.save(existing);
-
-        return employeeMapper.toDto(updated);
+        return employeeMapper.toDto(mappedEmployee);
     }
 
     @Transactional

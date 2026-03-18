@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -22,5 +22,5 @@ public class DriverDetailResponseDto {
     private LicenseCategoryDto licensecategory;
     private CrewStatusDto crewstatus;
     private RouteFamiliarityLevelDto routefamiliaritylevel;
-    private EmployeeSummaryResponseDto employee;
+    private EmployeeSummaryDto employee;
 }

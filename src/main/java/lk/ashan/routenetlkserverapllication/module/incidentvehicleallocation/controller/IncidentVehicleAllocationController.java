@@ -8,6 +8,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class IncidentVehicleAllocationController {
 
     private final IncidentVehicleAllocationService allocationService;
 
+    @PreAuthorize("hasAuthority('incident-vehicle-allocations-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentVehicleAllocationDetailsResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -31,6 +33,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.list(incidents, incidents.size());
     }
 
+    @PreAuthorize("hasAuthority('incident-vehicle-allocations-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> createAllocation(
             @Valid @RequestBody IncidentVehicleAllocationCreateRequestDto requestDto
@@ -41,6 +44,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.created(savedIncidentVehicleAllocation,savedIncidentVehicleAllocation.getId());
     }
 
+    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
     @PutMapping("/{allocationId}/start-handling")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> startHandling(
             @PathVariable Integer allocationId
@@ -51,6 +55,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.updated(updatedIncidentVehicleAllocation,updatedIncidentVehicleAllocation.getId());
     }
 
+    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
     @PutMapping("/{allocationId}/release")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> releaseAllocation(
             @PathVariable Integer allocationId
@@ -61,6 +66,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.updated(updatedIncidentVehicleAllocation,updatedIncidentVehicleAllocation.getId());
     }
 
+    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
     @PutMapping("/{allocationId}/cancel")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> cancelAllocation(
             @PathVariable Integer allocationId

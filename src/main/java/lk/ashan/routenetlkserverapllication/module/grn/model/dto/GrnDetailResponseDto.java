@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.grn.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryResponseDto;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class GrnDetailResponseDto {
     private Integer id;
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     private PartRequestSummaryResponseDto part;
     private String number;
     private LocalDate doreceived;

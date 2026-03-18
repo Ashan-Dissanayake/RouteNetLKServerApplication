@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.roster.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,5 +16,5 @@ public class ShiftRosterAssignmentDto {
     private ShiftSummaryResponseDto shift;
     private LocalDate doassigned;
     private RoleDto role;
-    private EmployeeSummaryResponseDto employee;
+    private EmployeeSummaryDto employee;
 }

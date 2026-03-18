@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class BranchSummaryResponseDto {
+public class BranchSummaryDto {
    private Integer id;
    private String name;
 }

@@ -13,14 +13,10 @@ import org.springframework.stereotype.Component;
 public class IncidentStateTransitionHandler {
 
     private final IncidentStatusFactory incidentStatusFactory;
-    private final IncidentRepository incidentRepository;
 
     public void transitionTo(Incident incident, IncidentStatus newStatus) {
         String currentStatus = incident.getIncidentstatus().getName();
         String targetStatus = newStatus.getName();
-
-        log.info("Transitioning incident {} from {} to {}",
-                incident.getId(), currentStatus, targetStatus);
 
         // Exit behavior
         executeOnExit(incident, currentStatus);
@@ -31,8 +27,6 @@ public class IncidentStateTransitionHandler {
 
         // Entry behavior
         executeOnEnter(incident, targetStatus);
-
-        incidentRepository.save(incident);
     }
 
     private void executeOnExit(Incident incident, String statusName) {

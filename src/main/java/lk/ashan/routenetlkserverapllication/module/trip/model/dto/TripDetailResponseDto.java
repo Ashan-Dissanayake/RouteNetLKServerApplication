@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryResponseDto;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @ToString
 public class TripDetailResponseDto {
     private Integer id;
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     private TripTypeDto triptype;
     private PermitSummaryResponseDto permite;
     private LocalDate doservice;

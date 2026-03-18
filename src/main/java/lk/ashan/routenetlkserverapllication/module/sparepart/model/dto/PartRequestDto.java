@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.model.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @SuperBuilder
 public class PartRequestDto {
     @NotNull(message = "Branch is required")
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     @NotNull(message = "Part category is required")
     private PartCategoryDto partcategory;
     @NotNull(message = "SKU is required")

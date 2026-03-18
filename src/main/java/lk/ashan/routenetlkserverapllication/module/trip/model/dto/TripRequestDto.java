@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,7 +18,7 @@ import java.time.LocalTime;
 @SuperBuilder
 public class TripRequestDto {
     @NotNull(message = "Branch is mandatory")
-    private BranchSummaryResponseDto branch;
+    private BranchSummaryDto branch;
     @NotNull(message = "Trip type is mandatory")
     private TripTypeDto triptype;
     @NotNull(message = "Permit is mandatory")

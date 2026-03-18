@@ -22,7 +22,7 @@ public class BranchTypeController {
 
     @GetMapping(path ="/list", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchTypeDto>>> get() {
-        List<BranchTypeDto> branchTypes = branchTypeService.getBranchtypes();
+        List<BranchTypeDto> branchTypes = branchTypeService.getBranchTypes();
         return APIResponseBuilder.list(branchTypes, branchTypes.size());
     }
 

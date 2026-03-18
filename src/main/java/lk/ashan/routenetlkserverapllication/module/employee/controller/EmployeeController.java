@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.controller;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -39,16 +39,16 @@ public class EmployeeController {
 
     @PreAuthorize("hasAuthority('employee-select')")
     @GetMapping(value = "/list",produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get() {
-        List<EmployeeSummaryResponseDto> employees =  employeeService.getSummaryEmployees();
+    public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get() {
+        List<EmployeeSummaryDto> employees =  employeeService.getSummaryEmployees();
         return APIResponseBuilder.list(employees, employees.size());
     }
 
     @PreAuthorize("hasAuthority('employee-select')")
     @GetMapping(value = "/list/{designation}")
-    public ResponseEntity<APISuccessResponse<List<EmployeeSummaryResponseDto>>> get(
+    public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get(
             @PathVariable String designation) {
-        List<EmployeeSummaryResponseDto> employees = employeeService.getEmployeesByDesignation(designation);
+        List<EmployeeSummaryDto> employees = employeeService.getEmployeesByDesignation(designation);
         return APIResponseBuilder.list(employees, employees.size());
     }
 

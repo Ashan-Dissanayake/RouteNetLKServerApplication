@@ -38,7 +38,7 @@ public class Grn {
     @ManyToOne
     @JoinColumn(name = "grnstatus_id", referencedColumnName = "id", nullable = false)
     private GrnStatus grnstatus;
-    @OneToMany(mappedBy = "grn")
+    @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<GrnPart> grnparts;
 
     @Override

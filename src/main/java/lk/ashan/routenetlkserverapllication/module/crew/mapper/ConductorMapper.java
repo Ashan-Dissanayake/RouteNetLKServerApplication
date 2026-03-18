@@ -3,10 +3,14 @@ package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -19,8 +23,11 @@ public interface ConductorMapper {
 
     ConductorDetailResponseDto toDto(Conductor conductor);
 
-    Conductor toEntity(ConductorCreateRequestDto conductorCreateRequestDto);
-    Conductor toEntity(ConductorUpdateRequestDto conductorCreateRequestDto);
+    Conductor toEntity(ConductorCreateRequestDto dto);
+    Conductor toEntity(ConductorUpdateRequestDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    Conductor updateEntityFromDto(ConductorUpdateRequestDto dto, @MappingTarget Conductor entity);
 
 
 }

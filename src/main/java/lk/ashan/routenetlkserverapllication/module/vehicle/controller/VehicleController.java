@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+    @PreAuthorize("hasAuthority('vehicle-select')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -32,6 +34,7 @@ public class VehicleController {
         return APIResponseBuilder.list(vehicles, vehicles.size());
     }
 
+    @PreAuthorize("hasAuthority('vehicle-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> add(
             @RequestBody @Valid VehicleCreateRequestDto vehicleCreateRequest)
@@ -40,6 +43,7 @@ public class VehicleController {
         return APIResponseBuilder.list(savedVehicle, savedVehicle.getId());
     }
 
+    @PreAuthorize("hasAuthority('vehicle-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> update(
             @RequestBody @Valid VehicleUpdateRequestDto vehicleUpdateRequestDto)
@@ -48,16 +52,11 @@ public class VehicleController {
         return APIResponseBuilder.updated(updatedVehicle,updatedVehicle.getId());
     }
 
+    @PreAuthorize("hasAuthority('vehicle-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = vehicleService.deactivateVehicle(ids);
         return APIResponseBuilder.deleted(deactivatedIds);
-    }
-
-    @PostMapping("/activate")
-    public ResponseEntity<APISuccessResponse<List<Integer>>> activateBranches(@RequestBody List<Integer> ids) {
-        List<Integer> activatedIds = vehicleService.activateVehicle(ids);
-        return APIResponseBuilder.created(null,activatedIds);
     }
 
 }
