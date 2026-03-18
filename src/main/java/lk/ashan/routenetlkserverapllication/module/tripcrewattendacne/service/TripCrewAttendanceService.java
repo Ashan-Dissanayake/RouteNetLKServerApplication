@@ -6,7 +6,9 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummar
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.mapper.TripCrewAttendanceMapper;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.mapper.TripCrewAttendanceStatusMapper;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.TripCrewAttendanceCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.TripCrewAttendanceDetailsResponseDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.dto.TripCrewAttendanceUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.CrewAttendanceStatus;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.repository.CrewAttendanceStatusRepository;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +34,7 @@ import java.util.stream.Stream;
 public class TripCrewAttendanceService {
 
     private final TripCrewAttendanceRepository tripCrewAttendanceRepository;
-    private final CrewAttendanceStatusRepository crewAttendanceRepository;
+    private final CrewAttendanceStatusRepository crewAttendanceStatusRepository;
     private final TripCrewAttendanceMapper tripCrewAttendanceMapper;
 
     private final List<CrewCheckInValidationStrategy> validationStrategies;
@@ -58,6 +61,36 @@ public class TripCrewAttendanceService {
             return tripCrewAttendanceMapper.toDtoList( tripCrewAttendanceStream.collect(Collectors.toList()));
     }
 
+    @Transactional
+    public TripCrewAttendanceDetailsResponseDto createCrewAttendance(@NotNull TripCrewAttendanceCreateRequestDto requestDto){
+
+        TripCrewAttendance mappedAttendance = tripCrewAttendanceMapper.toEntity(requestDto);
+
+        CrewAttendanceStatus plannedStatus = crewAttendanceStatusRepository.findByName("Pending")
+                .orElseThrow(()-> new ResourceNotFoundException("Status not found"));
+
+        mappedAttendance.setCrewattendancestatus(plannedStatus);
+        return tripCrewAttendanceMapper.toDto(mappedAttendance);
+    }
+
+    @Transactional
+    public TripCrewAttendanceDetailsResponseDto updateCrewAttendance(@NotNull TripCrewAttendanceUpdateRequestDto updateRequestDto){
+
+        TripCrewAttendance existing = tripCrewAttendanceRepository.findById(updateRequestDto.getId())
+                .orElseThrow(()->new ResourceNotFoundException("Attendance not found"));
+
+        TripCrewAttendance mappedAttendance = tripCrewAttendanceMapper.updateEntityFromDto(updateRequestDto,existing);
+
+        CrewAttendanceContext context = attendanceContextBuilder.buildForCheckIn(updateRequestDto);
+        validationStrategies.forEach(strategy -> strategy.validate(context));
+
+        CrewAttendanceStatus targetStatus = crewAttendanceStatusRepository.findByName(updateRequestDto.getCrewattendancestatus().getName())
+                .orElseThrow(()->new ResourceNotFoundException("Status not found"));
+
+        stateTransitionHandler.transitionTo(existing,targetStatus);
+
+        return tripCrewAttendanceMapper.toDto(mappedAttendance);
+    }
 
 
 }

@@ -5,9 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSu
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RoleDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripSummaryResponseDto;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
-import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -15,17 +12,11 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @ToString
 @Builder
-public class TripCrewAttendanceUpdateRequestDto {
-    @NotNull
-    private Integer id;
+public class TripCrewAttendanceCreateRequestDto {
     @NotNull(message = "Trip is mandatory")
     private TripSummaryResponseDto trip;
     @NotNull(message = "Role is mandatory")
     private RoleDto role;
     @NotNull(message = "Planned employee is mandatory")
     private EmployeeSummaryDto plannedemployee;
-    @NotNull(message = "Actual employee is mandatory")
-    private EmployeeSummaryDto actualemployee;
-    @NotNull(message = "Status is mandatory")
-    private CrewAttendanceStatusDto crewattendancestatus;
 }
