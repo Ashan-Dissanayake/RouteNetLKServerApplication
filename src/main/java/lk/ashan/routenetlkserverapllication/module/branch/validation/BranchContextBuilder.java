@@ -13,6 +13,7 @@ public class BranchContextBuilder {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .telephone(dto.getTelephone())
+                .address(dto.getAddress())
                 .build();
     }
 
@@ -23,6 +24,7 @@ public class BranchContextBuilder {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .telephone(dto.getTelephone())
+                .address(dto.getAddress())
                 .branchStatusId(dto.getBranchstatus() != null ? dto.getBranchstatus().getId() : null)
                 .build();
     }

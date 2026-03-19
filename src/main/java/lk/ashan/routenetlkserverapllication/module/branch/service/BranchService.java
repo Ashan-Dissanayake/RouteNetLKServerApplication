@@ -10,6 +10,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFacto
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContextBuilder;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
@@ -98,6 +99,10 @@ public class BranchService {
 
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+
+        if (!existing.getCode().equals(request.getCode())) {
+            throw new BusinessRuleViolationException("Code cannot be changed");
+        }
 
        Branch mappedBranch = branchMapper.updateEntityFromDto(request, existing);
 

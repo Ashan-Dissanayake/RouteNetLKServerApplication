@@ -13,28 +13,30 @@ import java.time.LocalDate;
 @ToString
 @SuperBuilder
 public class BranchRequestDto {
-    @NotBlank(message = "Branch name is mandatory")
-    @Pattern(regexp = "^[A-Za-z0-9 .&'-]{1,100}$", message = "Invalid branch name format")
+    @NotBlank(message = "Name is mandatory")
+    @Pattern(regexp = "^[A-Za-z0-9 .&'-]{1,30}$", message = "Invalid branch name format")
     private String name;
 
-    @NotBlank(message = "Branch code is mandatory")
-    @Size(max = 7, message = "Branch code max length is 7")
-    @Pattern(regexp = "^[A-Z]{3}\\d{4}(-\\d+)?$", message = "Branch code must be 3 uppercase letters, 4 digits, optional dash and branch number")
+    @NotBlank(message = "Code is mandatory")
+    @Pattern(regexp = "^[A-Z]{3}\\d{4}(-\\d+)?$", message = "Invalid code format")
     private String code;
 
-    @NotBlank(message = "Branch address is mandatory")
-    @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,255}$", message = "Invalid address format")
+    @NotBlank(message = "Address is mandatory")
+    @Pattern(regexp = "^[A-Za-z0-9 ,.\\-'/]{0,50}$", message = "Invalid address format")
     private String address;
 
-    @NotBlank(message = "Branch telephone number is mandatory")
-    @Pattern(regexp = "^\\+?[0-9]{10}$" , message = "Invalid telephone number")
+    @NotBlank(message = "Telephone number is mandatory")
+    @Pattern(
+            regexp = "^0(7\\d{8}|(11|21|23|24|25|26|27|31|32|33|34|35|36|37|38|41|45|51|52|54|55|57|63|65|66|67|81|91)\\d{7})$",
+            message = "Invalid telephone number"
+    )
     private String telephone;
 
-    @NotBlank(message = "Branch email is mandatory")
+    @NotBlank(message = "Email is mandatory")
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotNull(message = "Branch date of created is mandatory")
+    @NotNull(message = "Created date is mandatory")
     @PastOrPresent(message = "Creation date cannot be in the future")
     private LocalDate docreated;
 

@@ -13,34 +13,41 @@ public class BranchUniquenessValidationStrategy implements BranchValidationStrat
 
     @Override
     public void validateCreate(BranchContext context) {
-        if (branchRepository.existsByCode(context.getCode())) {
+        if (branchRepository.existsByCodeEqualsIgnoreCase(context.getCode())) {
             throw new ResourceExistsException("Branch code already exists.");
         }
-        if (branchRepository.existsByName(context.getName())) {
+        if (branchRepository.existsByNameEqualsIgnoreCase(context.getName())) {
             throw new ResourceExistsException("Branch name already exists.");
         }
-        if (branchRepository.existsByEmail(context.getEmail())) {
+        if (branchRepository.existsByEmailEqualsIgnoreCase(context.getEmail())) {
             throw new ResourceExistsException("Branch email already exists.");
         }
         if (branchRepository.existsByTelephone(context.getTelephone())) {
             throw new ResourceExistsException("Branch telephone already exists.");
+        }
+
+        if (branchRepository.existsByAddressEqualsIgnoreCase(context.getAddress())) {
+            throw new ResourceExistsException("Address already exists.");
         }
     }
 
     @Override
     public void validateUpdate(BranchContext context) {
         Integer id = context.getId();
-        if (branchRepository.existsByCodeAndIdNot(context.getCode(), id)) {
+        if (branchRepository.existsByCodeEqualsIgnoreCaseAndIdNot(context.getCode(), id)) {
             throw new ResourceExistsException("Another branch already uses this code.");
         }
-        if (branchRepository.existsByNameAndIdNot(context.getName(), id)) {
+        if (branchRepository.existsByNameEqualsIgnoreCaseAndIdNot(context.getName(), id)) {
             throw new ResourceExistsException("Another branch already uses this name.");
         }
-        if (branchRepository.existsByEmailAndIdNot(context.getEmail(), id)) {
+        if (branchRepository.existsByEmailEqualsIgnoreCaseAndIdNot(context.getEmail(), id)) {
             throw new ResourceExistsException("Another branch already uses this email.");
         }
         if (branchRepository.existsByTelephoneAndIdNot(context.getTelephone(), id)) {
             throw new ResourceExistsException("Another branch already uses this telephone.");
+        }
+        if (branchRepository.existsByAddressEqualsIgnoreCaseAndIdNot(context.getAddress(),id)) {
+            throw new ResourceExistsException("Another branch in this address.");
         }
     }
 }

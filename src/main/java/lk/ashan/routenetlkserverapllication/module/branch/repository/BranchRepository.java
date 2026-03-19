@@ -13,22 +13,20 @@ import java.util.List;
 @Repository
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
-    boolean existsByCode(String code);
-    boolean existsByCodeAndIdNot(String code, Integer id);
+    boolean existsByCodeEqualsIgnoreCase(String code);
+    boolean existsByCodeEqualsIgnoreCaseAndIdNot(String code, Integer id);
 
-    boolean existsByName(String name);
-    boolean existsByNameAndIdNot(String name, Integer id);
+    boolean existsByNameEqualsIgnoreCase(String name);
+    boolean existsByNameEqualsIgnoreCaseAndIdNot(String name, Integer id);
 
-    boolean existsByEmail(String email);
-    boolean existsByEmailAndIdNot(String email, Integer id);
+    boolean existsByEmailEqualsIgnoreCase(String email);
+    boolean existsByEmailEqualsIgnoreCaseAndIdNot(String email, Integer id);
 
     boolean existsByTelephone(String telephone);
     boolean existsByTelephoneAndIdNot(String telephone, Integer id);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Branch b SET b.deleted = false WHERE b.id IN :ids")
-    void restoreAll(@Param("ids") List<Integer> ids);
+    boolean existsByAddressEqualsIgnoreCase(String address);
+    boolean existsByAddressEqualsIgnoreCaseAndIdNot(String address, Integer id);
 
     @Modifying
     @Transactional

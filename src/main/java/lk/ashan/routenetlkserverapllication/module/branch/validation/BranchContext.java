@@ -11,5 +11,6 @@ public class BranchContext {
     private String name;
     private String email;
     private String telephone;
+    private String address;
     private Integer branchStatusId;
 }
