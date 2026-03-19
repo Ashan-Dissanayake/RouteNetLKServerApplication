@@ -8,6 +8,10 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class DocumentNumberFormatter {
 
+    public String branch(long seq) {
+        return "BRN-" + String.format("%06d", seq);
+    }
+
     public String employee(long seq) {
         return "EMP-" + String.format("%06d", seq);
     }

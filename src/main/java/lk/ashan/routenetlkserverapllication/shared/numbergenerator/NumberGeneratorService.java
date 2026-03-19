@@ -40,6 +40,12 @@ public class NumberGeneratorService {
         return formatter.conductor(next);
     }
 
+    @Transactional
+    public String nextBranchNumber() {
+        Integer next = nextGlobalSequenceValue("BRANCH", "NONE");
+        return formatter.branch(next);
+    }
+
     private Integer nextGlobalSequenceValue(String codeTypeName, String scopeName) {
         CodeType codeType = codeTypeRepository.findByName(codeTypeName)
                 .orElseThrow(() -> new RuntimeException("CodeType not found: " + codeTypeName));

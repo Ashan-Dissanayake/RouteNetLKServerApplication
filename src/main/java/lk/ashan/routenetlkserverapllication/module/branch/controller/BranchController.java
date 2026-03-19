@@ -25,7 +25,7 @@ public class BranchController {
 
     private final BranchService branchService;
 
-    @PreAuthorize("hasAuthority('branch-select')")
+    //@PreAuthorize("hasAuthority('branch-select')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -37,14 +37,14 @@ public class BranchController {
         return APIResponseBuilder.list(branches, branches.size());
     }
 
-    @PreAuthorize("hasAuthority('branch-select')")
+    //@PreAuthorize("hasAuthority('branch-select')")
     @GetMapping(value = "/list",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchSummaryDto>>> get() {
         List<BranchSummaryDto> branches =  branchService.getSummaryBranches();
         return APIResponseBuilder.list(branches, branches.size());
     }
 
-    @PreAuthorize("hasAuthority('branch-insert')")
+    //@PreAuthorize("hasAuthority('branch-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> create(
             @RequestBody @Valid BranchCreateRequestDto branchCreateRequest) {
@@ -52,7 +52,7 @@ public class BranchController {
         return APIResponseBuilder.created(savedBranch, savedBranch.getId());
     }
 
-    @PreAuthorize("hasAuthority('branch-update')")
+    //@PreAuthorize("hasAuthority('branch-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<BranchDetailResponseDto>> update(
             @RequestBody @Valid BranchUpdateRequestDto branchUpdateRequest) {
@@ -60,7 +60,7 @@ public class BranchController {
         return APIResponseBuilder.updated(updatedBranch, updatedBranch.getId());
     }
 
-    @PreAuthorize("hasAuthority('branch-delete')")
+    //@PreAuthorize("hasAuthority('branch-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = branchService.deactivateBranches(ids);
