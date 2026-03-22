@@ -55,13 +55,13 @@ class EmployeeControllerTest extends BaseTest {
     ) throws Exception {
 
         EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
-                .number("EMP0001")
+                //.number("EMP0001")
                 .fullname("John Silva")
                 .callingname("John")
                 .nic("200012345678")
                 .gender(GenderDto.builder().id(1).build())
                 .mobile("0712345678")
-                .email("john@sltb.lk")
+                //.email("john@sltb.lk")
                 .address("Colombo")
                 .emergencycontact("0771234567")
                 .doj(LocalDate.now().minusDays(10))
@@ -84,13 +84,13 @@ class EmployeeControllerTest extends BaseTest {
 
     static Stream<Arguments> missingFieldProvider() {
         return Stream.of(
-                Arguments.of("number", "Number is mandatory", (Consumer<EmployeeCreateRequestDto>) dto -> dto.setNumber(null)),
+                //Arguments.of("number", "Number is mandatory", (Consumer<EmployeeCreateRequestDto>) dto -> dto.setNumber(null)),
                 Arguments.of("fullname", "Full name is mandatory",(Consumer<EmployeeCreateRequestDto>) dto -> dto.setFullname(null)),
                 Arguments.of("callingname", "Calling name is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setCallingname(null)),
                 Arguments.of("nic", "NIC is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setNic(null)),
                 Arguments.of("gender", "Gender is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setGender(null)),
                 Arguments.of("mobile", "Mobile number is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setMobile(null)),
-                Arguments.of("email", "Email is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setEmail(null)),
+                //Arguments.of("email", "Email is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setEmail(null)),
                 Arguments.of("address", "Address is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setAddress(null)),
                 Arguments.of("emergencycontact", "Emergency contact is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setEmergencycontact(null)),
                 Arguments.of("doj", "Date of joining is mandatory", (Consumer<EmployeeCreateRequestDto>) dto  -> dto.setDoj(null)),
@@ -102,43 +102,43 @@ class EmployeeControllerTest extends BaseTest {
         );
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "",
-            "EMP@001",
-            "123",
-            "EMPLOYEE_NUMBER_TOO_LONG_12345"
-    })
-    void createEmployee_shouldFail_whenNumberIsInvalid(
-            String invalidNumber
-    ) throws Exception {
-
-        EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
-                .number("EMP0001")
-                .fullname("John Silva")
-                .callingname("John")
-                .nic("200012345678")
-                .gender(GenderDto.builder().id(1).build())
-                .mobile("0712345678")
-                .email("john@sltb.lk")
-                .address("Colombo")
-                .emergencycontact("0771234567")
-                .doj(LocalDate.now().minusDays(10))
-                .branch(BranchSummaryDto.builder().id(1).build())
-                .department(DepartmentDto.builder().id(1).build())
-                .designation(DesignationDto.builder().id(1).build())
-                .employeetype(EmployeeTypeDto.builder().id(1).build())
-                .employeestatus(EmployeeStatusDto.builder().id(1).build())
-                .build();
-        dto.setNumber(invalidNumber);
-
-        mockMvc.perform(post(API_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.details",
-                        hasItem(containsString("Invalid employee number"))));
-    }
+//    @ParameterizedTest
+//    @ValueSource(strings = {
+//            "",
+//            "EMP@001",
+//            "123",
+//            "EMPLOYEE_NUMBER_TOO_LONG_12345"
+//    })
+//    void createEmployee_shouldFail_whenNumberIsInvalid(
+//            String invalidNumber
+//    ) throws Exception {
+//
+//        EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
+//                //.number("EMP0001")
+//                .fullname("John Silva")
+//                .callingname("John")
+//                .nic("200012345678")
+//                .gender(GenderDto.builder().id(1).build())
+//                .mobile("0712345678")
+//                //.email("john@sltb.lk")
+//                .address("Colombo")
+//                .emergencycontact("0771234567")
+//                .doj(LocalDate.now().minusDays(10))
+//                .branch(BranchSummaryDto.builder().id(1).build())
+//                .department(DepartmentDto.builder().id(1).build())
+//                .designation(DesignationDto.builder().id(1).build())
+//                .employeetype(EmployeeTypeDto.builder().id(1).build())
+//                .employeestatus(EmployeeStatusDto.builder().id(1).build())
+//                .build();
+//        dto.setNumber(invalidNumber);
+//
+//        mockMvc.perform(post(API_URL)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(dto)))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$.details",
+//                        hasItem(containsString("Invalid employee number"))));
+//    }
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -153,13 +153,13 @@ class EmployeeControllerTest extends BaseTest {
     ) throws Exception {
 
         EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
-                .number("EMP0001")
+               // .number("EMP0001")
                 .fullname("John Silva")
                 .callingname("John")
                 .nic("200012345678")
                 .gender(GenderDto.builder().id(1).build())
                 .mobile("0712345678")
-                .email("john@sltb.lk")
+               // .email("john@sltb.lk")
                 .address("Colombo")
                 .emergencycontact("0771234567")
                 .doj(LocalDate.now().minusDays(10))
@@ -186,7 +186,7 @@ class EmployeeControllerTest extends BaseTest {
     @MethodSource("dojTestCases")
     @Sql(scripts = "/modules/branch/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/modules/branch/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/modules/employee/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)   @Sql(scripts = "/modules/employee/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/modules/employee/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/modules/employee/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void createEmployee_dojValidation_shouldWork(
             LocalDate inputDate,
@@ -195,15 +195,15 @@ class EmployeeControllerTest extends BaseTest {
     ) throws Exception {
 
         EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
-                .number("EMP0007")
+                //.number("EMP0007")
                 .fullname("John Silva")
                 .callingname("John")
-                .nic("200012345678")
+                .nic("200312345678")
                 .gender(GenderDto.builder().id(1).name("Male").build())
-                .mobile("0712345678")
-                .email("john@sltb.lk")
+                .mobile("0712342678")
+                //.email("john@sltb.lk")
                 .address("Colombo")
-                .emergencycontact("0771234567")
+                .emergencycontact("0761234567")
                 .doj(inputDate)
                 .branch(BranchSummaryDto.builder().id(1).build())
                 .department(DepartmentDto.builder().id(1).name("Operations").build())
@@ -263,13 +263,13 @@ class EmployeeControllerTest extends BaseTest {
     ) throws Exception {
 
         EmployeeCreateRequestDto dto = EmployeeCreateRequestDto.builder()
-                .number("EMP0007")
+                //.number("EMP0007")
                 .fullname("John Silva")
                 .callingname("John")
                 .nic("200012945678")
                 .gender(GenderDto.builder().id(1).name("Male").build())
                 .mobile("0714345678")
-                .email("john@sltb.lk")
+                //.email("john@sltb.lk")
                 .address("Colombo")
                 .emergencycontact("0771234561")
                 .doj(LocalDate.now().minusDays(100))
@@ -293,10 +293,10 @@ class EmployeeControllerTest extends BaseTest {
     private static Stream<Arguments> duplicateFieldProvider() {
         return Stream.of(
 
-                Arguments.of(
-                        "Employee number already exists.",
-                        (Consumer<EmployeeCreateRequestDto>) dto -> dto.setNumber("EMP0001")
-                ),
+//                Arguments.of(
+//                        "Employee number already exists.",
+//                        (Consumer<EmployeeCreateRequestDto>) dto -> dto.setNumber("EMP0001")
+//                ),
 
                 Arguments.of(
                         "NIC already exists.",
@@ -308,10 +308,10 @@ class EmployeeControllerTest extends BaseTest {
                         (Consumer<EmployeeCreateRequestDto>) dto -> dto.setMobile("0712345678")
                 ),
 
-                Arguments.of(
-                        "Email already exists.",
-                        (Consumer<EmployeeCreateRequestDto>) dto -> dto.setEmail("sunil.emp0001@sltb.lk")
-                ),
+//                Arguments.of(
+//                        "Email already exists.",
+//                        (Consumer<EmployeeCreateRequestDto>) dto -> dto.setEmail("sunil.emp0001@sltb.lk")
+//                ),
 
                 Arguments.of(
                         "Emergency contact already exists.",
@@ -331,52 +331,52 @@ class EmployeeControllerTest extends BaseTest {
     }
 
 
-    @Test
-    @Sql(
-            scripts = "/modules/branch/schema.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "/modules/branch/data.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "/modules/employee/schema.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = "/modules/employee/data.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    void updateEmployee_shouldFail_whenNumberIsChanged() throws Exception {
-        EmployeeUpdateRequestDto dto =EmployeeUpdateRequestDto.builder()
-                .id(1)
-                .number("EMP0001")
-                .fullname("Sunil Perera")
-                .callingname("Sunil")
-                .nic("200012345678")
-                .gender(GenderDto.builder().id(1).build())
-                .mobile("0712345678")
-                .email("sunil.emp0001@sltb.lk")
-                .address("No 12,kandy Rd,Colombo")
-                .emergencycontact("0771234567")
-                .doj(LocalDate.parse("2015-03-12"))
-                .branch(BranchSummaryDto.builder().id(1).name("Colombo head office").build())
-                .department(DepartmentDto.builder().id(1).name("Operations").build())
-                .designation(DesignationDto.builder().id(1).name("Driver").build())
-                .employeetype(EmployeeTypeDto.builder().id(1).name("Permanent").build())
-                .employeestatus(EmployeeStatusDto.builder().id(1).name("Active").build())
-                .build();
-
-        dto.setNumber("EMP9999");
-
-        mockMvc.perform(put(API_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.details",
-                        hasItem("Employee number cannot be changed")));
-    }
+//    @Test
+//    @Sql(
+//            scripts = "/modules/branch/schema.sql",
+//            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+//    )
+//    @Sql(
+//            scripts = "/modules/branch/data.sql",
+//            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+//    )
+//    @Sql(
+//            scripts = "/modules/employee/schema.sql",
+//            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+//    )
+//    @Sql(
+//            scripts = "/modules/employee/data.sql",
+//            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+//    )
+//    void updateEmployee_shouldFail_whenNumberIsChanged() throws Exception {
+//        EmployeeUpdateRequestDto dto =EmployeeUpdateRequestDto.builder()
+//                .id(1)
+//                //.number("EMP0001")
+//                .fullname("Sunil Perera")
+//                .callingname("Sunil")
+//                .nic("200012345678")
+//                .gender(GenderDto.builder().id(1).build())
+//                .mobile("0712345678")
+//                //.email("sunil.emp0001@sltb.lk")
+//                .address("No 12,kandy Rd,Colombo")
+//                .emergencycontact("0771234567")
+//                .doj(LocalDate.parse("2015-03-12"))
+//                .branch(BranchSummaryDto.builder().id(1).name("Colombo head office").build())
+//                .department(DepartmentDto.builder().id(1).name("Operations").build())
+//                .designation(DesignationDto.builder().id(1).name("Driver").build())
+//                .employeetype(EmployeeTypeDto.builder().id(1).name("Permanent").build())
+//                .employeestatus(EmployeeStatusDto.builder().id(1).name("Active").build())
+//                .build();
+//
+//        //dto.setNumber("EMP9999");
+//
+//        mockMvc.perform(put(API_URL)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(dto)))
+//                .andExpect(status().isConflict())
+//                .andExpect(jsonPath("$.details",
+//                        hasItem("Employee number cannot be changed")));
+//    }
 
 
 
@@ -403,13 +403,13 @@ class EmployeeControllerTest extends BaseTest {
 
                 EmployeeUpdateRequestDto dto =EmployeeUpdateRequestDto.builder()
                 .id(1)
-                .number("EMP0001")
+                //.number("EMP0001")
                 .fullname("Sunil Perera")
                 .callingname("Sunil")
                 .nic("200012345678")
                 .gender(GenderDto.builder().id(1).build())
                 .mobile("0712345678")
-                .email("sunil.emp0001@sltb.lk")
+                //.email("sunil.emp0001@sltb.lk")
                 .address("No 12,kandy Rd,Colombo")
                 .emergencycontact("0771234567")
                 .gender(GenderDto.builder().id(1).name("Male").build())

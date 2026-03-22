@@ -12,10 +12,10 @@ public class EmployeeContextBuilder {
     public EmployeeValidationContext buildForCreate(EmployeeCreateRequestDto dto) {
 
         return EmployeeValidationContext.builder()
-                .number(dto.getNumber())
+                //.number(dto.getNumber())
                 .nic(dto.getNic())
                 .mobile(dto.getMobile())
-                .email(dto.getEmail())
+                //.email(dto.getEmail())
                 .emergencyContact(dto.getEmergencycontact())
 
                 .departmentName(dto.getDepartment().getName())
@@ -31,10 +31,10 @@ public class EmployeeContextBuilder {
 
         return EmployeeValidationContext.builder()
                 .id(dto.getId())
-                .number(dto.getNumber())
+                //.number(dto.getNumber())
                 .nic(dto.getNic())
                 .mobile(dto.getMobile())
-                .email(dto.getEmail())
+                //.email(dto.getEmail())
                 .emergencyContact(dto.getEmergencycontact())
 
                 .departmentName(dto.getDepartment() != null ? dto.getDepartment().getName() : null)

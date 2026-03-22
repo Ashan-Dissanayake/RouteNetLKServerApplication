@@ -16,9 +16,9 @@ import java.time.LocalDate;
 @ToString
 public class EmployeeRequestDto {
 
-    @NotBlank(message = "Number is mandatory")
-    @Pattern(regexp = "^EMP\\d{4}$", message = "Invalid employee number")
-    private  String number;
+//    @NotBlank(message = "Number is mandatory")
+//    @Pattern(regexp = "^EMP\\d{4}$", message = "Invalid employee number")
+//    private  String number;
 
     @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid full name")
     @NotBlank(message = "Full name is mandatory")
@@ -39,9 +39,9 @@ public class EmployeeRequestDto {
     @Pattern(regexp = "^(070|071|072|074|075|076|077|078)\\d{7}$",message = "Invalid mobile number")
     private  String mobile;
 
-    @NotBlank(message = "Email is mandatory")
-    @Email(message = "Invalid email format")
-    private  String email;
+//    @NotBlank(message = "Email is mandatory")
+//    @Email(message = "Invalid email format")
+//    private  String email;
 
     @NotBlank(message = "Address is mandatory")
     @Pattern(regexp = "^([\\w/\\-,\\s]{2,})$", message = "Invalid address")

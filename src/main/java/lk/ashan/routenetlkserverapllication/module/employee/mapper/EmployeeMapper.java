@@ -29,6 +29,8 @@ public interface EmployeeMapper {
     //Employee toEntity(EmployeeUpdateRequestDto request);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "number", ignore = true)
+    @Mapping(target = "email", ignore = true)
     Employee updateEntityFromDto(EmployeeUpdateRequestDto dto, @MappingTarget Employee entity);
 
 }

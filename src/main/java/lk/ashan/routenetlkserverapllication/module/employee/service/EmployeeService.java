@@ -18,6 +18,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeC
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationContext;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
+import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class EmployeeService {
     private final DriverRepository driverRepository;
     private final EmployeeStatusService employeeStatusService;
     private final EmployeeMapper employeeMapper;
+    private final NumberGeneratorService numberGeneratorService;
 
     private final EmployeeContextBuilder employeeContextBuilder;
     private final List<EmployeeValidationStrategy> validationStrategies;
@@ -97,6 +99,8 @@ public class EmployeeService {
         employeeStateFactory.getState(initialStatus.getName())
                 .validateInitial();
         employee.setEmployeestatus(initialStatus);
+        employee.setNumber(numberGeneratorService.nextEmployeeNumber());
+        employee.setEmail(employee.getCallingname()+numberGeneratorService.nextEmployeeNumber()+"@sltb.lk");
 
         Employee saved = employeeRepository.save(employee);
         return employeeMapper.toDto(saved);
@@ -107,10 +111,6 @@ public class EmployeeService {
     public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
         Employee existing = employeeRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-
-        if (!existing.getNumber().equalsIgnoreCase(request.getNumber())) {
-            throw new BusinessRuleViolationException("Employee number cannot be changed");
-        }
 
         EmployeeValidationContext context = employeeContextBuilder.buildForUpdate(request);
 
