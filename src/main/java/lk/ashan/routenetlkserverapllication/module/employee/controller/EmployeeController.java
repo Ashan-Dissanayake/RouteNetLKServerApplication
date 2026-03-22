@@ -38,14 +38,14 @@ public class EmployeeController {
     }
 
     @PreAuthorize("hasAuthority('employee-select')")
-    @GetMapping(value = "/list",produces = "application/json")
+    @GetMapping(value = "/summaries",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get() {
         List<EmployeeSummaryDto> employees =  employeeService.getSummaryEmployees();
         return APIResponseBuilder.list(employees, employees.size());
     }
 
     @PreAuthorize("hasAuthority('employee-select')")
-    @GetMapping(value = "/list/{designation}")
+    @GetMapping(value = "/summaries/{designation}")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get(
             @PathVariable String designation) {
         List<EmployeeSummaryDto> employees = employeeService.getEmployeesByDesignation(designation);
@@ -71,7 +71,7 @@ public class EmployeeController {
     }
 
     @PreAuthorize("hasAuthority('employee-delete')")
-    @PostMapping("/deactivate")
+    @DeleteMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = employeeService.deactivateEmployee(ids);
         return APIResponseBuilder.ok(

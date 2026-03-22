@@ -65,5 +65,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByIdInWithCrewData(@Param("ids") List<Integer> ids);
 
 
-
 }

@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -327,4 +329,125 @@ class BranchControllerTest {
         );
     }
 
+    @Test
+    void updateBranch_shouldFail_whenCodeIsChanged() throws Exception {
+        BranchUpdateRequestDto dto = BranchUpdateRequestDto.builder()
+                .id(2)
+                .name("Angoda")
+                .code("AGD0001")
+                .address("WWF7 2H4, Colombo")
+                .telephone("0117706321")
+                .email("ang@sltb.lk")
+                .docreated(LocalDate.parse("2025-10-03"))
+                .branchtype(BranchTypeDto.builder().id(3).build())
+                .branchstatus(BranchStatusDto.builder().id(1).name("Active").build())
+                .regionaloffice(RegionalOfficeDto.builder().id(1).build())
+                .build();
+
+        mockMvc.perform(put(API_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.details", hasItem("Code cannot be changed")));
+    }
+
+    @Test
+    @Sql(scripts = "/modules/branch/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/modules/branch/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void updateBranch_shouldSucceed_whenSameValuesUsed() throws Exception {
+        BranchUpdateRequestDto dto = BranchUpdateRequestDto.builder()
+                .id(2)
+                .name("Angoda")
+                .code("ANG0001")
+                .address("WWF7 2H4, Colombo")
+                .telephone("0117706321")
+                .email("ang@sltb.lk")
+                .docreated(LocalDate.parse("2025-10-03"))
+                .branchtype(BranchTypeDto.builder().id(3).build())
+                .branchstatus(BranchStatusDto.builder().id(1).name("Active").build())
+                .regionaloffice(RegionalOfficeDto.builder().id(9).build())
+                .build();
+        mockMvc.perform(put(API_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @MethodSource("duplicateFieldProviderForUpdate")
+    @Sql(scripts = "/modules/branch/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/modules/branch/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void updateBranch_shouldFail_whenDuplicateField(
+            String expectedError,
+            Consumer<BranchUpdateRequestDto> mutator
+    ) throws Exception {
+
+        BranchUpdateRequestDto dto = BranchUpdateRequestDto.builder()
+                .id(1)
+                .name("Colombo head office")
+                .code("CLM0001")
+                .address("Kirula Rd, Colombo 00500")
+                .telephone("0117706320")
+                .email("clm@sltb.lk")
+                .docreated(LocalDate.parse("2025-10-03"))
+                .branchtype(BranchTypeDto.builder().id(1).build())
+                .branchstatus(BranchStatusDto.builder().id(1).build())
+                .regionaloffice(RegionalOfficeDto.builder().id(1).build())
+                .build();
+
+        mutator.accept(dto);
+
+        mockMvc.perform(put(API_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.details").value(expectedError));
+    }
+
+    private static Stream<Arguments> duplicateFieldProviderForUpdate() {
+        return Stream.of(
+                Arguments.of(
+                        "Another branch already uses this name.",
+                        (Consumer<BranchUpdateRequestDto>) dto -> dto.setName("Angoda")
+                ),
+                Arguments.of(
+                        "Another branch already uses this email.",
+                        (Consumer<BranchUpdateRequestDto>) dto -> dto.setEmail("ang@sltb.lk")
+                ),
+                Arguments.of(
+                        "Another branch already uses this telephone.",
+                        (Consumer<BranchUpdateRequestDto>) dto -> dto.setTelephone("0117706321")
+                ),
+                Arguments.of(
+                        "Another branch in this address.",
+                        (Consumer<BranchUpdateRequestDto>) dto -> dto.setAddress("WWF7 2H4, Colombo")
+                )
+        );
+    }
+
+    @Test
+    @Sql(scripts = "/modules/branch/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/modules/branch/data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void updateBranch_shouldSucceed_whenActiveToSuspended() throws Exception {
+
+        BranchUpdateRequestDto dto = BranchUpdateRequestDto.builder()
+                .id(2)
+                .name("Angoda")
+                .code("ANG0001")
+                .address("WWF7 2H4, Colombo")
+                .telephone("0117706321")
+                .email("ang@sltb.lk")
+                .docreated(LocalDate.parse("2025-10-03"))
+                .branchtype(BranchTypeDto.builder().id(3).build())
+                .branchstatus(BranchStatusDto.builder().id(1).name("Active").build())
+                .regionaloffice(RegionalOfficeDto.builder().id(9).build())
+                .build();
+
+        dto.setBranchstatus(BranchStatusDto.builder().id(2).name("Suspended").build());
+
+        mockMvc.perform(put(API_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
 }

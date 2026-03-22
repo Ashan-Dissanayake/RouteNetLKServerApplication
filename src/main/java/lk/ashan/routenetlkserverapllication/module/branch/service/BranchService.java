@@ -6,6 +6,8 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetail
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchType;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.RegionalOffice;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFactory;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
@@ -33,6 +35,8 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BranchStatusService branchStatusService;
+    private final BranchTypeService branchTypeService;
+    private final RegionalOfficeService regionalOfficeService;
 
     private final BranchMapper branchMapper;
 
@@ -94,22 +98,34 @@ public class BranchService {
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
-        BranchContext context = branchContextBuilder.buildForUpdate(request);
-        validationStrategies.forEach(s -> s.validateUpdate(context));
-
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
 
-        if (!existing.getCode().equals(request.getCode())) {
+        if (!existing.getCode().equalsIgnoreCase(request.getCode())) {
             throw new BusinessRuleViolationException("Code cannot be changed");
         }
 
-       Branch mappedBranch = branchMapper.updateEntityFromDto(request, existing);
+        BranchContext context = branchContextBuilder.buildForUpdate(request);
+        validationStrategies.forEach(s -> s.validateUpdate(context));
 
-        BranchStatus targetStatus = branchStatusService.getByName(request.getBranchstatus().getName());
-        branchStateTransitionHandler.transitionTo(existing, targetStatus);
+        branchMapper.updateEntityFromDto(request, existing);
 
-        return branchMapper.toDto(mappedBranch);
+        if (request.getBranchstatus().getId() != null) {
+            BranchStatus targetStatus = branchStatusService.getById(request.getBranchstatus().getId());
+            branchStateTransitionHandler.transitionTo(existing, targetStatus);
+        }
+
+        if (request.getBranchtype().getId() != null) {
+            BranchType type = branchTypeService.getById(request.getBranchtype().getId());
+            existing.setBranchtype(type);
+        }
+
+        if (request.getRegionaloffice().getId() != null) {
+            RegionalOffice ro = regionalOfficeService.getById(request.getRegionaloffice().getId());
+            existing.setRegionaloffice(ro);
+        }
+
+        return branchMapper.toDto(existing);
     }
 
     @Transactional

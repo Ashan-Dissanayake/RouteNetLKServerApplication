@@ -14,7 +14,6 @@ import java.util.List;
 public interface BranchRepository extends JpaRepository<Branch, Integer> {
 
     boolean existsByCodeEqualsIgnoreCase(String code);
-    boolean existsByCodeEqualsIgnoreCaseAndIdNot(String code, Integer id);
 
     boolean existsByNameEqualsIgnoreCase(String name);
     boolean existsByNameEqualsIgnoreCaseAndIdNot(String name, Integer id);

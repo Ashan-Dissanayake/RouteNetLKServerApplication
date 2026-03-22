@@ -26,6 +26,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "branch")
 public class Branch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

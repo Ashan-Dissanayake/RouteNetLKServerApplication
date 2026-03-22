@@ -14,6 +14,9 @@ public class BranchSuspendedState implements BranchState {
 
     @Override
     public void transitionTo(Branch branch, BranchStatus targetStatus) {
+        if (branch.getBranchstatus().getName().equalsIgnoreCase(targetStatus.getName())) {
+            return;
+        }
         if (!ALLOWED.contains(targetStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from SUSPENDED to " + targetStatus.getName()

@@ -21,7 +21,7 @@ public class EmployeeStatusController {
 
     private final EmployeeStatusService employeestatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeStatusDto>>> get() {
         List<EmployeeStatusDto> employeeStatuses = employeestatusService.getEmployeeStatuses();
         return APIResponseBuilder.list(employeeStatuses, employeeStatuses.size());

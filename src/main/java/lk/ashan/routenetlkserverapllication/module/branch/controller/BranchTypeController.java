@@ -20,7 +20,7 @@ public class BranchTypeController {
 
     private final BranchTypeService branchTypeService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchTypeDto>>> get() {
         List<BranchTypeDto> branchTypes = branchTypeService.getBranchTypes();
         return APIResponseBuilder.list(branchTypes, branchTypes.size());

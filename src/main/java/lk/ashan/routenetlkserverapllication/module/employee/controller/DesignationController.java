@@ -21,7 +21,7 @@ public class DesignationController {
 
     private final DesignationService designationService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DesignationDto>>> get() {
         List<DesignationDto> designations = designationService.getDesignations();
         return APIResponseBuilder.list(designations, designations.size());

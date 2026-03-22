@@ -8,12 +8,15 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class DocumentNumberFormatter {
 
-    public String branch(long seq) {
-        return "BRN-" + String.format("%06d", seq);
+
+    public String branch(long seq,String branchName) {
+        String prefix = branchName.replaceAll("[^a-zA-Z]", "").toUpperCase();
+        prefix = prefix.substring(0, 3);
+        return prefix + String.format("%04d", seq);
     }
 
     public String employee(long seq) {
-        return "EMP-" + String.format("%06d", seq);
+        return "EMP-" + String.format("%04d", seq);
     }
 
     public String driver(long seq) {

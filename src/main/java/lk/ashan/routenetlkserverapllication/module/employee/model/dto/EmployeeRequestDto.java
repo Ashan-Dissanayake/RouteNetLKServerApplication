@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @ToString
 public class EmployeeRequestDto {
 
-    @NotBlank(message = "Number mandatory")
-    @Pattern(regexp = "^EMP[A-Z]{3}\\d{4}$", message = "Invalid employee number")
+    @NotBlank(message = "Number is mandatory")
+    @Pattern(regexp = "^EMP\\d{4}$", message = "Invalid employee number")
     private  String number;
 
     @Pattern(regexp = "^([A-Z][a-z]*[.]?[\\s]?)*([A-Z][a-z]*)$", message = "Invalid full name")
@@ -35,7 +35,7 @@ public class EmployeeRequestDto {
     @NotNull(message = "Gender is mandatory")
     private  GenderDto gender;
 
-    @NotBlank(message = "Mobile is mandatory")
+    @NotBlank(message = "Mobile number is mandatory")
     @Pattern(regexp = "^(070|071|072|074|075|076|077|078)\\d{7}$",message = "Invalid mobile number")
     private  String mobile;
 
@@ -47,15 +47,15 @@ public class EmployeeRequestDto {
     @Pattern(regexp = "^([\\w/\\-,\\s]{2,})$", message = "Invalid address")
     private  String address;
 
-    @NotBlank(message = "Emergency Contact is mandatory")
+    @NotBlank(message = "Emergency contact is mandatory")
     @Pattern(regexp = "^0(?:(7[0|1|2|4-8])|(1[1]|2[1-7]|3[1-8]|4[1|5|7]|5[1|2|4|5|7]|6[3|5|6|7]|8[1]|9[1]))\\d{7}$",
             message = "Invalid emergency contact")
     private  String emergencycontact;
 
     private  byte[] image;
 
-    @NotNull(message = "Date of joined is mandatory")
-    @PastOrPresent(message = "Joined date cannot be in the future")
+    @NotNull(message = "Date of joining is mandatory")
+    @PastOrPresent(message = "Date of joining cannot be in the future")
     private LocalDate doj;
 
     @NotNull(message = "Branch is mandatory")
@@ -67,9 +67,9 @@ public class EmployeeRequestDto {
     @NotNull(message = "Designation is mandatory")
     private  DesignationDto designation;
 
-    @NotNull(message = "Employee Type is mandatory")
+    @NotNull(message = "Employee type is mandatory")
     private EmployeeTypeDto employeetype;
 
-    @NotNull(message = "Employee Status is mandatory")
+    @NotNull(message = "Employee status is mandatory")
     private EmployeeStatusDto employeestatus;
 }

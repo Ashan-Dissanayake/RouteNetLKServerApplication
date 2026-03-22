@@ -87,7 +87,6 @@ public class EmployeeService {
     @Transactional
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
-        ensureEmailFormat(request);
 
         EmployeeValidationContext context = employeeContextBuilder.buildForCreate(request);
         validationStrategies.forEach(strategy -> strategy.validateCreate(context));
@@ -106,19 +105,25 @@ public class EmployeeService {
     @Transactional
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
-        EmployeeValidationContext context = employeeContextBuilder.buildForUpdate(request);
-        validationStrategies.forEach(strategy -> strategy.validateUpdate(context));
-
         Employee existing = employeeRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-       Employee mappedEmployee = employeeMapper.updateEntityFromDto(request, existing);
+        if (!existing.getNumber().equalsIgnoreCase(request.getNumber())) {
+            throw new BusinessRuleViolationException("Employee number cannot be changed");
+        }
+
+        EmployeeValidationContext context = employeeContextBuilder.buildForUpdate(request);
+
+        validationStrategies.forEach(strategy -> strategy.validateUpdate(context));
+
+        Employee mappedEmployee = employeeMapper.updateEntityFromDto(request, existing);
 
         EmployeeStatus targetStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
-        employeeStateTransitionHandler.transitionTo(existing, targetStatus);
+        employeeStateTransitionHandler.transitionTo(mappedEmployee, targetStatus);
 
         return employeeMapper.toDto(mappedEmployee);
     }
+
 
     @Transactional
     public List<Integer> deactivateEmployee(List<Integer> employeeIds) {
@@ -148,21 +153,6 @@ public class EmployeeService {
         employeeRepository.restoreAll(branchIds);
 
         return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
-    }
-
-    private void ensureEmailFormat(@NotNull EmployeeCreateRequestDto request) {
-        String expectedEmail = generateEmail(request.getCallingname(), request.getNumber());
-
-        if (request.getEmail() == null || !request.getEmail().equalsIgnoreCase(expectedEmail)) {
-            request.setEmail(expectedEmail);
-        }
-    }
-
-    private String generateEmail(String callingName, String number) {
-        if (callingName == null || number == null) {
-            throw new IllegalArgumentException("Calling name and employee number required");
-        }
-        return callingName.toLowerCase() + "." + number + "@sltb.lk";
     }
 
 }

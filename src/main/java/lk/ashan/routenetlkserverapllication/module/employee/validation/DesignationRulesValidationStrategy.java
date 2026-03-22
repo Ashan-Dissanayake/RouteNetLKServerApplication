@@ -10,7 +10,7 @@ import java.util.Map;
 public class DesignationRulesValidationStrategy implements EmployeeValidationStrategy {
 
     private static final Map<String, List<String>> VALID_COMBINATIONS = Map.of(
-            "operations (traffic)", List.of("driver", "conductor", "depot manager"),
+            "operations", List.of("driver", "conductor", "depot manager"),
             "engineering and technical", List.of("mechanic", "supervisory"),
             "administrative", List.of("assistant manager", "supervisory", "clerical"),
             "finance and revenue", List.of("clerical"),

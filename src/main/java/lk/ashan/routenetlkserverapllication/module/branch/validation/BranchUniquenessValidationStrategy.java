@@ -34,9 +34,6 @@ public class BranchUniquenessValidationStrategy implements BranchValidationStrat
     @Override
     public void validateUpdate(BranchContext context) {
         Integer id = context.getId();
-        if (branchRepository.existsByCodeEqualsIgnoreCaseAndIdNot(context.getCode(), id)) {
-            throw new ResourceExistsException("Another branch already uses this code.");
-        }
         if (branchRepository.existsByNameEqualsIgnoreCaseAndIdNot(context.getName(), id)) {
             throw new ResourceExistsException("Another branch already uses this name.");
         }

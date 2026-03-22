@@ -10,7 +10,6 @@ import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -37,8 +36,7 @@ public class BranchController {
         return APIResponseBuilder.list(branches, branches.size());
     }
 
-    //@PreAuthorize("hasAuthority('branch-select')")
-    @GetMapping(value = "/list",produces = "application/json")
+    @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchSummaryDto>>> get() {
         List<BranchSummaryDto> branches =  branchService.getSummaryBranches();
         return APIResponseBuilder.list(branches, branches.size());
@@ -61,7 +59,7 @@ public class BranchController {
     }
 
     //@PreAuthorize("hasAuthority('branch-delete')")
-    @PostMapping("/deactivate")
+    @DeleteMapping
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = branchService.deactivateBranches(ids);
         return APIResponseBuilder.ok(

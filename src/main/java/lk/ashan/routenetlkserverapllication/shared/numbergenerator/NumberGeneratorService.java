@@ -22,9 +22,16 @@ public class NumberGeneratorService {
     private final ScopeRepository scopeRepository;
     private final DocumentNumberFormatter formatter;
 
+
+    @Transactional
+    public String nextBranchNumber(String branchName) {
+        Integer next = nextGlobalSequenceValue("BRANCH", "GLOBAL");
+        return formatter.branch(next,branchName);
+    }
+
     @Transactional
     public String nextEmployeeNumber() {
-        Integer next = nextGlobalSequenceValue("EMPLOYEE", "NONE");
+        Integer next = nextGlobalSequenceValue("EMPLOYEE", "GLOBAL");
         return formatter.employee(next);  // use formatter
     }
 
@@ -38,12 +45,6 @@ public class NumberGeneratorService {
     public String nextConductorNumber() {
         Integer next = nextGlobalSequenceValue("CONDUCTOR", "NONE");
         return formatter.conductor(next);
-    }
-
-    @Transactional
-    public String nextBranchNumber() {
-        Integer next = nextGlobalSequenceValue("BRANCH", "NONE");
-        return formatter.branch(next);
     }
 
     private Integer nextGlobalSequenceValue(String codeTypeName, String scopeName) {

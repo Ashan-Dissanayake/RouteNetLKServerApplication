@@ -15,7 +15,15 @@ import java.util.Optional;
 @Repository
 public interface DocSequenceRepository extends JpaRepository<DocSequence, Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT s FROM DocSequence s WHERE s.codetype.id = :codeTypeId AND s.scope.id = :scopeId AND s.periodkey = :periodKey")
+    @Query("""
+    SELECT s FROM DocSequence s
+    WHERE s.codetype.id = :codeTypeId
+      AND s.scope.id = :scopeId
+      AND (
+            (:periodKey IS NULL AND s.periodkey IS NULL)
+            OR s.periodkey = :periodKey
+          )
+""")
     Optional<DocSequence> findForUpdate(
             @Param("codeTypeId") Integer codeTypeId,
             @Param("scopeId") Integer scopeId,

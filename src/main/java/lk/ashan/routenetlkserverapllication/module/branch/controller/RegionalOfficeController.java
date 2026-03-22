@@ -20,7 +20,7 @@ public class RegionalOfficeController {
 
     private final RegionalOfficeService regionalOfficeService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RegionalOfficeDto>>> get() {
         List<RegionalOfficeDto> regionalOffices = regionalOfficeService.getRegionalOffices();
         return APIResponseBuilder.list(regionalOffices, regionalOffices.size());

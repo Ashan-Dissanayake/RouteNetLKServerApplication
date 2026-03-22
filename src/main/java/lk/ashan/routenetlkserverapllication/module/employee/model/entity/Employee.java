@@ -76,10 +76,11 @@ public class Employee extends BaseEntity {
     @JoinColumn(name = "employeestatus_id", referencedColumnName = "id", nullable = false)
     private EmployeeStatus employeestatus;
 
-    @OneToOne(mappedBy = "employee",fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "employee")
+//    @OneToOne(mappedBy = "employee",fetch = FetchType.EAGER)
     private Driver driver;
 
-    @OneToOne(mappedBy = "employee",fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "employee")
     private Conductor conductor;
 
     @OneToMany(mappedBy = "employee")

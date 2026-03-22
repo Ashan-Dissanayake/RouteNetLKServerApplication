@@ -19,7 +19,11 @@ public interface BranchMapper {
   List<BranchSummaryDto> toSummaryDtolList(List<Branch> branches);
 
   Branch toEntity(BranchCreateRequestDto request);
+  //Branch toEntity(BranchUpdateRequestDto request);
 
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "branchstatus", ignore = true)
+  @Mapping(target = "branchtype", ignore = true)
+  @Mapping(target = "regionaloffice", ignore = true)
   Branch updateEntityFromDto(BranchUpdateRequestDto dto, @MappingTarget Branch entity);
 }

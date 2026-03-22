@@ -22,21 +22,21 @@ public class RegexController {
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> branchStatic() {
        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new BranchRequestDto());
         assert regexes != null;
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
     @GetMapping(path ="/employees", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> employeeStatic() {
        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new EmployeeRequestDto());
         assert regexes != null;
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
     @GetMapping(path ="/vehicles", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> vehicleStatic() {
        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new VehicleRequestDto());
         assert regexes != null;
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
 
@@ -44,7 +44,7 @@ public class RegexController {
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> driverStatic() {
         HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new DriverRequestDto());
         assert regexes != null;
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
     @GetMapping(path = "/driver/{licensecategory}", produces = "application/json")
@@ -62,14 +62,14 @@ public class RegexController {
             }});
         }
 
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
     @GetMapping(path ="/conductor", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> conductorStatic() {
         HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new ConductorRequestDto());
         assert regexes != null;
-        return APIResponseBuilder.getResponse(regexes, regexes.size());
+        return APIResponseBuilder.list(regexes, regexes.size());
     }
 
 

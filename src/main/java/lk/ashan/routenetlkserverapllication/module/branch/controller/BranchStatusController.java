@@ -21,7 +21,7 @@ public class BranchStatusController {
 
     private final BranchStatusService branchStatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchStatusDto>>> get() {
         List<BranchStatusDto> branchStatuses = branchStatusService.getBranchStatuses();
         return APIResponseBuilder.list(branchStatuses, branchStatuses.size());

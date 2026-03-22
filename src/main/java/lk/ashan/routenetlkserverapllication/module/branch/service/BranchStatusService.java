@@ -31,5 +31,13 @@ public class BranchStatusService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+        public BranchStatus getById(Integer id) {
+            return branchStatusRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Branch status not found"
+                    ));
+        }
+
 
 }

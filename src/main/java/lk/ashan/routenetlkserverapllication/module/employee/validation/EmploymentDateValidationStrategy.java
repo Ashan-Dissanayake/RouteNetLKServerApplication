@@ -16,10 +16,6 @@ public class EmploymentDateValidationStrategy implements EmployeeValidationStrat
         LocalDate doj = context.getDateOfJoining();
         int currentYear = LocalDate.now().getYear();
 
-        if (doj == null) {
-            throw new BusinessRuleViolationException("Date of Joining is required.");
-        }
-
         if ((type.equals("probationers") || type.equals("contract")) && doj.getYear() < currentYear) {
             throw new BusinessRuleViolationException(
                     String.format("%s employees cannot have a Date of Joining older than the current year (%d).",

@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
 
         return APIResponseBuilder.error(
                 ErrorCode.INTERNAL_ERROR,
-                List.of("An unexpected error occurred. Please contact support."),
+                List.of("An unexpected error occurred,"+e.getMessage()),
                 request
         );
     }
