@@ -29,6 +29,9 @@ public interface DriverMapper {
     Driver toEntity(DriverUpdateRequestDto driverUpdateRequestDto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "licensenumber", ignore = true)
+    @Mapping(target = "employee", ignore = true)
+    @Mapping(target = "dolicenseissued", ignore = true)
     Driver updateEntityFromDto(DriverUpdateRequestDto dto, @MappingTarget Driver entity);
 
 }

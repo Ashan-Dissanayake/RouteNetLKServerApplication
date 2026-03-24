@@ -21,7 +21,7 @@ public class RouteFamiliarityLevelController {
 
     private final RouteFamiliarityLevelService routeFamiliarityLevelService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RouteFamiliarityLevelDto>>> get() {
         List<RouteFamiliarityLevelDto> routeFamiliarityLevels = routeFamiliarityLevelService.getRouteFamiliarityLevels();
         return APIResponseBuilder.list(routeFamiliarityLevels, routeFamiliarityLevels.size());

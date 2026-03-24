@@ -20,7 +20,7 @@ public class DocumentNumberFormatter {
     }
 
     public String driver(long seq) {
-        return "DRV-" + String.format("%06d", seq);
+        return "DRV-" + String.format("%04d", seq);
     }
 
     public String conductor(long seq) {

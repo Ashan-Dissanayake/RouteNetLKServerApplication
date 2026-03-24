@@ -10,6 +10,8 @@ public class DriverValidationContext {
 
     private Integer id;
 
+    // NEW VALUES
+
     private String number;
     private String licenseNumber;
 
@@ -20,5 +22,16 @@ public class DriverValidationContext {
 
     private LocalDate medicalIssued;
     private LocalDate medicalExpired;
+
+    private Integer employeeId;
+
+    // EXISTING VALUES
+
+    private String existingNumber;
+    private String existingLicenseNumber;
+
+    private LocalDate existingLicenseIssued;
+
+    private Integer existingEmployeeId;
 
 }

@@ -16,7 +16,7 @@ public class NumberGeneratorController {
     private final NumberGeneratorService numberGeneratorService;
 
     @GetMapping(value = "/branch/{branchName}", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<String>> get(
+    public ResponseEntity<APISuccessResponse<String>> getBranchCode(
             @PathVariable String branchName
     ) {
         String branchCode = numberGeneratorService.nextBranchNumber(branchName);
@@ -27,11 +27,20 @@ public class NumberGeneratorController {
     }
 
     @GetMapping(value = "/employee", produces = "application/json")
-    public ResponseEntity<APISuccessResponse<String>> get() {
+    public ResponseEntity<APISuccessResponse<String>> getEmployeeNumber() {
         String employeeNumber = numberGeneratorService.nextEmployeeNumber();
         return APIResponseBuilder.ok(
                 employeeNumber,
                 Map.of("employeeNumber", employeeNumber)
+        );
+    }
+
+    @GetMapping(value = "/driver", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<String>> getDriverNumber() {
+        String driverNumber = numberGeneratorService.nextDriverNumber();
+        return APIResponseBuilder.ok(
+                driverNumber,
+                Map.of("driverNumber", driverNumber)
         );
     }
 }

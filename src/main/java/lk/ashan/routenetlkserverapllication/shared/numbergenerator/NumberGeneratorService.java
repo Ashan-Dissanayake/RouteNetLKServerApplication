@@ -32,12 +32,12 @@ public class NumberGeneratorService {
     @Transactional
     public String nextEmployeeNumber() {
         Integer next = nextGlobalSequenceValue("EMPLOYEE", "GLOBAL");
-        return formatter.employee(next);  // use formatter
+        return formatter.employee(next);
     }
 
     @Transactional
     public String nextDriverNumber() {
-        Integer next = nextGlobalSequenceValue("DRIVER", "NONE");
+        Integer next = nextGlobalSequenceValue("DRIVER", "GLOBAL");
         return formatter.driver(next);
     }
 

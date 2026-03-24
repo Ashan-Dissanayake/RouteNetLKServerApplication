@@ -15,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Dri
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationContext;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
+import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 public class DriverService {
 
     private final DriverRepository driverRepository;
+    private final NumberGeneratorService numberGeneratorService;
     private final DriverMapper driverMapper;
 
     private final List<DriverValidationStrategy> validationStrategies;
@@ -76,28 +78,46 @@ public class DriverService {
         }
 
         Driver driver = driverMapper.toEntity(dto);
+        driver.setNumber(numberGeneratorService.nextDriverNumber());
         return driverMapper.toDto(driverRepository.save(driver));
     }
 
     @Transactional
     public DriverDetailResponseDto updateDriver(@NotNull DriverUpdateRequestDto dto) {
-
-        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto);
-        validationStrategies.forEach(s -> s.validateUpdate(context));
-
         Driver existingDriver =  driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        RouteFamiliarityLevel currentLevel = existingDriver.getRoutefamiliaritylevel();
+        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto,existingDriver);
+        validationStrategies.forEach(s -> s.validateUpdate(context));
 
-        // State Pattern Transition
-        if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {
-             RouteFamiliarityState state = routeFamiliarityStateFactory.getState(currentLevel.getName());
-             state.transitionTo(existingDriver.getEmployee(), driverMapper.toEntity(dto).getRoutefamiliaritylevel());
+
+        RouteFamiliarityLevel currentLevel =
+                existingDriver.getRoutefamiliaritylevel();
+
+        String currentLevelName =
+                currentLevel.getName();
+
+        String newLevelName =
+                dto.getRoutefamiliaritylevel()
+                        .getName();
+
+        if (!currentLevelName.equalsIgnoreCase(newLevelName)) {
+
+            RouteFamiliarityState state =
+                    routeFamiliarityStateFactory
+                            .getState(currentLevelName);
+
+            state.transitionTo(
+                    existingDriver.getEmployee(),
+                    driverMapper.toEntity(dto)
+                            .getRoutefamiliaritylevel()
+            );
+
         }
-
-       Driver mappedDriver =  driverMapper.updateEntityFromDto(dto,existingDriver);
-        return driverMapper.toDto(mappedDriver);
+       driverMapper.updateEntityFromDto(dto,existingDriver);
+        Driver savedDriver =
+                driverRepository.save(existingDriver);
+        return driverMapper.toDto(savedDriver);
     }
 
 }

@@ -20,9 +20,9 @@ import java.time.LocalDate;
 @ToString
 @ValidLicenseCategoryLicenseNumber
 public class DriverRequestDto {
-    @NotNull(message = "Number can not be empty")
-    @Pattern(regexp = "^DRV-\\d{4}-\\d{3}$",message = "Invalid driver number")
-    private String number;
+//    @NotNull(message = "Number can not be empty")
+//    @Pattern(regexp = "^DRV-\\d{4}$",message = "Invalid driver number")
+//    private String number;
 
     @NotNull(message = "License number can not be empty")
     private String licensenumber;
