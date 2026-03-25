@@ -9,7 +9,7 @@ public class ConductorContextBuilder {
 
     public ConductorValidationContext buildForCreate(ConductorCreateRequestDto dto) {
         return ConductorValidationContext.builder()
-                .number(dto.getNumber())
+                .employeeId(dto.getEmployee().getId())
                 .medicalIssued(dto.getDomedicalissued())
                 .medicalExpired(dto.getDomedicalexpired())
                 .build();
@@ -18,9 +18,10 @@ public class ConductorContextBuilder {
     public ConductorValidationContext buildForUpdate(ConductorUpdateRequestDto dto) {
         return ConductorValidationContext.builder()
                 .id(dto.getId())
-                .number(dto.getNumber())
+                .employeeId(dto.getEmployee().getId())
                 .medicalIssued(dto.getDomedicalissued())
                 .medicalExpired(dto.getDomedicalexpired())
                 .build();
     }
+
 }

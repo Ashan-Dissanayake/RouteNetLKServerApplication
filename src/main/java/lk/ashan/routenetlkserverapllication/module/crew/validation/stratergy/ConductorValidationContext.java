@@ -7,11 +7,10 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class ConductorValidationContext {
-
     private Integer id;
-    private String number;
-
+    private Integer employeeId;
     private LocalDate medicalIssued;
     private LocalDate medicalExpired;
-
 }
+
+

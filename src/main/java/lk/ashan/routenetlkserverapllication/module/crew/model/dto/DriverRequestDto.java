@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @ToString
-@ValidLicenseCategoryLicenseNumber
+//@ValidLicenseCategoryLicenseNumber
 public class DriverRequestDto {
 //    @NotNull(message = "Number can not be empty")
 //    @Pattern(regexp = "^DRV-\\d{4}$",message = "Invalid driver number")

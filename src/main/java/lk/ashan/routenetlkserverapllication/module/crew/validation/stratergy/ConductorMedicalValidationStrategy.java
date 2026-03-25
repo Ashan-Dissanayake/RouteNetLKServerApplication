@@ -11,28 +11,25 @@ public class ConductorMedicalValidationStrategy implements ConductorValidationSt
 
     @Override
     public void validateCreate(ConductorValidationContext context) {
-        validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
+        validate(context.getMedicalIssued(),context.getMedicalExpired() );
     }
 
     @Override
     public void validateUpdate(ConductorValidationContext context) {
-        validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
+        validate(context.getMedicalIssued(), context.getMedicalExpired());
     }
 
-    private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
-
-        if (issued.isAfter(LocalDate.now())) {
-            throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
+    private void validate(LocalDate issued,LocalDate expiry) {
+        if (!expiry.isAfter(LocalDate.now())) {
+            throw new BusinessRuleViolationException("Medical expiry must be in the future");
         }
 
-        if (!expiry.isAfter(issued)) {
-            throw new BusinessRuleViolationException("Medical expiry must be after issued date");
-        }
-
-        long months = ChronoUnit.MONTHS.between(issued, expiry);
+        long months = ChronoUnit.MONTHS.between( issued,expiry);
 
         if (months > 6) {
             throw new BusinessRuleViolationException("Medical validity cannot exceed 6 months");
         }
+
     }
+
 }

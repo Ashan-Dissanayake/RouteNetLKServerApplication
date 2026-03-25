@@ -21,7 +21,7 @@ public class CrewStatusController {
 
     private final CrewStatusService crewStatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<CrewStatusDto>>> get() {
         List<CrewStatusDto> crewStatuses = crewStatusService.getCrewStatuses();
         return APIResponseBuilder.list(crewStatuses, crewStatuses.size());

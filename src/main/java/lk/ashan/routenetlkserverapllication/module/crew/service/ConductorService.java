@@ -7,14 +7,14 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreat
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityState;
-import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityStateFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationContext;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
+import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +30,11 @@ public class ConductorService {
 
     private final ConductorRepository conductorRepository;
     private final ConductorMapper conductorMapper;
+    private final NumberGeneratorService numberGeneratorService;
+    private final CrewStatusService crewStatusService;
+    private final RouteFamiliarityLevelService routeFamiliarityLevelService;
 
     private final List<ConductorValidationStrategy> validationStrategies;
-    private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
     private final ConductorContextBuilder conductorContextBuilder;
 
 
@@ -69,38 +71,45 @@ public class ConductorService {
         validationStrategies.forEach(s -> s.validateCreate(context));
 
         if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-            throw new ValidationException("New conductor must have status 'ELIGIBLE'");
+            throw new BusinessRuleViolationException("New conductor must have status 'ELIGIBLE'");
         }
 
         if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-            throw new ValidationException("New conductor route familiarity must have 'LOW'");
+            throw new BusinessRuleViolationException("New conductor route familiarity must have 'LOW'");
         }
 
-        Conductor conductor = conductorMapper.toEntity(dto);
-        return conductorMapper.toDto(conductorRepository.save(conductor));
+        Conductor entity = conductorMapper.toEntity(dto);
+        entity.setNumber(numberGeneratorService.nextConductorNumber());
+        Conductor saved = conductorRepository.save(entity);
+
+        return conductorMapper.toDto(saved);
     }
 
     @Transactional
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
-        ConductorValidationContext context = conductorContextBuilder.buildForUpdate(dto);
+        Conductor existing = conductorRepository.findById(dto.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
 
+        ConductorValidationContext context = conductorContextBuilder.buildForUpdate(dto);
         validationStrategies.forEach(s -> s.validateUpdate(context));
 
-        Conductor existing =  conductorRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
+        Conductor entity =  conductorMapper.updateEntityFromDto(dto, existing);
 
-        RouteFamiliarityLevel currentLevel = existing.getRoutefamiliaritylevel();
-
-        // State Pattern Transition
-        if (!currentLevel.getName().equalsIgnoreCase(dto.getRoutefamiliaritylevel().getName())) {
-             RouteFamiliarityState state = routeFamiliarityStateFactory.getState(currentLevel.getName());
-             state.transitionTo(existing.getEmployee(), conductorMapper.toEntity(dto).getRoutefamiliaritylevel());
+      if (dto.getRoutefamiliaritylevel().getId()!=null){
+            RouteFamiliarityLevel targetRouteFamiliarityLevel = routeFamiliarityLevelService.getById(dto.getRoutefamiliaritylevel().getId());
+            entity.setRoutefamiliaritylevel(targetRouteFamiliarityLevel);
         }
 
-      Conductor mappedConductor =  conductorMapper.updateEntityFromDto(dto,existing);
-        return conductorMapper.toDto(mappedConductor);
+        if (dto.getCrewstatus().getId()!=null){
+            CrewStatus targetStatus = crewStatusService.getById(dto.getCrewstatus().getId());
+            entity.setCrewstatus(targetStatus);
+        }
+
+        return conductorMapper.toDto(entity);
     }
 
 }
+
+
 

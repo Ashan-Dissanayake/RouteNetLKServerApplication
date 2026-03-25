@@ -27,6 +27,8 @@ public interface ConductorMapper {
     Conductor toEntity(ConductorUpdateRequestDto dto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "routefamiliaritylevel", ignore = true)
+    @Mapping(target = "crewstatus", ignore = true)
     Conductor updateEntityFromDto(ConductorUpdateRequestDto dto, @MappingTarget Conductor entity);
 
 

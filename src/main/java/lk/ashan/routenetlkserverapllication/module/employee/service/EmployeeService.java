@@ -9,8 +9,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDe
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateTransitionHandler;
@@ -36,6 +35,9 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DriverRepository driverRepository;
     private final EmployeeStatusService employeeStatusService;
+    private final DesignationService designationService;
+    private final DepartmentService departmentService;
+    private final EmployeeTypeService employeeTypeService;
     private final EmployeeMapper employeeMapper;
     private final NumberGeneratorService numberGeneratorService;
 
@@ -116,12 +118,30 @@ public class EmployeeService {
 
         validationStrategies.forEach(strategy -> strategy.validateUpdate(context));
 
-        Employee mappedEmployee = employeeMapper.updateEntityFromDto(request, existing);
+        Employee entity = employeeMapper.updateEntityFromDto(request, existing);
 
-        EmployeeStatus targetStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
-        employeeStateTransitionHandler.transitionTo(mappedEmployee, targetStatus);
+        if (request.getEmployeestatus().getId()!=null){
+            EmployeeStatus targetStatus = employeeStatusService.getById(request.getEmployeestatus().getId());
+            employeeStateTransitionHandler.transitionTo(entity, targetStatus);
+        }
 
-        return employeeMapper.toDto(mappedEmployee);
+        if (request.getEmployeetype().getId()!=null){
+            EmployeeType targetType = employeeTypeService.getById(request.getEmployeetype().getId());
+            entity.setEmployeetype(targetType);
+        }
+
+        if (request.getDesignation().getId()!=null){
+            Designation targetDesignation = designationService.getById(request.getDesignation().getId());
+            entity.setDesignation(targetDesignation);
+
+        }
+
+        if (request.getDepartment().getId()!=null){
+            Department targetDepartment = departmentService.getById(request.getDepartment().getId());
+            entity.setDepartment(targetDepartment);
+
+        }
+        return employeeMapper.toDto(entity);
     }
 
 

@@ -24,7 +24,7 @@ public class DocumentNumberFormatter {
     }
 
     public String conductor(long seq) {
-        return "CON-" + String.format("%06d", seq);
+        return "CON-" + String.format("%04d", seq);
     }
 
     public String partRequest(String branchCode, YearMonth ym, long seq) {

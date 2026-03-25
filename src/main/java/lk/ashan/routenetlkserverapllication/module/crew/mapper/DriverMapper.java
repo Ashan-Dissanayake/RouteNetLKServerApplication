@@ -32,6 +32,9 @@ public interface DriverMapper {
     @Mapping(target = "licensenumber", ignore = true)
     @Mapping(target = "employee", ignore = true)
     @Mapping(target = "dolicenseissued", ignore = true)
+    @Mapping(target = "licensecategory", ignore = true)
+    @Mapping(target = "routefamiliaritylevel", ignore = true)
+    @Mapping(target = "crewstatus", ignore = true)
     Driver updateEntityFromDto(DriverUpdateRequestDto dto, @MappingTarget Driver entity);
 
 }

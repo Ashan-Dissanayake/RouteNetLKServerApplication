@@ -43,7 +43,7 @@ public class NumberGeneratorService {
 
     @Transactional
     public String nextConductorNumber() {
-        Integer next = nextGlobalSequenceValue("CONDUCTOR", "NONE");
+        Integer next = nextGlobalSequenceValue("CONDUCTOR", "GLOBAL");
         return formatter.conductor(next);
     }
 

@@ -31,6 +31,10 @@ public interface EmployeeMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "number", ignore = true)
     @Mapping(target = "email", ignore = true)
+    @Mapping(target = "employeetype",ignore = true)
+    @Mapping(target = "employeestatus",ignore = true)
+    @Mapping(target = "designation",ignore = true)
+    @Mapping(target = "department",ignore = true)
     Employee updateEntityFromDto(EmployeeUpdateRequestDto dto, @MappingTarget Employee entity);
 
 }

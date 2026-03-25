@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeS
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ public class EmployeeStatusService {
     
     private final EmployeeStatusRepository employeeStatusRepository;
     private final EmployeeStatusMapper employeeStatusMapper;
-    
+
+    @Transactional(readOnly = true)
     public List<EmployeeStatusDto> getEmployeeStatuses(){
        return employeeStatusMapper.toDtoList(employeeStatusRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
     public EmployeeStatus getByName(String name) {
         return employeeStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -28,5 +31,12 @@ public class EmployeeStatusService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    public EmployeeStatus getById(Integer id) {
+        return employeeStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Employee status not found"
+                ));
+    }
 
 }

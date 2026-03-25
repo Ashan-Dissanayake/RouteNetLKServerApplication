@@ -17,9 +17,6 @@ import java.time.LocalDate;
 @SuperBuilder
 @ToString
 public class ConductorRequestDto {
-    @NotNull(message = "Number can not be empty")
-    @Pattern(regexp = "^CON-\\d{4}-\\d{3}$",message = "Invalid conductor number")
-    private String number;
 
     @NotNull(message = "Medical issued date is mandatory")
     @PastOrPresent(message = "Medical issued date is cannot be in the future")

@@ -1,16 +1,15 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.LicenseCategory;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityState;
-import lk.ashan.routenetlkserverapllication.module.crew.state.routefamility.RouteFamiliarityStateFactory;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationContext;
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
@@ -31,10 +30,12 @@ public class DriverService {
 
     private final DriverRepository driverRepository;
     private final NumberGeneratorService numberGeneratorService;
+    private final RouteFamiliarityLevelService routeFamiliarityLevelService;
+    private final CrewStatusService crewStatusService;
+    private final LicenseCategoryService licenseCategoryService;
     private final DriverMapper driverMapper;
 
     private final List<DriverValidationStrategy> validationStrategies;
-    private final RouteFamiliarityStateFactory routeFamiliarityStateFactory;
     private final DriverContextBuilder driverContextBuilder;
 
     @Transactional(readOnly = true)
@@ -90,34 +91,24 @@ public class DriverService {
         DriverValidationContext context = driverContextBuilder.buildForUpdate(dto,existingDriver);
         validationStrategies.forEach(s -> s.validateUpdate(context));
 
+        Driver entity = driverMapper.updateEntityFromDto(dto,existingDriver);
 
-        RouteFamiliarityLevel currentLevel =
-                existingDriver.getRoutefamiliaritylevel();
-
-        String currentLevelName =
-                currentLevel.getName();
-
-        String newLevelName =
-                dto.getRoutefamiliaritylevel()
-                        .getName();
-
-        if (!currentLevelName.equalsIgnoreCase(newLevelName)) {
-
-            RouteFamiliarityState state =
-                    routeFamiliarityStateFactory
-                            .getState(currentLevelName);
-
-            state.transitionTo(
-                    existingDriver.getEmployee(),
-                    driverMapper.toEntity(dto)
-                            .getRoutefamiliaritylevel()
-            );
-
+        if (dto.getRoutefamiliaritylevel().getId()!=null){
+            RouteFamiliarityLevel targetRouteFamiliarityLevel = routeFamiliarityLevelService.getById(dto.getRoutefamiliaritylevel().getId());
+            entity.setRoutefamiliaritylevel(targetRouteFamiliarityLevel);
         }
-       driverMapper.updateEntityFromDto(dto,existingDriver);
-        Driver savedDriver =
-                driverRepository.save(existingDriver);
-        return driverMapper.toDto(savedDriver);
+
+        if (dto.getLicensecategory().getId()!=null){
+            LicenseCategory targetLicenseCategory = licenseCategoryService.getById(dto.getLicensecategory().getId());
+            entity.setLicensecategory(targetLicenseCategory);
+        }
+
+        if (dto.getCrewstatus().getId()!=null){
+            CrewStatus targetStatus = crewStatusService.getById(dto.getCrewstatus().getId());
+            entity.setCrewstatus(targetStatus);
+        }
+
+        return driverMapper.toDto(entity);
     }
 
 }
