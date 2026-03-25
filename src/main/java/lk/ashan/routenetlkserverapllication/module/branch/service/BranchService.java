@@ -12,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFacto
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.FuelType;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
@@ -53,6 +54,14 @@ public class BranchService {
     @Transactional(readOnly = true)
     public List<BranchSummaryDto> getSummaryBranches(){
         return branchMapper.toSummaryDtolList(branchRepository.findAll());
+    }
+
+    @Transactional(readOnly = true)
+    public Branch getById(Integer id) {
+        return branchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Branch not found"
+                ));
     }
 
     @Transactional(readOnly = true)

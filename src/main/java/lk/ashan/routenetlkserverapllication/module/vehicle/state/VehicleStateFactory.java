@@ -10,14 +10,14 @@ public class VehicleStateFactory {
     private final Map<String, Supplier<VehicleState>> stateMap;
 
     public VehicleStateFactory() {
-        // Initialize map with suppliers for each state
+        // Initialize map with suppliers for each updated state
         stateMap = Map.of(
-            "AVAILABLE", VehicleAvailableState::new,
-            "IN SERVICE", VehicleInServiceState::new,
-            "UNDER MAINTENANCE", VehicleUnderMaintenanceState::new,
-            "OUT OF SERVICE", VehicleOutOfServiceState::new,
-            "RESERVED", VehicleReservedState::new,
-            "DECOMMISSIONED", VehicleDecommissionedState::new
+                "AVAILABLE", VehicleAvailableState::new,
+                "ALLOCATED", VehicleAllocatedState::new,
+                "IN OPERATION", VehicleInOperationState::new,
+                "MAINTENANCE", VehicleMaintenanceState::new,
+                "BREAKDOWN", VehicleBreakdownState::new,
+                "DECOMMISSIONED", VehicleDecommissionedState::new
         );
     }
 

@@ -1,10 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.ModelDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.ModelMapper;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.FueltypeDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.FueltypeMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.FuelType;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Model;
-import lk.ashan.routenetlkserverapllication.module.vehicle.repository.ModelRepository;
+import lk.ashan.routenetlkserverapllication.module.vehicle.repository.FuelTypeRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,19 +13,19 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ModelService {
+public class FuelTypeService {
 
-    private final ModelRepository modelRepository;
-    private final ModelMapper modelMapper;
+    private final FuelTypeRepository fuelTypeRepository;
+    private final FueltypeMapper fuelTypeMapper;
 
     @Transactional(readOnly = true)
-    public List<ModelDto> getModels(){
-       return modelMapper.toDtoList(modelRepository.findAll());
+    public List<FueltypeDto> getFuelTypes(){
+       return fuelTypeMapper.toDtoList(fuelTypeRepository.findAll());
     }
 
     @Transactional(readOnly = true)
-    public Model getById(Integer id) {
-        return modelRepository.findById(id)
+    public FuelType getById(Integer id) {
+        return fuelTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Fuel type not found"
                 ));

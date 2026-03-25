@@ -21,7 +21,7 @@ public class ModelController {
 
     private final ModelService modelService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ModelDto>>> get() {
         List<ModelDto> models = modelService.getModels();
         return APIResponseBuilder.list(models, models.size());

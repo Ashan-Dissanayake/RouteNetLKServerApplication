@@ -21,7 +21,7 @@ public class BusTypeController {
 
     private final BusTypeService busTypeService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BusTypeDto>>> get() {
         List<BusTypeDto>busTypes = busTypeService.getBusTypes();
         return APIResponseBuilder.list(busTypes,busTypes.size());

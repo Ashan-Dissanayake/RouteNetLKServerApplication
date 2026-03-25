@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehiclestatusDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehiclestatusService;
+import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleStatusService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VehicleStatusController {
 
-    private final VehiclestatusService vehicleStatusService;
+    private final VehicleStatusService vehicleStatusService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehiclestatusDto>>> get() {
-        List<VehiclestatusDto> vehicleStatuses = vehicleStatusService.getVehiclestatuss();
+        List<VehiclestatusDto> vehicleStatuses = vehicleStatusService.getVehicleStatuses();
         return APIResponseBuilder.list(vehicleStatuses, vehicleStatuses.size());
     }
 

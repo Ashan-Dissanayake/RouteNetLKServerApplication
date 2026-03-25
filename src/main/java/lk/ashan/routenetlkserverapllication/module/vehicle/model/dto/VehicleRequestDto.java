@@ -24,9 +24,6 @@ public class VehicleRequestDto {
 
     private String remarks;
 
-    @NotNull(message = "Make/Mode Can Not be Empty")
-    private MakeRequestDto make;
-
     @NotNull(message = "Fuel Type Can Not be Empty")
     private FueltypeDto fueltype;
 
@@ -41,5 +38,8 @@ public class VehicleRequestDto {
 
     @NotNull(message = "Model can not be Empty")
     private ModelDto model;
+
+    @NotNull(message = "Bus type can not be Empty")
+    private BusTypeDto bustype;
 
 }

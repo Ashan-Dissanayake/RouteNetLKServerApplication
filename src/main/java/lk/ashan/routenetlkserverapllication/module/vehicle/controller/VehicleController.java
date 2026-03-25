@@ -53,7 +53,7 @@ public class VehicleController {
     }
 
     @PreAuthorize("hasAuthority('vehicle-delete')")
-    @PostMapping("/deactivate")
+    @DeleteMapping
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
         List<Integer> deactivatedIds = vehicleService.deactivateVehicle(ids);
         return APIResponseBuilder.deleted(deactivatedIds);

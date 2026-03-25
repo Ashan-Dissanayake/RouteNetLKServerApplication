@@ -6,17 +6,19 @@ import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransit
 
 import java.util.List;
 
-public class VehicleInServiceState implements VehicleState {
-    
-    private static final List<String> ALLOWED = List.of("AVAILABLE", "UNDER MAINTENANCE", "OUT OF SERVICE");
+public class VehicleMaintenanceState implements VehicleState {
+
+    private static final List<String> ALLOWED = List.of("AVAILABLE", "DECOMMISSIONED");
 
     @Override
     public void transitionTo(Vehicle vehicle, VehicleStatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
+        if ("MAINTENANCE".equals(newStatusName)) return;
         if (!ALLOWED.contains(newStatusName)) {
-             throw new InvalidStateTransitionException(
-                "Invalid status transition from IN SERVICE to " + newStatusName
+            throw new InvalidStateTransitionException(
+                    "Invalid status transition from MAINTENANCE to " + newStatusName
             );
         }
+        vehicle.setVehiclestatus(newStatus);
     }
 }

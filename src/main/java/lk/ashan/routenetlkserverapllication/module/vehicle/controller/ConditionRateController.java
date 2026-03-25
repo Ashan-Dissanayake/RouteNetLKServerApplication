@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.ConditionrateDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.service.ConditionrateService;
+import lk.ashan.routenetlkserverapllication.module.vehicle.service.ConditionRateService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConditionRateController {
 
-    private final ConditionrateService conditionRateService;
+    private final ConditionRateService conditionRateService;
 
-    @GetMapping(path ="/list", produces = "application/json")
+    @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ConditionrateDto>>> get() {
         List<ConditionrateDto> conditionRates = conditionRateService.getConditionRates();
         return APIResponseBuilder.list(conditionRates, conditionRates.size());
