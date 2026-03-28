@@ -66,4 +66,6 @@ INSERT INTO bustype(name) values ('AA'),('A+'),('A'),('B'),('B+'),('C'),('D'),('
 INSERT INTO vehicle
 (number,model_id,bustype_id,mileage, fueltype_id, conditionrate_id, remarks, vehiclestatus_id, deleted, branch_id)
 VALUES
-    ('ND-1217',1,6,10000,2, 2, NULL, 1, 0, 1);
+    ('ND-1217',1,6,10000,2, 2, NULL, 1, 0, 1),
+    ('NE-1217',1,6,10000,2, 2, NULL, 1, 0, 1),
+    ('NG-1110',1,6,10000,2, 2, NULL, 1, 0, 1);

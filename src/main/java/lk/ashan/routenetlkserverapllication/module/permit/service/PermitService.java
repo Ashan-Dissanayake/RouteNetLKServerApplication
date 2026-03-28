@@ -13,10 +13,12 @@ import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteReposi
 import lk.ashan.routenetlkserverapllication.module.permit.repository.ServiceTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitState;
 import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStateFactory;
+import lk.ashan.routenetlkserverapllication.module.permit.state.PermitStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContext;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.permit.validation.PermitValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -39,6 +41,7 @@ public class PermitService {
     private final ServiceTypeRepository serviceTypeRepository;
     private final PermitStatusRepository permitStatusRepository;
     private final PermitMapper permitMapper;
+    private final PermitStateTransitionHandler permitStateTransitionHandler;
 
     private final List<PermitValidationStrategy> validationStrategies;
     private final PermitStateFactory permitStateFactory;
@@ -52,7 +55,7 @@ public class PermitService {
     public List<PermitDetailResponseDto> searchPermit(@NotNull HashMap<String, String> params) {
 
         String number = params.get("ssnumber");
-        String permitStatusId = params.get("sspermitstatus");
+            String permitStatusId = params.get("sspermitstatus");
         String routeId = params.get("ssroute");
 
         Stream<Permite> permitStream = permitRepository.findAll().stream();
@@ -63,7 +66,6 @@ public class PermitService {
             permitStream = permitStream.filter(v -> v.getRoute().getId() == Integer.parseInt(routeId));
 
         return permitMapper.toDtoList(permitStream.collect(Collectors.toList()));
-
     }
 
     @Transactional
@@ -74,14 +76,14 @@ public class PermitService {
             throw new ResourceExistsException("Permit number already exists.");
         }
 
-        vehicleRepository.findByNumber(requestDto.getVehicle().getNumber())
+        vehicleRepository.findById(requestDto.getVehicle().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-        routeRepository.findByNumber(requestDto.getRoute().getNumber())
+        routeRepository.findById(requestDto.getRoute().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
          serviceTypeRepository
-                .findByName(requestDto.getServicetype().getName())
+                .findById(requestDto.getServicetype().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service type not found"));
 
         PermitValidationContext context = permitValidationContextBuilder.buildForCreate(requestDto);
@@ -99,7 +101,7 @@ public class PermitService {
         state.validateInitial();
 
         //due to validate initial calls empty body after processing need explicit set
-        permite.setPermitestatus(requestedStatus);
+        //permite.setPermitestatus(requestedStatus);
 
         Permite saved = permitRepository.save(permite);
         return permitMapper.toDto(saved);
@@ -107,29 +109,22 @@ public class PermitService {
 
     @Transactional
     public PermitDetailResponseDto transferPermit(Integer permitId, PermitTransferRequestDto request) {
+
         Permite permit = permitRepository.findById(permitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Permit not found"));
 
-        //clearDepotResources(permit);
-
         PermiteStatus currentStatus = permit.getPermitestatus();
 
-        PermiteStatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
-                .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
+        if ("Transferred".equalsIgnoreCase(currentStatus.getName())) {
+            throw new BusinessRuleViolationException("Permit is already transferred");}
 
-        PermitState state = permitStateFactory.getState(currentStatus.getName());
-        state.transitionTo(permit, newStatus);
-        permit.setDeleted(true);
+        PermiteStatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
+
+        permitStateTransitionHandler.transitionTo(permit, newStatus);
 
         Permite savedPermite = permitRepository.save(permit);
 
         return permitMapper.toDto(savedPermite);
     }
-
-
-    /*
-    private void clearDepotResources(Permite permit) {
-       //need to clear vehicle status aslo in later
-    }
-    */
 }

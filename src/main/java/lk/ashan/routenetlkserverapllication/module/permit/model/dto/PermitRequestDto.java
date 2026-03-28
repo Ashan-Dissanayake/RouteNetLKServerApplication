@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.permit.model.dto;
 
 import jakarta.validation.constraints.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -19,7 +19,7 @@ public class PermitRequestDto {
     @Pattern(regexp = "^(\\d{4}|[A-Z]{3}-[A-Z]{2}\\d+-\\d+(?:-\\d+)*(?:\\\\[A-Z]{3}-[A-Z]{2}\\d+(?:-\\d+)*)*)$",message = "Invalid Permit Number")
     private String number;
     @NotNull(message = "Vehicle is mandatory")
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     @NotNull(message = "Date of issued is mandatory")
     @PastOrPresent(message = "Issued date cannot be in the future")
     private LocalDate doissued;

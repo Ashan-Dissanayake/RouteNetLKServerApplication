@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import org.mapstruct.Mapper;
@@ -21,7 +22,8 @@ import java.util.List;
 public interface VehicleMapper {
 
     VehicleDetailResponseDto toDto(Vehicle vehicle);
-    List<VehicleDetailResponseDto> toDtoList(List<Vehicle> vehicleDetailResponses);
+    List<VehicleDetailResponseDto> toDtoList(List<Vehicle> vehicles);
+    List<VehicleSummaryDto> toSummaryDtoList(List<Vehicle> vehicles);
 
     Vehicle toEntity(VehicleCreateRequestDto requestDto);
 

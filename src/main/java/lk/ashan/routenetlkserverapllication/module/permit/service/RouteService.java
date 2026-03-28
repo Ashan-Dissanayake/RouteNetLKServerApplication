@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.permit.mapper.RouteMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final RouteMapper routeMapper;
 
+    @Transactional(readOnly = true)
     public List<RouteSummaryResponseDto> getRoutes(){
        return routeMapper.toDtoList(routeRepository.findAll());
     }

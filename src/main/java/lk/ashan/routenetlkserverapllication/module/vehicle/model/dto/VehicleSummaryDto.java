@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class VehicleSummaryResponseDto {
+public class VehicleSummaryDto {
     private  Integer id;
     private String number;
 }

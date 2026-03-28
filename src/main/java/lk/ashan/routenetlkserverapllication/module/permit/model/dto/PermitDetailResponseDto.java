@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.permit.model.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class PermitDetailResponseDto {
     private Integer id;
     private String number;
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     private LocalDate doissued;
     private LocalDate doexpired;
     private BranchSummaryDto branch;

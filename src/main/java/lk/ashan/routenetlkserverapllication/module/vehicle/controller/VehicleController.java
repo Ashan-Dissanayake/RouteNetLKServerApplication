@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -32,6 +30,12 @@ public class VehicleController {
                 ?vehicleService.getVehicles()
                 : vehicleService.searchVehicle(params);
         return APIResponseBuilder.list(vehicles, vehicles.size());
+    }
+
+    @GetMapping(path ="/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<VehicleSummaryDto>>> get() {
+        List<VehicleSummaryDto> vehicleSummaries = vehicleService.getVehicleSummary();
+        return APIResponseBuilder.list(vehicleSummaries, vehicleSummaries.size());
     }
 
     @PreAuthorize("hasAuthority('vehicle-insert')")

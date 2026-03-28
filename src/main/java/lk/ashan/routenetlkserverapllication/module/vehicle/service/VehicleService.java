@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.*;
@@ -50,6 +50,12 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
+    public List<VehicleSummaryDto> getVehicleSummary(){
+        return vehicleMapper.toSummaryDtoList(vehicleRepository.findAll());
+    }
+
+
+    @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
 
         String conditionrateid = params.get("ssconditionrate");
@@ -63,6 +69,12 @@ public class VehicleService {
 
         return vehicleMapper.toDtoList(vehicleStream.collect(Collectors.toList()));
 
+    }
+
+    @Transactional(readOnly = true)
+    public Vehicle getById(Integer id){
+        return vehicleRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Vehicle not found"));
     }
 
     @Transactional

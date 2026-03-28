@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 
 @Getter
@@ -12,6 +12,6 @@ import lombok.*;
 @ToString
 public class VehicleServiceSummaryResponseDto {
     private Integer id;
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     private BranchSummaryDto branch;
 }

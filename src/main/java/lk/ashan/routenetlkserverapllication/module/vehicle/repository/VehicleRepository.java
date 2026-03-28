@@ -38,4 +38,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     List<Vehicle> findByVehiclestatus_NameIn(Set<String> eligibleStatuses);
 
     List<Vehicle> findByVehiclestatus_Name(String statusName);
+
+    List<Vehicle> findAllByBranch_Id(Integer branchId);
 }

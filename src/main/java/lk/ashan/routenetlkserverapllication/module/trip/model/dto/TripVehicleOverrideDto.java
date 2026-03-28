@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,6 +15,6 @@ public class TripVehicleOverrideDto{
     private Integer id;
     private String reason;
     private LocalDate dooverride;
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     private OverrideStatusDto overridestatus;
 }

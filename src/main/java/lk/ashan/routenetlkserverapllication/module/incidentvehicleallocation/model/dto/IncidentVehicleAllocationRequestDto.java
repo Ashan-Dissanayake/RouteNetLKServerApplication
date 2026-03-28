@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mo
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -19,7 +19,7 @@ public class IncidentVehicleAllocationRequestDto {
     @NotNull(message = "Incident is mandatory")
     private IncidentSummaryDto incident;
     @NotNull(message = "Vehicle is mandatory")
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     @NotNull(message = "Branch is mandatory")
     private BranchSummaryDto providebranch;
     @NotNull(message = "Type is mandatory")

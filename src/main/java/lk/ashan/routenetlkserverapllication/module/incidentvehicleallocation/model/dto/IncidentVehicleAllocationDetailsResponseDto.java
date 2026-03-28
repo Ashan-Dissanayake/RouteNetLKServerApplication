@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mo
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class IncidentVehicleAllocationDetailsResponseDto {
     private Integer id;
     private IncidentSummaryDto name;
-    private VehicleSummaryResponseDto vehicle;
+    private VehicleSummaryDto vehicle;
     private BranchSummaryDto providebranch;
     private IncidentVehicleAllocationTypeDto incidentvehicleallocationtype;
     private IncidentVehicleAllocationStatusDto incidentvehicleallocationstatus;
