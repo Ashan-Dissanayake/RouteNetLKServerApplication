@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchReques
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeRequestDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -76,6 +77,13 @@ public class RegexController {
     @GetMapping(path ="/permits", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> permitStatic() {
         HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new PermitRequestDto());
+        assert regexes != null;
+        return APIResponseBuilder.list(regexes, regexes.size());
+    }
+
+    @GetMapping(path ="/parts", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> partStatic() {
+        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new PartRequestDto());
         assert regexes != null;
         return APIResponseBuilder.list(regexes, regexes.size());
     }

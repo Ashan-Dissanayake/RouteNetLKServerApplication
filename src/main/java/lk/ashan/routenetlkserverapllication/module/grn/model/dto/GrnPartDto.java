@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.grn.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 @Builder
 public class GrnPartDto {
     private Integer id;
-    private PartSummaryDetailResponseDto part;
+    private PartSummaryDto part;
     private BigDecimal quantity;
 }

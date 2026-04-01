@@ -17,4 +17,6 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
     @Transactional
     @Query("UPDATE Part  b SET b.deleted=true WHERE b.id in :ids")
     void removeAll(@Param("ids") List<Integer> ids);
+
+    boolean existsByBranch_IdAndPartmaster_Id(Integer id, Integer id1);
 }

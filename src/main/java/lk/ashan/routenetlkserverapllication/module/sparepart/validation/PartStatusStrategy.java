@@ -14,7 +14,7 @@ public class PartStatusStrategy {
 
     private final PartStatusRepository partstatusRepository;
 
-    public Partstatus determineStatus(PartCreationContext context) {
+    public Partstatus determineStatus(PartContext context) {
 
         if (context.getQoh().compareTo(BigDecimal.ZERO) == 0) {
             return getStatus("Out of stock");

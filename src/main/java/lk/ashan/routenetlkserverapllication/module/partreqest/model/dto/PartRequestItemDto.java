@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -13,5 +13,5 @@ import java.math.BigDecimal;
 public class PartRequestItemDto {
     private Integer id;
     private BigDecimal quantity;
-    private PartSummaryDetailResponseDto part;
+    private PartSummaryDto part;
 }

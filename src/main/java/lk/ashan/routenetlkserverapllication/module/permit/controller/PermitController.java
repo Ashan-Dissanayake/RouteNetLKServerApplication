@@ -3,7 +3,6 @@ package lk.ashan.routenetlkserverapllication.module.permit.controller;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.service.PermitService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -44,12 +43,11 @@ public class PermitController {
     }
 
     @PreAuthorize("hasAuthority('permits-transfer')")
-    @PostMapping("/{permitId}/transfer")
+    @PutMapping("/transfer/{permitId}")
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>>  transferPermit(
-            @PathVariable Integer permitId,
-            @RequestBody PermitTransferRequestDto requestDto
+            @PathVariable Integer permitId
     ) {
-        PermitDetailResponseDto updatedPermit = permitService.transferPermit(permitId, requestDto);
+        PermitDetailResponseDto updatedPermit = permitService.transferPermit(permitId);
         return APIResponseBuilder.created(updatedPermit, updatedPermit.getId());
     }
 }

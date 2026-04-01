@@ -26,15 +26,6 @@ public class Part extends BaseEntity {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "sku")
-    private String sku;
-    @Basic
-    @Column(name = "name")
-    private String name;
-    @Basic
-    @Column(name = "photo")
-    private byte[] photo;
-    @Basic
     @Column(name = "qoh")
     private BigDecimal qoh;
     @Basic
@@ -44,20 +35,20 @@ public class Part extends BaseEntity {
     @Column(name = "rop")
     private BigDecimal rop;
     @Basic
+    @Column(name = "remarks")
+    private String remarks;
+    @Basic
     @Column(name = "dolastordered")
     private LocalDate dolastordered;
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
     @ManyToOne
-    @JoinColumn(name = "partcategory_id", referencedColumnName = "id", nullable = false)
-    private Partcategory partcategory;
-    @ManyToOne
-    @JoinColumn(name = "unitofmeasure_id", referencedColumnName = "id", nullable = false)
-    private Unitofmeasure unitofmeasure;
-    @ManyToOne
     @JoinColumn(name = "partstatus_id", referencedColumnName = "id", nullable = false)
     private Partstatus partstatus;
+    @ManyToOne
+    @JoinColumn(name = "partmaster_id", referencedColumnName = "id", nullable = false)
+    private Partmaster partmaster;
 
     @OneToMany(mappedBy = "part")
     private Collection<PartRequestItem> partRequestItems;
@@ -73,13 +64,11 @@ public class Part extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Part part = (Part) o;
-        return Objects.equals(id, part.id) && Objects.equals(sku, part.sku) && Objects.equals(name, part.name) && Arrays.equals(photo, part.photo) && Objects.equals(qoh, part.qoh) && Objects.equals(maxlevel, part.maxlevel) && Objects.equals(rop, part.rop) && Objects.equals(dolastordered, part.dolastordered);
+        return Objects.equals(id, part.id) && Objects.equals(qoh, part.qoh) && Objects.equals(maxlevel, part.maxlevel) && Objects.equals(rop, part.rop) && Objects.equals(dolastordered, part.dolastordered);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, sku, name, qoh, maxlevel, rop, dolastordered);
-        result = 31 * result + Arrays.hashCode(photo);
-        return result;
+        return Objects.hash(id, qoh, maxlevel, rop, dolastordered);
     }
 }

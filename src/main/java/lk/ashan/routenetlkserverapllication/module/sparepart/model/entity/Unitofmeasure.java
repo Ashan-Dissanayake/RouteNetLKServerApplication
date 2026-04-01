@@ -21,7 +21,7 @@ public class Unitofmeasure {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "unitofmeasure")
-    private Collection<Part> parts;
+    private Collection<Partmaster> partmasters;
 
 
     @Override

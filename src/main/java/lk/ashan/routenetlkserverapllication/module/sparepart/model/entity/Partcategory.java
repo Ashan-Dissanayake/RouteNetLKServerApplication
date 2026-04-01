@@ -21,7 +21,7 @@ public class Partcategory {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "partcategory")
-    private Collection<Part> parts;
+    private Collection<Partmaster> partmasters;
 
     @Override
     public boolean equals(Object o) {

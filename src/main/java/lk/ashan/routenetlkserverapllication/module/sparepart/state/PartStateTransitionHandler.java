@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class PartStateTransitionHandler {
 
     private final PartStatusFactory partStatusFactory;
-    private final PartRepository partRepository;
 
     public void transitionTo(Part part, Partstatus newStatus) {
 
@@ -29,8 +28,6 @@ public class PartStateTransitionHandler {
         currentState.transitionTo(part, newStatus);
 
         executeOnEnter(part, targetStatus);
-
-        partRepository.save(part);
     }
 
     private void executeOnExit(Part part, String statusName) {

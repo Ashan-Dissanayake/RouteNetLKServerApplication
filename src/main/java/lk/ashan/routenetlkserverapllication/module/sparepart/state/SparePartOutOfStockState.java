@@ -10,11 +10,12 @@ import java.util.List;
 @Component
 public class SparePartOutOfStockState implements SparePartState {
 
-    private static final List<String> ALLOWED = List.of("LOW_STOCK", "DECOMMISSIONED");
+    private static final List<String> ALLOWED = List.of("LOW STOCK", "DECOMMISSIONED");
 
     @Override
     public void transitionTo(Part part, Partstatus newStatus) {
-        if (!ALLOWED.contains(newStatus.getName())) {
+        if ("OUT OF STOCK".equalsIgnoreCase(newStatus.getName())) return;
+        if (!ALLOWED.contains(newStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from OUT_OF_STOCK to " + newStatus.getName()
             );

@@ -20,7 +20,6 @@ public class RosterConstraintProvider implements ConstraintProvider {
                 employeeMustBelongToSameBranch(factory),   // Employee must be from same branch
                 roleAssignedOncePerShift(factory),         // Each role filled once per shift
                 assignmentWithinRosterWeek(factory),       // Assignment date within roster's week
-                //employeeMustHaveQualification(factory),    // Employee qualified for role
                 maxDailyHours(factory),                    // Max hours per day not exceeded
                 maxWeeklyHours(factory),                   // Max hours per week not exceeded
 

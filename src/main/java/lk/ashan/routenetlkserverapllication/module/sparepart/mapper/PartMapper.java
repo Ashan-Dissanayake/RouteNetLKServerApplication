@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING,
 uses = {
-        PartCategoryMapper.class, PartStatusMapper.class,UnitOfMeasureMapper.class, BranchMapper.class
+       PartStatusMapper.class, BranchMapper.class,PartMasterMapper.class
 })
 public interface PartMapper {
     PartDetailResponseDto toDto(Part part);
@@ -20,10 +20,8 @@ public interface PartMapper {
     Part toEntity(PartCreateRequestDto createRequestDto);
 
     @Mapping(target = "id", ignore = true) // updated in service via entity loaded from DB
-    @Mapping(target = "sku", ignore = true)
     @Mapping(target = "branch", ignore = true)
-    @Mapping(target = "partcategory", ignore = true)
-    @Mapping(target = "qoh", ignore = true)
-    @Mapping(target = "dolastordered", ignore = true)
+    @Mapping(target = "partstatus", ignore = true)
+    @Mapping(target = "partmaster", ignore = true)
     void updateFromDto(PartUpdateRequestDto dto, @MappingTarget Part entity);
 }

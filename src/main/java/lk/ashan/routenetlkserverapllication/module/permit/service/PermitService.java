@@ -3,7 +3,6 @@ package lk.ashan.routenetlkserverapllication.module.permit.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitTransferRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
@@ -100,15 +99,12 @@ public class PermitService {
         PermitState state = permitStateFactory.getState(requestedStatus.getName());
         state.validateInitial();
 
-        //due to validate initial calls empty body after processing need explicit set
-        //permite.setPermitestatus(requestedStatus);
-
         Permite saved = permitRepository.save(permite);
         return permitMapper.toDto(saved);
     }
 
     @Transactional
-    public PermitDetailResponseDto transferPermit(Integer permitId, PermitTransferRequestDto request) {
+    public PermitDetailResponseDto transferPermit(Integer permitId) {
 
         Permite permit = permitRepository.findById(permitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Permit not found"));
@@ -118,7 +114,7 @@ public class PermitService {
         if ("Transferred".equalsIgnoreCase(currentStatus.getName())) {
             throw new BusinessRuleViolationException("Permit is already transferred");}
 
-        PermiteStatus newStatus = permitStatusRepository.findById(request.getNewStatusId())
+        PermiteStatus newStatus = permitStatusRepository.findByName("Transferred")
                         .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
 
         permitStateTransitionHandler.transitionTo(permit, newStatus);
