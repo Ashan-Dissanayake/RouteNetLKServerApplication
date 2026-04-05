@@ -117,7 +117,6 @@ class PartControllerTest extends BaseTest {
         );
     }
 
-
     @ParameterizedTest
     @ValueSource(strings = { "-1", "-100" })
     void createPart_shouldFail_WhenQohIsNegative(String qohStr) throws Exception {

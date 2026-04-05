@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.mapper;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import org.mapstruct.*;
@@ -24,4 +25,9 @@ public interface PartMapper {
     @Mapping(target = "partstatus", ignore = true)
     @Mapping(target = "partmaster", ignore = true)
     void updateFromDto(PartUpdateRequestDto dto, @MappingTarget Part entity);
+
+    @Mapping(target = "name", source = "partmaster.name")
+    PartSummaryDto toSummaryDto(Part part);
+
+    List<PartSummaryDto> toSummaryDtoList(List<Part> parts);
 }

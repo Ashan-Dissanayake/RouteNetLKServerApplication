@@ -69,9 +69,9 @@ public class NumberGeneratorService {
 
     // Similarly for branch-period sequences:
     @Transactional
-    public String nextPartRequestNumber(String branchCode, YearMonth ym) {
-        Integer next = nextBranchPeriodSequenceValue("PART_REQUEST", branchCode, ym);
-        return formatter.partRequest(branchCode, ym, next);
+    public String nextPartRequestNumber(String scopeName, YearMonth ym) {
+        Integer next = nextBranchPeriodSequenceValue("PART_REQUEST", scopeName, ym);
+        return formatter.partRequest(scopeName, ym, next);
     }
 
     private Integer nextBranchPeriodSequenceValue(String codeTypeName, String scopeName, YearMonth ym) {

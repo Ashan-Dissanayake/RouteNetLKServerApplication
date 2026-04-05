@@ -10,13 +10,12 @@ import java.util.List;
 @Component
 public class PartRequestApprovedState implements PartRequestState {
 
-    private static final List<String> ALLOWED =
-            List.of("COMPLETED");
+    private static final List<String> ALLOWED = List.of("COMPLETED");
 
     @Override
     public void transitionTo(PartRequest request, PartRequestStatus newStatus) {
 
-        if (!ALLOWED.contains(newStatus.getName())) {
+        if (!ALLOWED.contains(newStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from APPROVED to " + newStatus.getName()
             );

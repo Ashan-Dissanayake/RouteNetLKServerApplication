@@ -10,13 +10,12 @@ import java.util.List;
 @Component
 public class PartRequestPendingState implements PartRequestState {
 
-    private static final List<String> ALLOWED =
-            List.of("APPROVED", "REJECTED");
+    private static final List<String> ALLOWED = List.of("APPROVED", "REJECTED");
 
     @Override
     public void transitionTo(PartRequest request, PartRequestStatus newStatus) {
 
-        if (!ALLOWED.contains(newStatus.getName())) {
+        if (!ALLOWED.contains(newStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from PENDING to " + newStatus.getName()
             );

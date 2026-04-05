@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
@@ -66,6 +67,12 @@ public class PartService {
         if(partStatusId!=null)partStream = partStream.filter(r->r.getPartstatus().getId()==Integer.parseInt(partStatusId));
 
         return partMapper.toDtoList( partStream.collect(Collectors.toList()));
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<PartSummaryDto> getSummaryParts() {
+        return partMapper.toSummaryDtoList(partRepository.findAll());
     }
 
     @Transactional
@@ -164,4 +171,5 @@ public class PartService {
                     );
                 });
     }
+
 }

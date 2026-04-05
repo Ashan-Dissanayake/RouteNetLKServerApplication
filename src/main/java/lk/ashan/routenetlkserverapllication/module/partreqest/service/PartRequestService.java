@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.service;
 
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
@@ -14,14 +16,20 @@ import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartReq
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestState;
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStatusFactory;
+import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationContext;
+import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,15 +37,22 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PartRequestService {
 
     private final PartRequestRepository partRequestRepository;
     private final PartRequestStatusRepository partRequestStatusRepository;
-    private final PartRequestStatusFactory partRequestStatusFactory;
-    private final PartRequestStateTransitionHandler partRequestStateTransitionHandler;
-
+    private final PartRequestStatusService partRequestStatusService;
+    private final NumberGeneratorService numberGeneratorService;
+    private final BranchService branchService;
     private final PartRequestMapper partRequestMapper;
     private final PartRequestItemMapper partRequestItemMapper;
+
+    private final PartRequestValidationContextBuilder contextBuilder;
+    private final List<PartRequestValidationStrategy> validationStrategies;
+    private final PartRequestStateTransitionHandler partRequestStateTransitionHandler;
+    private final PartRequestStatusFactory partRequestStatusFactory;
+
 
     @Transactional(readOnly = true)
     public List<PartRequestDetailResponseDto> getPartRequests(){
@@ -54,7 +69,7 @@ public class PartRequestService {
 
         Stream<PartRequest> partRequestStream = partRequests.stream();
 
-        if(requestNumber!=null)partRequestStream = partRequestStream.filter(r->r.getNumber().equals(requestNumber));
+        if(requestNumber!=null)partRequestStream = partRequestStream.filter(r->r.getNumber().equalsIgnoreCase(requestNumber));
         if(partRequestStatusId!=null)partRequestStream = partRequestStream.filter(r->r.getPartrequeststatus().getId()==Integer.parseInt(partRequestStatusId));
 
         return partRequestMapper.toDtoList( partRequestStream.collect(Collectors.toList()));
@@ -63,35 +78,32 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto createRequest(@NotNull PartRequestCreateRequestDto dto) {
 
+        PartRequestValidationContext context = contextBuilder.buildForCreate(dto);
+
+        validationStrategies.forEach(strategy -> strategy.validate(context));
+
         PartRequest request = partRequestMapper.toEntity(dto);
 
-        if (dto.getPartrequestitems() == null || dto.getPartrequestitems().isEmpty()) {
-            throw new BusinessRuleViolationException(
-                    "Request must contain at least one part"
-            );
-        }
-
-        dto.getPartrequestitems().forEach(item -> {
-            if (item.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new BusinessRuleViolationException(
-                        "Requested quantity must be greater than zero"
-                );
-            }
-        });
-
-        PartRequestStatus initialStatus = partRequestStatusRepository
-                .findByName("Pending")
-                .orElseThrow(() -> new IllegalStateException("Initial status PENDING not found"));
-
-        PartRequestState initialState =
-                partRequestStatusFactory.getState(initialStatus.getName());
-
+        PartRequestStatus initialStatus = partRequestStatusService.getByName(request.getPartrequeststatus().getName());
+        PartRequestState initialState = partRequestStatusFactory.getState(initialStatus.getName());
         initialState.validateInitial();
-
         request.setPartrequeststatus(initialStatus);
 
-        PartRequest saved = partRequestRepository.save(request);
+        Branch branch = branchService.getById(request.getBranch().getId());
 
+        request.setNumber(numberGeneratorService.nextPartRequestNumber(branch.getCode(), YearMonth.now()));
+
+        request.getPartrequestitems()
+                .forEach(i ->
+                        log.info("Item id before save: {}", i.getId())
+                );
+
+        if (request.getPartrequestitems() != null) {
+            request.getPartrequestitems()
+                    .forEach(item -> item.setPartrequest(request));
+        }
+
+        PartRequest saved = partRequestRepository.save(request);
         return partRequestMapper.toDto(saved);
     }
 

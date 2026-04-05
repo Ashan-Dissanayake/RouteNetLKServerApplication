@@ -1,8 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.controller;
 
 import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.service.PartService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
@@ -33,6 +35,12 @@ public class PartController {
                 ? partService.getParts()
                 : partService.searchParts(params);
 
+        return APIResponseBuilder.list(parts, parts.size());
+    }
+
+    @GetMapping(value = "/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<PartSummaryDto>>> get() {
+        List<PartSummaryDto> parts =  partService.getSummaryParts();
         return APIResponseBuilder.list(parts, parts.size());
     }
 

@@ -17,5 +17,6 @@ public interface PartRequestItemMapper {
     List<PartRequestItemDto> toDtoList(List<PartRequestItem> partRequestItems);
 
     @Mapping(target = "partrequest", ignore = true)
+    @Mapping(target = "id", ignore = true)
     PartRequestItem toEntity(PartRequestItemDto dto);
 }

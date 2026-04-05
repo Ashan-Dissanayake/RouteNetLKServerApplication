@@ -16,6 +16,7 @@ public interface PartRequestMapper {
     PartRequestDetailResponseDto toDto(PartRequest partRequest);
     List<PartRequestDetailResponseDto> toDtoList(List<PartRequest> partRequests);
 
+
     PartRequest toEntity(PartRequestCreateRequestDto createRequestDto);
     PartRequest toEntity(PartRequestUpdateRequestDto updateRequestDto);
 

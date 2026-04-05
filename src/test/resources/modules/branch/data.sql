@@ -61,13 +61,13 @@ VALUES
     ('Ratnapura Workshop Depot', 'RTP0001', 'Colombo Road, Ratnapura', '0452223408', 'rtp@sltb.lk', '2025-12-25', 4, '', 3, 9, 0);
 
 -- codetype
-INSERT INTO codetype (name) VALUES
-                                ('EMPLOYEE'),
-                                ('DRIVER'),
-                                ('CONDUCTOR'),
-                                ('PART_REQUEST'),
-                                ('GRN'),
-                                ('VEHICLE_SERVICE'),
-                                ('BRANCH');
-
-insert into scope (name) values ('GLOBAL')
+# INSERT INTO codetype (name) VALUES
+#                                 ('EMPLOYEE'),
+#                                 ('DRIVER'),
+#                                 ('CONDUCTOR'),
+#                                 ('PART_REQUEST'),
+#                                 ('GRN'),
+#                                 ('VEHICLE_SERVICE'),
+#                                 ('BRANCH');
+#
+# insert into scope (name) values ('GLOBAL'),('CLM'),('ANG'),('KND');
