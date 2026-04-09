@@ -20,5 +20,5 @@ public class GrnDetailResponseDto {
     private LocalDate doreceived;
     private String remarks;
     private GrnStatusDto grnstatus;
-    private List<GrnPartDto> grnparts;
+    private List<GrnPartRequestItemDto> grnpartrequestitems;
 }

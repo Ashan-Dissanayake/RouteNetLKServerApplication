@@ -2,8 +2,11 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -15,6 +18,9 @@ uses = {
 public interface PartRequestMapper {
     PartRequestDetailResponseDto toDto(PartRequest partRequest);
     List<PartRequestDetailResponseDto> toDtoList(List<PartRequest> partRequests);
+
+    PartRequestSummaryDto toSummaryDto(PartRequest partRequest);
+    List<PartRequestSummaryDto> toSummaryDtoList(List<PartRequest> partRequests);
 
 
     PartRequest toEntity(PartRequestCreateRequestDto createRequestDto);

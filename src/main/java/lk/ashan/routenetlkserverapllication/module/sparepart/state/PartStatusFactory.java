@@ -13,8 +13,8 @@ public class PartStatusFactory {
     public PartStatusFactory() {
         stateMap = Map.of(
                 "AVAILABLE", SparePartAvailableState::new,
-                "LOW_STOCK", SparePartLowStockState::new,
-                "OUT_OF_STOCK", SparePartOutOfStockState::new,
+                "LOW STOCK", SparePartLowStockState::new,
+                "OUT OF STOCK", SparePartOutOfStockState::new,
                 "DECOMMISSIONED", SparePartDecommissionedState::new
         );
     }

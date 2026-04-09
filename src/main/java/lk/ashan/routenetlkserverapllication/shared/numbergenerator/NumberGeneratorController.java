@@ -53,4 +53,13 @@ public class NumberGeneratorController {
                 Map.of("partRequestNumber", partRequestNumber)
         );
     }
+
+    @GetMapping(value = "/grn", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<String>> getGrnNumber() {
+        String grnNumber = numberGeneratorService.nextGrnNumber("CLM0001", YearMonth.now());
+        return APIResponseBuilder.ok(
+                grnNumber,
+                Map.of("grnNumber", grnNumber)
+        );
+    }
 }

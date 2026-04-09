@@ -8,21 +8,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class GrnPendingState implements GrnState {
-
-    private static final List<String> ALLOWED =
-            List.of("COMPLETED", "CANCELLED");
+public class GrnDraftState implements GrnState {
+    private static final List<String> ALLOWED = List.of("PARTIALLY RECEIVED", "RECEIVED");
 
     @Override
     public void transitionTo(Grn grn, GrnStatus newStatus) {
+        String newStatusName = newStatus.getName().toUpperCase();
+        if ("DRAFT".equals(newStatusName)) return;
 
-        if (!ALLOWED.contains(newStatus.getName())) {
-
-            throw new InvalidStateTransitionException(
-                    "Invalid transition from PENDING to " + newStatus.getName()
-            );
+        if (!ALLOWED.contains(newStatusName)) {
+            throw new InvalidStateTransitionException("Draft GRN can only move to Partial or Received.");
         }
-
         grn.setGrnstatus(newStatus);
     }
 }

@@ -3,8 +3,11 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
+import lk.ashan.routenetlkserverapllication.module.grn.event.GrnProcessedEvent;
+import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnPartRequestItemRepository;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestItemMapper;
 import lk.ashan.routenetlkserverapllication.module.partreqest.mapper.PartRequestMapper;
@@ -26,7 +29,10 @@ import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGenerat
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -47,6 +53,7 @@ public class PartRequestService {
     private final BranchService branchService;
     private final PartRequestMapper partRequestMapper;
     private final PartRequestItemMapper partRequestItemMapper;
+    private final GrnPartRequestItemRepository grnPartRequestItemRepository;
 
     private final PartRequestValidationContextBuilder contextBuilder;
     private final List<PartRequestValidationStrategy> validationStrategies;
@@ -74,6 +81,20 @@ public class PartRequestService {
 
         return partRequestMapper.toDtoList( partRequestStream.collect(Collectors.toList()));
     }
+
+    @Transactional(readOnly = true)
+    public PartRequest getById(Integer id) {
+        return partRequestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Request not found with id " + id
+                ));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PartRequestSummaryDto> getSummaryPartRequests() {
+        return partRequestMapper.toSummaryDtoList(partRequestRepository.findAll());
+    }
+
 
     @Transactional
     public PartRequestDetailResponseDto createRequest(@NotNull PartRequestCreateRequestDto dto) {
@@ -191,23 +212,35 @@ public class PartRequestService {
         return partRequestMapper.toDto(request);
     }
 
-    @Transactional
-    public PartRequestDetailResponseDto completeRequest(@NotNull Integer id) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleGrnProcessed(GrnProcessedEvent event) {
+        PartRequest request = partRequestRepository.findById(event.partRequestId())
+                .orElseThrow(() -> new ResourceNotFoundException("Part Request not found"));
 
-        PartRequest request = partRequestRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Request not found with id " + id
-                ));
+        // 1. Check if every item is fulfilled by summing directly from the DB
+        // This is MUCH faster than looping through lists in Java
+            boolean isFullyReceived = request.getPartrequestitems().stream().allMatch(item -> {
 
-        PartRequestStatus completedStatus = partRequestStatusRepository
-                .findByName("Completed")
-                .orElseThrow(() -> new IllegalStateException(
-                        "Status COMPLETED not found"
-                ));
+            // Summing only finalized quantities from the grnpart table
+            BigDecimal totalReceived = grnPartRequestItemRepository.sumQuantityByPartRequestItemId(
+                    item.getId(),
+                    List.of("Received", "Partially Received")
+            );
 
-        partRequestStateTransitionHandler.transitionTo(request, completedStatus);
+            BigDecimal received = (totalReceived != null) ? totalReceived : BigDecimal.ZERO;
 
-        return partRequestMapper.toDto(request);
+            // Compare against the required quantity
+            return received.compareTo(item.getQuantity()) >= 0;
+        });
+
+        if (isFullyReceived) {
+            PartRequestStatus completedStatus = partRequestStatusRepository.findByName("Completed").orElseThrow();
+            partRequestStateTransitionHandler.transitionTo(request, completedStatus);
+            partRequestRepository.saveAndFlush(request);
+        }
     }
+
+
 
 }

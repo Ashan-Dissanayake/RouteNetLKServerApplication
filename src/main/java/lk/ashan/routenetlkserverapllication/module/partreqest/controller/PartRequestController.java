@@ -3,8 +3,10 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.controller;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.partreqest.service.PartRequestService;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,13 @@ public class PartRequestController {
 
         return APIResponseBuilder.list(requests, requests.size());
     }
+
+    @GetMapping(value = "/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<PartRequestSummaryDto>>> get() {
+        List<PartRequestSummaryDto> partRequests =  partRequestService.getSummaryPartRequests();
+        return APIResponseBuilder.list(partRequests, partRequests.size());
+    }
+
 
     @PreAuthorize("hasAuthority('part-requests-insert')")
     @PostMapping
@@ -71,6 +80,7 @@ public class PartRequestController {
         return APIResponseBuilder.ok(request);
     }
 
+    /*
     @PreAuthorize("hasAuthority('part-requests-update')")
     @PostMapping("/{id}/complete")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> complete(
@@ -79,5 +89,5 @@ public class PartRequestController {
         PartRequestDetailResponseDto request = partRequestService.completeRequest(id);
         return APIResponseBuilder.ok(request);
     }
-
+    */
 }

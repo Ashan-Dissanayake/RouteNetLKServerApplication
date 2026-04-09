@@ -9,9 +9,9 @@ import java.sql.Date;
 import java.util.Collection;
 import java.util.Objects;
 
+@Entity
 @Setter
 @Getter
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,7 +39,7 @@ public class Grn {
     @JoinColumn(name = "grnstatus_id", referencedColumnName = "id", nullable = false)
     private GrnStatus grnstatus;
     @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Collection<GrnPart> grnparts;
+    private Collection<GrnPartRequestItem> grnpartrequestitems;
 
     @Override
     public boolean equals(Object o) {

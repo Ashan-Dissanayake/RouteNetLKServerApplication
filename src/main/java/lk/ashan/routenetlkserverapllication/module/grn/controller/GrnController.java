@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.grn.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.grn.service.GrnService;
@@ -35,15 +34,6 @@ public class GrnController {
         return APIResponseBuilder.list(requests, requests.size());
     }
 
-    @PreAuthorize("hasAuthority('grn-insert')")
-    @PostMapping
-    public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> create(
-            @RequestBody @Valid GrnCreateRequestDto dto
-    ) {
-        GrnDetailResponseDto saved = grnService.createGrn(dto);
-        return APIResponseBuilder.created(saved, saved.getId());
-    }
-
     @PreAuthorize("hasAuthority('grn-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> update(
@@ -51,20 +41,6 @@ public class GrnController {
     ) {
         GrnDetailResponseDto updated = grnService.updateGrn(dto);
         return APIResponseBuilder.updated(updated, updated.getId());
-    }
-
-    @PreAuthorize("hasAuthority('grn-complete')")
-    @PostMapping("/{id}/complete")
-    public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> complete(@PathVariable Integer id) {
-        GrnDetailResponseDto completed = grnService.completeGrn(id);
-        return APIResponseBuilder.ok(completed);
-    }
-
-    @PreAuthorize("hasAuthority('grn-cancel')")
-    @PostMapping("/{id}/cancel")
-    public ResponseEntity<APISuccessResponse<GrnDetailResponseDto>> cancel(@PathVariable Integer id) {
-        GrnDetailResponseDto cancelled = grnService.cancelGrn(id);
-        return APIResponseBuilder.ok(cancelled);
     }
 
 }

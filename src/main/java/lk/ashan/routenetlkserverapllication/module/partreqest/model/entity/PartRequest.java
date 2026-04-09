@@ -47,6 +47,7 @@ public class PartRequest {
     @OneToMany(mappedBy = "partrequest")
     private Collection<Grn> grns;
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

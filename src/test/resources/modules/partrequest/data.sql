@@ -10,10 +10,10 @@ TRUNCATE TABLE partrequestitem;
 SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO partrequeststatus (name) VALUES
-                                         ('Pending'),
-                                         ('Approved'),
-                                         ('Rejected'),
-                                         ('Completed');
+     ('Pending'),
+     ('Approved'),
+     ('Rejected'),
+     ('Completed');
 
 INSERT INTO partrequest
 (branch_id, number, dorequested, partrequeststatus_id, remarks)
@@ -22,6 +22,10 @@ VALUES
     (1, 'PR-CLM0001-202603-0002', '2026-03-02', 2, 'Urgent brake replacement'),
     (2, 'PR-ANG0001-202603-0001', '2026-03-03', 3, 'Invalid quantity request'),
     (1, 'PR-CLM0001-202603-0003', '2026-03-04', 4, 'Stock replenishment completed');
+
+-- Approved PO
+INSERT INTO partrequest (branch_id, number, dorequested, partrequeststatus_id, remarks)
+VALUES (1, 'PR-CLM0001-202604-0001', '2026-04-01', 2, 'Partial Receipt Testing');
 
 
 INSERT INTO partrequestitem
@@ -43,6 +47,8 @@ VALUES
 (4, 5, 4);
 
 
+INSERT INTO partrequestitem (partrequest_id, part_id, quantity)
+VALUES (5, 6, 20);
 
 
 

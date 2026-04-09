@@ -11,5 +11,4 @@ import lombok.*;
 public class PartSummaryDto {
     private Integer id;
     private String name;
-
 }

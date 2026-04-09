@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.service;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
+import lk.ashan.routenetlkserverapllication.module.grn.event.PartReceivedEvent;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
@@ -25,7 +26,10 @@ import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDelete
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -130,6 +134,21 @@ public class PartService {
         return partMapper.toDto(saved);
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void handlePartReceived(PartReceivedEvent event) {
+        Part part = partRepository.findById(event.partId())
+                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+
+        // 1. Update the actual quantity
+        BigDecimal currentQoh = part.getQoh() != null ? part.getQoh() : BigDecimal.ZERO;
+        part.setQoh(currentQoh.add(event.quantityReceived()));
+
+        // 2. Determine and Transition the Status
+        updatePartStatus(part);
+
+        partRepository.save(part);
+    }
+
     @Transactional
     public List<Integer> deactivateParts(List<Integer> partIds) {
 
@@ -170,6 +189,34 @@ public class PartService {
                             )
                     );
                 });
+    }
+
+    private void updatePartStatus(Part part) {
+        String currentStatusName = part.getPartstatus().getName().toUpperCase();
+
+        // Safety: If it's already DECOMMISSIONED, the Handler/State will throw an
+        // exception if we try to move it. We catch it or check here to prevent crashes.
+        if ("DECOMMISSIONED".equals(currentStatusName)) {
+            return;
+        }
+
+        // 1. Calculate what the status SHOULD be based on QOH
+        String targetStatusName = calculateTargetStatus(part.getQoh(), part.getRop());
+
+        // 2. Only transition if the status actually needs to change
+        if (!currentStatusName.equalsIgnoreCase(targetStatusName)) {
+            Partstatus newStatus = partStatusRepository.findByName(targetStatusName)
+                    .orElseThrow(() -> new IllegalStateException("Status " + targetStatusName + " not found"));
+
+            // 3. USE YOUR HANDLER: This triggers transitionTo -> currentState.transitionTo -> executeOnEnter
+            partStateTransitionHandler.transitionTo(part, newStatus);
+        }
+    }
+
+    private String calculateTargetStatus(BigDecimal qoh, BigDecimal rop) {
+        if (qoh.compareTo(BigDecimal.ZERO) <= 0) return "OUT OF STOCK";
+        if (qoh.compareTo(rop) <= 0) return "LOW STOCK";
+        return "AVAILABLE";
     }
 
 }

@@ -1,20 +1,20 @@
 package lk.ashan.routenetlkserverapllication.module.grn.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Entity
 @Setter
 @Getter
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "grnpart", schema = "routenetlk")
-public class GrnPart {
+@Table(name = "grnpartrequestitem", schema = "routenetlk")
+public class GrnPartRequestItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -26,15 +26,15 @@ public class GrnPart {
     @JoinColumn(name = "grn_id", referencedColumnName = "id", nullable = false)
     private Grn grn;
     @ManyToOne
-    @JoinColumn(name = "part_id", referencedColumnName = "id", nullable = false)
-    private Part part;
+    @JoinColumn(name = "partrequestitem_id", referencedColumnName = "id", nullable = false)
+    private PartRequestItem partrequestitem;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GrnPart grnpart = (GrnPart) o;
-        return Objects.equals(id, grnpart.id) && Objects.equals(quantity, grnpart.quantity);
+        GrnPartRequestItem that = (GrnPartRequestItem) o;
+        return Objects.equals(id, that.id) && Objects.equals(quantity, that.quantity);
     }
 
     @Override

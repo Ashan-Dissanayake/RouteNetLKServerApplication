@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnPart;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
@@ -10,7 +9,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -52,9 +50,6 @@ public class Part extends BaseEntity {
 
     @OneToMany(mappedBy = "part")
     private Collection<PartRequestItem> partRequestItems;
-
-    @OneToMany(mappedBy = "part")
-    private Collection<GrnPart> grnParts;
 
     @OneToMany(mappedBy = "part")
     private Collection<Vehicleservicepart> vehicleserviceparts;

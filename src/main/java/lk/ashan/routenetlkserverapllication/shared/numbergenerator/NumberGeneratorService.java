@@ -74,6 +74,12 @@ public class NumberGeneratorService {
         return formatter.partRequest(scopeName, ym, next);
     }
 
+    @Transactional
+    public String nextGrnNumber(String scopeName, YearMonth ym) {
+        Integer next = nextBranchPeriodSequenceValue("GRN", scopeName, ym);
+        return formatter.grn(scopeName, ym, next);
+    }
+
     private Integer nextBranchPeriodSequenceValue(String codeTypeName, String scopeName, YearMonth ym) {
         CodeType codeType = codeTypeRepository.findByName(codeTypeName)
                 .orElseThrow(() -> new RuntimeException("CodeType not found: " + codeTypeName));

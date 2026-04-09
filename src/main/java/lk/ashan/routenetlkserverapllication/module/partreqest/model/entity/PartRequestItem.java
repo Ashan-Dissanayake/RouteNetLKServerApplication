@@ -1,10 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnPartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -31,6 +33,10 @@ public class PartRequestItem {
     @ManyToOne
     @JoinColumn(name = "part_id", referencedColumnName = "id", nullable = false)
     private Part part;
+
+    @OneToMany(mappedBy = "partrequestitem")
+    private Collection<GrnPartRequestItem> grnpartrequestitems;
+
 
     @Override
     public boolean equals(Object o) {
