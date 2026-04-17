@@ -1,8 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.mapper.RoleMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.mapper.ShiftMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripCrewAllocationDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
@@ -16,8 +14,8 @@ import java.util.List;
 uses = {
         TripMapper.class,
         EmployeeMapper.class,
-        RoleMapper.class,
-        ShiftMapper.class,
+        //RoleMapper.class,
+       // ShiftMapper.class,
         TripAllocationStatusMapper.class
 })
 public interface TripCrewAllocationMapper {

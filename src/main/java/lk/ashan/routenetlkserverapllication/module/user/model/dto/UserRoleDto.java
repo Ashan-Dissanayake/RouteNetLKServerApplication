@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RoleDto;
 import lombok.*;
 
 @Getter

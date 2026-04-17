@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lombok.*;
@@ -23,8 +22,6 @@ public class Role {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "role")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
 
     @OneToMany(mappedBy = "role")
     private Collection<Tripcrewallocation> tripcrewallocations;

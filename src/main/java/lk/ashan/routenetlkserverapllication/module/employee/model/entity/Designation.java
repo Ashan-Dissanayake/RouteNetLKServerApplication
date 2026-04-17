@@ -2,6 +2,8 @@ package lk.ashan.routenetlkserverapllication.module.employee.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lombok.*;
 
 import java.util.Collection;
@@ -23,6 +25,9 @@ public class Designation {
     @JsonIgnore
     @OneToMany(mappedBy = "designation")
     private Collection<Employee> employees;
+
+    @OneToMany(mappedBy = "designation")
+    private Collection<RosterShift> rostershifts;
 
     @Override
     public boolean equals(Object o) {

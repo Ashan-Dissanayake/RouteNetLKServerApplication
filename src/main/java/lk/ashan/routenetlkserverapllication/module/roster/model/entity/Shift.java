@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Designation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lombok.*;
 
@@ -32,17 +32,20 @@ public class Shift {
     @Basic
     @Column(name = "maxhours")
     private Integer maxhours;
-    @ManyToOne
-    @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
-    private Branch branch;
+    @Basic
+    @Column(name = "breakminutes")
+    private Integer breakminutes;
+    @Basic
+    @Column(name = "issplitshift")
+    private boolean issplitshift;
     @ManyToOne
     @JoinColumn(name = "shiftstatus_id", referencedColumnName = "id", nullable = false)
-    private Shiftstatus shiftstatus;
-    @OneToMany(mappedBy = "shift")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
+    private ShiftStatus shiftstatus;
 
     @OneToMany(mappedBy = "derivedshift")
     private Collection<Tripcrewallocation> tripcrewallocations;
+
+
 
     @Override
     public boolean equals(Object o) {

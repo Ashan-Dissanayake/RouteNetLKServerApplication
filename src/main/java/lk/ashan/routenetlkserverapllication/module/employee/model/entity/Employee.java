@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shiftrosterassignment;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
@@ -84,7 +84,7 @@ public class Employee extends BaseEntity {
     private Conductor conductor;
 
     @OneToMany(mappedBy = "employee")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
+    private Collection<RosterShiftAssignment> rosterShiftAssignments;
 
     @OneToMany(mappedBy = "employee")
     private Collection<Tripcrewallocation> tripcrewallocations;

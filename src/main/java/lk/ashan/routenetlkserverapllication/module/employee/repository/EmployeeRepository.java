@@ -64,5 +64,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT DISTINCT e FROM Employee e WHERE e.id IN :ids")
     List<Employee> findByIdInWithCrewData(@Param("ids") List<Integer> ids);
 
+    @Query("SELECT e FROM Employee e " +
+            "WHERE e.employeestatus.name = 'Active' " +
+            "AND e.deleted = false " +
+            "AND e.designation.id IN :designationIds")
+    List<Employee> findActiveEmployeesByDesignations(@Param("designationIds") List<Integer> designationIds);
+
 
 }

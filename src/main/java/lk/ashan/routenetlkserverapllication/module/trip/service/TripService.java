@@ -9,7 +9,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.mapper.OriginTerminalMap
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
+//import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
@@ -48,7 +48,7 @@ public class TripService {
     private final TripMapper tripMapper;
     private final OriginTerminalMapper originTerminalMapper;
 
-    private final TripOverrideSolverService tripOverrideSolverService;
+//    private final TripOverrideSolverService tripOverrideSolverService;
 
     private final List<TripCreationValidationStrategy> creationValidationStrategies;
     private final List<TripUpdateValidationStrategy> updateValidationStrategies;
@@ -160,15 +160,17 @@ public class TripService {
 
         existingTrips.removeIf(t -> t.getId().equals(trip.getId()));
 
-        // Call solver
-        Vehicle suggestedVehicle = tripOverrideSolverService.solveForTrip(
-                trip, candidateVehicles, existingTrips
-        );
+//        // Call solver
+//        Vehicle suggestedVehicle = tripOverrideSolverService.solveForTrip(
+//                trip, candidateVehicles, existingTrips
+//        );
+//
+//        return new OverrideSuggestionResponse(
+//                trip.getId(),
+//                suggestedVehicle != null ? suggestedVehicle.getId() : null
+//        );
 
-        return new OverrideSuggestionResponse(
-                trip.getId(),
-                suggestedVehicle != null ? suggestedVehicle.getId() : null
-        );
+        return null;
     }
 
     @Transactional

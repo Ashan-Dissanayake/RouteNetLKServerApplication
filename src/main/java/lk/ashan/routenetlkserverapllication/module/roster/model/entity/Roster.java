@@ -26,29 +26,23 @@ public class Roster  extends BaseEntity {
     @Basic
     @Column(name = "doendofweek")
     private LocalDate doendofweek;
-    @Basic
-    @Column(name = "deleted")
-    private Boolean deleted;
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
-    @ManyToOne
-    @JoinColumn(name = "rosterstatus_id", referencedColumnName = "id", nullable = false)
-    private Rosterstatus rosterstatus;
     @OneToMany(mappedBy = "roster")
-    private Collection<Shiftrosterassignment> shiftrosterassignments;
+    private Collection<RosterShift> rosterShifts;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Roster roster = (Roster) o;
-        return Objects.equals(id, roster.id) && Objects.equals(dostartofweek, roster.dostartofweek) && Objects.equals(doendofweek, roster.doendofweek) && Objects.equals(deleted, roster.deleted);
+        return Objects.equals(id, roster.id) && Objects.equals(dostartofweek, roster.dostartofweek) && Objects.equals(doendofweek, roster.doendofweek);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dostartofweek, doendofweek, deleted);
+        return Objects.hash(id, dostartofweek, doendofweek);
     }
 
 }
