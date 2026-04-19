@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterGenerationResponse;
-import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDTO;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.service.RosterShiftAssignmentService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -21,9 +21,9 @@ public class RosterShiftController {
     private final RosterShiftAssignmentService rosterShiftAssignmentService;
 
     @GetMapping("/view/{rosterId}")
-    public ResponseEntity<APISuccessResponse<List<RosterShiftAssignmentResponseDTO>>> getFullRoster
+    public ResponseEntity<APISuccessResponse<List<RosterShiftAssignmentResponseDto>>> getFullRoster
             (@PathVariable Integer rosterId) {
-        List<RosterShiftAssignmentResponseDTO> assignments =
+        List<RosterShiftAssignmentResponseDto> assignments =
                 rosterShiftAssignmentService.getAssignmentsByRosterId(rosterId);
         return APIResponseBuilder.list(assignments, assignments.size());
     }
@@ -42,6 +42,22 @@ public class RosterShiftController {
                 LocalDateTime.now()
         );
         return APIResponseBuilder.accepted(data);
+    }
+
+    @PostMapping("/approved/{assignmentId}")
+    public ResponseEntity<APISuccessResponse<String>> approveSuggestion(
+            @PathVariable Integer assignmentId)
+    {
+        rosterShiftAssignmentService.approveSuggestion(assignmentId);
+        return APIResponseBuilder.ok("Shift assignment suggestion approved successfully.");
+    }
+
+    @PostMapping("/cancelled/{assignmentId}")
+    public ResponseEntity<APISuccessResponse<String>> cancelSuggestion(
+            @PathVariable Integer assignmentId)
+    {
+        rosterShiftAssignmentService.cancelSuggestion(assignmentId);
+        return APIResponseBuilder.ok("Shift assignment suggestion cancelled successfully.");
     }
 
 

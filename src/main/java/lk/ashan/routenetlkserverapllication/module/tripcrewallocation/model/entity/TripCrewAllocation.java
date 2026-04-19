@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lombok.*;
 
@@ -16,7 +14,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tripcrewallocation {
+@Table(name = "tripcrewallocation", schema = "routenetlk")
+public class TripCrewAllocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -30,24 +29,20 @@ public class Tripcrewallocation {
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;
+
     @ManyToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
-    private Employee employee;
+    @JoinColumn(name = "tripcrewallocationstatus_id", referencedColumnName = "id", nullable = false)
+    private TripCrewAllocationStatus tripcrewallocationstatus;
+
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-    private Role role;
-    @ManyToOne
-    @JoinColumn(name = "derivedshift_id", referencedColumnName = "id", nullable = false)
-    private Shift derivedshift;
-    @ManyToOne
-    @JoinColumn(name = "tripallocationstatus_id", referencedColumnName = "id", nullable = false)
-    private Tripallocationstatus tripallocationstatus;
+    @JoinColumn(name = "rostershiftassignment_id", referencedColumnName = "id", nullable = false)
+    private RosterShiftAssignment rostershiftassignment;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tripcrewallocation that = (Tripcrewallocation) o;
+        TripCrewAllocation that = (TripCrewAllocation) o;
         return Objects.equals(id, that.id) && Objects.equals(remarks, that.remarks);
     }
 

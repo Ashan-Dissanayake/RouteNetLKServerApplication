@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TripReadyState implements TripState {
 
-    private static final List<String> ALLOWED = List.of("IN_PROGRESS","CANCELLED");
+    private static final List<String> ALLOWED = List.of("IN PROGRESS","CANCELLED");
 
     @Override
     public void transitionTo(Trip trip, Tripstatus newStatus) {

@@ -14,12 +14,13 @@ public class RosterShiftAssignmentPlanning {
 
     @PlanningId
     private Integer id;
-
     private Integer rosterShiftId;
     private LocalTime startTime;
     private LocalTime endTime;
     private LocalDate shiftDate;
     private Integer designationId;
+    private Integer shiftId;
+    private Integer requiredFamiliarityLevel;
 
     @PlanningVariable(valueRangeProviderRefs = "employeeRange")
     private EmployeeFact employeeFact;

@@ -33,6 +33,10 @@ public class RosterShift {
     @JoinColumn(name = "designation_id", referencedColumnName = "id", nullable = false)
     private Designation designation;
 
+    @Transient
+    private Integer requiredFamiliarityLevel = 1;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

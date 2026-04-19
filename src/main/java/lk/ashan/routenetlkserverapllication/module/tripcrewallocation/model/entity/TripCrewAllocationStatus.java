@@ -13,7 +13,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tripallocationstatus {
+@Table(name = "tripcrewallocationstatus", schema = "routenetlk")
+public class TripCrewAllocationStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -21,14 +22,14 @@ public class Tripallocationstatus {
     @Basic
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "tripallocationstatus")
-    private Collection<Tripcrewallocation> tripcrewallocations;
+    @OneToMany(mappedBy = "tripcrewallocationstatus")
+    private Collection<TripCrewAllocation> tripCrewAllocations;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tripallocationstatus that = (Tripallocationstatus) o;
+        TripCrewAllocationStatus that = (TripCrewAllocationStatus) o;
         return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 

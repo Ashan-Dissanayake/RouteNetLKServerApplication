@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleFact {
-
     private Integer id;
     private String number;
-    private String status; // AVAILABLE, MAINTENANCE, BREAKDOWN
+    private String status;
     private Integer depotId;
 }

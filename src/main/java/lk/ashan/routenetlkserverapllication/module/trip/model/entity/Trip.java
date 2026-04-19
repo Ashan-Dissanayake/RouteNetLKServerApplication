@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.TripCrewAllocation;
 import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lombok.*;
 
@@ -58,7 +58,7 @@ public class Trip {
     private Originterminal originterminal;
 
     @OneToMany(mappedBy = "trip")
-    private Collection<Tripcrewallocation> tripcrewallocations;
+    private Collection<TripCrewAllocation> tripCrewAllocations;
 
     @OneToMany(mappedBy = "trip")
     private Collection<TripCrewAttendance> tripCrewAttendances;

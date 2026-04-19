@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class RosterShiftAssignmentResponseDTO {
+public class RosterShiftAssignmentResponseDto {
     private Integer id;
     private Integer rosterId;
     private String shiftName;

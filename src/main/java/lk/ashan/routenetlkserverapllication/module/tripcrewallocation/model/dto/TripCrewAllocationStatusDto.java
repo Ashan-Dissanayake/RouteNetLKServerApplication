@@ -2,8 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto
 
 import lombok.*;
 
-import java.io.Serializable;
-
 
 @Getter
 @Setter
@@ -11,7 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @ToString
-public class TripAllocationStatusDto{
+public class TripCrewAllocationStatusDto {
     private  Integer id;
     private String name;
 }

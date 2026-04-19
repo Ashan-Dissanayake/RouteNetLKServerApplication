@@ -29,5 +29,6 @@ INSERT INTO servicetype (name) values ('Normal'),('Semi luxury'),('Luxury'),('Su
 
 INSERT INTO permite(number,vehicle_id,doissued,doexpired,branch_id,permitestatus_id,servicetype_id,route_id,deleted) VALUES
             ('2696',1,'2003-01-13','2027-07-24', 1,1,1,1,0),
-            ('ANG-NA7845-103-3',2,'2002-05-01','2026-05-12', 1,1,1,4,0);
-#             ('1865',3,'2002-05-01','2026-05-12', 1,1,1,2,0);
+            ('ANG-NA7845-103-3',2,'2002-05-01','2026-05-12', 1,1,1,4,0),
+            ('1865',3,'2002-05-01','2026-05-12', 1,1,1,2,0),
+            ('1031', 4, '2024-01-01', '2028-01-01', 1, 1, 1, 1, 0);

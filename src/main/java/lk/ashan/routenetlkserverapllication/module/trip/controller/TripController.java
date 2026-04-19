@@ -102,8 +102,6 @@ public class TripController {
         TripDetailResponseDto response =
                 tripService.cancelTrip(tripId);
 
-        System.out.println("Trip " + tripId + " cancelled. Current status: " + response.getTripstatus().getName());
-
         return APIResponseBuilder.ok(
                 response,
                 Map.of("action", "trip_cancelled", "status", "CANCELLED")

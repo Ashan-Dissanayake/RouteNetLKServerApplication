@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDTO;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterShiftAssignmentPlanning;
@@ -33,11 +33,13 @@ public interface RosterAssignmentMapper {
     @Mapping(target = "startTime", source = "rostershift.shift.tostart")
     @Mapping(target = "endTime", source = "rostershift.shift.toend")
     @Mapping(target = "designationId", source = "rostershift.designation.id")
+    @Mapping(target = "shiftId", source = "rostershift.shift.id")
+    @Mapping(target = "requiredFamiliarityLevel", source = "rostershift.requiredFamiliarityLevel")
     RosterShiftAssignmentPlanning toPlanning(RosterShiftAssignment assignment);
 
-    @Mapping(target = "employee", source = "employeeFact")
-    @Mapping(target = "rostershift", ignore = true)
-    void updateAssignmentFromPlanning(RosterShiftAssignmentPlanning planning, @MappingTarget RosterShiftAssignment entity);
+//    @Mapping(target = "employee", source = "employeeFact")
+//    @Mapping(target = "rostershift", ignore = true)
+//    void updateAssignmentFromPlanning(RosterShiftAssignmentPlanning planning, @MappingTarget RosterShiftAssignment entity);
 
 
     @Mapping(target = "employeeName", source = "employee.fullname")
@@ -48,7 +50,7 @@ public interface RosterAssignmentMapper {
     @Mapping(target = "startTime", source = "rostershift.shift.tostart")
     @Mapping(target = "endTime", source = "rostershift.shift.toend")
     @Mapping(target = "status", source = "rostershiftassignmentstatus.name")
-    RosterShiftAssignmentResponseDTO toDto(RosterShiftAssignment entity);
+    RosterShiftAssignmentResponseDto toDto(RosterShiftAssignment entity);
 
-    List<RosterShiftAssignmentResponseDTO> toDtoList(List<RosterShiftAssignment> entities);
+    List<RosterShiftAssignmentResponseDto> toDtoList(List<RosterShiftAssignment> entities);
 }

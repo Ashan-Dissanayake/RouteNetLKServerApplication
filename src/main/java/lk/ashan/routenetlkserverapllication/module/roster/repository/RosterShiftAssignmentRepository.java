@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -25,14 +27,10 @@ public interface RosterShiftAssignmentRepository extends JpaRepository<RosterShi
             "ORDER BY rs.doshift ASC, rs.shift.tostart ASC")
     List<RosterShiftAssignment> findByRosterId(@Param("rosterId") Integer rosterId);
 
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE RosterShiftAssignment ra SET ra.employee.id = :employeeId WHERE ra.id = :id")
-    void updateEmployeeDirectly(@Param("id") Integer id, @Param("employeeId") Integer employeeId);
-
     @Modifying
     @Transactional
     @Query("UPDATE RosterShiftAssignment ra SET ra.employee.id = :employeeId, ra.rostershiftassignmentstatus.id = :statusId WHERE ra.id = :id")
     void updateEmployeeAndStatusDirectly(@Param("id") Integer id, @Param("employeeId") Integer employeeId, @Param("statusId") Integer statusId);
+
+
 }

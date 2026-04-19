@@ -12,7 +12,7 @@ public class TripCrewAllocationStateFactory {
 
     public TripCrewAllocationStateFactory() {
         stateMap = Map.of(
-                "SUGGESTED", TripCrewAllocationSuggestedState::new,
+                "ALLOCATED", TripCrewAllocationAllocatedState::new,
                 "CONFIRMED", TripCrewAllocationConfirmedState::new,
                 "REJECTED", TripCrewAllocationRejectedState::new
         );

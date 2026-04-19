@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.repository;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -47,5 +48,14 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     @Query("SELECT MAX(t.notrip) FROM Trip t WHERE t.permite.id = :permitId AND t.doservice = :serviceDate")
     Optional<Integer> findMaxTripNumberForPermitAndDate(Integer permitId, LocalDate serviceDate);
 
-    List<Trip> findByDoserviceBetween(LocalDate startDate, LocalDate endDate);
+    List<Trip> findByDoserviceAndBranchId(LocalDate doservice, Integer branchId);
+
+    @Query("SELECT t FROM Trip t " +
+            "JOIN FETCH t.permite p " +
+            "JOIN FETCH p.route r " +
+            "JOIN FETCH r.routetype rt " + // Navigate the direct FK link
+            "WHERE t.doservice = :date " +
+            "AND rt.name = 'Inter provincial' " +
+            "AND t.tripstatus.name IN ('Planned', 'Ready')")
+    List<Trip> findInterprovincialTrips(@Param("date") LocalDate date);
 }

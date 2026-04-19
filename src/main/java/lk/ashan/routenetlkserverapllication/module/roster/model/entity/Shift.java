@@ -1,12 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Designation;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripcrewallocation;
 import lombok.*;
 
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -42,8 +39,8 @@ public class Shift {
     @JoinColumn(name = "shiftstatus_id", referencedColumnName = "id", nullable = false)
     private ShiftStatus shiftstatus;
 
-    @OneToMany(mappedBy = "derivedshift")
-    private Collection<Tripcrewallocation> tripcrewallocations;
+//    @OneToMany(mappedBy = "derivedshift")
+//    private Collection<Tripcrewallocation> tripcrewallocations;
 
 
 

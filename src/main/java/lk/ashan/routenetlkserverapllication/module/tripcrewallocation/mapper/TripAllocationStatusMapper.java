@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.tripcrewallocation.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripAllocationStatusDto;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.Tripallocationstatus;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.dto.TripCrewAllocationStatusDto;
+import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.TripCrewAllocationStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
@@ -10,8 +10,8 @@ import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TripAllocationStatusMapper {
-    Tripallocationstatus toEntity(TripAllocationStatusDto tripAllocationStatusDto);
+    TripCrewAllocationStatus toEntity(TripCrewAllocationStatusDto tripCrewAllocationStatusDto);
 
-    TripAllocationStatusDto toDto(Tripallocationstatus tripAllocationStatus);
-    List<TripAllocationStatusDto> toDtoList(List<Tripallocationstatus> tripAllocationStatuses);
+    TripCrewAllocationStatusDto toDto(TripCrewAllocationStatus tripAllocationStatus);
+    List<TripCrewAllocationStatusDto> toDtoList(List<TripCrewAllocationStatus> tripAllocationStatuses);
 }

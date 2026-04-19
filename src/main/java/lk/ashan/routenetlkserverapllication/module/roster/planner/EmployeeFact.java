@@ -11,6 +11,7 @@ public class EmployeeFact {
     private Integer id;
     private String fullname;
     private Integer designationId;
+    private Integer familiarityLevel;
 
     public boolean isDriver() { return this.designationId == 1; }
     public boolean isConductor() { return this.designationId == 2; }
