@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -30,7 +31,11 @@ public class Roster  extends BaseEntity {
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
     @OneToMany(mappedBy = "roster")
-    private Collection<RosterShift> rosterShifts;
+    private Collection<RosterShift> rostershifts;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Override
     public boolean equals(Object o) {

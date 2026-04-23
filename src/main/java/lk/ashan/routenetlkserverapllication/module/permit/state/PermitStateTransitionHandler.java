@@ -21,39 +21,39 @@ public class PermitStateTransitionHandler {
     private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
 
 
-    public void transitionTo(Permite permit, PermiteStatus targetStatus) {
-        String currentStatus = permit.getPermitestatus().getName();
+    public void transitionTo(Permite permite, PermiteStatus targetStatus) {
+        String currentStatus = permite.getPermitestatus().getName();
         String target = targetStatus.getName();
 
-        log.info("Transitioning permit {} from {} to {}", permit.getId(), currentStatus, target);
+        log.info("Transitioning permit {} from {} to {}", permite.getId(), currentStatus, target);
 
         // Exit behavior
-        executeOnExit(permit, currentStatus);
+        executeOnExit(permite, currentStatus);
 
         // Validate & transition
         PermitState currentState = permitStateFactory.getState(currentStatus);
-        currentState.transitionTo(permit, targetStatus);
+        currentState.transitionTo(permite, targetStatus);
 
         // Entry behavior
-        executeOnEnter(permit, target);
+        executeOnEnter(permite, target);
     }
 
-    private void executeOnExit(Permite permit, String statusName) {
+    private void executeOnExit(Permite permite, String statusName) {
 
     }
 
-    private void executeOnEnter(Permite permit, String statusName) {
+    private void executeOnEnter(Permite permite, String statusName) {
         String normalized = statusName.trim().toUpperCase();
 
         /* No entry behavior for other states */
         if (normalized.equals("TRANSFERRED")) {
-            onEnterTransferred(permit);
+            onEnterTransferred(permite);
         }
     }
 
-    private void onEnterTransferred(Permite permit) {
+    private void onEnterTransferred(Permite permite) {
         Vehicle vehicle =
-                permit.getVehicle();
+                permite.getVehicle();
 
         VehicleStatus available =
                 vehicleStatusService

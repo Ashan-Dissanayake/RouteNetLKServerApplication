@@ -1,37 +1,19 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OverrideSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.mapper.OriginTerminalMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
-//import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
-import lk.ashan.routenetlkserverapllication.module.trip.planner.TripOverrideSolverService;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
-import lk.ashan.routenetlkserverapllication.module.trip.repository.TripStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.trip.state.TripState;
-import lk.ashan.routenetlkserverapllication.module.trip.state.TripStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.trip.state.TripStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripCreateContext;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.TripUpdateContext;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.*;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,29 +25,14 @@ import java.util.stream.Stream;
 public class TripService {
 
     private final TripRepository tripRepository;
-    private final VehicleRepository vehicleRepository;
-    private final TripStatusRepository tripStatusRepository;
-
+    private final TripStatusService tripStatusService;
     private final TripMapper tripMapper;
-    private final OriginTerminalMapper originTerminalMapper;
 
-    private final List<TripCreationValidationStrategy> creationValidationStrategies;
-    private final List<TripUpdateValidationStrategy> updateValidationStrategies;
-    private final TripStatusFactory tripStatusFactory;
-
-    private final InitialTripStatusDeterminationStrategy initialStatusStrategy;
-    private final TripExecutionStrategy tripExecutionStrategy;
-    private final TripCancellationStrategy tripCancellationStrategy;
-    private final TripCompletionStrategy tripCompletionStrategy;
-
-    private final TripStateTransitionHandler stateTransitionHandler;
-    private final VehicleOverrideApprovalStrategy overrideApprovalStrategy;
-
-    private final TripUpdateVehicleAvailabilityValidation vehicleAvailabilityValidation;
-
-    private final TripContextBuilder validationContextBuilder;
-
-    private final TripOverrideSolverService tripOverrideSolverService;
+    private final TripContextBuilder contextBuilder;
+    private final List<TripValidationStrategy> strategies;
+    private final TripActivationStrategy activationStrategy;
+    private final TripSuspendedStrategy suspendStrategy;
+    private final TripDiscontinuedStrategy discontinuedStrategy;
 
     @Transactional(readOnly = true)
     public List<TripDetailResponseDto> getTrips() {
@@ -80,15 +47,12 @@ public class TripService {
         if (!params.isEmpty()) {
 
             String tripTypeId = params.get("sstriptype");
-            String toDeparture = params.get("sstodepature");
             String tripStatusId = params.get("sstripstatus");
 
             Stream<Trip> tripStream = trips.stream();
 
             if (tripTypeId != null)
                 tripStream = tripStream.filter(t -> t.getTriptype().getId() == Integer.parseInt(tripTypeId));
-            if (toDeparture != null)
-                tripStream = tripStream.filter(t -> t.getTodepature() == LocalTime.parse(toDeparture));
             if (tripStatusId != null)
                 tripStream = tripStream.filter(t -> t.getTripstatus().getId() == Integer.parseInt(tripStatusId));
 
@@ -98,187 +62,52 @@ public class TripService {
         return tripMapper.toDetailList(trips);
     }
 
+    @Transactional(readOnly = true)
+    public Trip getTripById(Integer tripId){
+     return tripRepository.findById(tripId)
+             .orElseThrow(()->new ResourceNotFoundException("Trip not Found"));
+    }
+
     @Transactional
     public TripDetailResponseDto createTrip(@NotNull TripCreateRequestDto createRequestDto) {
 
-        TripCreateContext context = validationContextBuilder.buildForCreation(createRequestDto );
-        creationValidationStrategies.forEach(strategy -> strategy.validate(context));
+        TripValidationContext context = contextBuilder.buildForCreate(createRequestDto);
+        strategies.forEach(strategy -> strategy.validateCreate(context));
 
-        Trip trip = tripMapper.toEntity(createRequestDto);
+        Tripstatus initialStatus = tripStatusService.getByName("Draft");
 
-        Integer nextTripNo = getNextTripNumber(
-                createRequestDto.getPermite().getId(),
-                createRequestDto.getDoservice()
-        );
+        Trip entity = tripMapper.toEntity(createRequestDto);
+        entity.setTripstatus(initialStatus);
 
-        trip.setNotrip(nextTripNo);
-
-        Tripstatus determinedStatus = initialStatusStrategy.determineInitialStatus(
-                context.getPermit(),
-                createRequestDto.getDoservice(),
-                createRequestDto.getTodepature(),
-                createRequestDto.getToarrival()
-        );
-
-
-        TripState state = tripStatusFactory.getState(determinedStatus.getName());
-        state.validateInitial();
-
-        trip.setTripstatus(determinedStatus);
-
-        Trip savedTrip = tripRepository.save(trip);
-
+        Trip savedTrip = tripRepository.save(entity);
         return tripMapper.toDto(savedTrip);
     }
 
     @Transactional
-    public OverrideSuggestionResponse triggerOverrideSolver(Integer tripId) {
+    public TripDetailResponseDto activateTrip(Integer tripId){
+        Trip trip = getTripById(tripId);
+        activationStrategy.activateTrip(trip);
+        Trip activatedTrip = tripRepository.save(trip);
+        return tripMapper.toDto(activatedTrip);
+    }
 
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
-
-        if (! trip.getTripstatus().getName().equalsIgnoreCase("NEED VEHICLE OVERRIDE")) {
-            throw new IllegalStateException(
-                    "Override solver can only run for NEEDS_VEHICLE_OVERRIDE trips"
-            );
-        }
-
-        // Load candidate vehicles
-        List<Vehicle> candidateVehicles = vehicleRepository
-                .findByBranch_IdAndDeletedFalse(trip.getBranch().getId());
-
-        if (candidateVehicles.isEmpty()) {
-            System.out.println("NO CANDIDATES FROM REPOSITORY!");
-            return new OverrideSuggestionResponse(tripId, null);
-        }
-
-        // Load existing trips
-        List<Trip> existingTrips = tripRepository
-                .findByDoserviceAndTripstatus_NameIn(
-                        trip.getDoservice(),
-                        List.of("Ready", "In progress", "Delayed", "Suspended")
-                );
-
-        existingTrips.removeIf(t -> t.getId().equals(trip.getId()));
-
-                // Call solver
-                Vehicle suggestedVehicle = tripOverrideSolverService.solveForTrip(
-                        trip, candidateVehicles, existingTrips
-                );
-
-                return new OverrideSuggestionResponse(
-                        trip.getId(),
-                        suggestedVehicle != null ? suggestedVehicle.getId() : null
-                );
-
+     @Transactional
+    public TripDetailResponseDto suspendTrip(Integer tripId){
+         Trip trip = getTripById(tripId);
+        suspendStrategy.suspendTrip(trip);
+        Trip suspendedTrip = tripRepository.save(trip);
+        return tripMapper.toDto(suspendedTrip);
     }
 
     @Transactional
-    public TripDetailResponseDto approveOverride(Integer tripId, Integer vehicleId) {
-
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
-
-        overrideApprovalStrategy.approveOverride(trip, vehicleId);
-
-        Trip updatedTrip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new IllegalArgumentException("Trip not found after approval"));
-
-        return tripMapper.toDto(updatedTrip);
+    public TripDetailResponseDto discontinueTrip(Integer tripId){
+        Trip trip = getTripById(tripId);
+        discontinuedStrategy.discontinueTrip(trip);
+        Trip discontinuedTrip = tripRepository.save(trip);
+        return tripMapper.toDto(discontinuedTrip);
     }
 
 
-    @Transactional
-    public TripDetailResponseDto updateTrip(@NotNull TripUpdateRequestDto requestDto) {
 
-        Trip trip = tripRepository.findById(requestDto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
 
-        Tripstatus currentStatus = trip.getTripstatus();
-
-        if (currentStatus.getName().equalsIgnoreCase("CANCELLED") ||
-                currentStatus.getName().equalsIgnoreCase("COMPLETED")) {
-            throw new BusinessRuleViolationException("Closed trips cannot be edited");
-        }
-
-        TripUpdateContext updateContext = validationContextBuilder.buildForUpdate(
-                trip,
-                requestDto.getPermite().getId(),
-                requestDto.getDoservice(),
-                requestDto.getTodepature(),
-                requestDto.getToarrival(),
-                requestDto.getOriginterminal().getId()
-        );
-
-        updateValidationStrategies.forEach(strategy -> strategy.validate(updateContext));
-
-        trip.setTodepature(requestDto.getTodepature());
-        trip.setToarrival(requestDto.getToarrival());
-        trip.setDoservice(requestDto.getDoservice());
-        trip.setOriginterminal(originTerminalMapper.toEntity(requestDto.getOriginterminal()));
-
-        if (updateContext.isPermitChanged()) {
-            trip.setPermite(updateContext.getNewPermit());
-        }
-
-        if (vehicleAvailabilityValidation.requiresVehicleOverride(updateContext)) {
-            Tripstatus needsOverrideStatus = tripStatusRepository.findByName("Need vehicle override'")
-                    .orElseThrow(() -> new ResourceNotFoundException("NEEDS VEHICLE OVERRIDE status not found"));
-
-            stateTransitionHandler.transitionTo(trip, needsOverrideStatus);
-        }
-
-        Trip updatedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(updatedTrip);
-    }
-
-    @Transactional
-    public TripDetailResponseDto executeTrip(Integer tripId) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
-
-        tripExecutionStrategy.executeTrip(trip);
-
-        Trip executedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(executedTrip);
-    }
-
-    @Transactional
-    public TripDetailResponseDto cancelTrip(Integer tripId) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
-
-        tripCancellationStrategy.cancelTrip(trip);
-
-        Trip cancelledTrip = tripRepository.save(trip);
-        return tripMapper.toDto(cancelledTrip);
-    }
-
-    @Transactional
-    public TripDetailResponseDto completeTrip(Integer tripId) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
-
-        tripCompletionStrategy.completeTrip(trip);
-
-        Trip completedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(completedTrip);
-    }
-
-    @Transactional
-    public TripDetailResponseDto completeTrip(Integer tripId, LocalTime actualArrivalTime) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
-
-        tripCompletionStrategy.completeTrip(trip, actualArrivalTime);
-
-        Trip completedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(completedTrip);
-    }
-
-    private Integer getNextTripNumber(Integer permitId, LocalDate serviceDate) {
-        return tripRepository.findMaxTripNumberForPermitAndDate(permitId, serviceDate)
-                .map(max -> max + 1)
-                .orElse(1);  // First trip = 1
-    }
 }

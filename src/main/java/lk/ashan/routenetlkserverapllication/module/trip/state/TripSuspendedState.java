@@ -8,21 +8,19 @@ import java.util.List;
 
 public class TripSuspendedState implements TripState {
 
-    private static final List<String> ALLOWED =
-            List.of("IN_PROGRESS", "CANCELLED");
+    private static final List<String> ALLOWED = List.of("ACTIVE", "DISCONTINUED");
 
     @Override
     public void transitionTo(Trip trip, Tripstatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
-
         if ("SUSPENDED".equals(newStatusName)) return;
-
         if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStateTransitionException(
-                    "Invalid status transition from SUSPENDED to " + newStatusName
+                    "Suspended schedules can only be Reactivated or Discontinued."
             );
         }
-
         trip.setTripstatus(newStatus);
     }
+
 }
+

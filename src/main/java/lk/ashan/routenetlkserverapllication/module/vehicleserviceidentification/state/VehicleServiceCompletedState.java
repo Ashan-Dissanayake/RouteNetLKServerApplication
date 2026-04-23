@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class VehicleServiceCompletedState implements VehicleServiceState {
 
     @Override
-    public void transitionTo(Vehicleservice service, Vehicleservicestatus newStatus) {
+    public void transitionTo(VehicleService service, VehicleServiceStatus newStatus) {
 
         throw new InvalidStateTransitionException(
                 "Service already completed. No further transitions allowed."

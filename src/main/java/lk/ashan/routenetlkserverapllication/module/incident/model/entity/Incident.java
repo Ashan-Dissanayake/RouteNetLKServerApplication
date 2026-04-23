@@ -1,9 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.incident.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.RegionalOffice;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -38,14 +41,26 @@ public class Incident {
     @JoinColumn(name = "incidentstatus_id", referencedColumnName = "id", nullable = false)
     private IncidentStatus incidentstatus;
     @ManyToOne
-    @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
-    private Trip trip;
+    @JoinColumn(name = "tripexecution_id", referencedColumnName = "id", nullable = false)
+    private TripExecution tripexecution;
+
+    @ManyToOne
+    @JoinColumn(name = "regionalarea_id", referencedColumnName = "id", nullable = false)
+    private RegionalOffice regionalarea;
 
     @OneToMany(mappedBy = "incident")
     private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "incident")
-    private Collection<Vehicleservice> vehicleservices;
+    private Collection<VehicleService> vehicleServices;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "branch_id", referencedColumnName = "id")
+    private Branch branch;
 
     @Override
     public boolean equals(Object o) {

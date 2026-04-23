@@ -3,10 +3,10 @@ package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServiceSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper.VehicleServiceMapper;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleserviceschedule;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceScheduleRepository;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceExecution;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceStatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceExecutionRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state.VehicleServiceStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -15,29 +15,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-
 
 @Service
 @RequiredArgsConstructor
 public class VehicleServiceExecutionService {
 
-    private final VehicleServiceScheduleRepository vehicleServiceScheduleRepository;
+    private final VehicleServiceExecutionRepository vehicleServiceExecutionRepository;
     private final VehicleServiceStatusRepository vehicleServiceStatusRepository;
     private final VehicleServiceStateTransitionHandler vehicleServiceStateTransitionHandler;
     private final VehicleServiceMapper vehicleServiceMapper;
 
     @Transactional
     public VehicleServiceSummaryResponseDto startService(@NotNull Integer scheduleId){
-        Vehicleserviceschedule schedule =
-                vehicleServiceScheduleRepository.findById(scheduleId)
+        VehicleServiceExecution schedule =
+                vehicleServiceExecutionRepository.findById(scheduleId)
                         .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
 
-        if(schedule.getDoactualstarted() != null){
+        if(schedule.getDostarted() != null){
             throw new BusinessRuleViolationException("Service already started");
         }
 
-        Vehicleservice service = schedule.getVehicleservice();
+        VehicleService service = schedule.getVehicleservice();
 
         String currentStatus = service.getVehicleservicestatus().getName();
 
@@ -48,9 +46,7 @@ public class VehicleServiceExecutionService {
             );
         }
 
-        schedule.setDoactualstarted(LocalDate.now());
-
-        Vehicleservicestatus inProgress =
+        VehicleServiceStatus inProgress =
                 vehicleServiceStatusRepository.findByName("In progress");
 
         vehicleServiceStateTransitionHandler.transitionTo(service,inProgress);
@@ -60,15 +56,15 @@ public class VehicleServiceExecutionService {
 
     @Transactional
     public VehicleServiceSummaryResponseDto completeService(Integer scheduleId){
-        Vehicleserviceschedule schedule =
-                vehicleServiceScheduleRepository.findById(scheduleId)
+        VehicleServiceExecution schedule =
+                vehicleServiceExecutionRepository.findById(scheduleId)
                         .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
 
-        if(schedule.getDoactualend() != null){
+        if(schedule.getDoend() != null){
             throw new BusinessRuleViolationException("Service already completed");
         }
 
-        Vehicleservice service = schedule.getVehicleservice();
+        VehicleService service = schedule.getVehicleservice();
 
         String currentStatus = service.getVehicleservicestatus().getName();
 
@@ -79,9 +75,8 @@ public class VehicleServiceExecutionService {
             );
         }
 
-        schedule.setDoactualend(LocalDate.now());
 
-        Vehicleservicestatus inProgress =
+        VehicleServiceStatus inProgress =
                 vehicleServiceStatusRepository.findByName("Completed");
 
         vehicleServiceStateTransitionHandler.transitionTo(service,inProgress);

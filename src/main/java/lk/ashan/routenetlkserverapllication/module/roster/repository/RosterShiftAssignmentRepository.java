@@ -32,5 +32,4 @@ public interface RosterShiftAssignmentRepository extends JpaRepository<RosterShi
     @Query("UPDATE RosterShiftAssignment ra SET ra.employee.id = :employeeId, ra.rostershiftassignmentstatus.id = :statusId WHERE ra.id = :id")
     void updateEmployeeAndStatusDirectly(@Param("id") Integer id, @Param("employeeId") Integer employeeId, @Param("statusId") Integer statusId);
 
-
 }

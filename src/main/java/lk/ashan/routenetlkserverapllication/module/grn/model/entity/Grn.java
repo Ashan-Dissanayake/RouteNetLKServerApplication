@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.grn.model.entity;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 
 import java.sql.Date;
@@ -40,6 +41,10 @@ public class Grn {
     private GrnStatus grnstatus;
     @OneToMany(mappedBy = "grn", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<GrnPartRequestItem> grnpartrequestitems;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Override
     public boolean equals(Object o) {

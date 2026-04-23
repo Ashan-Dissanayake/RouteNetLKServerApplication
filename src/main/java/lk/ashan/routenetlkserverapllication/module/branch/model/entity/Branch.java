@@ -1,18 +1,22 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.FareCollection;
+import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.TicketMachine;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.RouteBranch;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceExecution;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -59,20 +63,16 @@ public class Branch extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "branchstatus_id", referencedColumnName = "id", nullable = false)
     private BranchStatus branchstatus;
-    @JsonIgnore
-    @OneToMany(mappedBy = "branch")
-    private Collection<Employee> employees;
-
-//    @Column(name = "deleted")
-//    private boolean deleted;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "branch")
-    private Collection<Vehicle> vehicles;
 
     @ManyToOne
     @JoinColumn(name = "regionaloffice_id", referencedColumnName = "id", nullable = false)
     private RegionalOffice regionaloffice;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Employee> employees;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Vehicle> vehicles;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Permite> permites;
@@ -96,7 +96,25 @@ public class Branch extends BaseEntity {
     private Collection<Grn> grns;
 
     @OneToMany(mappedBy = "branch")
-    private Collection<Vehicleservice> vehicleservices;
+    private Collection<VehicleService> vehicleServices;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<RouteBranch> routeBranches;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<TripExecution> tripExecutions;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<VehicleServiceExecution> vehicleServiceExecutions;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<TicketMachine> ticketmachines;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<FareCollection> farecollections;
+
+ @OneToMany(mappedBy = "branch")
+    private Collection<Incident> incidents;
 
 
     @Override

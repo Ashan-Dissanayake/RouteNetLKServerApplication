@@ -11,7 +11,7 @@ public interface PermitRepository extends JpaRepository<Permite, Integer> {
     boolean existsByNumber(String number);
     boolean existsByVehicle_IdAndRoute_IdAndPermitestatus_Id(Integer id, Integer id1, Integer activeStatusId);
 
-    List<Permite> findByPermitestatus_NameAndDoexpiredBefore(String name,LocalDate date);
+    List<Permite> findByPermitestatus_NameAndDoexpiredBefore(String name, LocalDate date);
     List<Permite> findByPermitestatus_NameAndDoexpiredBetween(String name, LocalDate startDate, LocalDate endDate);
 
     Permite findByVehicle_Id(Integer id);

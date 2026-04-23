@@ -3,8 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper.VehicleServicePartMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.*;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServicePart;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServicePartRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -35,13 +35,13 @@ public class VehicleServicePartService {
         List<VehicleServicePartDetailResponseDto> results = new ArrayList<>();
 
         for (VehicleServicePartCreateRequestDto partDto : dto.getParts()) {
-            Vehicleservice vehicleservice = getVehicleServiceOrThrow(partDto.getVehicleservice().getId());
+            VehicleService vehicleservice = getVehicleServiceOrThrow(partDto.getVehicleservice().getId());
             validateVehicleServiceStatus(vehicleservice);
             validatePartExists(partDto.getPart().getId());
             validateQuantity(partDto.getQuantity());
 
-            Vehicleservicepart entity = vehicleServicePartMapper.toEntity(partDto);
-            Vehicleservicepart saved = vehicleServicePartRepository.save(entity);
+            VehicleServicePart entity = vehicleServicePartMapper.toEntity(partDto);
+            VehicleServicePart saved = vehicleServicePartRepository.save(entity);
             results.add(vehicleServicePartMapper.toDto(saved));
         }
 
@@ -59,13 +59,13 @@ public class VehicleServicePartService {
                 throw new BusinessRuleViolationException("VehicleServicePart id is required for update");
             }
 
-            Vehicleservicepart existing = vehicleServicePartRepository
+            VehicleServicePart existing = vehicleServicePartRepository
                     .findById(partDto.getId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "VehicleServicePart not found with id " + partDto.getId()
                     ));
 
-            Vehicleservice vehicleservice = existing.getVehicleservice();
+            VehicleService vehicleservice = existing.getVehicleservice();
             validateVehicleServiceStatus(vehicleservice);
             validatePartExists(partDto.getPart().getId());
             validateQuantity(partDto.getQuantity());
@@ -73,7 +73,7 @@ public class VehicleServicePartService {
             // Update existing entity in-place
             vehicleServicePartMapper.updateEntityFromDto(partDto, existing);
 
-            Vehicleservicepart saved = vehicleServicePartRepository.save(existing);
+            VehicleServicePart saved = vehicleServicePartRepository.save(existing);
             results.add(vehicleServicePartMapper.toDto(saved));
         }
 
@@ -81,12 +81,12 @@ public class VehicleServicePartService {
     }
 
     // ---------------- HELPER METHODS ----------------
-    private Vehicleservice getVehicleServiceOrThrow(Integer id) {
+    private VehicleService getVehicleServiceOrThrow(Integer id) {
         return vehicleServiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("VehicleService not found with id " + id));
     }
 
-    private void validateVehicleServiceStatus(Vehicleservice vehicleservice) {
+    private void validateVehicleServiceStatus(VehicleService vehicleservice) {
         String statusName = vehicleservice.getVehicleservicestatus().getName().toUpperCase();
         if (!"CREATED".equals(statusName)) {
             throw new BusinessRuleViolationException("VehicleService must be in CREATED status to modify parts");

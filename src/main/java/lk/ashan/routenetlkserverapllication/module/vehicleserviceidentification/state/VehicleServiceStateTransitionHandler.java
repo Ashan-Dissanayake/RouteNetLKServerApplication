@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ public class VehicleServiceStateTransitionHandler {
 
     private final VehicleServiceStateFactory stateFactory;
 
-    public void transitionTo(Vehicleservice service, Vehicleservicestatus newStatus) {
+    public void transitionTo(VehicleService service, VehicleServiceStatus newStatus) {
 
         String currentStatus = service.getVehicleservicestatus().getName();
         String targetStatus = newStatus.getName();
@@ -31,7 +31,7 @@ public class VehicleServiceStateTransitionHandler {
         executeOnEnter(service, targetStatus);
     }
 
-    private void executeOnExit(Vehicleservice service, String statusName) {
+    private void executeOnExit(VehicleService service, String statusName) {
 
         switch (statusName.toUpperCase()) {
 
@@ -46,7 +46,7 @@ public class VehicleServiceStateTransitionHandler {
         }
     }
 
-    private void executeOnEnter(Vehicleservice service, String statusName) {
+    private void executeOnEnter(VehicleService service, String statusName) {
 
         switch (statusName.toUpperCase()) {
 

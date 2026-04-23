@@ -2,9 +2,12 @@ package lk.ashan.routenetlkserverapllication.module.crew.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -36,6 +39,13 @@ public class Conductor {
     @ManyToOne
     @JoinColumn(name = "crewstatus_id", referencedColumnName = "id", nullable = false)
     private CrewStatus crewstatus;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "conductor")
+    private Collection<TripExecution> tripExecutions;
 
     @Override
     public boolean equals(Object o) {

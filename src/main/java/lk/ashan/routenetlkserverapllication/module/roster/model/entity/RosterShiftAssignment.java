@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.TripCrewAllocation;
 import lombok.*;
 
 import java.util.Collection;
@@ -29,9 +28,6 @@ public class RosterShiftAssignment {
     @ManyToOne
     @JoinColumn(name = "rostershiftassignmentstatus_id", referencedColumnName = "id", nullable = false)
     private RosterShiftAssignmentStatus rostershiftassignmentstatus;
-
-    @OneToMany(mappedBy = "rostershiftassignment")
-    private Collection<TripCrewAllocation> tripCrewAllocations;
 
     public Integer getEffectiveFamiliarity() {
         if (employee == null) return 0;

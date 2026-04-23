@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lombok.*;
 
 import java.util.Collection;
@@ -23,6 +24,9 @@ public class RegionalOffice {
     private String name;
     @OneToMany(mappedBy = "regionaloffice")
     private Collection<Branch> branches;
+
+    @OneToMany(mappedBy = "regionalarea")
+    private Collection<Incident> incidents;
 
 
     @Override

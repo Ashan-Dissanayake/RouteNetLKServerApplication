@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.annotation.ValidTimeRange;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -29,10 +30,6 @@ public class TripUpdateRequestDto {
     @NotNull(message = "Permit is mandatory")
     private PermitSummaryRequestDto permite;
 
-    @NotNull(message = "Service date is mandatory")
-    // Note: @FutureOrPresent is removed to allow editing historical/completed trips
-    private LocalDate doservice;
-
     @NotNull(message = "Departure time is mandatory")
     private LocalTime todepature;
 
@@ -40,7 +37,8 @@ public class TripUpdateRequestDto {
     private LocalTime toarrival;
 
     private String remarks;
-    private Integer notrip;
+
+    @NotNull(message = "Status is mandatory")
     private TripStatusDto tripstatus;
 
     @NotNull(message = "Origin terminal is mandatory")

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
@@ -67,6 +68,12 @@ public class PermitService {
         return permitMapper.toDtoList(permitStream.collect(Collectors.toList()));
     }
 
+
+    @Transactional(readOnly = true)
+    public List<PermitSummaryResponseDto> getSummaryPermits() {
+        return permitMapper.toSummaryDtoList(permitRepository.findAll());
+    }
+
     @Transactional
     @DisableSoftDeleteFilter
     public PermitDetailResponseDto createPermit(@NotNull PermitCreateRequestDto requestDto) {
@@ -106,10 +113,10 @@ public class PermitService {
     @Transactional
     public PermitDetailResponseDto transferPermit(Integer permitId) {
 
-        Permite permit = permitRepository.findById(permitId)
+        Permite permite = permitRepository.findById(permitId)
                 .orElseThrow(() -> new ResourceNotFoundException("Permit not found"));
 
-        PermiteStatus currentStatus = permit.getPermitestatus();
+        PermiteStatus currentStatus = permite.getPermitestatus();
 
         if ("Transferred".equalsIgnoreCase(currentStatus.getName())) {
             throw new BusinessRuleViolationException("Permit is already transferred");}
@@ -117,9 +124,9 @@ public class PermitService {
         PermiteStatus newStatus = permitStatusRepository.findByName("Transferred")
                         .orElseThrow(() -> new ResourceNotFoundException("Target permit status not found"));
 
-        permitStateTransitionHandler.transitionTo(permit, newStatus);
+        permitStateTransitionHandler.transitionTo(permite, newStatus);
 
-        Permite savedPermite = permitRepository.save(permit);
+        Permite savedPermite = permitRepository.save(permite);
 
         return permitMapper.toDto(savedPermite);
     }

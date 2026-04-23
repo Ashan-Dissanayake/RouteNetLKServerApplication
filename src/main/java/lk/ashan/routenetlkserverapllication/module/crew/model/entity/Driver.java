@@ -2,10 +2,13 @@ package lk.ashan.routenetlkserverapllication.module.crew.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -46,6 +49,13 @@ public class Driver {
     @ManyToOne
     @JoinColumn(name = "routefamiliaritylevel_id", referencedColumnName = "id", nullable = false)
     private RouteFamiliarityLevel routefamiliaritylevel;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @OneToMany(mappedBy = "driver")
+    private Collection<TripExecution> tripExecutions;
 
     @Override
     public boolean equals(Object o) {

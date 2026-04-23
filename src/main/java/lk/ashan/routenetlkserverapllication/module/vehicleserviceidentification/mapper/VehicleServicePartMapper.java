@@ -4,7 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.mapper.PartMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServicePartUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicepart;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServicePart;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -19,15 +19,15 @@ import java.util.List;
 )
 public interface VehicleServicePartMapper {
 
-    Vehicleservicepart toEntity(VehicleServicePartCreateRequestDto dto);
-    Vehicleservicepart toEntity(VehicleServicePartUpdateRequestDto dto);
+    VehicleServicePart toEntity(VehicleServicePartCreateRequestDto dto);
+    VehicleServicePart toEntity(VehicleServicePartUpdateRequestDto dto);
 
-    VehicleServicePartDetailResponseDto toDto(Vehicleservicepart entity);
+    VehicleServicePartDetailResponseDto toDto(VehicleServicePart entity);
 
-    List<VehicleServicePartDetailResponseDto> toDtoList(List<Vehicleservicepart> entities);
+    List<VehicleServicePartDetailResponseDto> toDtoList(List<VehicleServicePart> entities);
 
     @Mapping(target = "id", ignore = true) // don't override ID
     @Mapping(target = "vehicleservice", ignore = true) // optionally ignore if not updatable
-    Vehicleservicepart updateEntityFromDto(VehicleServicePartUpdateRequestDto dto, @MappingTarget Vehicleservicepart entity);
+    VehicleServicePart updateEntityFromDto(VehicleServicePartUpdateRequestDto dto, @MappingTarget VehicleServicePart entity);
 
 }

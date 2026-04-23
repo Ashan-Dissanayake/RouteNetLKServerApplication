@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
 import lombok.*;
 
 import java.util.Collection;
@@ -21,12 +20,6 @@ public class Role {
     @Basic
     @Column(name = "name")
     private String name;
-
-//    @OneToMany(mappedBy = "role")
-//    private Collection<Tripcrewallocation> tripcrewallocations;
-
-    @OneToMany(mappedBy = "role")
-    private Collection<TripCrewAttendance> tripCrewAttendances;
 
     @OneToMany(mappedBy = "role")
     private Collection<Privilege> privileges;

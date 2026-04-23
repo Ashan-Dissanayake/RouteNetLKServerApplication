@@ -113,7 +113,6 @@ class TripControllerTest extends BaseTest {
                         .build()
         );
 
-        violatingDto.setDoservice(LocalDate.now().plusDays(1));
         violatingDto.setTodepature(LocalTime.parse("08:15:00"));
 
         mockMvc.perform(post(API_URL)
@@ -133,7 +132,6 @@ class TripControllerTest extends BaseTest {
                 .branch(BranchSummaryDto.builder().id(1).build())
                 .triptype(TripTypeDto.builder().id(2).build())
                 .permite(PermitSummaryRequestDto.builder().id(1).build())
-                .doservice(LocalDate.now().minusDays(1))
                 .todepature(LocalTime.parse("06:00:00"))
                 .toarrival(LocalTime.parse("08:00:00"))
                 .originterminal(OriginTerminalDto.builder().id(1).build())
@@ -174,10 +172,8 @@ class TripControllerTest extends BaseTest {
                 .branch(BranchSummaryDto.builder().id(2).name("Angoda").build())
                 .triptype(TripTypeDto.builder().id(1).name("Daily").build())
                 .permite(PermitSummaryRequestDto.builder().id(1).number("ANG-NA7845-103-3").build())
-                .doservice(LocalDate.now().plusDays(2))
                 .todepature(LocalTime.parse("08:50:00"))
                 .toarrival(LocalTime.parse("09:30:00"))
-                .notrip(2)
                 .tripstatus(TripStatusDto.builder().id(1).name("Planned").build())
                 .originterminal(OriginTerminalDto.builder().id(1).name("Pettah").build())
                 .build();
@@ -188,7 +184,6 @@ class TripControllerTest extends BaseTest {
                 Arguments.of("branch", "Branch is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setBranch(null)),
                 Arguments.of("triptype", "Trip type is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setTriptype(null)),
                 Arguments.of("permite", "Permit is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setPermite(null)),
-                Arguments.of("doservice", "Service date is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setDoservice(null)),
                 Arguments.of("todepature", "Departure time is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setTodepature(null)),
                 Arguments.of("toarrival", "Arrival time is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setToarrival(null)),
                 Arguments.of("originterminal", "Origin terminal is mandatory", (Consumer<TripCreateRequestDto>) dto -> dto.setOriginterminal(null))

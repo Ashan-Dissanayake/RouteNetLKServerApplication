@@ -1,8 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.permit.controller;
 
 import jakarta.validation.Valid;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.service.PermitService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -32,6 +34,13 @@ public class PermitController {
                 : permitService.searchPermit(params);
         return APIResponseBuilder.list(permits, permits.size());
     }
+
+    @GetMapping(value = "/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<PermitSummaryResponseDto>>> get() {
+        List<PermitSummaryResponseDto> permits =  permitService.getSummaryPermits();
+        return APIResponseBuilder.list(permits, permits.size());
+    }
+
 
     @PreAuthorize("hasAuthority('permits-insert')")
     @PostMapping

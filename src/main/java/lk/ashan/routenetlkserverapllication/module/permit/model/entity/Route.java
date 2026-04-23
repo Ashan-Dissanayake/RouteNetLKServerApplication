@@ -1,7 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -35,12 +38,21 @@ public class Route {
 
     @OneToMany(mappedBy = "route")
     private Collection<Permite> permites;
+
     @ManyToOne
-    @JoinColumn(name = "scheduletype_id", referencedColumnName = "id", nullable = false)
-    private ScheduleType scheduletype;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     @ManyToOne
     @JoinColumn(name = "routetype_id", referencedColumnName = "id", nullable = false)
     private RouteType routetype;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Basic
+    @Column(name = "waypoints")
+    private Object waypoints;
+    @OneToMany(mappedBy = "route")
+    private Collection<RouteBranch> routeBranches;
 
     @Override
     public boolean equals(Object o) {
@@ -54,4 +66,5 @@ public class Route {
     public int hashCode() {
         return Objects.hash(id, number, distancekm);
     }
+
 }

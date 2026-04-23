@@ -13,4 +13,6 @@ import java.time.LocalDate;
 public class PermitSummaryResponseDto {
     private Integer id;
     private String number;
+    private RouteSummaryResponseDto route;
+    private String vehicle;
 }

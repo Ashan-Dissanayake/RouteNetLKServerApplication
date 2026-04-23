@@ -41,14 +41,14 @@ public class PermitExpiryScheduler {
                         ACTIVE, today
                 );
 
-        for (Permite permit : permitsToExpire) {
+        for (Permite permite : permitsToExpire) {
 
             //Resolve current state dynamically
-            String currentStatus = permit.getPermitestatus().getName();
+            String currentStatus = permite.getPermitestatus().getName();
             PermitState state = permitStateFactory.getState(currentStatus);
 
             //Delegate transition to state machine
-            state.transitionTo(permit, expiredStatus);
+            state.transitionTo(permite, expiredStatus);
         }
 
         //Persist state changes
@@ -65,7 +65,7 @@ public class PermitExpiryScheduler {
         logExpiringSoon(expiringSoon);
     }
 
-    private void logExpiringSoon(List<Permite> permits) {
+    private void logExpiringSoon(List<Permite> permites) {
         // future: notification / event / audit
     }
 }

@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.model.entity;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -36,6 +37,11 @@ public class PartRequest {
     @ManyToOne
     @JoinColumn(name = "partrequeststatus_id", referencedColumnName = "id", nullable = false)
     private PartRequestStatus partrequeststatus;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
 
     @OneToMany(
             mappedBy = "partrequest",

@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.mo
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lombok.*;
 
@@ -42,6 +43,11 @@ public class IncidentVehicleAllocation {
     @ManyToOne
     @JoinColumn(name = "incidentvehicleallocationstatus_id", referencedColumnName = "id", nullable = false)
     private IncidentVehicleAllocationStatus incidentvehicleallocationstatus;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
 
     @Override
     public boolean equals(Object o) {

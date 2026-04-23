@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.dto.VehicleServiceSummaryResponseDto;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
@@ -11,5 +11,5 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface VehicleServiceMapper {
-    VehicleServiceSummaryResponseDto toDto(Vehicleservice entity);
+    VehicleServiceSummaryResponseDto toDto(VehicleService entity);
 }

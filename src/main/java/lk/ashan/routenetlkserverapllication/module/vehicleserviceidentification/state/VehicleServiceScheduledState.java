@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class VehicleServiceScheduledState implements VehicleServiceState {
             List.of("IN_PROGRESS", "CANCELLED");
 
     @Override
-    public void transitionTo(Vehicleservice service, Vehicleservicestatus newStatus) {
+    public void transitionTo(VehicleService service, VehicleServiceStatus newStatus) {
 
         if (!ALLOWED.contains(newStatus.getName())) {
             throw new InvalidStateTransitionException(

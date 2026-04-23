@@ -68,7 +68,7 @@ public class IncidentService {
             if (doReport != null)
                 incidentStream = incidentStream.filter(t -> t.getDoreported() == LocalDate.parse(doReport));
             if (tripId != null)
-                incidentStream = incidentStream.filter(t -> t.getTrip().getId() == Integer.parseInt(tripId));
+                incidentStream = incidentStream.filter(t -> t.getTripexecution().getId() == Integer.parseInt(tripId));
 
             return incidentMapper.toDtoList(incidentStream.collect(Collectors.toList()));
         }

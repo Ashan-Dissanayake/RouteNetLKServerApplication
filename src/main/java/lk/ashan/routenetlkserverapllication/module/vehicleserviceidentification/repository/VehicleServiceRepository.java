@@ -1,6 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.repository;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,17 +10,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface VehicleServiceRepository extends JpaRepository<Vehicleservice, Integer> {
+public interface VehicleServiceRepository extends JpaRepository<VehicleService, Integer> {
 
     @Query("SELECT vs.vehicle.id " +
-            "FROM Vehicleservice vs " +
+            "FROM VehicleService vs " +
             "WHERE vs.vehicleservicestatus.name IN ('Created', 'Scheduled', 'In progress')")
     List<Integer> findVehicleIdsWithOpenServices();
 
 
     @Query("""
     SELECT CASE WHEN COUNT(vs) > 0 THEN true ELSE false END
-    FROM Vehicleservice vs
+    FROM VehicleService vs
     WHERE vs.incident.id = :incidentId
       AND vs.vehicleservicestatus.name IN ('Created', 'Scheduled', 'In progress')
 """)
@@ -28,11 +28,11 @@ public interface VehicleServiceRepository extends JpaRepository<Vehicleservice, 
 
     @Query("""
     SELECT COUNT(vs)
-    FROM Vehicleservice vs
+    FROM VehicleService vs
     WHERE vs.docreated = :date
 """)
     long countByDate(@Param("date") LocalDate date);
 
-    List<Vehicleservice> findByVehicleservicestatus_Name(String statusName);
+    List<VehicleService> findByVehicleservicestatus_Name(String statusName);
 
 }

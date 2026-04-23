@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
@@ -56,13 +57,16 @@ public class Vehicle extends BaseEntity {
     private Collection<Permite> permites;
 
     @OneToMany(mappedBy = "vehicle")
-    private Collection<Tripvehicleoverride> tripvehicleoverrides;
-
-    @OneToMany(mappedBy = "vehicle")
     private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "vehicle")
-    private Collection<Vehicleservice> vehicleservices;
+    private Collection<VehicleService> vehicleServices;
+
+    @OneToMany(mappedBy = "vehicle")
+    private Collection<TripExecution> tripExecutions;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Override
     public boolean equals(Object o) {

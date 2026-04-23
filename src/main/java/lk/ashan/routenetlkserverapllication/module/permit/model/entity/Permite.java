@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "permite",schema = "routenetlk")
 public class Permite extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -31,6 +33,9 @@ public class Permite extends BaseEntity {
     @Basic
     @Column(name = "doexpired")
     private LocalDate doexpired;
+    @Basic
+    @Column(name = "notripsperday")
+    private Integer notripsperday;
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id", nullable = false)
     private Vehicle vehicle;
@@ -49,6 +54,10 @@ public class Permite extends BaseEntity {
 
     @OneToMany(mappedBy = "permite")
     private Collection<Trip> trips;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Override
     public boolean equals(Object o) {

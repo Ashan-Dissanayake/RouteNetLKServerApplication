@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        ScheduleTypeMapper.class,RouteTypeMapper.class
+        RouteTypeMapper.class
 })
 public interface RouteMapper {
 

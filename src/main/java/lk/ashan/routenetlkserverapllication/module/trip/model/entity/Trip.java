@@ -2,13 +2,11 @@ package lk.ashan.routenetlkserverapllication.module.trip.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
-import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.tripcrewallocation.model.entity.TripCrewAllocation;
-import lk.ashan.routenetlkserverapllication.module.tripcrewattendacne.model.entity.TripCrewAttendance;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Objects;
@@ -25,9 +23,6 @@ public class Trip {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "doservice")
-    private LocalDate doservice;
-    @Basic
     @Column(name = "todepature")
     private LocalTime todepature;
     @Basic
@@ -36,9 +31,6 @@ public class Trip {
     @Basic
     @Column(name = "remarks")
     private String remarks;
-    @Basic
-    @Column(name = "notrip")
-    private Integer notrip;
     @ManyToOne
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
     private Triptype triptype;
@@ -51,21 +43,17 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "tripstatus_id", referencedColumnName = "id", nullable = false)
     private Tripstatus tripstatus;
-    @OneToMany(mappedBy = "trip")
-    private Collection<Tripvehicleoverride> tripvehicleoverrides;
+
     @ManyToOne
     @JoinColumn(name = "originterminal_id", referencedColumnName = "id", nullable = false)
     private Originterminal originterminal;
 
     @OneToMany(mappedBy = "trip")
-    private Collection<TripCrewAllocation> tripCrewAllocations;
+    private Collection<TripExecution> tripExecutions;
 
-    @OneToMany(mappedBy = "trip")
-    private Collection<TripCrewAttendance> tripCrewAttendances;
-
-    @OneToMany(mappedBy = "trip")
-    private Collection<Incident> incidents;
-
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
 
     @Override
@@ -73,12 +61,12 @@ public class Trip {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trip trip = (Trip) o;
-        return Objects.equals(id, trip.id) && Objects.equals(doservice, trip.doservice) && Objects.equals(todepature, trip.todepature) && Objects.equals(toarrival, trip.toarrival) && Objects.equals(remarks, trip.remarks) && Objects.equals(notrip, trip.notrip);
+        return Objects.equals(id, trip.id) && Objects.equals(todepature, trip.todepature) && Objects.equals(toarrival, trip.toarrival) && Objects.equals(remarks, trip.remarks);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, doservice, todepature, toarrival, remarks, notrip);
+        return Objects.hash(id, todepature, toarrival, remarks);
     }
 
 }

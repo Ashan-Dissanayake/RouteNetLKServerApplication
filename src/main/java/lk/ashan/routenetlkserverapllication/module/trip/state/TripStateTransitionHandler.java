@@ -2,8 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.trip.state;
 
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripvehicleoverride;
-import lk.ashan.routenetlkserverapllication.module.trip.repository.TripVehicleOverrideRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,8 +19,7 @@ import java.util.List;
 public class TripStateTransitionHandler {
     
     private final TripStatusFactory tripStatusFactory;
-    private final TripVehicleOverrideRepository tripVehicleOverrideRepository;
-    
+
     /**
      * Performs state transition with all necessary side effects
      * 
@@ -100,18 +97,6 @@ public class TripStateTransitionHandler {
     
     private void onEnterCancelled(Trip trip) {
         log.info("Entering CANCELLED state for trip {}", trip.getId());
-        
-        // Remove all active vehicle overrides
-        List<Tripvehicleoverride> activeOverrides = trip.getTripvehicleoverrides().stream()
-            .filter(override -> "ACTIVE".equalsIgnoreCase(override.getOverridestatus().getName()))
-            .toList();
-        
-        if (!activeOverrides.isEmpty()) {
-            log.debug("Removing {} active override(s) for cancelled trip {}", 
-                activeOverrides.size(), trip.getId());
-            tripVehicleOverrideRepository.deleteAll(activeOverrides);
-            trip.getTripvehicleoverrides().removeAll(activeOverrides);
-        }
         
 
     }

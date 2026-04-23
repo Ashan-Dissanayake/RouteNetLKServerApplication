@@ -18,11 +18,9 @@ public class TripDetailResponseDto {
     private BranchSummaryDto branch;
     private TripTypeDto triptype;
     private PermitSummaryResponseDto permite;
-    private LocalDate doservice;
     private LocalTime todepature;
     private LocalTime toarrival;
     private String remarks;
-    private Integer notrip;
     private OriginTerminalDto originterminal;
     private TripStatusDto tripstatus;
 }

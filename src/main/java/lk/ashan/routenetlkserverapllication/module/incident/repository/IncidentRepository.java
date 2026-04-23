@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
-    Optional<Incident> findLatestIncidentByTrip_Permite_Vehicle_Id(Integer id);
+
 }

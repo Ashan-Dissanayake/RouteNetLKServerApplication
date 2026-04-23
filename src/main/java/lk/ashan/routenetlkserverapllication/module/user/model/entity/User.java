@@ -1,7 +1,23 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.FareCollection;
+import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
+import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
+import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
+import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.*;
+import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceExecution;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -52,6 +68,39 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Collection<UserRole> userRoles;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<Conductor> conductors;
+    @OneToMany(mappedBy = "user")
+    private Collection<Driver> drivers;
+    @OneToMany(mappedBy = "user")
+    private Collection<FareCollection> fareCollections;
+    @OneToMany(mappedBy = "user")
+    private Collection<Grn> grns;
+    @OneToMany(mappedBy = "user")
+    private Collection<Incident> incidents;
+    @OneToMany(mappedBy = "user")
+    private Collection<IncidentVehicleAllocation> incidentvehicleallocations;
+    @OneToMany(mappedBy = "user")
+    private Collection<Part> parts;
+    @OneToMany(mappedBy = "user")
+    private Collection<PartRequest> partrequests;
+    @OneToMany(mappedBy = "user")
+    private Collection<Permite> permites;
+    @OneToMany(mappedBy = "user")
+    private Collection<Roster> rosters;
+    @OneToMany(mappedBy = "user")
+    private Collection<Route> routes;
+    @OneToMany(mappedBy = "user")
+    private Collection<Trip> trips;
+    @OneToMany(mappedBy = "user")
+    private Collection<TripExecution> tripExecutions;
+    @OneToMany(mappedBy = "user")
+    private Collection<Vehicle> vehicles;
+    @OneToMany(mappedBy = "user")
+    private Collection<VehicleService> vehicleServices;
+    @OneToMany(mappedBy = "user")
+    private Collection<VehicleServiceExecution> vehicleServiceExecutions;
 
     @Override
     public boolean equals(Object o) {

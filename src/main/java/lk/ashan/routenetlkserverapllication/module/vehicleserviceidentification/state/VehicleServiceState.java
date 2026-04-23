@@ -1,12 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.state;
 
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservice;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.Vehicleservicestatus;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 
 public interface VehicleServiceState {
 
-    void transitionTo(Vehicleservice service, Vehicleservicestatus newStatus);
+    void transitionTo(VehicleService service, VehicleServiceStatus newStatus);
 
     default void validateInitial() {
         throw new InvalidStateTransitionException(

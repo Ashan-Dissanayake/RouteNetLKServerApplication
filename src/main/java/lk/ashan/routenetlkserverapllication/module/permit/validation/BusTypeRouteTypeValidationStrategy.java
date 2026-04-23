@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.permit.validation;
 
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;

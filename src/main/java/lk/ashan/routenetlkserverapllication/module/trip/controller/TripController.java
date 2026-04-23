@@ -1,10 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.trip.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.OverrideSuggestionResponse;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.service.TripService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -13,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,86 +43,47 @@ public class TripController {
         return APIResponseBuilder.created(savedTrip,savedTrip.getId());
     }
 
-    @PreAuthorize("hasAuthority('trip-suggest-override')")
-    @PostMapping("/{tripId}/override/suggest")
-    public ResponseEntity<APISuccessResponse<OverrideSuggestionResponse>> suggestOverride(
-            @PathVariable Integer tripId) {
-        OverrideSuggestionResponse response = tripService.triggerOverrideSolver(tripId);
-        return APIResponseBuilder.ok(
-                response,
-                Map.of("action", "suggestion_generated")
-        );    }
 
-    @PreAuthorize("hasAuthority('trip-approve-override')")
-    @PostMapping("/{tripId}/approve-override")
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> approveOverride(
-            @PathVariable Integer tripId,
-            @RequestParam Integer vehicleId) {
-
-        TripDetailResponseDto response =
-                tripService.approveOverride(tripId, vehicleId);
-
-        return APIResponseBuilder.ok(
-                response,
-                Map.of("action", "override_approved")
-        );
-    }
-
-    @PreAuthorize("hasAuthority('trip-update')")
-    @PutMapping
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> updateTrip(
-            @RequestBody @Valid TripUpdateRequestDto updateRequestDto
-    ){
-        TripDetailResponseDto updatedTrip = tripService.updateTrip(updateRequestDto);
-        return APIResponseBuilder.updated(updatedTrip, updatedTrip.getId());
-    }
-
-    @PreAuthorize("hasAuthority('trip-execute')")
-    @PostMapping("/{tripId}/execute-trip")
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> executeTrip(
+    @PreAuthorize("hasAuthority('trip-activate')")
+    @PostMapping("/{tripId}/activate-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> activate(
             @PathVariable Integer tripId) {
 
-        TripDetailResponseDto response =
-                tripService.executeTrip(tripId);
+        TripDetailResponseDto response = tripService.activateTrip(tripId);
 
         return APIResponseBuilder.ok(
                 response,
-                Map.of("action", "trip_executed", "status", response.getTripstatus().getName())
+                Map.of("action", "trip_activated", "status", response.getTripstatus().getName())
         );
     }
 
-    @PreAuthorize("hasAuthority('trip-cancel')")
-    @PostMapping("/{tripId}/cancel-trip")
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> cancelTrip(
+    @PreAuthorize("hasAuthority('trip-suspend')")
+    @PostMapping("/{tripId}/suspend-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> suspend(
             @PathVariable Integer tripId) {
 
-        TripDetailResponseDto response =
-                tripService.cancelTrip(tripId);
+        TripDetailResponseDto response = tripService.suspendTrip(tripId);
 
         return APIResponseBuilder.ok(
                 response,
-                Map.of("action", "trip_cancelled", "status", "CANCELLED")
+                Map.of("action", "trip_suspended", "status", response.getTripstatus().getName())
         );
     }
 
-    @PreAuthorize("hasAuthority('trip-complete')")
-    @PostMapping("/{tripId}/complete-trip")
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> completeTrip(
-            @PathVariable Integer tripId,
-            @RequestParam(required = false) LocalTime actualTime) {
+    @PreAuthorize("hasAuthority('trip-discontinue')")
+    @PostMapping("/{tripId}/discontinue-trip")
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> discontinue(
+            @PathVariable Integer tripId) {
 
-        TripDetailResponseDto response;
-
-        if (actualTime != null) {
-            response = tripService.completeTrip(tripId, actualTime);
-        } else {
-            response = tripService.completeTrip(tripId);
-        }
+        TripDetailResponseDto response = tripService.discontinueTrip(tripId);
 
         return APIResponseBuilder.ok(
                 response,
-                Map.of("action", "trip_completed", "status", "COMPLETED")
+                Map.of("action", "trip_discontinued", "status", response.getTripstatus().getName())
         );
     }
+
+
+
 
 }
