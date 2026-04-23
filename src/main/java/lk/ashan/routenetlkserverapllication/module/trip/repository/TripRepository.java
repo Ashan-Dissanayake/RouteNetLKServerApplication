@@ -17,5 +17,9 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     List<Trip> findByOriginterminal_Id(Integer originterminalId);
 
 
-    boolean existsByPermite_IdAndOriginterminal_IdAndTodepatureAndToarrival(Integer permitId, Integer originTerminalId, LocalTime departure, LocalTime arrival);
+    boolean existsByPermite_IdAndOriginterminal_IdAndTodepatureAndToarrivalAndTripstatus_Name(Integer permitId, Integer originTerminalId, LocalTime departure, LocalTime arrival,String status);
+
+    long countByPermite_IdAndTripstatus_Name(Integer permitId, String active);
+
+    List<Trip> findByPermite_IdAndTripstatus_Name(Integer permitId, String active);
 }
