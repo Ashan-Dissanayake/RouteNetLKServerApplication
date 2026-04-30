@@ -22,6 +22,9 @@ public class RosterShift {
     @Basic
     @Column(name = "doshift")
     private LocalDate doshift;
+    @Basic
+    @Column(name = "requiredemployeecount")
+    private Integer requiredemployeecount;
     @ManyToOne
     @JoinColumn(name = "shift_id", referencedColumnName = "id", nullable = false)
     private Shift shift;

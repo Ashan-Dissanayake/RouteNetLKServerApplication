@@ -1,21 +1,21 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
+import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.employee.model.projection.EmployeeFamiliarityProjection;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.event.RosterShiftAssignmentEvent;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterAssignmentMapper;
-import lk.ashan.routenetlkserverapllication.module.roster.model.dto.EligibleCrewDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShift;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignmentStatus;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterShiftAssignmentPlanning;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.RosterShiftAssignmentSolution;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterShiftAssignmentRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterShiftRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.state.rosterassigment.RosterShiftAssignmentStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +40,8 @@ public class RosterShiftAssignmentService {
     private final RosterShiftAssignmentStatusService rosterShiftAssignmentStatusService;
     private final EmployeeRepository employeeRepository;
     private final TripRepository tripRepository;
-    private final RosterShiftAssignmentRepository rosterShiftAssignmentRepository;
     private final RosterAssignmentMapper rosterAssignmentMapper;
-
+    private final RosterShiftRepository rosterShiftRepository;
 
     @Qualifier("rosterSolver")
     private final SolverManager<RosterShiftAssignmentSolution, Integer> solverManager;
@@ -52,139 +53,130 @@ public class RosterShiftAssignmentService {
         return rosterAssignmentMapper.toDtoList(assignments);
     }
 
-    /**
-     * Finds all rostered crew members who are:
-     * 1. Not busy during the trip time
-     * 2. Covering the trip's duration in their shift
-     * 3. Skilled enough (Familiarity Check)
-     */
-//    public List<EligibleCrewDto> getEligibleCrewForTrip(Integer tripId, Integer designationId) {
-//        Trip trip = tripRepository.findById(tripId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
-//
-//        // 1. Fetch from Repository (Time & Designation check)
-//        List<RosterShiftAssignment> potentialCrew = rosterShiftAssignmentRepository.findAvailableCrewForTrip(
-//                trip.getDoservice(),
-//                designationId,
-//                trip.getTodepature(),
-//                trip.getToarrival()
-//        );
-//
-//        // 2. Filter by Skill & Map using MapStruct
-//        Integer requiredLevel = trip.getPermit().getRoute().getRoutetype().getId();
-//
-//        List<RosterShiftAssignment> filteredCrew = potentialCrew.stream()
-//                .filter(rsa -> rsa.getEffectiveFamiliarity() >= requiredLevel)
-//                .toList();
-//
-//        return rosterAssignmentMapper.toEligibleDtoList(filteredCrew);
-//    }
-
     @Transactional
-    public void generateRoster(Integer rosterId) {
+    public void generateRosterShiftAssignments(Integer rosterId) {
+        // 1. Fetch unassigned slots for this specific Roster
         List<RosterShiftAssignment> entities = assignmentRepository.findUnassignedByRosterId(rosterId);
-        if (entities.isEmpty()) return;
 
-        // Get the date for the roster (assuming all assignments in a roster are for the same day)
-        LocalDate rosterDate = entities.get(0).getRostershift().getDoshift();
+        if (entities.isEmpty()) {
+            log.warn("No unassigned slots found for Roster ID: {}", rosterId);
+            return;
+        }
 
-        // 1. Prepare Demand: Tag the RosterShift entities with familiarity requirements
-        // Extract unique RosterShifts from the assignments
-        List<RosterShift> uniqueShifts = entities.stream()
-                .map(RosterShiftAssignment::getRostershift)
-                .distinct()
+        // 2. Fetch Employees with Familiarity from Driver/Conductor tables via Projection
+        // Get branchId from the roster associated with these assignments
+        Integer branchId = entities.get(0).getRostershift().getRoster().getBranch().getId();
+        List<Integer> targetDesignations = List.of(1, 2); // 1=Driver, 2=Conductor
+
+        List<EmployeeFamiliarityProjection> employeeResults =
+                employeeRepository.findActiveEmployeesWithFamiliarity(branchId, targetDesignations);
+
+        // Use the mapper to convert the Projection results into Solver Facts
+        List<EmployeeFact> employeeFacts = employeeResults.stream()
+                .map(rosterAssignmentMapper::toFact)
                 .toList();
 
-        //prepareRosterDemand(rosterDate, uniqueShifts);
-
-        List<Integer> requiredIds = List.of(1, 2);
-        List<Employee> employeeEntities = employeeRepository.findActiveEmployeesByDesignations(requiredIds);
-
-        List<EmployeeFact> employeeFacts = employeeEntities.stream()
-                .filter(e -> e.getBranch().getId() == 1)
-                .map(rosterAssignmentMapper::toFact) // Mapper should now include familiarity
-                .toList();
-
-        // 2. Map to Planning: Ensure mapper copies 'requiredFamiliarityLevel' from entity to planning
+        // 3. Prepare Planning Entities and dynamically set Familiarity Requirements
         List<RosterShiftAssignmentPlanning> planningEntities = entities.stream()
-                .map(rosterAssignmentMapper::toPlanning)
+                .map(entity -> {
+                    RosterShiftAssignmentPlanning planning = rosterAssignmentMapper.toPlanning(entity);
+
+                    // Logic: Determine required skill level based on trips mapped to this shift
+                    // If the shift contains Interprovincial trips, level 2 is required.
+                    int requiredLevel = determineRequiredFamiliarity(entity.getRostershift());
+                    planning.setRequiredFamiliarityLevel(requiredLevel);
+
+                    return planning;
+                })
                 .toList();
 
+        // 4. Build the Solution object (The Problem Fact)
         RosterShiftAssignmentSolution problem = new RosterShiftAssignmentSolution(
                 employeeFacts,
                 planningEntities
         );
 
-        log.info("Employees passed to solver: " + employeeFacts.size());
-        for(EmployeeFact f : employeeFacts) {
-            log.info("Emp: " + f.getFullname() + " | Desig: " + f.getDesignationId());
-        }
+        log.info("Starting Synchronous Solver for Roster {}", rosterId);
 
-        for(RosterShiftAssignmentPlanning p : planningEntities) {
-            log.info("Shift ID: " + p.getId() + " | Needs Desig: " + p.getDesignationId());
-        }
+        try {
+            // 5. Trigger the Solver and WAIT for completion
+            SolverJob<RosterShiftAssignmentSolution, Integer> solverJob =
+                    solverManager.solve(rosterId, problem);
+            RosterShiftAssignmentSolution finalSolution = solverJob.getFinalBestSolution();
 
-        solverManager.solve(rosterId, (Integer id) -> problem, this::saveResult);
-    }
+            this.saveResult(finalSolution);
 
-//    public void prepareRosterDemand(LocalDate date, List<RosterShift> rosterShifts) {
-//        // 1. Get all Interprovincial trips for the day
-//        List<Trip> interprovincialTrips = tripRepository.findInterprovincialTrips(date);
-//
-//        for (RosterShift rs : rosterShifts) {
-//            // 2. Check if this shift covers ANY interprovincial trip
-//            boolean coversInterprovincial = interprovincialTrips.stream()
-//                    .anyMatch(t -> isTripInShift(t, rs.getShift()));
-//
-//            // 3. Flag the shift so Timefold knows who to put there
-//            if (coversInterprovincial) {
-//                rs.setRequiredFamiliarityLevel(2); // 2 = Medium/High
-//            } else {
-//                rs.setRequiredFamiliarityLevel(1); // 1 = Low/Local
-//            }
-//        }
-//    }
-
-    private boolean isTripInShift(Trip trip, Shift shift) {
-        // A trip "belongs" to a shift if it starts within the shift's duration
-        LocalTime tripStart = trip.getTodepature();
-        LocalTime shiftStart = shift.getTostart();
-        LocalTime shiftEnd = shift.getToend();
-
-        // Standard check (handle shifts that cross midnight if necessary)
-        if (shiftEnd.isAfter(shiftStart)) {
-            return !tripStart.isBefore(shiftStart) && tripStart.isBefore(shiftEnd);
-        } else {
-            // Handle night shifts (e.g., 22:00 to 06:00)
-            return !tripStart.isBefore(shiftStart) || tripStart.isBefore(shiftEnd);
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Solver failed for roster {}", rosterId, e);
+            throw new RuntimeException("Roster generation failed during optimization", e);
         }
     }
 
+    private int determineRequiredFamiliarity(RosterShift rosterShift) {
+        // Use the branch and the shift times to find if any scheduled
+        // trips in this slot require high familiarity.
+        boolean isHighSkillRequired = tripRepository.existsInterprovincialTripInShift(
+                rosterShift.getRoster().getBranch().getId(),
+                rosterShift.getShift().getTostart(),
+                rosterShift.getShift().getToend()
+        );
+
+        return isHighSkillRequired ? 2 : 1;
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveResult(RosterShiftAssignmentSolution solution) {
-        log.info("--- PERSISTENCE START (DIRECT UPDATE) ---");
+        log.info("--- PERSISTING SOLVER RESULTS ---");
 
-        // 1. Get the Proposed Status ID (Assuming it's 2, but fetching dynamically is safer)
         Integer proposedStatusId = rosterShiftAssignmentStatusService.getByName("Proposed").getId();
 
         for (RosterShiftAssignmentPlanning planning : solution.getAssignmentList()) {
             if (planning.getEmployeeFact() != null) {
-
-                // 2. Call the new combined update method
+                // Update the database using a single optimized query
                 assignmentRepository.updateEmployeeAndStatusDirectly(
-                        planning.getId(),
+                        planning.getId(), // This is the rostershiftassignment primary key
                         planning.getEmployeeFact().getId(),
                         proposedStatusId
                 );
-
-                log.info("SUCCESS: Assignment {} set to Employee {} with status PROPOSED",
-                        planning.getId(), planning.getEmployeeFact().getId());
             }
         }
-        log.info("--- PERSISTENCE COMPLETE ---");
+        log.info("--- SOLVER PERSISTENCE COMPLETE ---");
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void handleRosterShiftAssignmentGeneratedEvent(RosterShiftAssignmentEvent event) {
+        Integer rosterId = event.rosterId(); // Record accessor syntax
+        log.info("Received event for Roster ID: {}. Initializing unassigned slots...", rosterId);
+
+        // 1. Get the requirements (RosterShifts)
+        List<RosterShift> shifts = rosterShiftRepository.findByRoster_Id(rosterId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "No shifts found for Roster ID: " + rosterId
+                ));
+
+        // 2. Fetch the 'Unassigned' status
+        RosterShiftAssignmentStatus unassignedStatus = rosterShiftAssignmentStatusService.getByName("Draft");
+
+        List<RosterShiftAssignment> assignmentsToCreate = new ArrayList<>();
+
+        for (RosterShift shift : shifts) {
+            // Create the exact number of assignment rows requested by the automation service
+            for (int i = 0; i < shift.getRequiredemployeecount(); i++) {
+                RosterShiftAssignment assignment = new RosterShiftAssignment();
+                assignment.setRostershift(shift);
+                assignment.setRostershiftassignmentstatus(unassignedStatus);
+                // employee remains null for now
+                assignmentsToCreate.add(assignment);
+            }
+        }
+
+        if (!assignmentsToCreate.isEmpty()) {
+            assignmentRepository.saveAll(assignmentsToCreate);
+            log.info("Created {} unassigned assignment rows for Roster {}.", assignmentsToCreate.size(), rosterId);
+        }
+    }
 
     @Transactional
     public void approveSuggestion(Integer assignmentId) {

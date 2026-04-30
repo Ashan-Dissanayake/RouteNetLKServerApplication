@@ -26,35 +26,21 @@ public class Shift {
     @Basic
     @Column(name = "toend")
     private LocalTime toend;
-    @Basic
-    @Column(name = "maxhours")
-    private Integer maxhours;
-    @Basic
-    @Column(name = "breakminutes")
-    private Integer breakminutes;
-    @Basic
-    @Column(name = "issplitshift")
-    private boolean issplitshift;
     @ManyToOne
     @JoinColumn(name = "shiftstatus_id", referencedColumnName = "id", nullable = false)
     private ShiftStatus shiftstatus;
-
-//    @OneToMany(mappedBy = "derivedshift")
-//    private Collection<Tripcrewallocation> tripcrewallocations;
-
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Shift shift = (Shift) o;
-        return Objects.equals(id, shift.id) && Objects.equals(name, shift.name) && Objects.equals(tostart, shift.tostart) && Objects.equals(toend, shift.toend) && Objects.equals(maxhours, shift.maxhours);
+        return Objects.equals(id, shift.id) && Objects.equals(name, shift.name) && Objects.equals(tostart, shift.tostart) && Objects.equals(toend, shift.toend);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, tostart, toend, maxhours);
+        return Objects.hash(id, name, tostart, toend);
     }
 
 }

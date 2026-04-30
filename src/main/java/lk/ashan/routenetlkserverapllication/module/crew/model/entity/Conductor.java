@@ -41,7 +41,7 @@ public class Conductor {
     private CrewStatus crewstatus;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @OneToMany(mappedBy = "conductor")

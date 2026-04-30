@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -30,7 +31,8 @@ public class Roster  extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
-    @OneToMany(mappedBy = "roster")
+
+    @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private Collection<RosterShift> rostershifts;
 
     @ManyToOne
@@ -48,6 +50,14 @@ public class Roster  extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, dostartofweek, doendofweek);
+    }
+
+    public void addRosterShift(RosterShift shift) {
+        if (this.rostershifts == null) {
+            this.rostershifts = new ArrayList<>();
+        }
+        this.rostershifts.add(shift);
+        shift.setRoster(this);
     }
 
 }

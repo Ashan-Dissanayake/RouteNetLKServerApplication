@@ -17,9 +17,35 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     List<Trip> findByOriginterminal_Id(Integer originterminalId);
 
 
-    boolean existsByPermite_IdAndOriginterminal_IdAndTodepatureAndToarrivalAndTripstatus_Name(Integer permitId, Integer originTerminalId, LocalTime departure, LocalTime arrival,String status);
+    boolean existsByPermite_IdAndOriginterminal_IdAndTodepatureAndToarrivalAndTripstatus_Name(Integer permitId, Integer originTerminalId, LocalTime departure, LocalTime arrival, String status);
 
     long countByPermite_IdAndTripstatus_Name(Integer permitId, String active);
 
     List<Trip> findByPermite_IdAndTripstatus_Name(Integer permitId, String active);
+
+
+    @Query("SELECT COUNT(DISTINCT t.permite.id) FROM Trip t " +
+            "WHERE t.permite.branch.id = :branchId " +
+            "AND t.tripstatus.name = 'Active' " +
+            "AND t.todepature >= :startTime " +
+            "AND t.todepature < :endTime")
+    long countDistinctPermitsForShift(
+            @Param("branchId") Integer branchId,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime
+    );
+
+    @Query("SELECT COUNT(t) > 0 FROM Trip t " +
+            "JOIN t.permite p " +
+            "JOIN p.route r " +
+            "WHERE t.branch.id = :branchId " +
+            "AND r.routetype.id = 2 " + // 2 = Interprovincial/High Skill
+            "AND t.todepature >= :shiftStart " +
+            "AND t.todepature < :shiftEnd")
+    boolean existsInterprovincialTripInShift(
+            @Param("branchId") Integer branchId,
+            @Param("shiftStart") LocalTime shiftStart,
+            @Param("shiftEnd") LocalTime shiftEnd
+    );
+
 }

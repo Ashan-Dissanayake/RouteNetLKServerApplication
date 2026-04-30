@@ -13,6 +13,16 @@ public class EmployeeFact {
     private Integer designationId;
     private Integer familiarityLevel;
 
-    public boolean isDriver() { return this.designationId == 1; }
-    public boolean isConductor() { return this.designationId == 2; }
+    public boolean isDriver() {
+        return this.designationId != null && this.designationId == 1;
+    }
+
+    public boolean isConductor() {
+        return this.designationId != null && this.designationId == 2;
+    }
+
+    public boolean hasRequiredFamiliarity(Integer requiredLevel) {
+        if (this.familiarityLevel == null) return false;
+        return this.familiarityLevel >= requiredLevel;
+    }
 }

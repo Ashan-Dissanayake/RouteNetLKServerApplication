@@ -72,16 +72,15 @@ public class RosterConstraintProvider implements ConstraintProvider {
         return constraintFactory
                 .forEach(RosterShiftAssignmentPlanning.class)
                 .filter(assignment -> assignment.getEmployeeFact() != null)
-                // effectiveFamiliarity is 1 or 2 from the EmployeeFact
-                // requiredFamiliarityLevel is 1 or 2 from the Shift/Planning entity
-                .filter(assignment -> assignment.getEmployeeFact().getFamiliarityLevel() <
-                        assignment.getRequiredFamiliarityLevel())
+                // Use your new helper method here
+                .filter(assignment -> !assignment.getEmployeeFact()
+                        .hasRequiredFamiliarity(assignment.getRequiredFamiliarityLevel()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Familiarity Mismatch");
     }
 
     // 3. SOFT: Fairness - try to distribute shifts evenly (Simplified)
-    private Constraint fairWorkloadDistribution(ConstraintFactory factory) {
+    Constraint fairWorkloadDistribution(ConstraintFactory factory) {
         return factory.forEach(RosterShiftAssignmentPlanning.class)
                 .groupBy(RosterShiftAssignmentPlanning::getEmployeeFact, ConstraintCollectors.count())
                 .penalize(HardSoftScore.ONE_SOFT, (employee, count) -> count * count)

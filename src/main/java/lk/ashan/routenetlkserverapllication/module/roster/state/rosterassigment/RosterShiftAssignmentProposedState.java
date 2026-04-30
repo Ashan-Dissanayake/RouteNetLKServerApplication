@@ -7,7 +7,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransit
 import java.util.List;
 
 public class RosterShiftAssignmentProposedState implements RosterShiftAssignmentState{
-    private static final List<String> ALLOWED = List.of("CONFIRMED", "CANCELLED");
+    private static final List<String> ALLOWED = List.of("CONFIRMED", "CANCELED");
     @Override
     public void transitionTo(RosterShiftAssignment assignment, RosterShiftAssignmentStatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();

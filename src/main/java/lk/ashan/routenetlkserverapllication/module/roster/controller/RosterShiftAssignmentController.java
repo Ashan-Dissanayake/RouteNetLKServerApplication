@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.roster.controller;
 
-import lk.ashan.routenetlkserverapllication.module.roster.model.dto.EligibleCrewDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterGenerationResponse;
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDto;
 import lk.ashan.routenetlkserverapllication.module.roster.service.RosterShiftAssignmentService;
@@ -29,38 +28,30 @@ public class RosterShiftAssignmentController {
         return APIResponseBuilder.list(assignments, assignments.size());
     }
 
-//    @GetMapping("/eligible-crew")
-//    public ResponseEntity<APISuccessResponse<List<EligibleCrewDto>>> getEligibleCrew(
-//            @RequestParam Integer tripId,
-//            @RequestParam Integer designationId) {
-//        List<EligibleCrewDto> eligibleCrew = rosterShiftAssignmentService.getEligibleCrewForTrip(tripId, designationId);
-//        return APIResponseBuilder.list(eligibleCrew,eligibleCrew.size());
-//    }
-
-    @PostMapping("/generate/{rosterId}")
+    @PostMapping("/{rosterId}/generate")
     public ResponseEntity<APISuccessResponse<RosterGenerationResponse>> generateRoster(
             @PathVariable Integer rosterId
     ){
-        rosterShiftAssignmentService.generateRoster(rosterId);
+        rosterShiftAssignmentService.generateRosterShiftAssignments(rosterId);
 
         RosterGenerationResponse data = new RosterGenerationResponse(
                 rosterId,
-                "Roster generation task has been queued and is processing in the background.",
-                "PROCESSING",
+                "Roster generation completed successfully.",
+                "COMPLETED",
                 LocalDateTime.now()
         );
-        return APIResponseBuilder.accepted(data);
+        return APIResponseBuilder.ok(data);
     }
 
-    @PostMapping("/approved/{assignmentId}")
+    @PostMapping("/{assignmentId}/approved")
     public ResponseEntity<APISuccessResponse<String>> approveSuggestion(
             @PathVariable Integer assignmentId)
-    {
+    {   
         rosterShiftAssignmentService.approveSuggestion(assignmentId);
         return APIResponseBuilder.ok("Shift assignment suggestion approved successfully.");
     }
 
-    @PostMapping("/cancelled/{assignmentId}")
+    @PostMapping("/{assignmentId}/cancelled")
     public ResponseEntity<APISuccessResponse<String>> cancelSuggestion(
             @PathVariable Integer assignmentId)
     {
