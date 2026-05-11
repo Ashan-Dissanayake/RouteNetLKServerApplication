@@ -13,7 +13,7 @@ import java.util.List;
 @Configuration
 public class RosterSolverConfig {
 
-    @Bean
+    @Bean("rosterSolverConfiguration")
     public SolverConfig rosterSolverConfiguration() {
         return new SolverConfig()
                 .withSolutionClass(RosterShiftAssignmentSolution.class)
@@ -24,8 +24,9 @@ public class RosterSolverConfig {
     }
 
     @Bean("rosterSolver")
-    public SolverManager<RosterShiftAssignmentSolution, Integer> rosterSolverManager(SolverConfig rosterSolverConfiguration) {
-        SolverFactory<RosterShiftAssignmentSolution> solverFactory = SolverFactory.create(rosterSolverConfiguration);
+    public SolverManager<RosterShiftAssignmentSolution, Integer> rosterSolverManager() {
+        SolverFactory<RosterShiftAssignmentSolution> solverFactory =
+                SolverFactory.create(rosterSolverConfiguration());
         return SolverManager.create(solverFactory);
     }
 }

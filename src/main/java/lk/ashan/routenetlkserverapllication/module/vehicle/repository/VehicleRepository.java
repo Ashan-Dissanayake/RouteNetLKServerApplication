@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,4 +41,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     List<Vehicle> findByVehiclestatus_Name(String statusName);
 
     List<Vehicle> findAllByBranch_Id(Integer branchId);
+
+    List<Vehicle> findByBranch_Id(Integer branchId);
 }

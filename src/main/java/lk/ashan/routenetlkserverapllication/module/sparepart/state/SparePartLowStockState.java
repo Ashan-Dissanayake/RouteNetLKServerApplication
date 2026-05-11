@@ -22,7 +22,4 @@ public class SparePartLowStockState implements SparePartState {
         }
         part.setPartstatus(newStatus);
     }
-
-    @Override
-    public void validateInitial() { }
 }

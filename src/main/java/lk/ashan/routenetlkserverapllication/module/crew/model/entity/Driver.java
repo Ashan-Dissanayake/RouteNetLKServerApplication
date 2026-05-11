@@ -23,6 +23,9 @@ public class Driver {
     @Column(name = "number")
     private String number;
     @Basic
+    @Column(name = "totaldutyminute")
+    private Integer totaldutyminute;
+    @Basic
     @Column(name = "licensenumber")
     private String licensenumber;
     @Basic

@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.crew.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +22,12 @@ public class RouteFamiliarityLevel {
     private String name;
     @OneToMany(mappedBy = "routefamiliaritylevel")
     private Collection<Driver> drivers;
+
     @OneToMany(mappedBy = "routefamiliaritylevel")
     private Collection<Conductor> conductors;
+
+    @OneToMany(mappedBy = "requiredroutefamiliaritylevel")
+    private Collection<Route> routes;
 
     @Override
     public boolean equals(Object o) {

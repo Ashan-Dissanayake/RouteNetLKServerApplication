@@ -25,6 +25,10 @@ public class Conductor {
     @Column(name = "number")
     private String number;
     @Basic
+    @Column(name = "totaldutyminute")
+    private Integer totaldutyminute;
+
+    @Basic
     @Column(name = "domedicalissued")
     private LocalDate domedicalissued;
     @Basic

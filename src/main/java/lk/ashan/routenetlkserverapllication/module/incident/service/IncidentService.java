@@ -101,7 +101,6 @@ public class IncidentService {
         return incidentMapper.toDto(saved);
     }
 
-
     @Transactional
     public IncidentDetailResponseDto update(@NotNull IncidentUpdateRequestDto updateRequestDto) {
 

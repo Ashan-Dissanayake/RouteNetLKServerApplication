@@ -22,7 +22,7 @@ public class SparePartOutOfStockState implements SparePartState {
         }
         part.setPartstatus(newStatus);
     }
-
-    @Override
-    public void validateInitial() { }
+//
+//    @Override
+//    public void validateInitial() { }
 }

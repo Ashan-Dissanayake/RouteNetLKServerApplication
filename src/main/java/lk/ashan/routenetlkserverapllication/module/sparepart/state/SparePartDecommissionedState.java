@@ -19,10 +19,4 @@ public class SparePartDecommissionedState implements SparePartState {
         );
     }
 
-    @Override
-    public void validateInitial() {
-        throw new InvalidStateTransitionException(
-                "DECOMMISSIONED cannot be an initial part status"
-        );
-    }
 }

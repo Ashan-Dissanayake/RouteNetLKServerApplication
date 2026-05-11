@@ -2,12 +2,10 @@ package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.annotation.ValidTimeRange;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
-
 
 @Getter
 @Setter
@@ -37,4 +35,7 @@ public class TripCreateRequestDto {
 
     @NotNull(message = "Origin terminal is mandatory")
     private OriginTerminalDto originterminal;
+
+    @NotNull(message = "OP Calender is mandatory")
+    private OpCalenderSummaryDto opcalender;
 }

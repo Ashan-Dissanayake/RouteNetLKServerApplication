@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RosterService {
+public class RosterService{
 
     private final RosterRepository rosterRepository;
     private final RosterMapper rosterMapper;

@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.permit.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -51,8 +53,13 @@ public class Route {
     @Basic
     @Column(name = "waypoints")
     private Object waypoints;
+
     @OneToMany(mappedBy = "route")
     private Collection<RouteBranch> routeBranches;
+
+    @ManyToOne
+    @JoinColumn(name = "requiredroutefamiliaritylevel_id", referencedColumnName = "id", nullable = false)
+    private RouteFamiliarityLevel requiredroutefamiliaritylevel;
 
     @Override
     public boolean equals(Object o) {

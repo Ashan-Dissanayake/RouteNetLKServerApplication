@@ -4,7 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.service.TripStatusService;
 import lk.ashan.routenetlkserverapllication.module.trip.state.TripStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.tripexecution.TripExecutionService;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.service.TripExecutionService;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;

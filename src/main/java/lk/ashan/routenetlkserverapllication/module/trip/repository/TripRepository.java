@@ -48,4 +48,5 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
             @Param("shiftEnd") LocalTime shiftEnd
     );
 
+    List<Trip> findByBranch_IdAndTripstatus_Name(Integer branchId, String active);
 }

@@ -3,9 +3,8 @@ package lk.ashan.routenetlkserverapllication.module.crew.model.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
+
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.annotation.ValidLicenseCategoryLicenseNumber;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

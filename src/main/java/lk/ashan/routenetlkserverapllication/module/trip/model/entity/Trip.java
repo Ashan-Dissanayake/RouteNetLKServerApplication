@@ -31,6 +31,9 @@ public class Trip {
     @Basic
     @Column(name = "remarks")
     private String remarks;
+    @Basic
+    @Column(name = "breakminutes")
+    private Integer breakminutes;
     @ManyToOne
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
     private Triptype triptype;
@@ -54,7 +57,9 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-
+    @ManyToOne
+    @JoinColumn(name = "opcalender_id", referencedColumnName = "id", nullable = false)
+    private Opcalender opcalender;
 
     @Override
     public boolean equals(Object o) {
@@ -68,5 +73,4 @@ public class Trip {
     public int hashCode() {
         return Objects.hash(id, todepature, toarrival, remarks);
     }
-
 }

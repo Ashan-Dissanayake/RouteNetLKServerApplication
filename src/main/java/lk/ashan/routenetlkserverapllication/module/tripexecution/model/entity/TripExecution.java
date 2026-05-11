@@ -13,6 +13,8 @@ import lombok.*;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -30,13 +32,13 @@ public class TripExecution {
     private Integer id;
     @Basic
     @Column(name = "doservice")
-    private Date doservice;
+    LocalDate doservice;
     @Basic
     @Column(name = "toactualdeparture")
-    private Time toactualdeparture;
+    private LocalTime toactualdeparture;
     @Basic
     @Column(name = "toactualarrival")
-    private Time toactualarrival;
+    private LocalTime toactualarrival;
     @Basic
     @Column(name = "startodometer")
     private Integer startodometer;

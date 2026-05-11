@@ -12,7 +12,7 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
         TripTypeMapper.class, TripStatusMapper.class, OriginTerminalMapper.class,
-        PermitMapper.class
+        PermitMapper.class,OpCalenderMapper.class
 })
 public interface TripMapper {
   TripDetailResponseDto toDto(Trip trip);

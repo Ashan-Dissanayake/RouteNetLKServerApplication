@@ -15,7 +15,6 @@ public class SparePartAvailableState implements SparePartState {
     @Override
     public void transitionTo(Part part, Partstatus newStatus) {
         if ("AVAILABLE".equalsIgnoreCase(newStatus.getName())) return;
-
         if (!ALLOWED.contains(newStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
                     "Invalid transition from AVAILABLE to " + newStatus.getName()
