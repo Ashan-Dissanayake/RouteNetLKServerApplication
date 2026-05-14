@@ -19,17 +19,19 @@ public class IncidentAllocationLimitValidationStrategy implements AllocationVali
     @Override
     public void validate(AllocationContext context) {
         Incident incident = incidentRepository.findById(context.getIncidentId())
-                .orElseThrow(() -> new BusinessRuleViolationException("Incident not found with id: " + context.getIncidentId()));
+                .orElseThrow(() ->
+                        new BusinessRuleViolationException(
+                                "Incident not found with id: " + context.getIncidentId())
+                );
+
         String type = incident.getIncidenttype().getName();
 
-        if (type.equalsIgnoreCase("BREAKDOWN")) {
-
+        if (type.equalsIgnoreCase("BREAKDOWN")){
             long activeCount =
                     allocationRepository.countByIncident_IdAndIncidentvehicleallocationstatus_NameIn(
                             context.getIncidentId(),
                             List.of("Assigned", "In progress")
                     );
-
             if (activeCount >= 1) {
                 throw new BusinessRuleViolationException("Breakdown allows only one active allocation");
             }

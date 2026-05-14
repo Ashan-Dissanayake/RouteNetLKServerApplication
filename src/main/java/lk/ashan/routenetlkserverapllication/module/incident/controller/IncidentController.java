@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.incident.controller;
 
-
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.service.IncidentService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -43,14 +41,44 @@ public class IncidentController {
         return APIResponseBuilder.created(savedIncident,savedIncident.getId());
     }
 
-    @PreAuthorize("hasAuthority('incident-update')")
-    @PutMapping
-    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> update(
-            @RequestBody IncidentUpdateRequestDto updateRequestDto
-
+    @PostMapping("/{id}/in-progress")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> inProgress(
+            @PathVariable Integer id
     ) {
-        IncidentDetailResponseDto updatedIncident =
-                incidentService.update(updateRequestDto);
-        return APIResponseBuilder.updated(updatedIncident,updatedIncident.getId());
+        IncidentDetailResponseDto updatedIncident = incidentService.inProgress(id);
+        return APIResponseBuilder.ok(updatedIncident);
     }
+
+    @PostMapping("/{id}/vehicle-recovery")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> vehicleRecovery(
+            @PathVariable Integer id
+    ) {
+        IncidentDetailResponseDto updatedIncident = incidentService.vehicleRecovery(id);
+        return APIResponseBuilder.ok(updatedIncident);
+    }
+
+    @PostMapping("/{id}/pending-allocation")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> pendingAllocation(
+            @PathVariable Integer id
+    ) {
+        IncidentDetailResponseDto updatedIncident = incidentService.pendingAllocation(id);
+        return APIResponseBuilder.ok(updatedIncident);
+    }
+
+    @PostMapping("/{id}/resolved")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> resolved(
+            @PathVariable Integer id
+    ) {
+        IncidentDetailResponseDto updatedIncident = incidentService.resolved(id);
+        return APIResponseBuilder.ok(updatedIncident);
+    }
+
+    @PostMapping("/{id}/closed")
+    public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> closed(
+            @PathVariable Integer id
+    ) {
+        IncidentDetailResponseDto updatedIncident = incidentService.closed(id);
+        return APIResponseBuilder.ok(updatedIncident);
+    }
+
 }

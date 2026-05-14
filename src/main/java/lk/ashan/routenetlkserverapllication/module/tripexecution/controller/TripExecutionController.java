@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.tripexecution.controller;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionAssignmentDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionDetailsResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionInitializationDto;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.service.TripExecutionService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
@@ -30,6 +31,12 @@ public class TripExecutionController {
                 ? tripExecutionService.getTripExecutions()
                 : tripExecutionService.searchTripExecutions(params);
 
+        return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
+    }
+
+    @GetMapping(value = "/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<TripExecutionSummaryDto>>> get() {
+        List<TripExecutionSummaryDto> tripExecutions =  tripExecutionService.getSummaryTripExecution();
         return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
     }
 

@@ -13,7 +13,9 @@ public class IncidentStatusFactory {
     public IncidentStatusFactory() {
         stateMap = Map.of(
                 "REPORTED", IncidentReportedState::new,
-                "IN_PROGRESS", IncidentInProgressState::new,
+                "IN PROGRESS", IncidentInProgressState::new,
+                "VEHICLE RECOVERY", IncidentVehicleRecoveryState::new,
+                "PENDING ALLOCATION", IncidentPendingAllocationState::new,
                 "RESOLVED", IncidentResolvedState::new,
                 "CLOSED", IncidentClosedState::new
         );

@@ -1,7 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.permit.mapper;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.RouteSummaryResponseDto;
+import lk.ashan.routenetlkserverapllication.module.permit.model.dto.WaypointDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Waypoint;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -18,6 +20,10 @@ public interface RouteMapper {
     RouteSummaryResponseDto toDto(Route route);
 
     List<RouteSummaryResponseDto> toDtoList(List<Route> routes);
+
+    List<WaypointDto> toWaypointDtoList(List<Waypoint> waypoints);
+
+    WaypointDto toWaypointDto(Waypoint waypoint);
 
     default String buildRouteName(Route route) {
         return route.getNumber() + " " +

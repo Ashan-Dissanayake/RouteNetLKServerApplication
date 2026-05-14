@@ -17,10 +17,12 @@ public class VehicleAvailabilityValidationStrategy implements AllocationValidati
     private final VehicleRepository vehicleRepository;
 
     @Override
-    public void validate(AllocationContext context) {
-
+    public void validate(AllocationContext context){
         Vehicle vehicle =vehicleRepository.findById(context.getVehicleId())
-                .orElseThrow(() -> new BusinessRuleViolationException("Vehicle not found with id: " + context.getVehicleId()));
+                .orElseThrow(() ->
+                        new BusinessRuleViolationException(
+                                "Vehicle not found with id: " + context.getVehicleId())
+                );
 
         if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("ACTIVE")) {
             throw new BusinessRuleViolationException("Vehicle is not ACTIVE");
@@ -31,7 +33,6 @@ public class VehicleAvailabilityValidationStrategy implements AllocationValidati
                         vehicle.getId(),
                         List.of("Assigned", "In progress")
                 );
-
         if (alreadyAllocated) {
             throw new BusinessRuleViolationException("Vehicle already allocated to active incident");
         }

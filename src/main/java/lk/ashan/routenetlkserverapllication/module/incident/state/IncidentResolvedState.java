@@ -14,9 +14,12 @@ public class IncidentResolvedState implements IncidentState {
 
     @Override
     public void transitionTo(Incident incident, IncidentStatus newStatus) {
-        if (!ALLOWED.contains(newStatus.getName())) {
+        String newStatusName = newStatus.getName().trim().toUpperCase();
+        if ("RESOLVED".equals(newStatusName)) return;
+
+        if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStateTransitionException(
-                    "Invalid transition from RESOLVED to " + newStatus
+                    "Invalid transition from RESOLVED to " + newStatusName
             );
         }
         incident.setIncidentstatus(newStatus);

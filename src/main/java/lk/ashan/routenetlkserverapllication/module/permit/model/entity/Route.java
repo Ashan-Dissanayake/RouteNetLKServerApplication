@@ -9,6 +9,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Setter
@@ -50,9 +51,8 @@ public class Route {
     private RouteType routetype;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Basic
-    @Column(name = "waypoints")
-    private Object waypoints;
+    @Column(name = "waypoints", columnDefinition = "json")
+    private List<Waypoint> waypoints;
 
     @OneToMany(mappedBy = "route")
     private Collection<RouteBranch> routeBranches;

@@ -15,16 +15,16 @@ public class DuplicateAllocationValidationStrategy implements AllocationValidati
 
     @Override
     public void validate(AllocationContext context) {
-
         boolean exists =
                 allocationRepository.existsByIncident_IdAndVehicle_IdAndIncidentvehicleallocationstatus_NameIn(
                         context.getIncidentId(),
                         context.getVehicleId(),
                         List.of("Assigned", "In progress")
                 );
-
         if (exists) {
-            throw new BusinessRuleViolationException("Duplicate active allocation for this incident and vehicle");
+            throw new BusinessRuleViolationException(
+                    "Duplicate active allocation for this incident and vehicle"
+            );
         }
     }
 }

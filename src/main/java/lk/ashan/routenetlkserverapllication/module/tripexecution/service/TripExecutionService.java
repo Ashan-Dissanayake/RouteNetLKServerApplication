@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.tripexecution.service;
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
@@ -14,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.mapper.TripExec
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionAssignmentDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionDetailsResponseDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionInitializationDto;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto.TripExecutionSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecutionStatus;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.planner.*;
@@ -89,6 +91,13 @@ public class TripExecutionService {
         return tripExecutionRepository.findAllByTrip_Id(tripId).
                 orElseThrow(()->new ResourceNotFoundException("TripExecution with id "+tripId+" not found"));
     }
+
+
+    @Transactional(readOnly = true)
+    public List<TripExecutionSummaryDto> getSummaryTripExecution(){
+        return tripExecutionMapper.toSummaryDtoList(tripExecutionRepository.findByTripexecutionstatus_Name("Breakdown"));
+    }
+
 
     @Transactional
     public List<TripExecutionDetailsResponseDto> initializeDailyExecutions(

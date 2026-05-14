@@ -16,13 +16,14 @@ public class IncidentStateValidationStrategy implements AllocationValidationStra
 
     @Override
     public void validate(AllocationContext context) {
-
-
         Incident incident = incidentRepository.findById(context.getIncidentId())
                 .orElseThrow(()->new
-                        BusinessRuleViolationException("Incident not found with ID: " + context.getIncidentId()));
+                        BusinessRuleViolationException(
+                                "Incident not found with ID: " + context.getIncidentId())
+                );
 
                 String status = incident.getIncidentstatus().getName();
+
         if (status.equalsIgnoreCase("CLOSED") || status.equalsIgnoreCase("RESOLVED")) {
             throw new BusinessRuleViolationException(
                     "Cannot allocate vehicle for incident in state: " + status

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class IncidentContextBuilder {
     public IncidentContext buildForCreate(IncidentCreateRequestDto dto) {
         return IncidentContext.builder()
-                .tripId(dto.getTrip().getId())
+                .tripId(dto.getTripexecution().getId())
                 .reportedTime(dto.getToreported())
                 .remarks(dto.getRemarks())
                 .build();

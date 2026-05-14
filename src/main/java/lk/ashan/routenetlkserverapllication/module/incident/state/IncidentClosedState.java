@@ -15,11 +15,4 @@ public class IncidentClosedState implements IncidentState {
         );
     }
 
-    @Override
-    public void validateInitial() {
-        // CLOSED can never be initial state
-        throw new InvalidStateTransitionException(
-                "CLOSED cannot be an initial incident state"
-        );
-    }
 }

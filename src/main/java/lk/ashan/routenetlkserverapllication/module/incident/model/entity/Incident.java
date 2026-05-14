@@ -34,6 +34,10 @@ public class Incident {
     @Basic
     @Column(name = "remarks")
     private String remarks;
+
+    @Column(name = "odometeratincident")
+    private Integer odometeratincident;
+
     @ManyToOne
     @JoinColumn(name = "incidenttype_id", referencedColumnName = "id", nullable = false)
     private IncidentType incidenttype;

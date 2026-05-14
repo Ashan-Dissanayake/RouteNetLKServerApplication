@@ -6,27 +6,23 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalTime;
-
 @Component
 @RequiredArgsConstructor
-public class TripTimeValidation implements IncidentStrategy {
+public class MechanicalIncidentStrategy implements IncidentStrategy {
 
     private final TripExecutionRepository tripExecutionRepository;
 
     @Override
     public void validate(IncidentContext context) {
-        TripExecution tripExecution = tripExecutionRepository.findById(context.getTripId())
-                .orElseThrow(() -> new BusinessRuleViolationException("Trip Execution not found"));
-        LocalTime reported = context.getReportedTime();
-        if (reported.isBefore(tripExecution.getTrip().getTodepature()) ||
-                reported.isAfter(tripExecution.getTrip().getToarrival())) {
-            throw new BusinessRuleViolationException("Incident time must be within trip duration");
+        TripExecution trip = tripExecutionRepository.findById(context.getTripId()).orElseThrow();
+
+        if (context.getOdometerAtIncident() < trip.getStartodometer()) {
+            throw new BusinessRuleViolationException("Incident odometer cannot be less than start odometer");
         }
     }
 
     @Override
     public boolean isApplicable(String typeCode) {
-        return true;
+        return "MECHANICAL".equalsIgnoreCase(typeCode);
     }
 }

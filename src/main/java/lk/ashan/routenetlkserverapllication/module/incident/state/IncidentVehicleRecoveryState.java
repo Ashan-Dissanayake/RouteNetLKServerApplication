@@ -8,18 +8,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class IncidentInProgressState implements IncidentState {
+public class IncidentVehicleRecoveryState  implements IncidentState{
 
-    private static final List<String> ALLOWED = List.of("VEHICLE RECOVERY", "PENDING ALLOCATION","RESOLVED");
+    private static final List<String> ALLOWED = List.of("PENDING ALLOCATION","RESOLVED");
 
     @Override
     public void transitionTo(Incident incident, IncidentStatus newStatus) {
         String newStatusName = newStatus.getName().trim().toUpperCase();
-        if ("IN PROGRESS".equals(newStatusName)) return;
-
+        if ("VEHICLE RECOVERY".equals(newStatusName)) return;
         if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStateTransitionException(
-                    "Invalid transition from IN_PROGRESS to " + newStatusName
+                    "Invalid transition from VEHICLE RECOVERY to " + newStatusName
             );
         }
         incident.setIncidentstatus(newStatus);

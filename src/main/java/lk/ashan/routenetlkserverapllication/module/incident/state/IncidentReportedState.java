@@ -10,15 +10,22 @@ import java.util.List;
 @Component
 public class IncidentReportedState implements IncidentState {
 
-    private static final List<String> ALLOWED = List.of("IN_PROGRESS");
+    private static final List<String> ALLOWED = List.of("IN PROGRESS");
 
     @Override
     public void transitionTo(Incident incident, IncidentStatus newStatus) {
-        if (!ALLOWED.contains(newStatus.getName())) {
+        String newStatusName = newStatus.getName().trim().toUpperCase();
+        if ("REPORTED".equals(newStatusName)) return;
+
+        if (!ALLOWED.contains(newStatusName)) {
             throw new InvalidStateTransitionException(
-                    "Invalid transition from REPORTED to " + newStatus
+                    "Invalid transition from REPORTED to " + newStatusName
             );
         }
         incident.setIncidentstatus(newStatus);
     }
+
+
+    @Override
+    public void validateInitial() { }
 }

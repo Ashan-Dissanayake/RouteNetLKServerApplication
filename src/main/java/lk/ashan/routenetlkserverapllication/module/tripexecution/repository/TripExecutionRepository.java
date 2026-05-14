@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Struct;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -17,4 +18,6 @@ public interface TripExecutionRepository extends JpaRepository<TripExecution, In
     List<TripExecution> findByDoserviceAndBranch_Id(LocalDate date, Integer branchId);
 
     List<TripExecution> findByDoserviceAndBranch_IdAndDriverIsNull(LocalDate executionDate, Integer branchId);
+
+    List<TripExecution> findByTripexecutionstatus_Name(String status);
 }

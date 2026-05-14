@@ -4,19 +4,19 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.mapper.IncidentMapper;
-import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
-import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentTypeRepository;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentState;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContext;
-import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentCreationStrategy;
-import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
+import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentStrategy;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,17 +33,15 @@ import java.util.stream.Stream;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
-    private final TripRepository tripRepository;
+    private final TripExecutionRepository tripExecutionRepository;
     private final IncidentTypeRepository incidentTypeRepository;
-    private final IncidentStatusRepository incidentStatusRepository;
     private final IncidentStatusService incidentStatusService;
     private final IncidentMapper incidentMapper;
 
-    private final List<IncidentCreationStrategy> incidentCreationStrategies;
+    private final List<IncidentStrategy> incidentCreationStrategies;
     private final IncidentStatusFactory incidentStatusFactory;
     private final IncidentStateTransitionHandler incidentStateTransitionHandler;
     private final IncidentContextBuilder incidentContextBuilder;
-
 
     @Transactional(readOnly = true)
     public List<IncidentDetailResponseDto> getIncidents() {
@@ -59,7 +57,7 @@ public class IncidentService {
 
             String incidentTypeId = params.get("ssincidenttype");
             String doReport = params.get("ssdoreport");
-            String tripId = params.get("sstrip");
+            String tripExecutionId = params.get("sstripexecution");
 
             Stream<Incident> incidentStream = incidents.stream();
 
@@ -67,8 +65,8 @@ public class IncidentService {
                 incidentStream = incidentStream.filter(t -> t.getIncidenttype().getId() == Integer.parseInt(incidentTypeId));
             if (doReport != null)
                 incidentStream = incidentStream.filter(t -> t.getDoreported() == LocalDate.parse(doReport));
-            if (tripId != null)
-                incidentStream = incidentStream.filter(t -> t.getTripexecution().getId() == Integer.parseInt(tripId));
+            if (tripExecutionId != null)
+                incidentStream = incidentStream.filter(t -> t.getTripexecution().getId() == Integer.parseInt(tripExecutionId));
 
             return incidentMapper.toDtoList(incidentStream.collect(Collectors.toList()));
         }
@@ -79,42 +77,92 @@ public class IncidentService {
     @Transactional
     public IncidentDetailResponseDto create(IncidentCreateRequestDto dto) {
 
-        tripRepository.findById(dto.getTrip().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Trip not found"));
+      TripExecution existTripExecution = tripExecutionRepository.findById(dto.getTripexecution().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Trip Execution not found"));
 
         incidentTypeRepository.findById(dto.getIncidenttype().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid incident type"));
 
         IncidentContext context = incidentContextBuilder.buildForCreate(dto);
-        incidentCreationStrategies.forEach(strategy -> strategy.validate(context));
-
+        incidentCreationStrategies.stream()
+                .filter(s -> s.isApplicable(dto.getIncidenttype().getName()))
+                .forEach(s -> s.validate(context));
         Incident incident = incidentMapper.toEntity(dto);
 
         IncidentStatus incidentStatus = incidentStatusService.getByName(dto.getIncidentstatus().getName());
-        IncidentState initialState =
-                incidentStatusFactory.getState(incidentStatus.getName());
+        IncidentState initialState = incidentStatusFactory.getState(incidentStatus.getName());
         initialState.validateInitial();
-
         incident.setIncidentstatus(incidentStatus);
+
+        incident.setOdometeratincident(existTripExecution.getEndodometer());
         Incident saved = incidentRepository.save(incident);
 
         return incidentMapper.toDto(saved);
     }
 
     @Transactional
-    public IncidentDetailResponseDto update(@NotNull IncidentUpdateRequestDto updateRequestDto) {
+    public  IncidentDetailResponseDto inProgress(@NotNull Integer incidentId){
+        IncidentStatus inProgressStatus =incidentStatusService.getByName("In Progress");
+        Incident existing = getById(incidentId);
+        incidentStateTransitionHandler.transitionTo(existing, inProgressStatus);
+        return incidentMapper.toDto(existing);
+    }
 
-        Incident existing = incidentRepository.findById(updateRequestDto.getId())
+    @Transactional
+    public  IncidentDetailResponseDto vehicleRecovery(@NotNull Integer incidentId){
+        IncidentStatus recoveryStatus =incidentStatusService.getByName("Vehicle Recovery");
+        Incident existing = getById(incidentId);
+
+        String incidentType = existing.getIncidenttype().getName();
+
+        if (incidentType.equals("Accident") ||incidentType.equals("Mechanical Breakdown") ) {
+            incidentStateTransitionHandler.transitionTo(existing, recoveryStatus);
+        } else {
+            throw new BusinessRuleViolationException(
+                    "Only MECHANICAL BREAKDOWN or ACCIDENT can be " +
+                     "marked for VEHICLE RECOVERY"
+            );
+        }
+        return incidentMapper.toDto(existing);
+    }
+
+    @Transactional
+    public  IncidentDetailResponseDto pendingAllocation(@NotNull Integer incidentId){
+        IncidentStatus pendingStatus =incidentStatusService.getByName("Pending Allocation");
+        Incident existing = getById(incidentId);
+
+        String incidentType = existing.getIncidenttype().getName();
+
+        if (incidentType.equals("Mechanical Breakdown") || incidentType.equals("Accident")) {
+            incidentStateTransitionHandler.transitionTo(existing, pendingStatus);
+        } else {
+            throw new BusinessRuleViolationException(
+                    "Only MECHANICAL BREAKDOWN or ACCIDENT incidents can be " +
+                            "marked for PENDING ALLOCATION"
+            );
+        }
+        return incidentMapper.toDto(existing);
+    }
+
+    @Transactional
+    public IncidentDetailResponseDto resolved(@NotNull Integer incidentId){
+        IncidentStatus resolvedStatus =incidentStatusService.getByName("Resolved");
+        Incident existing = getById(incidentId);
+        incidentStateTransitionHandler.transitionTo(existing, resolvedStatus);
+        return incidentMapper.toDto(existing);
+    }
+
+    @Transactional
+    public IncidentDetailResponseDto closed(@NotNull Integer incidentId){
+        IncidentStatus closedStatus =incidentStatusService.getByName("Closed");
+        Incident existing = getById(incidentId);
+        incidentStateTransitionHandler.transitionTo(existing, closedStatus);
+        return incidentMapper.toDto(existing);
+    }
+
+    private Incident getById(@NotNull Integer id){
+       return incidentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Incident not found"));
-
-        IncidentStatus targetStatus = incidentStatusRepository.findByName(updateRequestDto.getIncidentstatus().getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid incident status"));
-
-        Incident mappedIncident = incidentMapper.updateEntityFromDto(updateRequestDto,existing);
-
-        incidentStateTransitionHandler.transitionTo(mappedIncident, targetStatus);
-
-        return incidentMapper.toDto(mappedIncident);
     }
 }
 
