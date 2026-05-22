@@ -13,7 +13,7 @@ public interface IncidentVehicleAllocationRepository extends JpaRepository<Incid
 
     boolean existsByIncident_IdAndVehicle_IdAndIncidentvehicleallocationstatus_NameIn(Integer incidentId, Integer vehicleId, List<String> statuses);
 
-    long countByIncident_IdAndIncidentvehicleallocationstatus_NameIn(Integer id,List<String> statuses);
-
     List<IncidentVehicleAllocation> findByIncident_Id(Integer id);
+
+    boolean existsByIncident_IdAndIncidentvehicleallocationstatus_NameIn(Integer incidentId, List<String> assigned);
 }

@@ -14,18 +14,20 @@ public class IncidentVehicleAllocationStatusFactory {
     public IncidentVehicleAllocationStatusFactory() {
         stateMap = Map.of(
                 "ASSIGNED", IncidentVehicleAllocationAssignedState::new,
-                "IN_PROGRESS", IncidentVehicleAllocationInProgressState::new,
-                "RELEASED", IncidentVehiclellocationReleasedState::new,
-                "CANCELLED", IncidentVehicleCancelledState::new
+                "IN PROGRESS", IncidentVehicleAllocationInProgressState::new,
+                "RELEASED", IncidentVehicleAllocationReleasedState::new,
+                "CANCELLED", IncidentVehicleAllocationCancelledState::new
         );
     }
 
-
     public IncidentVehicleAllocationState getState(String statusName) {
+        if (statusName == null) throw new IllegalArgumentException("Status name cannot be null");
+
         String normalized = statusName.trim().toUpperCase();
         Supplier<IncidentVehicleAllocationState> supplier = stateMap.get(normalized);
+
         if (supplier == null) {
-            throw new IllegalArgumentException("Unknown incident status: " + statusName);
+            throw new IllegalArgumentException("Unknown allocation status: " + statusName);
         }
         return supplier.get();
     }

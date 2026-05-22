@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.mapper;
 import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import org.mapstruct.Mapper;
@@ -17,6 +18,9 @@ import java.util.List;
 public interface TripMapper {
   TripDetailResponseDto toDto(Trip trip);
   List<TripDetailResponseDto> toDetailList(List<Trip> trips);
+
+  TripSummaryResponseDto toSummaryDto(Trip trip);
+  List<TripSummaryResponseDto> toDto(List<Trip> trip);
 
   Trip toEntity(TripCreateRequestDto requestDto);
   Trip toEntity(TripUpdateRequestDto requestDto);

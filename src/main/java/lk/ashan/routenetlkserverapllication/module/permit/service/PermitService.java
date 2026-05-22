@@ -55,15 +55,14 @@ public class PermitService {
     public List<PermitDetailResponseDto> searchPermit(@NotNull HashMap<String, String> params) {
 
         String number = params.get("ssnumber");
-            String permitStatusId = params.get("sspermitstatus");
+        String permitStatusId = params.get("sspermitstatus");
         String routeId = params.get("ssroute");
 
         Stream<Permite> permitStream = permitRepository.findAll().stream();
 
         if (number != null) permitStream = permitStream.filter(v->v.getNumber().equalsIgnoreCase(number));
         if (permitStatusId != null) permitStream = permitStream.filter(v->v.getPermitestatus().getId()==Integer.parseInt(permitStatusId));
-        if (routeId != null)
-            permitStream = permitStream.filter(v -> v.getRoute().getId() == Integer.parseInt(routeId));
+        if (routeId != null) permitStream = permitStream.filter(v -> v.getRoute().getId() == Integer.parseInt(routeId));
 
         return permitMapper.toDtoList(permitStream.collect(Collectors.toList()));
     }

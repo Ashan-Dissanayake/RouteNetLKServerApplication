@@ -23,6 +23,9 @@ public interface VehicleMapper {
 
     VehicleDetailResponseDto toDto(Vehicle vehicle);
     List<VehicleDetailResponseDto> toDtoList(List<Vehicle> vehicles);
+
+    @Mapping(target = "branchId", source = "branch.id")
+    VehicleSummaryDto toSummaryDto(Vehicle vehicle);
     List<VehicleSummaryDto> toSummaryDtoList(List<Vehicle> vehicles);
 
     Vehicle toEntity(VehicleCreateRequestDto requestDto);

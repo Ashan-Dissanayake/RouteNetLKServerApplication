@@ -15,14 +15,11 @@ public class IncidentVehicleAllocationInProgressState implements IncidentVehicle
 
     @Override
     public void transitionTo(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus newStatus) {
-        if (!ALLOWED.contains(newStatus.getName())) {
+        if (!ALLOWED.contains(newStatus.getName().toUpperCase())) {
             throw new InvalidStateTransitionException(
-                    "Invalid transition from IN_PROGRESS to " + newStatus
+                    "Invalid transition from IN_PROGRESS to " + newStatus.getName()
             );
         }
         allocation.setIncidentvehicleallocationstatus(newStatus);
-        if (newStatus.getName().equals("RELEASED")) {
-            allocation.setDoreleased(LocalDateTime.now());
-        }
     }
 }

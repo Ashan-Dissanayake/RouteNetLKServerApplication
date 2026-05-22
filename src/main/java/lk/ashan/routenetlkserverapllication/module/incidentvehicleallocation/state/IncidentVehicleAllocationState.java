@@ -3,7 +3,9 @@ package lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.st
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocationStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface IncidentVehicleAllocationState {
     void transitionTo(IncidentVehicleAllocation allocation,
                       IncidentVehicleAllocationStatus newStatus);

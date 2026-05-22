@@ -83,7 +83,7 @@ public class Branch extends BaseEntity {
     @OneToMany(mappedBy = "branch")
     private Collection<Roster> rosters;
 
-    @OneToMany(mappedBy = "providbranch")
+    @OneToMany(mappedBy = "providedbranch")
     private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
 
     @OneToMany(mappedBy = "branch")

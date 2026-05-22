@@ -16,6 +16,9 @@ public interface BranchMapper {
 
   BranchDetailResponseDto toDto(Branch branch);
   List<BranchDetailResponseDto> toDtoList(List<Branch> branches);
+
+  @Mapping(target = "regionalOfficeId", source = "regionaloffice.id")
+  BranchSummaryDto toSummaryDto(Branch branch);
   List<BranchSummaryDto> toSummaryDtolList(List<Branch> branches);
 
   Branch toEntity(BranchCreateRequestDto request);

@@ -6,12 +6,9 @@ import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransit
 import org.springframework.stereotype.Component;
 
 @Component
-public class IncidentVehiclellocationReleasedState implements IncidentVehicleAllocationState {
-
+public class IncidentVehicleAllocationReleasedState implements IncidentVehicleAllocationState {
     @Override
     public void transitionTo(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus newStatus) {
-        throw new InvalidStateTransitionException(
-                "Cannot transition from RELEASED state"
-        );
+        throw new InvalidStateTransitionException("Cannot transition from RELEASED state");
     }
 }

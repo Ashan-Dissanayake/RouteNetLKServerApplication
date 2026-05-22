@@ -17,24 +17,20 @@ public class VehicleAvailabilityValidationStrategy implements AllocationValidati
     private final VehicleRepository vehicleRepository;
 
     @Override
-    public void validate(AllocationContext context){
-        Vehicle vehicle =vehicleRepository.findById(context.getVehicleId())
-                .orElseThrow(() ->
-                        new BusinessRuleViolationException(
-                                "Vehicle not found with id: " + context.getVehicleId())
-                );
+    public void validate(AllocationContext context) {
+        Vehicle vehicle = vehicleRepository.findById(context.getVehicleId()).orElseThrow();
 
-        if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("ACTIVE")) {
-            throw new BusinessRuleViolationException("Vehicle is not ACTIVE");
+        if (!vehicle.getVehiclestatus().getName().equalsIgnoreCase("Available")) {
+            throw new BusinessRuleViolationException("Vehicle is " + vehicle.getVehiclestatus().getName() + " and cannot be used for relief.");
         }
 
-        boolean alreadyAllocated =
-                allocationRepository.existsByVehicle_IdAndIncidentvehicleallocationstatus_NameIn(
-                        vehicle.getId(),
-                        List.of("Assigned", "In progress")
-                );
+        boolean alreadyAllocated = allocationRepository.existsByVehicle_IdAndIncidentvehicleallocationstatus_NameIn(
+                context.getVehicleId(),
+                List.of("Assigned", "In Progress")
+        );
+
         if (alreadyAllocated) {
-            throw new BusinessRuleViolationException("Vehicle already allocated to active incident");
+            throw new BusinessRuleViolationException("This bus is already assigned to another emergency.");
         }
     }
 }

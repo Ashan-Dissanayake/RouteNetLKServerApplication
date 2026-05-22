@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.mapper.IncidentMapper;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.IncidentStatus;
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
@@ -14,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatus
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContext;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentStrategy;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -99,6 +101,12 @@ public class IncidentService {
 
         return incidentMapper.toDto(saved);
     }
+
+    @Transactional(readOnly = true)
+    public List<IncidentSummaryDto> getSummaryIncidents() {
+        return incidentMapper.toSummaryDtoList(incidentRepository.findAll());
+    }
+
 
     @Transactional
     public  IncidentDetailResponseDto inProgress(@NotNull Integer incidentId){

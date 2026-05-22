@@ -14,10 +14,9 @@ import java.time.LocalDateTime;
 @Builder
 public class IncidentVehicleAllocationDetailsResponseDto {
     private Integer id;
-    private IncidentSummaryDto name;
+    private IncidentSummaryDto incident;
     private VehicleSummaryDto vehicle;
-    private BranchSummaryDto providebranch;
-    private IncidentVehicleAllocationTypeDto incidentvehicleallocationtype;
+    private BranchSummaryDto providedbranch;
     private IncidentVehicleAllocationStatusDto incidentvehicleallocationstatus;
     private LocalDateTime doassigned;
     private LocalDateTime doreleased;

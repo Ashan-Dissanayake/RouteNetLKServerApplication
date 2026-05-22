@@ -27,10 +27,10 @@ public class IncidentVehicleAllocationController {
     public ResponseEntity<APISuccessResponse<List<IncidentVehicleAllocationDetailsResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
-        List<IncidentVehicleAllocationDetailsResponseDto> incidents = params.isEmpty()
+        List<IncidentVehicleAllocationDetailsResponseDto> incidentVhicleAllocations = params.isEmpty()
                 ? allocationService.getIncidentVehicleAllocations()
                 : allocationService.searchIncidentAllocations(params);
-        return APIResponseBuilder.list(incidents, incidents.size());
+        return APIResponseBuilder.list(incidentVhicleAllocations, incidentVhicleAllocations.size());
     }
 
     @PreAuthorize("hasAuthority('incident-vehicle-allocations-insert')")
@@ -40,40 +40,31 @@ public class IncidentVehicleAllocationController {
     ) {
         IncidentVehicleAllocationDetailsResponseDto savedIncidentVehicleAllocation =
                 allocationService.createAllocation(requestDto);
-
         return APIResponseBuilder.created(savedIncidentVehicleAllocation,savedIncidentVehicleAllocation.getId());
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
-    @PutMapping("/{allocationId}/start-handling")
-    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> startHandling(
-            @PathVariable Integer allocationId
+    @PostMapping("/{id}/in-progress")
+    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> inProgress(
+            @PathVariable Integer id
     ) {
-        IncidentVehicleAllocationDetailsResponseDto updatedIncidentVehicleAllocation =
-                allocationService.startHandling(allocationId);
-
-        return APIResponseBuilder.updated(updatedIncidentVehicleAllocation,updatedIncidentVehicleAllocation.getId());
+        IncidentVehicleAllocationDetailsResponseDto updated = allocationService.inProgress(id);
+        return APIResponseBuilder.ok(updated);
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
-    @PutMapping("/{allocationId}/release")
-    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> releaseAllocation(
-            @PathVariable Integer allocationId
+    @PostMapping("/{id}/released")
+    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> released(
+            @PathVariable Integer id
     ) {
-        IncidentVehicleAllocationDetailsResponseDto updatedIncidentVehicleAllocation =
-                allocationService.releaseAllocation(allocationId);
-
-        return APIResponseBuilder.updated(updatedIncidentVehicleAllocation,updatedIncidentVehicleAllocation.getId());
+        IncidentVehicleAllocationDetailsResponseDto updated = allocationService.released(id);
+        return APIResponseBuilder.ok(updated);
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-update')")
-    @PutMapping("/{allocationId}/cancel")
-    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> cancelAllocation(
-            @PathVariable Integer allocationId
+    @PostMapping("/{id}/cancelled")
+    public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> cancelled(
+            @PathVariable Integer id
     ) {
-        IncidentVehicleAllocationDetailsResponseDto updatedIncidentVehicleAllocation =
-                allocationService.cancelAllocation(allocationId);
-
-        return APIResponseBuilder.updated(updatedIncidentVehicleAllocation,updatedIncidentVehicleAllocation.getId());
+        IncidentVehicleAllocationDetailsResponseDto updated = allocationService.cancelled(id);
+        return APIResponseBuilder.ok(updated);
     }
+
 }

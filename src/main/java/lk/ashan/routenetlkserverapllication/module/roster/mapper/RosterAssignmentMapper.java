@@ -52,15 +52,6 @@ public interface RosterAssignmentMapper {
 
     List<RosterShiftAssignmentResponseDto> toDtoList(List<RosterShiftAssignment> entities);
 
-//    @Mapping(target = "id", source = "id")
-//    @Mapping(target = "employeeName", source = "employee.fullname")
-//    @Mapping(target = "employeeNumber", source = "employee.number")
-//    @Mapping(target = "shiftName", source = "rostershift.shift.name")
-//    @Mapping(target = "shiftStart", source = "rostershift.shift.tostart")
-//    @Mapping(target = "shiftEnd", source = "rostershift.shift.toend")
-//    EligibleCrewDto toEligibleDto(RosterShiftAssignment entity);
-//
-//    List<EligibleCrewDto> toEligibleDtoList(List<RosterShiftAssignment> entities);
 
 
     default Integer getFamiliarityLevel(Employee employee) {

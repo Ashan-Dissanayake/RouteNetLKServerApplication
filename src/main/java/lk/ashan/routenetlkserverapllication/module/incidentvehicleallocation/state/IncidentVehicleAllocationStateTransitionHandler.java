@@ -12,40 +12,39 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AllocationStateTransitionHandler {
+public class IncidentVehicleAllocationStateTransitionHandler {
 
     private final IncidentVehicleAllocationStatusFactory allocationStateFactory;
     private final IncidentVehicleAllocationRepository allocationRepository;
 
     public void transitionTo(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus newStatus) {
-
         IncidentVehicleAllocationStatus currentStatus = allocation.getIncidentvehicleallocationstatus();
         log.info("Transitioning allocation {} from {} to {}",
-                allocation.getId(), currentStatus, newStatus);
+                allocation.getId(), currentStatus.getName(), newStatus.getName());
 
-        // Exit behavior (optional)
         executeOnExit(allocation, currentStatus);
 
-        // Validate and perform transition
         IncidentVehicleAllocationState currentState =
                 allocationStateFactory.getState(currentStatus.getName());
+
         currentState.transitionTo(allocation, newStatus);
 
-        // Entry behavior (optional)
         executeOnEnter(allocation, newStatus);
 
         allocationRepository.save(allocation);
     }
 
     private void executeOnExit(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus status) {
-        log.debug("Exiting {} state for allocation {}", status, allocation.getId());
+        log.debug("Exiting {} state for allocation {}", status.getName(), allocation.getId());
     }
 
     private void executeOnEnter(IncidentVehicleAllocation allocation, IncidentVehicleAllocationStatus status) {
-        log.debug("Entering {} state for allocation {}", status, allocation.getId());
-        if (status.getName().equalsIgnoreCase("ASSIGNED")) {
+        log.debug("Entering {} state for allocation {}", status.getName(), allocation.getId());
+        String name = status.getName().toUpperCase();
+
+        if (name.equals("ASSIGNED")) {
             allocation.setDoassigned(LocalDateTime.now());
-        } else if (status.getName().equalsIgnoreCase("RELEASED")) {
+        } else if (name.equals("RELEASED")) {
             allocation.setDoreleased(LocalDateTime.now());
         }
     }

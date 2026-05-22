@@ -36,10 +36,8 @@ public class IncidentVehicleAllocation {
     private Vehicle vehicle;
     @ManyToOne
     @JoinColumn(name = "providedbranch_id", referencedColumnName = "id", nullable = false)
-    private Branch providbranch;
-    @ManyToOne
-    @JoinColumn(name = "incidentvehicleallocationtype_id", referencedColumnName = "id", nullable = false)
-    private IncidentVehicleAllocationType incidentvehicleallocationtype;
+    private Branch providedbranch;
+
     @ManyToOne
     @JoinColumn(name = "incidentvehicleallocationstatus_id", referencedColumnName = "id", nullable = false)
     private IncidentVehicleAllocationStatus incidentvehicleallocationstatus;

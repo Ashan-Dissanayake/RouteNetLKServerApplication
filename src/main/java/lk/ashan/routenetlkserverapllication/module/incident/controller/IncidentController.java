@@ -2,7 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.incident.controller;
 
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
+import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.incident.service.IncidentService;
+import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,12 @@ public class IncidentController {
         return APIResponseBuilder.list(incidents, incidents.size());
     }
 
+    @GetMapping(value = "/summaries", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<IncidentSummaryDto>>> get() {
+        List<IncidentSummaryDto> incidents =  incidentService.getSummaryIncidents();
+        return APIResponseBuilder.list(incidents, incidents.size());
+    }
+
     @PreAuthorize("hasAuthority('incident-insert')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> create(
@@ -40,6 +48,7 @@ public class IncidentController {
         IncidentDetailResponseDto savedIncident = incidentService.create(createRequestDto);
         return APIResponseBuilder.created(savedIncident,savedIncident.getId());
     }
+
 
     @PostMapping("/{id}/in-progress")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> inProgress(

@@ -11,4 +11,5 @@ import lombok.*;
 public class VehicleSummaryDto {
     private  Integer id;
     private String number;
+    private Integer branchId;
 }

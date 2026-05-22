@@ -10,7 +10,7 @@ public class AllocationContextBuilder {
         return AllocationContext.builder()
                 .incidentId(dto.getIncident().getId())
                 .vehicleId(dto.getVehicle().getId())
-                .branchId(dto.getProvidebranch().getId())
+                .branchId(dto.getProvidedbranch().getId())
                 .build();
     }
 }
