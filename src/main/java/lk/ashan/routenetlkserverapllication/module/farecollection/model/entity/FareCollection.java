@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
@@ -36,7 +37,7 @@ public class FareCollection {
     private Boolean isreconciled;
     @Basic
     @Column(name = "tocollected")
-    private Time tocollected;
+    private LocalTime tocollected;
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;

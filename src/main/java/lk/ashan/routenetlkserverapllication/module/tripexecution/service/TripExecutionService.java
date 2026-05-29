@@ -311,7 +311,6 @@ public class TripExecutionService {
         execution.setEndodometer(calculatedEndOdo);
         execution.setToactualarrival(LocalTime.now());
 
-        //this should handle via event in later
         Vehicle vehicle = execution.getVehicle();
         vehicle.setMileage(calculatedEndOdo);
         vehicleRepository.save(vehicle);

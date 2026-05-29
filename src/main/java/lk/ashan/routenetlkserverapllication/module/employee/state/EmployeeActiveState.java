@@ -3,9 +3,11 @@ package lk.ashan.routenetlkserverapllication.module.employee.state;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class EmployeeActiveState implements EmployeeState {
     
     private static final List<String> ALLOWED = List.of("SUSPEND", "RESIGNED", "ON LEAVE");
@@ -20,6 +22,7 @@ public class EmployeeActiveState implements EmployeeState {
                 "Invalid status transition from ACTIVE to " + newStatusName
             );
         }
+        employee.setEmployeestatus(newStatus);
     }
 
     @Override

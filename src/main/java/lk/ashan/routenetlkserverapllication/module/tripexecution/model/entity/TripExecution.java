@@ -54,17 +54,13 @@ public class TripExecution {
     @Basic
     @Column(name = "remarks")
     private String remarks;
-
     @OneToMany(mappedBy = "tripexecution")
     private Collection<FareCollection> fareCollections;
-
     @OneToMany(mappedBy = "tripexecution")
     private Collection<Incident> incidents;
-
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
-
     @ManyToOne
     @JoinColumn(name = "trip_id", referencedColumnName = "id", nullable = false)
     private Trip trip;
