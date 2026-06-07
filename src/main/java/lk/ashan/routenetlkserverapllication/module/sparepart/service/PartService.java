@@ -79,6 +79,12 @@ public class PartService {
         return partMapper.toSummaryDtoList(partRepository.findAll());
     }
 
+    @Transactional(readOnly = true)
+    public Part getById(Integer id) {
+        return partRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+    }
+
     @Transactional
     @DisableSoftDeleteFilter
     public PartDetailResponseDto createPart(@NotNull PartCreateRequestDto dto) {

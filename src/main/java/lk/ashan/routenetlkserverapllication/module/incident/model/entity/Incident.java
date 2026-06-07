@@ -6,7 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.RegionalO
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lombok.*;
 
 import java.time.LocalDate;

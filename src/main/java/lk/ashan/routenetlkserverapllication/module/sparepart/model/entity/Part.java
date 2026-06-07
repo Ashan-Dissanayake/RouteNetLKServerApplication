@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServicePart;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServicePart;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 

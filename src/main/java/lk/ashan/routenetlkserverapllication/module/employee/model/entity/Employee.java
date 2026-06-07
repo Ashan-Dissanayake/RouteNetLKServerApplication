@@ -6,7 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceExecution;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
 

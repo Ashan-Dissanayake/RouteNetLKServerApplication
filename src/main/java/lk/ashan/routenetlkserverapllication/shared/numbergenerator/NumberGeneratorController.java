@@ -62,4 +62,13 @@ public class NumberGeneratorController {
                 Map.of("grnNumber", grnNumber)
         );
     }
+
+    @GetMapping(value = "/vehicle-service", produces = "application/json")
+    public ResponseEntity<APISuccessResponse<String>> getVehicleServiceNumber() {
+        String vehicleServiceNumber = numberGeneratorService.nextVehicleServiceNumber("CLM0001", YearMonth.now());
+        return APIResponseBuilder.ok(
+                vehicleServiceNumber,
+                Map.of("vehicleServiceNumber", vehicleServiceNumber)
+        );
+    }
 }

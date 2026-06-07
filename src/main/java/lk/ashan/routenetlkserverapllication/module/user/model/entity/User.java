@@ -16,8 +16,8 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleService;
-import lk.ashan.routenetlkserverapllication.module.vehicleserviceidentification.model.entity.VehicleServiceExecution;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
 import lombok.*;
 
 import java.sql.Timestamp;

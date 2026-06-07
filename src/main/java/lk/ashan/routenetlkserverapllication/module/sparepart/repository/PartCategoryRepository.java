@@ -4,6 +4,9 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partca
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PartCategoryRepository extends JpaRepository<Partcategory, Integer> {
+    Optional<Partcategory> findByName(String name);
 }

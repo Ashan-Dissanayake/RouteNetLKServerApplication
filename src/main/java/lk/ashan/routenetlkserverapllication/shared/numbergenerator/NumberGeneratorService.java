@@ -47,6 +47,25 @@ public class NumberGeneratorService {
         return formatter.conductor(next);
     }
 
+    @Transactional
+    public String nextPartRequestNumber(String scopeName, YearMonth ym) {
+        Integer next = nextBranchPeriodSequenceValue("PART_REQUEST", scopeName, ym);
+        return formatter.partRequest(scopeName, ym, next);
+    }
+
+    @Transactional
+    public String nextGrnNumber(String scopeName, YearMonth ym) {
+        Integer next = nextBranchPeriodSequenceValue("GRN", scopeName, ym);
+        return formatter.grn(scopeName, ym, next);
+    }
+
+    @Transactional
+    public String nextVehicleServiceNumber(String scopeName,YearMonth ym) {
+        Integer next = nextBranchPeriodSequenceValue("VEHICLE_SERVICE", scopeName, ym);
+        return formatter.vehicleService(scopeName, ym, next);
+    }
+
+
     private Integer nextGlobalSequenceValue(String codeTypeName, String scopeName) {
         CodeType codeType = codeTypeRepository.findByName(codeTypeName)
                 .orElseThrow(() -> new RuntimeException("CodeType not found: " + codeTypeName));
@@ -67,18 +86,6 @@ public class NumberGeneratorService {
         return next;
     }
 
-    // Similarly for branch-period sequences:
-    @Transactional
-    public String nextPartRequestNumber(String scopeName, YearMonth ym) {
-        Integer next = nextBranchPeriodSequenceValue("PART_REQUEST", scopeName, ym);
-        return formatter.partRequest(scopeName, ym, next);
-    }
-
-    @Transactional
-    public String nextGrnNumber(String scopeName, YearMonth ym) {
-        Integer next = nextBranchPeriodSequenceValue("GRN", scopeName, ym);
-        return formatter.grn(scopeName, ym, next);
-    }
 
     private Integer nextBranchPeriodSequenceValue(String codeTypeName, String scopeName, YearMonth ym) {
         CodeType codeType = codeTypeRepository.findByName(codeTypeName)
@@ -102,4 +109,5 @@ public class NumberGeneratorService {
         sequenceRepository.save(seq);
         return next;
     }
+
 }

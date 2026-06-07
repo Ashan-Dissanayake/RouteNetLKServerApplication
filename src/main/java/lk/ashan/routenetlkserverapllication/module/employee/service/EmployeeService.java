@@ -16,6 +16,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateT
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationContext;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -88,6 +89,12 @@ public class EmployeeService {
         return employeeMapper.toSummaryDetailList(employees);
     }
 
+    @Transactional(readOnly = true)
+    public Employee getById(Integer id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+    }
+
     @Transactional
     @DisableSoftDeleteFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
@@ -143,7 +150,6 @@ public class EmployeeService {
         }
         return employeeMapper.toDto(entity);
     }
-
 
     @Transactional
     public List<Integer> deactivateEmployee(List<Integer> employeeIds) {

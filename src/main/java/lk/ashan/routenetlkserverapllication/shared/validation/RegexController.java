@@ -42,20 +42,20 @@ public class RegexController {
     }
 
 
-    @GetMapping(path ="/driver", produces = "application/json")
+    @GetMapping(path ="/drivers", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> driverStatic() {
         HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new DriverRequestDto());
         assert regexes != null;
         return APIResponseBuilder.list(regexes, regexes.size());
     }
 
-    @GetMapping(path = "/driver/{licensecategory}", produces = "application/json")
+    @GetMapping(path = "/drivers/{licenseCategory}", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String, HashMap<String, String>>>> driverDynamic(
-            @PathVariable String licensecategory) {
+            @PathVariable String licenseCategory) {
 
         HashMap<String, HashMap<String, String>> regexes = new HashMap<>();
 
-        String licenseCategoryPattern = DriverValidationData.LICENSE_CATEGORY_LICENSE_NUMBER_REGEX.get(licensecategory);
+        String licenseCategoryPattern = DriverValidationData.LICENSE_CATEGORY_LICENSE_NUMBER_REGEX.get(licenseCategory);
 
         if (licenseCategoryPattern != null) {
             regexes.put("licensenumber", new HashMap<>() {{
@@ -67,7 +67,7 @@ public class RegexController {
         return APIResponseBuilder.list(regexes, regexes.size());
     }
 
-    @GetMapping(path ="/conductor", produces = "application/json")
+    @GetMapping(path ="/conductors", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> conductorStatic() {
         HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new ConductorRequestDto());
         assert regexes != null;

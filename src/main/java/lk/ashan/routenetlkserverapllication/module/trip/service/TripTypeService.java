@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripTypeMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class TripTypeService {
     private final TripTypeRepository triptypeRepository;
     private final TripTypeMapper triptypeMapper;
 
+    @Transactional(readOnly = true)
     public List<TripTypeDto> getTripTypes() {
         return triptypeMapper.toDtoList(triptypeRepository.findAll());
     }
