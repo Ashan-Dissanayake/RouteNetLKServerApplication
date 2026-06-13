@@ -5,7 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.dto.Vehi
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServicePart;
 import org.mapstruct.*;
 
-import java.util.List;
 
 @Mapper(
  componentModel = MappingConstants.ComponentModel.SPRING,
@@ -15,9 +14,5 @@ import java.util.List;
 public interface VehicleServicePartMapper {
 
     VehicleServicePart toEntity(VehicleServicePartDto dto);
-
-    VehicleServicePartDetailResponseDto toDto(VehicleServicePart entity);
-
-    List<VehicleServicePartDetailResponseDto> toDtoList(List<VehicleServicePart> entities);
 
 }

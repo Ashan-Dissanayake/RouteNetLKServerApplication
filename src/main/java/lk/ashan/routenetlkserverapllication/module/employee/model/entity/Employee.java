@@ -88,7 +88,7 @@ public class Employee extends BaseEntity {
     @OneToMany(mappedBy = "employee")
     private Collection<User> users;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "maintechnician")
     private Collection<VehicleServiceExecution> vehicleServiceExecutions;
 
 

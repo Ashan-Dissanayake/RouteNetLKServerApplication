@@ -52,8 +52,8 @@ import java.util.List;
  * extensibility for custom authentication and authorization use cases.
  */
 @Configuration
-//@EnableMethodSecurity
-//@EnableWebSecurity
+@EnableMethodSecurity
+@EnableWebSecurity
 @RequiredArgsConstructor
 @Profile("!test")
 public class SecurityConfiguration {

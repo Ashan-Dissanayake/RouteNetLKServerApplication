@@ -17,7 +17,7 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/vehicle-service")
+@RequestMapping(value = "/vehicle-services")
 @RequiredArgsConstructor
 public class VehicleServiceController {
 
