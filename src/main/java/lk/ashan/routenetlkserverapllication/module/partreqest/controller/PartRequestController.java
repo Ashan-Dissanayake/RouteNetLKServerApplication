@@ -25,7 +25,7 @@ public class PartRequestController {
 
     private final PartRequestService partRequestService;
 
-    @PreAuthorize("hasAuthority('part-requests-select')")
+    @PreAuthorize("hasAuthority('part-requests-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -37,6 +37,7 @@ public class PartRequestController {
         return APIResponseBuilder.list(requests, requests.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestSummaryDto>>> get() {
         List<PartRequestSummaryDto> partRequests =  partRequestService.getSummaryPartRequests();
@@ -44,7 +45,7 @@ public class PartRequestController {
     }
 
 
-    @PreAuthorize("hasAuthority('part-requests-insert')")
+    @PreAuthorize("hasAuthority('part-requests-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> create(
             @RequestBody @Valid PartRequestCreateRequestDto dto
@@ -62,7 +63,7 @@ public class PartRequestController {
         return APIResponseBuilder.updated(updatedRequest, updatedRequest.getId());
     }
 
-    @PreAuthorize("hasAuthority('part-requests-update')")
+    @PreAuthorize("hasAuthority('part-requests-approve')")
     @PostMapping("/{id}/approve")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> approve(
             @PathVariable Integer id
@@ -71,7 +72,7 @@ public class PartRequestController {
         return APIResponseBuilder.ok(request);
     }
 
-    @PreAuthorize("hasAuthority('part-requests-update')")
+    @PreAuthorize("hasAuthority('part-requests-reject')")
     @PostMapping("/{id}/reject")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> reject(
             @PathVariable Integer id

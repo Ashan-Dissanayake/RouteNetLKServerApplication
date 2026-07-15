@@ -23,7 +23,7 @@ public class IncidentController {
 
     private final IncidentService incidentService;
 
-    @PreAuthorize("hasAuthority('incident-select')")
+    @PreAuthorize("hasAuthority('incident-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -34,13 +34,14 @@ public class IncidentController {
         return APIResponseBuilder.list(incidents, incidents.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentSummaryDto>>> get() {
         List<IncidentSummaryDto> incidents =  incidentService.getSummaryIncidents();
         return APIResponseBuilder.list(incidents, incidents.size());
     }
 
-    @PreAuthorize("hasAuthority('incident-insert')")
+    @PreAuthorize("hasAuthority('incident-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> create(
             @RequestBody IncidentCreateRequestDto createRequestDto
@@ -49,7 +50,7 @@ public class IncidentController {
         return APIResponseBuilder.created(savedIncident,savedIncident.getId());
     }
 
-
+    @PreAuthorize("hasAuthority('incident-start')")
     @PostMapping("/{id}/in-progress")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> inProgress(
             @PathVariable Integer id
@@ -58,6 +59,7 @@ public class IncidentController {
         return APIResponseBuilder.ok(updatedIncident);
     }
 
+    @PreAuthorize("hasAuthority('incident-vehicle-recovery')")
     @PostMapping("/{id}/vehicle-recovery")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> vehicleRecovery(
             @PathVariable Integer id
@@ -66,6 +68,7 @@ public class IncidentController {
         return APIResponseBuilder.ok(updatedIncident);
     }
 
+    @PreAuthorize("hasAuthority('incident-pending-allocation')")
     @PostMapping("/{id}/pending-allocation")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> pendingAllocation(
             @PathVariable Integer id
@@ -74,6 +77,7 @@ public class IncidentController {
         return APIResponseBuilder.ok(updatedIncident);
     }
 
+    @PreAuthorize("hasAuthority('incident-resolve')")
     @PostMapping("/{id}/resolved")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> resolved(
             @PathVariable Integer id
@@ -82,6 +86,7 @@ public class IncidentController {
         return APIResponseBuilder.ok(updatedIncident);
     }
 
+    @PreAuthorize("hasAuthority('incident-close')")
     @PostMapping("/{id}/closed")
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> closed(
             @PathVariable Integer id

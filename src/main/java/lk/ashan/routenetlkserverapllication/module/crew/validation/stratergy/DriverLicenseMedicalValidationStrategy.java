@@ -10,12 +10,23 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Validation strategy for driver license and medical details.
+ * Ensures that license and medical dates are valid and enforces business rules
+ * for license category changes.
+ */
 @Component
 @RequiredArgsConstructor
 public class DriverLicenseMedicalValidationStrategy implements DriverValidationStrategy {
 
     private final DriverRepository driverRepository;
 
+    /**
+     * Validates the creation of a driver by checking license and medical dates.
+     *
+     * @param context the validation context containing driver details
+     * @throws BusinessRuleViolationException if any validation rule is violated
+     */
     @Override
     public void validateCreate(DriverValidationContext context) {
 
@@ -24,6 +35,14 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
 
     }
 
+    /**
+     * Validates the update of a driver by checking license category changes,
+     * license dates, and medical dates.
+     *
+     * @param context the validation context containing updated driver details
+     * @throws ResourceNotFoundException if the driver is not found
+     * @throws BusinessRuleViolationException if any validation rule is violated
+     */
     @Override
     public void validateUpdate(DriverValidationContext context) {
 
@@ -37,6 +56,13 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
 
     }
 
+    /**
+     * Validates the license issued and expiry dates.
+     *
+     * @param issued the license issued date
+     * @param expiry the license expiry date
+     * @throws BusinessRuleViolationException if the dates are invalid
+     */
     private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
 
         if (issued.isAfter(LocalDate.now())) {
@@ -54,6 +80,13 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
         }
     }
 
+    /**
+     * Validates the medical issued and expiry dates.
+     *
+     * @param issued the medical issued date
+     * @param expiry the medical expiry date
+     * @throws BusinessRuleViolationException if the dates are invalid
+     */
     private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
 
         if (issued.isAfter(LocalDate.now())) {
@@ -71,6 +104,14 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
         }
     }
 
+    /**
+     * Validates changes to the driver's license category.
+     *
+     * @param existingDriver the existing driver entity
+     * @param context the validation context containing updated driver details
+     * @throws IllegalArgumentException if the new license category is null
+     * @throws BusinessRuleViolationException if the license category change violates business rules
+     */
     private void validateLicenseCategoryChange(Driver existingDriver, DriverValidationContext context) {
 
         if (context.getLicenseCategoryName() == null) {

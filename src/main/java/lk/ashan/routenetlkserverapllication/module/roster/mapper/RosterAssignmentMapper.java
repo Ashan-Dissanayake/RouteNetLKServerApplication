@@ -53,7 +53,6 @@ public interface RosterAssignmentMapper {
     List<RosterShiftAssignmentResponseDto> toDtoList(List<RosterShiftAssignment> entities);
 
 
-
     default Integer getFamiliarityLevel(Employee employee) {
         if (employee == null) return 1;
         if (employee.getDriver() != null && employee.getDriver().getRoutefamiliaritylevel() != null) {

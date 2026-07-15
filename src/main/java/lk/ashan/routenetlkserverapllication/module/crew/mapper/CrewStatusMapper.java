@@ -8,8 +8,25 @@ import org.mapstruct.MappingConstants;
 import java.util.List;
 
 
+/**
+ * Mapper interface for converting CrewStatus entities to CrewStatusDto objects.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CrewStatusMapper {
+
+    /**
+     * Converts a CrewStatus entity to a CrewStatusDto.
+     *
+     * @param crewstatus the CrewStatus entity to be converted
+     * @return the converted CrewStatusDto
+     */
     CrewStatusDto toDto(CrewStatus crewstatus);
+
+    /**
+     * Converts a list of CrewStatus entities to a list of CrewStatusDto objects.
+     *
+     * @param crewStatuses the list of CrewStatus entities to be converted
+     * @return the list of converted CrewStatusDto objects
+     */
     List<CrewStatusDto> toDtoList(List<CrewStatus> crewStatuses);
 }

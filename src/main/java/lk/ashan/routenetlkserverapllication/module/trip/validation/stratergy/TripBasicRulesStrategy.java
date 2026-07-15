@@ -15,6 +15,10 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Strategy implementation for validating basic rules related to trip creation.
+ * This class ensures that all business rules are adhered to when creating or updating trips.
+ */
 @Component
 @RequiredArgsConstructor
 public class TripBasicRulesStrategy implements TripValidationStrategy {
@@ -23,6 +27,12 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
     private final PermitRepository permitRepository;
     private final OriginTerminalRepository originTerminalRepository;
 
+    /**
+     * Validates the creation of a trip based on various business rules.
+     *
+     * @param context the context containing trip details and validation parameters
+     * @throws BusinessRuleViolationException if any business rule is violated
+     */
     @Override
     public void validateCreate(TripValidationContext context) {
         validateTimeLogic(context);
@@ -33,40 +43,46 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
         validateTerminalLocation(context);
     }
 
+    /**
+     * Validates the time logic of the trip, ensuring proper departure and arrival times.
+     *
+     * @param context the context containing trip details
+     * @throws BusinessRuleViolationException if the trip duration is zero or if the trip type and times are inconsistent
+     */
     private void validateTimeLogic(TripValidationContext context) {
         LocalTime dep = context.getDeparture();
         LocalTime arr = context.getArrival();
 
-        // Using a constant or Enum for TripType is safer than a magic number like '5'
         final Integer MIDNIGHT_TRIP_TYPE = 5;
         boolean isOverNightType = MIDNIGHT_TRIP_TYPE.equals(context.getTriptypeId());
 
-        // 1. Prevent zero-duration trips
         if (dep.equals(arr)) {
             throw new BusinessRuleViolationException("Trip duration cannot be zero.");
         }
 
-        // 2. Numerical Check: Arrival is before Departure (e.g., 22:00 to 02:00)
         boolean numericalMidnightDetected = arr.isBefore(dep);
 
         if (numericalMidnightDetected && !isOverNightType) {
-            // The times cross midnight, but the trip isn't categorized as a Midnight Trip
             throw new BusinessRuleViolationException("Arrival time is before departure, but this is not marked as a Midnight Trip.");
         }
 
         if (!numericalMidnightDetected && isOverNightType) {
-            // It's marked as a Midnight Trip, but the times are on the same day (e.g., 08:00 to 10:00)
             throw new BusinessRuleViolationException("This is marked as a Midnight Trip, but the arrival time is not after midnight.");
         }
     }
+
+    /**
+     * Validates the gaps between trips at the terminal to ensure minimum gap requirements are met.
+     *
+     * @param context the context containing trip details and existing trips at the terminal
+     * @throws BusinessRuleViolationException if the gap between trips is less than the minimum required
+     */
     private void validateTerminalGaps(TripValidationContext context) {
         for (Trip existing : context.getExistingTripsAtTerminal()) {
-            // Skip self on update
             if (context.getId() != null && existing.getId().equals(context.getId())) {
                 continue;
             }
 
-            // Midnight-aware gap calculation
             long gap = calculateCircularGap(existing.getTodepature(), context.getDeparture());
 
             if (gap < context.getMinGapMinutes()) {
@@ -77,15 +93,25 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
         }
     }
 
+    /**
+     * Calculates the circular gap between two times, considering midnight crossings.
+     *
+     * @param t1 the first time
+     * @param t2 the second time
+     * @return the gap in minutes
+     */
     private long calculateCircularGap(LocalTime t1, LocalTime t2) {
         long diff = Math.abs(Duration.between(t1, t2).toMinutes());
-        // If the difference is > 12 hours (720 mins), the "shorter" gap
-        // is actually across the midnight boundary.
         return (diff > 720) ? (1440 - diff) : diff;
     }
 
+    /**
+     * Validates idempotency by checking for duplicate trips with the same core attributes.
+     *
+     * @param context the context containing trip details
+     * @throws BusinessRuleViolationException if a duplicate trip is detected
+     */
     private void validateIdempotency(TripValidationContext context) {
-        // Search for any existing trip with the same core attributes
         boolean exists = tripRepository.existsByPermite_IdAndOriginterminal_IdAndTodepatureAndToarrivalAndTripstatus_Name(
                 context.getPermitId(),
                 context.getOriginTerminalId(),
@@ -102,29 +128,22 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
         }
     }
 
-
     /**
-     * Ensures the number of active trip templates does not exceed
-     * the total trips per day authorized by the NTC permit.
+     * Validates that the number of active trips does not exceed the daily quota allowed by the permit.
+     *
+     * @param context the context containing trip details
+     * @throws BusinessRuleViolationException if the daily trip quota is exceeded
      */
     private void validatePermittedDailyTripQuota(TripValidationContext context) {
-        // 1. Get the maximum allowed trips from the Permit module
-//        int allowedQuota = context.getPermit().getTripsPerDay();
         int allowedQuota = permitRepository.findById(context.getPermitId())
-                .orElseThrow(()->new ResourceNotFoundException("Permit Not Found"))
+                .orElseThrow(() -> new ResourceNotFoundException("Permit Not Found"))
                 .getNotripsperday();
 
-        // 2. Count current active trips for this permit
-        // Exclude the current trip ID if this is an update/replacement scenario
         long activeCount = tripRepository.countByPermite_IdAndTripstatus_Name(
                 context.getPermitId(),
                 "Active"
         );
 
-        // 3. Logic check
-        // If we are creating a new trip, we check if adding one more exceeds the quota.
-        // Note: In a 'Replacement' flow, the old trip is discontinued first,
-        // so the count should stay within limits.
         if (activeCount >= allowedQuota) {
             throw new BusinessRuleViolationException(
                     String.format("Permit Quota Exceeded! This permit only allows %d trips per day. " +
@@ -135,11 +154,12 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
     }
 
     /**
-     * Ensures that for a single permit, trips do not overlap in time.
-     * This handles the reality that one bus cannot be in two places at once.
+     * Validates that trips for a single permit do not overlap in time.
+     *
+     * @param context the context containing trip details
+     * @throws BusinessRuleViolationException if a scheduling conflict is detected
      */
     private void validateTripOverlap(TripValidationContext context) {
-        // Fetch all currently active templates for this permit
         List<Trip> activeTrips = tripRepository.findByPermite_IdAndTripstatus_Name(
                 context.getPermitId(),
                 "Active"
@@ -154,7 +174,6 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
             LocalTime exArr = existing.getToarrival();
             boolean isExOvernight = Integer.valueOf(5).equals(existing.getTriptype().getId());
 
-            // We use a helper to see if the two time windows intersect
             if (isOverlapping(newDep, newArr, isNewOvernight, exDep, exArr, isExOvernight)) {
                 throw new BusinessRuleViolationException(
                         String.format("Scheduling Conflict! This permit is already active for a trip from %s to %s. " +
@@ -165,37 +184,45 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
     }
 
     /**
-     * Helper to check if two time ranges overlap, considering midnight crossings.
+     * Checks if two time ranges overlap, considering midnight crossings.
+     *
+     * @param start1 the start time of the first range
+     * @param end1 the end time of the first range
+     * @param over1 whether the first range crosses midnight
+     * @param start2 the start time of the second range
+     * @param end2 the end time of the second range
+     * @param over2 whether the second range crosses midnight
+     * @return true if the time ranges overlap, false otherwise
      */
     private boolean isOverlapping(LocalTime start1, LocalTime end1, boolean over1,
                                   LocalTime start2, LocalTime end2, boolean over2) {
-
-        // Convert to a comparable "minutes from midnight" scale
-        // If overnight, we treat the arrival as being on 'Day 2' (adding 1440 minutes)
         long s1 = start1.toSecondOfDay() / 60;
         long e1 = (over1) ? (end1.toSecondOfDay() / 60) + 1440 : end1.toSecondOfDay() / 60;
 
         long s2 = start2.toSecondOfDay() / 60;
         long e2 = (over2) ? (end2.toSecondOfDay() / 60) + 1440 : end2.toSecondOfDay() / 60;
 
-        // Standard overlap formula: (StartA < EndB) AND (EndA > StartB)
         return (s1 < e2) && (e1 > s2);
     }
 
+    /**
+     * Validates that the terminal location is within the route authorized by the permit.
+     *
+     * @param context the context containing trip details
+     * @throws BusinessRuleViolationException if the terminal location is not authorized for the route
+     * @throws ResourceNotFoundException if the permit or terminal is not found
+     */
     private void validateTerminalLocation(TripValidationContext context) {
-        // 1. Get the Route cities from the Permit
-       Permite permite = permitRepository.findById(context.getPermitId())
-                .orElseThrow(()->new ResourceNotFoundException("Permit Not Found"));
+        Permite permite = permitRepository.findById(context.getPermitId())
+                .orElseThrow(() -> new ResourceNotFoundException("Permit Not Found"));
         String routeOrigin = permite.getRoute().getOrigin();
         String routeDestination = permite.getRoute().getDestination();
 
         Originterminal tripOriginTerminal = originTerminalRepository.findById(context.getOriginTerminalId())
-                .orElseThrow(()-> new ResourceNotFoundException("Origin not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Origin not found"));
 
-        // 2. Get the City where the selected Terminal is located
         String terminalCity = tripOriginTerminal.getCity();
 
-        // 3. Validation: Is the terminal in one of the allowed cities for this route?
         boolean isValidLocation = terminalCity.equalsIgnoreCase(routeOrigin) ||
                 terminalCity.equalsIgnoreCase(routeDestination);
 
@@ -206,17 +233,4 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
             );
         }
     }
-
-    /* To Implemente in future
-    1. The "Day-Crossing" Turnaround (The 48-Hour Loop)
-       Case: A bus departs Colombo at 11:00 PM (Monday) and arrives in Jaffna at 5:00 AM (Tuesday)
-       The Edge Case: The system must recognize that even though it is now Tuesday, the bus is "occupied"
-       by a Monday-started trip.
-
-        Business Rule: You cannot schedule a return trip from Jaffna at 4:00 AM Tuesday because the bus
-        hasn't arrived yet,even though 4:00 AM is technically "later" in the day than the 11:00 PM start.
-
-        Your Solution: Your minutes-from-midnight logic (adding 1440 minutes for Type 5 trips) handles
-        this temporal continuity.
-     */
 }

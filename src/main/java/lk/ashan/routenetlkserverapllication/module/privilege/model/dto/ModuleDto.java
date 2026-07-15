@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.user.model.dto;
+package lk.ashan.routenetlkserverapllication.module.privilege.model.dto;
 
 import lombok.*;
 
@@ -9,6 +9,6 @@ import lombok.*;
 @Builder
 @ToString
 public class ModuleDto {
-    private String id;
+    private Integer id;
     private String name;
 }

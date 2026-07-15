@@ -22,7 +22,7 @@ public class GrnController {
 
     private final GrnService grnService;
 
-    @PreAuthorize("hasAuthority('grn-select')")
+    @PreAuthorize("hasAuthority('grn-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<GrnDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params

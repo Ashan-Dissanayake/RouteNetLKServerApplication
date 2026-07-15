@@ -16,13 +16,8 @@ public class UserDetailResponseDto {
     private Integer id;
     private EmployeeSummaryDto employee;
     private String username;
-    private String password;
     private UserTypeDto usertype;
     private UserStatusDto userstatus;
     private boolean accountlocked;
-    private String recoverycode;
-    private Timestamp recoverycodeexpiration;
-    private boolean recoverycodeused;
-    private List<UserRoleDto> userRoles;
     private String remarks;
 }

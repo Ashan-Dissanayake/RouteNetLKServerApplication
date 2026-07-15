@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Service class for managing Driver entities.
+ * Provides methods for retrieving, creating, and updating drivers.
+ */
 @Service
 @RequiredArgsConstructor
 public class DriverService {
@@ -38,11 +42,22 @@ public class DriverService {
     private final List<DriverValidationStrategy> validationStrategies;
     private final DriverContextBuilder driverContextBuilder;
 
+    /**
+     * Retrieves all drivers.
+     *
+     * @return a list of DriverDetailResponseDto containing details of all drivers.
+     */
     @Transactional(readOnly = true)
-    public List<DriverDetailResponseDto> getDrivers(){
-       return driverMapper.toDtoList(driverRepository.findAll());
+    public List<DriverDetailResponseDto> getDrivers() {
+        return driverMapper.toDtoList(driverRepository.findAll());
     }
 
+    /**
+     * Searches for drivers based on the provided parameters.
+     *
+     * @param params a map containing search parameters such as "ssnumber", "sscrewstatus", and "ssroutefamilitylevel".
+     * @return a list of DriverDetailResponseDto matching the search criteria.
+     */
     @Transactional(readOnly = true)
     public List<DriverDetailResponseDto> searchDriver(
             @NotNull HashMap<String, String> params) {
@@ -54,16 +69,22 @@ public class DriverService {
         Stream<Driver> driverStream = driverRepository.findAll().stream();
 
         if (number != null)
-            driverStream = driverStream.filter(d->d.getNumber().equalsIgnoreCase(number));
+            driverStream = driverStream.filter(d -> d.getNumber().equalsIgnoreCase(number));
         if (crewStatusId != null)
-            driverStream = driverStream.filter(d->d.getCrewstatus().getId()==Integer.parseInt(crewStatusId));
+            driverStream = driverStream.filter(d -> d.getCrewstatus().getId() == Integer.parseInt(crewStatusId));
         if (routeFamiliarityLevelId != null)
-            driverStream = driverStream.filter(d -> d.getRoutefamiliaritylevel().getId()== Integer.parseInt(routeFamiliarityLevelId));
+            driverStream = driverStream.filter(d -> d.getRoutefamiliaritylevel().getId() == Integer.parseInt(routeFamiliarityLevelId));
 
         return driverMapper.toDtoList(driverStream.collect(Collectors.toList()));
-
     }
 
+    /**
+     * Creates a new driver.
+     *
+     * @param dto the DriverCreateRequestDto containing details of the driver to be created.
+     * @return the created DriverDetailResponseDto.
+     * @throws ValidationException if the driver's crew status is not "ELIGIBLE" or route familiarity is not "LOW".
+     */
     @Transactional
     public DriverDetailResponseDto createDriver(@NotNull DriverCreateRequestDto dto) {
 
@@ -83,27 +104,34 @@ public class DriverService {
         return driverMapper.toDto(driverRepository.save(driver));
     }
 
+    /**
+     * Updates an existing driver.
+     *
+     * @param dto the DriverUpdateRequestDto containing updated details of the driver.
+     * @return the updated DriverDetailResponseDto.
+     * @throws ResourceNotFoundException if the driver to be updated is not found.
+     */
     @Transactional
     public DriverDetailResponseDto updateDriver(@NotNull DriverUpdateRequestDto dto) {
-        Driver existingDriver =  driverRepository.findById(dto.getId())
+        Driver existingDriver = driverRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto,existingDriver);
+        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto, existingDriver);
         validationStrategies.forEach(s -> s.validateUpdate(context));
 
-        Driver entity = driverMapper.updateEntityFromDto(dto,existingDriver);
+        Driver entity = driverMapper.updateEntityFromDto(dto, existingDriver);
 
-        if (dto.getRoutefamiliaritylevel().getId()!=null){
+        if (dto.getRoutefamiliaritylevel().getId() != null) {
             RouteFamiliarityLevel targetRouteFamiliarityLevel = routeFamiliarityLevelService.getById(dto.getRoutefamiliaritylevel().getId());
             entity.setRoutefamiliaritylevel(targetRouteFamiliarityLevel);
         }
 
-        if (dto.getLicensecategory().getId()!=null){
+        if (dto.getLicensecategory().getId() != null) {
             LicenseCategory targetLicenseCategory = licenseCategoryService.getById(dto.getLicensecategory().getId());
             entity.setLicensecategory(targetLicenseCategory);
         }
 
-        if (dto.getCrewstatus().getId()!=null){
+        if (dto.getCrewstatus().getId() != null) {
             CrewStatus targetStatus = crewStatusService.getById(dto.getCrewstatus().getId());
             entity.setCrewstatus(targetStatus);
         }

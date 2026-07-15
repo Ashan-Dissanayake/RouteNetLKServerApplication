@@ -24,7 +24,7 @@ public class PermitController {
     
     private final PermitService permitService;
 
-    @PreAuthorize("hasAuthority('permits-select')")
+    @PreAuthorize("hasAuthority('permits-view')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PermitDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -35,6 +35,7 @@ public class PermitController {
         return APIResponseBuilder.list(permits, permits.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PermitSummaryResponseDto>>> get() {
         List<PermitSummaryResponseDto> permits =  permitService.getSummaryPermits();
@@ -42,7 +43,7 @@ public class PermitController {
     }
 
 
-    @PreAuthorize("hasAuthority('permits-insert')")
+    @PreAuthorize("hasAuthority('permits-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>> add(
             @RequestBody @Valid PermitCreateRequestDto permitCreateRequestDto)

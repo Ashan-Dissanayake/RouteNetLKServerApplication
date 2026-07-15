@@ -9,24 +9,69 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,uses = {
-        BranchTypeMapper.class,BranchStatusMapper.class,RegionalOfficeMapper.class,
+/**
+ * Mapper interface for converting between Branch entities and their corresponding DTOs.
+ * Utilizes MapStruct for automatic mapping and includes additional mappers for related entities.
+ */
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {
+        BranchTypeMapper.class, BranchStatusMapper.class, RegionalOfficeMapper.class,
 })
 public interface BranchMapper {
 
-  BranchDetailResponseDto toDto(Branch branch);
-  List<BranchDetailResponseDto> toDtoList(List<Branch> branches);
+    /**
+     * Converts a Branch entity to a BranchDetailResponseDto.
+     *
+     * @param branch the Branch entity to convert
+     * @return the corresponding BranchDetailResponseDto
+     */
+    BranchDetailResponseDto toDto(Branch branch);
 
-  @Mapping(target = "regionalOfficeId", source = "regionaloffice.id")
-  BranchSummaryDto toSummaryDto(Branch branch);
-  List<BranchSummaryDto> toSummaryDtolList(List<Branch> branches);
+    /**
+     * Converts a list of Branch entities to a list of BranchDetailResponseDto.
+     *
+     * @param branches the list of Branch entities to convert
+     * @return the corresponding list of BranchDetailResponseDto
+     */
+    List<BranchDetailResponseDto> toDtoList(List<Branch> branches);
 
-  Branch toEntity(BranchCreateRequestDto request);
-  //Branch toEntity(BranchUpdateRequestDto request);
+    /**
+     * Converts a Branch entity to a BranchSummaryDto.
+     *
+     * @param branch the Branch entity to convert
+     * @return the corresponding BranchSummaryDto
+     */
+    @Mapping(target = "regionalOfficeId", source = "regionaloffice.id")
+    BranchSummaryDto toSummaryDto(Branch branch);
 
-  @Mapping(target = "id", ignore = true)
-  @Mapping(target = "branchstatus", ignore = true)
-  @Mapping(target = "branchtype", ignore = true)
-  @Mapping(target = "regionaloffice", ignore = true)
-  Branch updateEntityFromDto(BranchUpdateRequestDto dto, @MappingTarget Branch entity);
+    /**
+     * Converts a list of Branch entities to a list of BranchSummaryDto.
+     *
+     * @param branches the list of Branch entities to convert
+     * @return the corresponding list of BranchSummaryDto
+     */
+    List<BranchSummaryDto> toSummaryDtolList(List<Branch> branches);
+
+    /**
+     * Converts a BranchCreateRequestDto to a Branch entity.
+     *
+     * @param request the BranchCreateRequestDto containing the data
+     * @return the corresponding Branch entity
+     */
+    Branch toEntity(BranchCreateRequestDto request);
+
+    // Branch toEntity(BranchUpdateRequestDto request);
+
+    /**
+     * Updates an existing Branch entity with data from a BranchUpdateRequestDto.
+     * Ignores certain fields during the update process.
+     *
+     * @param dto    the BranchUpdateRequestDto containing the updated data
+     * @param entity the existing Branch entity to update
+     * @return the updated Branch entity
+     */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "branchstatus", ignore = true)
+    @Mapping(target = "branchtype", ignore = true)
+    @Mapping(target = "regionaloffice", ignore = true)
+    Branch updateEntityFromDto(BranchUpdateRequestDto dto, @MappingTarget Branch entity);
 }

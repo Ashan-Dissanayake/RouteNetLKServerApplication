@@ -5,12 +5,23 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsExcep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validation strategy to ensure the uniqueness of branch attributes.
+ * This class validates that branch codes, names, emails, telephones, and addresses
+ * are unique during creation and update operations.
+ */
 @Component
 @RequiredArgsConstructor
 public class BranchUniquenessValidationStrategy implements BranchValidationStrategy {
 
     private final BranchRepository branchRepository;
 
+    /**
+     * Validates the uniqueness of branch attributes during creation.
+     *
+     * @param context the context containing branch details to validate
+     * @throws ResourceExistsException if any branch attribute (code, name, email, telephone, or address) already exists
+     */
     @Override
     public void validateCreate(BranchContext context) {
         if (branchRepository.existsByCodeEqualsIgnoreCase(context.getCode())) {
@@ -31,6 +42,12 @@ public class BranchUniquenessValidationStrategy implements BranchValidationStrat
         }
     }
 
+    /**
+     * Validates the uniqueness of branch attributes during updates.
+     *
+     * @param context the context containing branch details to validate
+     * @throws ResourceExistsException if any branch attribute (name, email, telephone, or address) is already used by another branch
+     */
     @Override
     public void validateUpdate(BranchContext context) {
         Integer id = context.getId();

@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.security;
 
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
-import lk.ashan.routenetlkserverapllication.module.user.repository.ModuleRepository;
+import lk.ashan.routenetlkserverapllication.module.privilege.repository.ModuleRepository;
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,16 +22,16 @@ import java.util.stream.Stream;
  * required by Spring Security. This class implements the {@link UserDetailsService}
  * interface, providing methods to authenticate users and retrieve user-specific
  * details, such as authorities and account state.
- *
+ * <p>
  * Dependencies:
  * - {@link ModuleRepository} is used to fetch system modules for determining administrative authorities.
  * - {@link UserRepository} is used to retrieve user details and account state from the database.
  * - {@link PasswordEncoder} is used to encode the in-memory admin password.
- *
+ * <p>
  * Configuration:
  * - The service supports an in-memory user with a username and password defined
- *   via properties `spring.security.user.name` and `spring.security.user.password`.
- *
+ * via properties `spring.security.user.name` and `spring.security.user.password`.
+ * <p>
  * Responsibilities:
  * - Load user details by username and generate a {@link UserDetails} object.
  * - Differentiate between in-memory administrative users and database-stored users.
@@ -55,7 +54,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     /**
      * Loads the user details associated with the specified username.
-     *
+     * <p>
      * This method retrieves a user by the given username and constructs a {@code UserDetails}
      * object containing the user's properties and granted authorities. If the username is not
      * found, a {@code UsernameNotFoundException} is thrown.
@@ -138,11 +137,11 @@ public class MyUserDetailsService implements UserDetailsService {
     /**
      * Creates and returns a new in-memory user object using the predefined
      * username and password configured in application properties.
-     *
+     * <p>
      * IMPORTANT: The password is encoded using BCrypt for security.
      *
      * @return a {@link User} instance representing the in-memory user with the configured
-     *         username and BCrypt-encoded password.
+     * username and BCrypt-encoded password.
      */
     private User createInMemoryUser() {
         // IMPORTANT: Encode the password for security
@@ -163,22 +162,44 @@ public class MyUserDetailsService implements UserDetailsService {
      * @return a set of {@link SimpleGrantedAuthority} instances representing the administrative authorities for all modules.
      */
     protected Set<SimpleGrantedAuthority> getAdminAuthorities() {
-        log.debug("Generating admin authorities from all modules");
+        log.debug("Generating admin authorities");
 
         var standardOperations = Set.of("select", "insert", "update", "delete");
 
-        Set<SimpleGrantedAuthority> authorities = moduleRepository.findAll().stream()
-                .flatMap(module -> {
-                    var operations = module.getName().equalsIgnoreCase("user")
+        // Define bootstrap modules to guarantee in-memory user can access everything without seeded DB
+        var bootstrapModules = Set.of(
+                "branch", "employee", "crew", "driver", "conductor", "vehicle", "permit",
+                "part", "part-request", "grn", "roster", "trip", "trip-execution",
+                "incident", "incident-vehicle-allocation", "fare-collection", "vehicle-service", "user"
+        );
+
+        // Map bootstrap modules to authorities
+        Set<SimpleGrantedAuthority> authorities = bootstrapModules.stream()
+                .flatMap(mod -> {
+                    var operations = mod.equalsIgnoreCase("user")
                             ? Stream.concat(standardOperations.stream(), Stream.of("lock"))
                             : standardOperations.stream();
-
-                    return operations.map(op ->
-                            new SimpleGrantedAuthority(module.getName().toLowerCase() + "-" + op));
+                    return operations.map(op -> new SimpleGrantedAuthority(mod + "-" + op));
                 })
                 .collect(Collectors.toSet());
 
-        log.debug("Generated {} admin authorities", authorities.size());
+        // Also query database modules if any exist
+        try {
+            moduleRepository.findAll().forEach(module -> {
+                String modName = module.getName().toLowerCase();
+                var operations = modName.equalsIgnoreCase("user")
+                        ? Stream.concat(standardOperations.stream(), Stream.of("lock"))
+                        : standardOperations.stream();
+                operations.forEach(op -> authorities.add(new SimpleGrantedAuthority(modName + "-" + op)));
+            });
+        } catch (Exception e) {
+            log.warn("Failed to retrieve modules from database: {}", e.getMessage());
+        }
+
+        // Grant the in-memory admin user the DEPOT_SUPERINTENDENT role
+        authorities.add(new SimpleGrantedAuthority("ROLE_DEPOT_SUPERINTENDENT"));
+
+        log.debug("Generated {} admin authorities (including DEPOT_SUPERINTENDENT role)", authorities.size());
         return authorities;
     }
 
@@ -195,6 +216,7 @@ public class MyUserDetailsService implements UserDetailsService {
             return Set.of();
         }
 
+        // 1. Retrieve granular privileges (authorities)
         Set<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
                 .flatMap(userRole -> {
                     if (userRole.getRole() == null) {
@@ -212,7 +234,23 @@ public class MyUserDetailsService implements UserDetailsService {
                 .map(privilege -> new SimpleGrantedAuthority(privilege.getAuthority()))
                 .collect(Collectors.toSet());
 
-        log.debug("User '{}' has {} authorities", user.getUsername(), authorities.size());
+        // 2. Retrieve role names and prefix with "ROLE_" for role-based access checks
+        Set<SimpleGrantedAuthority> roleAuthorities = user.getUserRoles().stream()
+                .filter(userRole -> userRole.getRole() != null && userRole.getRole().getName() != null)
+                .map(userRole ->
+                        new SimpleGrantedAuthority(
+                                "ROLE_" +
+                                        userRole.getRole()
+                                                .getName()
+                                                .trim()
+                                                .toUpperCase()
+                                                .replace(" ", "_")
+                        )
+                ).collect(Collectors.toSet());
+
+        authorities.addAll(roleAuthorities);
+
+        log.debug("User '{}' loaded with {} authorities (privileges + roles)", user.getUsername(), authorities.size());
 
         if (authorities.isEmpty()) {
             log.warn("User '{}' has no authorities after processing", user.getUsername());

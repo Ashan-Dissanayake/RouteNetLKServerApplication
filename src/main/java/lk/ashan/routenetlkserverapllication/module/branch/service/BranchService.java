@@ -29,6 +29,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Service class for managing Branch entities and related operations.
+ * Provides methods for CRUD operations, searching, and state transitions.
+ */
 @Validated
 @Service
 @RequiredArgsConstructor
@@ -46,16 +50,33 @@ public class BranchService {
     private final BranchStateFactory branchStateFactory;
     private final BranchStateTransitionHandler branchStateTransitionHandler;
 
+    /**
+     * Retrieves all branches as detailed response DTOs.
+     *
+     * @return a list of {@link BranchDetailResponseDto} containing details of all branches.
+     */
     @Transactional(readOnly = true)
-    public List<BranchDetailResponseDto> getBranches(){
+    public List<BranchDetailResponseDto> getBranches() {
         return branchMapper.toDtoList(branchRepository.findAll());
     }
 
+    /**
+     * Retrieves all branches as summary DTOs.
+     *
+     * @return a list of {@link BranchSummaryDto} containing summary details of all branches.
+     */
     @Transactional(readOnly = true)
-    public List<BranchSummaryDto> getSummaryBranches(){
+    public List<BranchSummaryDto> getSummaryBranches() {
         return branchMapper.toSummaryDtolList(branchRepository.findAll());
     }
 
+    /**
+     * Retrieves a branch by its ID.
+     *
+     * @param id the ID of the branch to retrieve.
+     * @return the {@link Branch} entity with the specified ID.
+     * @throws ResourceNotFoundException if no branch is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public Branch getById(Integer id) {
         return branchRepository.findById(id)
@@ -64,6 +85,12 @@ public class BranchService {
                 ));
     }
 
+    /**
+     * Searches for branches based on the provided parameters.
+     *
+     * @param params a map of search parameters (e.g., branch name, code, status ID).
+     * @return a list of {@link BranchDetailResponseDto} matching the search criteria.
+     */
     @Transactional(readOnly = true)
     public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
 
@@ -71,21 +98,30 @@ public class BranchService {
 
         if (!params.isEmpty()) {
 
-        String branchname = params.get("ssname");
-        String branchcode= params.get("sscode");
-        String brachstatusid= params.get("ssbranchstatus");
+            String branchname = params.get("ssname");
+            String branchcode = params.get("sscode");
+            String brachstatusid = params.get("ssbranchstatus");
 
-        Stream<Branch> branchStream = branches.stream();
+            Stream<Branch> branchStream = branches.stream();
 
-        if(branchname!=null)branchStream = branchStream.filter(i->i.getName().toLowerCase().contains(branchname.toLowerCase()));
-        if(branchcode!=null)branchStream = branchStream.filter(i-> i.getCode().equalsIgnoreCase(branchcode));
-        if(brachstatusid!=null)branchStream = branchStream.filter(i->i.getBranchstatus().getId()==Integer.parseInt(brachstatusid));
+            if (branchname != null)
+                branchStream = branchStream.filter(i -> i.getName().toLowerCase().contains(branchname.toLowerCase()));
+            if (branchcode != null)
+                branchStream = branchStream.filter(i -> i.getCode().equalsIgnoreCase(branchcode));
+            if (brachstatusid != null)
+                branchStream = branchStream.filter(i -> i.getBranchstatus().getId() == Integer.parseInt(brachstatusid));
 
-        return branchMapper.toDtoList( branchStream.collect(Collectors.toList()));
+            return branchMapper.toDtoList(branchStream.collect(Collectors.toList()));
         }
         return branchMapper.toDtoList(branches);
     }
 
+    /**
+     * Creates a new branch.
+     *
+     * @param request the {@link BranchCreateRequestDto} containing branch creation details.
+     * @return the created branch as a {@link BranchDetailResponseDto}.
+     */
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
@@ -104,6 +140,14 @@ public class BranchService {
         return branchMapper.toDto(saved);
     }
 
+    /**
+     * Updates an existing branch.
+     *
+     * @param request the {@link BranchUpdateRequestDto} containing branch update details.
+     * @return the updated branch as a {@link BranchDetailResponseDto}.
+     * @throws ResourceNotFoundException if the branch to update is not found.
+     * @throws BusinessRuleViolationException if the branch code is attempted to be changed.
+     */
     @Transactional
     @DisableSoftDeleteFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
@@ -137,6 +181,13 @@ public class BranchService {
         return branchMapper.toDto(existing);
     }
 
+    /**
+     * Deactivates a list of branches by their IDs.
+     *
+     * @param branchIds a list of branch IDs to deactivate.
+     * @return a list of IDs of the deactivated branches.
+     * @throws ResourceNotFoundException if no branches are found for the given IDs.
+     */
     @Transactional
     public List<Integer> deactivateBranches(List<Integer> branchIds) {
         List<Branch> branches = branchRepository.findAllById(branchIds);
@@ -146,7 +197,7 @@ public class BranchService {
 
         branchRepository.removeAll(branchIds);
 
-        return branches.stream() .map(Branch::getId) .collect(Collectors.toList());
+        return branches.stream().map(Branch::getId).collect(Collectors.toList());
     }
 
 }

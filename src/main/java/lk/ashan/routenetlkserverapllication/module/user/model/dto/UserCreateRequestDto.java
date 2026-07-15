@@ -1,15 +1,35 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
-@SuperBuilder
+@Builder
 @NoArgsConstructor
-public class UserCreateRequestDto extends UserRequestDto{
+@AllArgsConstructor
+public class UserCreateRequestDto{
+    @NotNull(message = "Employee is mandatory")
+    private EmployeeSummaryDto employee;
+
+    @NotBlank(message = "Username is mandatory")
+    @Size(max = 45)
+    @Pattern(regexp = "^([a-zA-Z0-9_.-]+)$", message = "Invalid Username")
+    private String username;
+
+    @NotBlank(message = "Password is mandatory")
+    @Size(max = 255)
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "Invalid Password")
+    private String password;
+
+    @NotNull(message = "User Type is mandatory")
+    private UserTypeDto usertype;
+
+    @Pattern(regexp = "^.*$", message = "Invalid Description")
+    private String remarks;
 }

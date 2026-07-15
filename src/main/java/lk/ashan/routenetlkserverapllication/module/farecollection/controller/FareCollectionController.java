@@ -23,7 +23,7 @@ public class FareCollectionController {
 
     private final FareCollectionService fareCollectionService;
 
-    @PreAuthorize("hasAuthority('parts-select')")
+    @PreAuthorize("hasAuthority('fare-collection-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<FareCollectionDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -35,7 +35,7 @@ public class FareCollectionController {
         return APIResponseBuilder.list(fareCollections, fareCollections.size());
     }
 
-    @PreAuthorize("hasAuthority('parts-insert')")
+    @PreAuthorize("hasAuthority('fare-collection-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<FareCollectionDetailResponseDto>> add(
             @RequestBody @Valid FareCollectionCreateRequestDto createRequestDto
@@ -44,6 +44,7 @@ public class FareCollectionController {
         return APIResponseBuilder.created(savedFareCollection, savedFareCollection.getId());
     }
 
+    @PreAuthorize("hasAuthority('fare-collection-reconcile')")
     @PostMapping("/{fareCollectionId}/reconciled")
     public ResponseEntity<Map<String, String>> reconciled(
             @PathVariable Integer fareCollectionId

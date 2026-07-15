@@ -188,17 +188,18 @@ public class SecurityConfiguration {
      * @return an instance of {@link InMemoryUserDetailsManager} containing a single user with
      *         defined credentials and authorities.
      */
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        User.UserBuilder userBuilder = User.builder();
-        return new InMemoryUserDetailsManager(
-                userBuilder
-                        .username(inMemoryUserName)
-                        .password(passwordEncoder.encode(inMemoryUserPassword))
-                        .authorities(userDetailsService.getAdminAuthorities())
-                        .build()
-        );
-    }
+
+//    @Bean
+//    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+//        User.UserBuilder userBuilder = User.builder();
+//        return new InMemoryUserDetailsManager(
+//                userBuilder
+//                        .username(inMemoryUserName)
+//                        .password(passwordEncoder.encode(inMemoryUserPassword))
+//                        .authorities(userDetailsService.getAdminAuthorities())
+//                        .build()
+//        );
+//    }
 
     /**
      * Configures and provides a customized {@code AuthenticationManager} bean.
@@ -214,7 +215,7 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(inMemoryAuthenticationProvider())  // Try in-memory provider first
+                //.authenticationProvider(inMemoryAuthenticationProvider())  // Try in-memory provider first
                 .authenticationProvider(authenticationProvider)  // Then try custom provider
                 .authenticationProvider(daoAuthenticationProvider())  // Finally, try database provider
                 .build();
@@ -227,14 +228,14 @@ public class SecurityConfiguration {
      *
      * @return an instance of {@link AuthenticationProvider} configured for in-memory user authentication
      */
-    @Bean
-    public AuthenticationProvider inMemoryAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(inMemoryUserDetailsManager());
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setHideUserNotFoundExceptions(false);
-        return provider;
-    }
+//    @Bean
+//    public AuthenticationProvider inMemoryAuthenticationProvider() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(inMemoryUserDetailsManager());
+//        provider.setPasswordEncoder(passwordEncoder);
+//        provider.setHideUserNotFoundExceptions(false);
+//        return provider;
+//    }
 
     /**
      * Configures and returns a DaoAuthenticationProvider bean.

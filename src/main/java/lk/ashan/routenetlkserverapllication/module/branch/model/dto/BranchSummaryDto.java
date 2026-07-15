@@ -11,6 +11,6 @@ import lombok.*;
 public class BranchSummaryDto {
    private Integer id;
    private String name;
-      private Integer regionalOfficeId;
+   private Integer regionalOfficeId;
 }
 

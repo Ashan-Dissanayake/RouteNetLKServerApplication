@@ -1,6 +1,6 @@
-package lk.ashan.routenetlkserverapllication.module.user.repository;
+package lk.ashan.routenetlkserverapllication.module.privilege.repository;
 
-import lk.ashan.routenetlkserverapllication.module.user.model.entity.Operation;
+import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Operation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

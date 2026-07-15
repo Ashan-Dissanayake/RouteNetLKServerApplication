@@ -97,8 +97,6 @@ public class TripStateTransitionHandler {
     
     private void onEnterCancelled(Trip trip) {
         log.info("Entering CANCELLED state for trip {}", trip.getId());
-        
-
     }
     
     private void onEnterCompleted(Trip trip) {

@@ -16,7 +16,7 @@ public class EmployeeDetailResponseDto{
     private  Integer id;
     private  String number;
     private  String fullname;
-    private String callingname;
+    private  String callingname;
     private  String nic;
     private  String mobile;
     private  String email;
@@ -25,9 +25,9 @@ public class EmployeeDetailResponseDto{
     private  byte[] image;
     private  LocalDate doj;
     private  GenderDto gender;
-    private BranchSummaryDto branch;
+    private  BranchSummaryDto branch;
     private  DepartmentDto department;
     private  DesignationDto designation;
-    private EmployeeTypeDto employeetype;
-    private EmployeeStatusDto employeestatus;
+    private  EmployeeTypeDto employeetype;
+    private  EmployeeStatusDto employeestatus;
 }

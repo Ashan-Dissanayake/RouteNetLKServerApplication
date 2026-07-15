@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.module.user.model.entity;
+package lk.ashan.routenetlkserverapllication.module.privilege.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

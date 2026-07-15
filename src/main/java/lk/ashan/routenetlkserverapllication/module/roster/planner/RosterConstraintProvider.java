@@ -6,7 +6,18 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShi
 
 import java.util.Objects;
 
+/**
+ * Provides constraints for the roster planning problem.
+ * Implements the {@link ConstraintProvider} interface to define both hard and soft constraints.
+ */
 public class RosterConstraintProvider implements ConstraintProvider {
+
+    /**
+     * Defines the constraints for the roster planning problem.
+     *
+     * @param factory the {@link ConstraintFactory} used to create constraints.
+     * @return an array of {@link Constraint} objects representing the defined constraints.
+     */
     @Override
     public Constraint[] defineConstraints(ConstraintFactory factory) {
         return new Constraint[] {
@@ -22,10 +33,14 @@ public class RosterConstraintProvider implements ConstraintProvider {
         };
     }
 
-    // 1. HARD: Employee must have the correct designation (Driver/Conductor)
+    /**
+     * Ensures that employees have the correct designation (e.g., Driver or Conductor) for their assigned shifts.
+     *
+     * @param factory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing assignments with mismatched designations.
+     */
     Constraint requiredDesignation(ConstraintFactory factory) {
         return factory.forEach(RosterShiftAssignmentPlanning.class)
-                // Only check if an employee has actually been assigned to this slot
                 .filter(assignment -> assignment.getEmployeeFact() != null)
                 .filter(assignment -> !Objects.equals(
                         assignment.getEmployeeFact().getDesignationId(),
@@ -33,19 +48,30 @@ public class RosterConstraintProvider implements ConstraintProvider {
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Designation Mismatch");
     }
-    // 2. HARD: An employee cannot be in two places at once
+
+    /**
+     * Prevents employees from being assigned to overlapping shifts.
+     *
+     * @param factory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing overlapping shift assignments for the same employee.
+     */
     Constraint noOverlappingShifts(ConstraintFactory factory) {
         return factory.forEachUniquePair(RosterShiftAssignmentPlanning.class,
                         Joiners.equal(RosterShiftAssignmentPlanning::getEmployeeFact),
                         Joiners.equal(RosterShiftAssignmentPlanning::getShiftDate),
                         Joiners.overlapping(RosterShiftAssignmentPlanning::getStartTime,
                                 RosterShiftAssignmentPlanning::getEndTime))
-                // Only penalize if the same person is assigned to both overlapping slots
                 .filter((a1, a2) -> a1.getEmployeeFact() != null)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Overlapping Shifts");
     }
 
+    /**
+     * Ensures that the employee's designation matches the required designation for the shift.
+     *
+     * @param factory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing mismatched designations.
+     */
     public Constraint designationMatch(ConstraintFactory factory) {
         return factory.forEach(RosterShiftAssignmentPlanning.class)
                 .filter(assignment -> assignment.getEmployeeFact() != null &&
@@ -54,32 +80,43 @@ public class RosterConstraintProvider implements ConstraintProvider {
                 .asConstraint("Designation Match");
     }
 
-
+    /**
+     * Ensures that each shift has one driver and one conductor, preventing duplicate designations.
+     *
+     * @param factory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing shifts with duplicate designations.
+     */
     public Constraint oneDriverOneConductorPerShift(ConstraintFactory factory) {
         return factory.forEachUniquePair(RosterShiftAssignmentPlanning.class,
-                        // Join on the same physical bus shift
                         Joiners.equal(RosterShiftAssignmentPlanning::getShiftId))
-                .filter((a1, a2) -> {
-                    // If they are both the same designation, it's a violation
-                    return a1.getEmployeeFact().getDesignationId()
-                            .equals(a2.getEmployeeFact().getDesignationId());
-                })
+                .filter((a1, a2) -> a1.getEmployeeFact().getDesignationId()
+                        .equals(a2.getEmployeeFact().getDesignationId()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Shift must have unique designations");
     }
 
+    /**
+     * Ensures that employees assigned to shifts have the required familiarity level for the route.
+     *
+     * @param constraintFactory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing assignments where employees lack the required familiarity.
+     */
     public Constraint routeFamiliarityMatchConstraint(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(RosterShiftAssignmentPlanning.class)
                 .filter(assignment -> assignment.getEmployeeFact() != null)
-                // Use your new helper method here
                 .filter(assignment -> !assignment.getEmployeeFact()
                         .hasRequiredFamiliarity(assignment.getRequiredFamiliarityLevel()))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("Familiarity Mismatch");
     }
 
-    // 3. SOFT: Fairness - try to distribute shifts evenly (Simplified)
+    /**
+     * Encourages fair workload distribution by penalizing uneven shift assignments.
+     *
+     * @param factory the {@link ConstraintFactory} used to create the constraint.
+     * @return a {@link Constraint} penalizing uneven workload distribution.
+     */
     Constraint fairWorkloadDistribution(ConstraintFactory factory) {
         return factory.forEach(RosterShiftAssignmentPlanning.class)
                 .groupBy(RosterShiftAssignmentPlanning::getEmployeeFact, ConstraintCollectors.count())

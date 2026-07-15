@@ -26,7 +26,7 @@ public class PartController {
 
     private final PartService partService;
 
-    @PreAuthorize("hasAuthority('parts-select')")
+    @PreAuthorize("hasAuthority('parts-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -38,13 +38,14 @@ public class PartController {
         return APIResponseBuilder.list(parts, parts.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartSummaryDto>>> get() {
         List<PartSummaryDto> parts =  partService.getSummaryParts();
         return APIResponseBuilder.list(parts, parts.size());
     }
 
-    @PreAuthorize("hasAuthority('parts-insert')")
+    @PreAuthorize("hasAuthority('parts-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> add(
             @RequestBody @Valid PartCreateRequestDto partRequest

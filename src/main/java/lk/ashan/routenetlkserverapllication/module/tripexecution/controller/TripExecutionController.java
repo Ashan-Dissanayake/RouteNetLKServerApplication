@@ -9,6 +9,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class TripExecutionController {
 
     private final TripExecutionService tripExecutionService;
 
+    @PreAuthorize("hasAuthority('trip-execution-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripExecutionDetailsResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -34,12 +36,14 @@ public class TripExecutionController {
         return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripExecutionSummaryDto>>> get() {
         List<TripExecutionSummaryDto> tripExecutions =  tripExecutionService.getSummaryTripExecution();
         return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-initialize')")
     @PostMapping("/initialize")
     public ResponseEntity<APISuccessResponse<List<TripExecutionDetailsResponseDto>>> createTrip(
             @RequestBody TripExecutionInitializationDto tripExecutionInitializationDto
@@ -49,6 +53,7 @@ public class TripExecutionController {
         return APIResponseBuilder.created(initializedTripExecutions,initializedTripExecutions.size());
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-generate-assignments')")
     @PostMapping("/generate-assignments")
     public ResponseEntity<Map<String, String>> generateAssignments(
             @RequestBody TripExecutionAssignmentDto tripExecutionAssignmentDto
@@ -60,6 +65,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-checked-in')")
     @PostMapping("/{tripExecutionId}/checked-in")
     public ResponseEntity<Map<String, String>> checkedInTripExecution(
             @PathVariable Integer tripExecutionId
@@ -71,6 +77,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-dispatched')")
     @PostMapping("/{tripExecutionId}/dispatched")
     public ResponseEntity<Map<String, String>> dispatchedTripExecution(
             @PathVariable Integer tripExecutionId
@@ -82,6 +89,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-arrived')")
     @PostMapping("/{tripExecutionId}/arrived")
     public ResponseEntity<Map<String, String>> arrivedTripExecution(
             @PathVariable Integer tripExecutionId
@@ -93,6 +101,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-breakdown')")
     @PostMapping("/{tripExecutionId}/breakdown")
     public ResponseEntity<Map<String, String>> breakDownTripExecution(
             @PathVariable Integer tripExecutionId
@@ -104,6 +113,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-completed')")
     @PostMapping("/{tripExecutionId}/completed")
     public ResponseEntity<Map<String, String>> completedTripExecution(
             @PathVariable Integer tripExecutionId
@@ -115,6 +125,7 @@ public class TripExecutionController {
         ));
     }
 
+    @PreAuthorize("hasAuthority('trip-execution-cancelled')")
     @PostMapping("/{tripExecutionId}/cancelled")
     public ResponseEntity<Map<String, String>> cancelledTripExecution(
             @PathVariable Integer tripExecutionId

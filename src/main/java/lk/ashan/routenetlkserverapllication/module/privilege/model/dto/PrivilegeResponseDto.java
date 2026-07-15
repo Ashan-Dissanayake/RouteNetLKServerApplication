@@ -1,17 +1,15 @@
-package lk.ashan.routenetlkserverapllication.module.user.model.dto;
+package lk.ashan.routenetlkserverapllication.module.privilege.model.dto;
 
 import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ToString
-public class PrivilegeDto {
+public class PrivilegeResponseDto {
     private Integer id;
     private String authority;
-    private RoleDto role;
     private ModuleDto module;
     private OperationDto operation;
 }

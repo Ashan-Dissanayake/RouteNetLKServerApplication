@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing branch statuses.
+ * Provides endpoints to retrieve branch status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/branch-statuses")
@@ -21,6 +26,13 @@ public class BranchStatusController {
 
     private final BranchStatusService branchStatusService;
 
+    /**
+     * Retrieves a list of branch status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of BranchStatusDto objects
+     * @throws RuntimeException if an error occurs while fetching branch statuses
+     */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BranchStatusDto>>> get() {
         List<BranchStatusDto> branchStatuses = branchStatusService.getBranchStatuses();

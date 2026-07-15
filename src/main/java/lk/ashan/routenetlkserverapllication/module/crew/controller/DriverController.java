@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Controller for managing driver-related operations.
+ * Provides endpoints for retrieving, adding, and updating driver information.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/drivers")
@@ -24,18 +28,33 @@ public class DriverController {
 
     private final DriverService driverService;
 
-    @PreAuthorize("hasAuthority('driver-select')")
-    @GetMapping( produces = "application/json")
+    /**
+     * Retrieves a list of drivers. If query parameters are provided, performs a search based on the parameters.
+     *
+     * @param params A map of query parameters for filtering drivers.
+     * @return A ResponseEntity containing a list of DriverDetailResponseDto objects and the total count.
+     * @throws SecurityException if the user does not have the 'driver-select' authority.
+     */
+    @PreAuthorize("hasAuthority('driver-view')")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DriverDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
         List<DriverDetailResponseDto> drivers = params.isEmpty()
-                ?driverService.getDrivers()
+                ? driverService.getDrivers()
                 : driverService.searchDriver(params);
         return APIResponseBuilder.list(drivers, drivers.size());
     }
 
-    @PreAuthorize("hasAuthority('branch-insert')")
+    /**
+     * Adds a new driver to the system.
+     *
+     * @param driverCreateRequestDto The data transfer object containing the details of the driver to be created.
+     * @return A ResponseEntity containing the created DriverDetailResponseDto and its ID.
+     * @throws SecurityException if the user does not have the 'branch-insert' authority.
+     * @throws jakarta.validation.ConstraintViolationException if the input data is invalid.
+     */
+    @PreAuthorize("hasAuthority('branch-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> add(
             @RequestBody @Valid DriverCreateRequestDto driverCreateRequestDto)
@@ -44,6 +63,14 @@ public class DriverController {
         return APIResponseBuilder.created(savedDriver, savedDriver.getId());
     }
 
+    /**
+     * Updates an existing driver's information.
+     *
+     * @param driverUpdateRequestDto The data transfer object containing the updated details of the driver.
+     * @return A ResponseEntity containing the updated DriverDetailResponseDto and its ID.
+     * @throws SecurityException if the user does not have the 'branch-update' authority.
+     * @throws jakarta.validation.ConstraintViolationException if the input data is invalid.
+     */
     @PreAuthorize("hasAuthority('branch-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> update(

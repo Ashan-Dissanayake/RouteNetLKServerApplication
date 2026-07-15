@@ -1,7 +1,7 @@
-package lk.ashan.routenetlkserverapllication.module.user.mapper;
+package lk.ashan.routenetlkserverapllication.module.privilege.mapper;
 
-import lk.ashan.routenetlkserverapllication.module.user.model.dto.OperationDto;
-import lk.ashan.routenetlkserverapllication.module.user.model.entity.Operation;
+import lk.ashan.routenetlkserverapllication.module.privilege.model.dto.OperationDto;
+import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Operation;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

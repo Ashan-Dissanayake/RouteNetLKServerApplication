@@ -20,12 +20,25 @@ public class RosterService{
     private final RosterMapper rosterMapper;
     private final RosterShiftAutomationService rosterShiftAutomationService;
 
+    /**
+     * Retrieves a summary of all rosters.
+     *
+     * @return a list of {@link RosterSummaryDto} objects representing the summary of all rosters
+     */
     @Transactional(readOnly = true)
     public List<RosterSummaryDto> getRosterSummary(){
         List<Roster> rosters = rosterRepository.findAll();
         return rosterMapper.toSummaryDto(rosters);
     }
 
+    /**
+     * Creates a new roster based on the provided request data.
+     *
+     * @param requestDto the data transfer object containing the details of the roster to be created
+     * @return a summary DTO of the created roster
+     * @throws BusinessRuleViolationException if the roster does not span exactly 7 days
+     *                                        or if a roster already exists for the specified branch and date range
+     */
     @Transactional
     public RosterSummaryDto createRoster(RosterRequestDto requestDto) {
         // 1. Validate the 7-day range

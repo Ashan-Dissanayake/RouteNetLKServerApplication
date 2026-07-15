@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.repository;
 
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.report.model.projection.Report5Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,21 +27,17 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("UPDATE Vehicle  v SET v.deleted=true WHERE v.id in :ids")
     void removeAll(@Param("ids") List<Integer> ids);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Vehicle  v SET v.deleted=false WHERE v.id in :ids")
-    void restoreAll(@Param("ids") List<Integer> ids);
-
-    Optional<Vehicle> findByNumber(String number);
-
-
-    List<Vehicle> findByBranch_IdAndDeletedFalse(Integer id);
-
-    List<Vehicle> findByVehiclestatus_NameIn(Set<String> eligibleStatuses);
-
-    List<Vehicle> findByVehiclestatus_Name(String statusName);
-
-    List<Vehicle> findAllByBranch_Id(Integer branchId);
+//    @Modifying
+//    @Transactional
+//    @Query("UPDATE Vehicle  v SET v.deleted=false WHERE v.id in :ids")
+//    void restoreAll(@Param("ids") List<Integer> ids);
 
     List<Vehicle> findByBranch_Id(Integer branchId);
+
+    // --- REPORT 5: Proportional Distribution of Fleet Route Incidents ---
+    @Query(value = "SELECT it.name as incidentTypeName, COUNT(i.id) as incidentCount " +
+            "FROM incident i " +
+            "JOIN incidenttype it ON i.incidenttype_id = it.id " +
+            "GROUP BY it.id, it.name", nativeQuery = true)
+    List<Report5Projection> getIncidentDistributionMetrics();
 }

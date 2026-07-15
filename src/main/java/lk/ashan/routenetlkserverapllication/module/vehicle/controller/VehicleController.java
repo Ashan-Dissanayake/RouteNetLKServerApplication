@@ -21,7 +21,7 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
-    @PreAuthorize("hasAuthority('vehicle-select')")
+    @PreAuthorize("hasAuthority('vehicle-view')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -38,7 +38,7 @@ public class VehicleController {
         return APIResponseBuilder.list(vehicleSummaries, vehicleSummaries.size());
     }
 
-    @PreAuthorize("hasAuthority('vehicle-insert')")
+    @PreAuthorize("hasAuthority('vehicle-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> add(
             @RequestBody @Valid VehicleCreateRequestDto vehicleCreateRequest)

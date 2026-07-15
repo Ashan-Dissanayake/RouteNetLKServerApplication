@@ -1,7 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 
-import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocationStatus;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripStatusDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripStatusMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
@@ -26,6 +25,7 @@ public class TripStatusService {
     }
 
 
+    @Transactional(readOnly = true)
     public Tripstatus getByName(String name) {
         return tripStatusRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(

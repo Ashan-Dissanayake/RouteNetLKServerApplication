@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing Crew Status operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class CrewStatusService {
@@ -19,12 +22,23 @@ public class CrewStatusService {
     private final CrewStatusRepository crewStatusRepository;
     private final CrewStatusMapper crewStatusMapper;
 
+    /**
+     * Retrieves all Crew Statuses.
+     *
+     * @return a list of CrewStatusDto objects representing all crew statuses.
+     */
     @Transactional(readOnly = true)
-    public List<CrewStatusDto> getCrewStatuses(){
-       return crewStatusMapper.toDtoList(crewStatusRepository.findAll());
+    public List<CrewStatusDto> getCrewStatuses() {
+        return crewStatusMapper.toDtoList(crewStatusRepository.findAll());
     }
 
-
+    /**
+     * Retrieves a Crew Status by its ID.
+     *
+     * @param id the ID of the Crew Status to retrieve.
+     * @return the CrewStatus entity corresponding to the given ID.
+     * @throws ResourceNotFoundException if no Crew Status is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public CrewStatus getById(Integer id) {
         return crewStatusRepository.findById(id)

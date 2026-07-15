@@ -7,6 +7,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class RosterShiftAssignmentController {
 
     private final RosterShiftAssignmentService rosterShiftAssignmentService;
 
+    @PreAuthorize("hasAuthority('roster-shift-assignment-view')")
     @GetMapping("/view/{rosterId}")
     public ResponseEntity<APISuccessResponse<List<RosterShiftAssignmentResponseDto>>> getFullRoster
             (@PathVariable Integer rosterId) {
@@ -28,6 +30,7 @@ public class RosterShiftAssignmentController {
         return APIResponseBuilder.list(assignments, assignments.size());
     }
 
+    @PreAuthorize("hasAuthority('roster-shift-assignment-generate')")
     @PostMapping("/{rosterId}/generate")
     public ResponseEntity<APISuccessResponse<RosterGenerationResponse>> generateRoster(
             @PathVariable Integer rosterId
@@ -43,6 +46,7 @@ public class RosterShiftAssignmentController {
         return APIResponseBuilder.ok(data);
     }
 
+    @PreAuthorize("hasAuthority('roster-shift-assignment-approved')")
     @PostMapping("/{assignmentId}/approved")
     public ResponseEntity<APISuccessResponse<String>> approveSuggestion(
             @PathVariable Integer assignmentId)
@@ -51,6 +55,7 @@ public class RosterShiftAssignmentController {
         return APIResponseBuilder.ok("Shift assignment suggestion approved successfully.");
     }
 
+    @PreAuthorize("hasAuthority('roster-shift-assignment-cancelled')")
     @PostMapping("/{assignmentId}/cancelled")
     public ResponseEntity<APISuccessResponse<String>> cancelSuggestion(
             @PathVariable Integer assignmentId)

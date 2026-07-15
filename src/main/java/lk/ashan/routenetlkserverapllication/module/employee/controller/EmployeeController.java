@@ -25,7 +25,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @PreAuthorize("hasAuthority('employee-select')")
+    @PreAuthorize("hasAuthority('employee-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -37,14 +37,14 @@ public class EmployeeController {
         return APIResponseBuilder.list(employees, employees.size());
     }
 
-    @PreAuthorize("hasAuthority('employee-select')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get() {
         List<EmployeeSummaryDto> employees =  employeeService.getSummaryEmployees();
         return APIResponseBuilder.list(employees, employees.size());
     }
 
-    @PreAuthorize("hasAuthority('employee-select')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries/{designation}")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get(
             @PathVariable String designation) {
@@ -52,7 +52,7 @@ public class EmployeeController {
         return APIResponseBuilder.list(employees, employees.size());
     }
 
-    @PreAuthorize("hasAuthority('employee-insert')")
+    @PreAuthorize("hasAuthority('employee-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> add(
             @RequestBody @Valid EmployeeCreateRequestDto employeeCreateRequest)

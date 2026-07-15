@@ -11,6 +11,11 @@ import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Represents a Trip entity with details such as departure and arrival times,
+ * associated branch, permit, trip type, and other related information.
+ * This entity is mapped to a database table using JPA annotations.
+ */
 @Setter
 @Getter
 @Entity
@@ -18,31 +23,40 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trip {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private Integer id;
+
     @Basic
     @Column(name = "todepature")
     private LocalTime todepature;
+
     @Basic
     @Column(name = "toarrival")
     private LocalTime toarrival;
+
     @Basic
     @Column(name = "remarks")
     private String remarks;
+
     @Basic
     @Column(name = "breakminutes")
     private Integer breakminutes;
+
     @ManyToOne
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
     private Triptype triptype;
+
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
+
     @ManyToOne
     @JoinColumn(name = "permite_id", referencedColumnName = "id", nullable = false)
     private Permite permite;
+
     @ManyToOne
     @JoinColumn(name = "tripstatus_id", referencedColumnName = "id", nullable = false)
     private Tripstatus tripstatus;
@@ -57,10 +71,17 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
     @ManyToOne
     @JoinColumn(name = "opcalender_id", referencedColumnName = "id", nullable = false)
     private Opcalender opcalender;
 
+    /**
+     * Checks if this Trip is equal to another object.
+     *
+     * @param o the object to compare with this Trip
+     * @return true if the objects are equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,6 +90,11 @@ public class Trip {
         return Objects.equals(id, trip.id) && Objects.equals(todepature, trip.todepature) && Objects.equals(toarrival, trip.toarrival) && Objects.equals(remarks, trip.remarks);
     }
 
+    /**
+     * Computes the hash code for this Trip.
+     *
+     * @return the hash code value for this Trip
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, todepature, toarrival, remarks);

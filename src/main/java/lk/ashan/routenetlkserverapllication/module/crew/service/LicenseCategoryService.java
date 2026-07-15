@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing License Categories.
+ * Provides methods to retrieve license categories and fetch a specific license category by ID.
+ */
 @Service
 @RequiredArgsConstructor
 public class LicenseCategoryService {
@@ -18,11 +22,23 @@ public class LicenseCategoryService {
     private final LicenseCategoryRepository licenseCategoryRepository;
     private final LicenseCategoryMapper licenseCategoryMapper;
 
+    /**
+     * Retrieves all license categories.
+     *
+     * @return a list of LicenseCategoryDto objects representing all license categories.
+     */
     @Transactional(readOnly = true)
-    public List<LicenseCategoryDto> getLicenseCategories(){
-       return licenseCategoryMapper.toDtoList(licenseCategoryRepository.findAll());
+    public List<LicenseCategoryDto> getLicenseCategories() {
+        return licenseCategoryMapper.toDtoList(licenseCategoryRepository.findAll());
     }
 
+    /**
+     * Retrieves a license category by its ID.
+     *
+     * @param id the ID of the license category to retrieve.
+     * @return the LicenseCategory entity corresponding to the given ID.
+     * @throws ResourceNotFoundException if no license category is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public LicenseCategory getById(Integer id) {
         return licenseCategoryRepository.findById(id)

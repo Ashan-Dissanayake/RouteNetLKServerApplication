@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Privilege;
 import lombok.*;
 
 import java.util.Collection;
@@ -21,7 +22,7 @@ public class Role {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role",fetch = FetchType.EAGER)
     private Collection<Privilege> privileges;
 
     @OneToMany(mappedBy = "role")

@@ -30,6 +30,7 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "user")
 public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -89,16 +90,22 @@ public class User {
     private Collection<Permite> permites;
     @OneToMany(mappedBy = "user")
     private Collection<Roster> rosters;
+
     @OneToMany(mappedBy = "user")
     private Collection<Route> routes;
+
     @OneToMany(mappedBy = "user")
     private Collection<Trip> trips;
+
     @OneToMany(mappedBy = "user")
     private Collection<TripExecution> tripExecutions;
+
     @OneToMany(mappedBy = "user")
     private Collection<Vehicle> vehicles;
+
     @OneToMany(mappedBy = "user")
     private Collection<VehicleService> vehicleServices;
+
     @OneToMany(mappedBy = "user")
     private Collection<VehicleServiceExecution> vehicleServiceExecutions;
 

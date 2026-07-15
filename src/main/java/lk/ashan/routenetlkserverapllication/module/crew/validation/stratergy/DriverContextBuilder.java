@@ -5,9 +5,19 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRe
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builder class for creating and updating DriverValidationContext objects.
+ * This class provides methods to construct validation contexts for driver creation and updates.
+ */
 @Component
 public class DriverContextBuilder {
 
+    /**
+     * Builds a DriverValidationContext for creating a new driver.
+     *
+     * @param dto the DriverCreateRequestDto containing the details of the driver to be created
+     * @return a DriverValidationContext object populated with the provided driver creation details
+     */
     public DriverValidationContext buildForCreate(DriverCreateRequestDto dto) {
         return DriverValidationContext.builder()
 //                .number(dto.getNumber())
@@ -20,6 +30,13 @@ public class DriverContextBuilder {
                 .build();
     }
 
+    /**
+     * Builds a DriverValidationContext for updating an existing driver.
+     *
+     * @param dto      the DriverUpdateRequestDto containing the updated details of the driver
+     * @param existing the existing Driver entity to be updated
+     * @return a DriverValidationContext object populated with the provided driver update details
+     */
     public DriverValidationContext buildForUpdate(DriverUpdateRequestDto dto, Driver existing) {
         return DriverValidationContext.builder()
                 .id(dto.getId())
