@@ -108,6 +108,32 @@ public class MyUserDetailsService implements UserDetailsService {
      *             password, and roles to be converted into a {@link UserDetails} object.
      * @return a {@link UserDetails} object configured with the user's data and authorities.
      */
+//    private UserDetails buildUserDetails(User user) {
+//        boolean isInMemoryUser = user.getUsername().equals(inMemoryUserName);
+//        boolean isLocked = isUserAccountLocked(user.getUsername());
+//
+//        Set<SimpleGrantedAuthority> authorities = isInMemoryUser
+//                ? getAdminAuthorities()
+//                : getUserAuthorities(user);
+//
+//        if (isLocked) {
+//            log.warn("User '{}' account is locked", user.getUsername());
+//        }
+//
+//        log.debug("Building UserDetails for '{}': locked={}, authorities={}",
+//                user.getUsername(), isLocked, authorities.size());
+//
+//        return org.springframework.security.core.userdetails.User.builder()
+//                .username(user.getUsername())
+//                .password(user.getPassword())
+//                .authorities(authorities)
+//                .accountExpired(false)
+//                .accountLocked(isLocked)
+//                .credentialsExpired(false)
+//                .disabled(false)
+//                .build();
+//    }
+
     private UserDetails buildUserDetails(User user) {
         boolean isInMemoryUser = user.getUsername().equals(inMemoryUserName);
         boolean isLocked = isUserAccountLocked(user.getUsername());
@@ -120,18 +146,12 @@ public class MyUserDetailsService implements UserDetailsService {
             log.warn("User '{}' account is locked", user.getUsername());
         }
 
-        log.debug("Building UserDetails for '{}': locked={}, authorities={}",
+        // Updated log statement to reflect our custom type
+        log.debug("Building CustomUserPrincipal for '{}': locked={}, authorities={}",
                 user.getUsername(), isLocked, authorities.size());
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(isLocked)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
+        // Switch out the old framework builder and return your new custom wrapper
+        return new CustomUserPrincipal(user, authorities, isLocked);
     }
 
     /**
