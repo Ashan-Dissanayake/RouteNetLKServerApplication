@@ -22,7 +22,7 @@ public class IncidentVehicleAllocationController {
 
     private final IncidentVehicleAllocationService allocationService;
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-view')")
+    @PreAuthorize("hasAuthority('incident-vehicle-allocation-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentVehicleAllocationDetailsResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -33,7 +33,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.list(incidentVhicleAllocations, incidentVhicleAllocations.size());
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-add')")
+    @PreAuthorize("hasAuthority('incident-vehicle-allocation-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> createAllocation(
             @Valid @RequestBody IncidentVehicleAllocationCreateRequestDto requestDto
@@ -43,7 +43,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.created(savedIncidentVehicleAllocation,savedIncidentVehicleAllocation.getId());
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-in-progress')")
+    @PreAuthorize("hasAuthority('incident-vehicle-allocation-in-progress')")
     @PostMapping("/{id}/in-progress")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> inProgress(
             @PathVariable Integer id
@@ -52,7 +52,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.ok(updated);
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-released')")
+    @PreAuthorize("hasAuthority('incident-vehicle-allocation-released')")
     @PostMapping("/{id}/released")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> released(
             @PathVariable Integer id
@@ -61,7 +61,7 @@ public class IncidentVehicleAllocationController {
         return APIResponseBuilder.ok(updated);
     }
 
-    @PreAuthorize("hasAuthority('incident-vehicle-allocations-cancelled')")
+    @PreAuthorize("hasAuthority('incident-vehicle-allocation-cancelled')")
     @PostMapping("/{id}/cancelled")
     public ResponseEntity<APISuccessResponse<IncidentVehicleAllocationDetailsResponseDto>> cancelled(
             @PathVariable Integer id

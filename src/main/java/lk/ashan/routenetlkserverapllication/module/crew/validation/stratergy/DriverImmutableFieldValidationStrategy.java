@@ -8,8 +8,7 @@ import org.springframework.stereotype.Component;
  * remain immutable during updates. Implements the {@link DriverValidationStrategy}.
  */
 @Component
-public class DriverImmutableFieldValidationStrategy
-        implements DriverValidationStrategy {
+public class DriverImmutableFieldValidationStrategy implements DriverValidationStrategy {
 
     /**
      * Validates the creation of a Driver entity.
@@ -18,9 +17,7 @@ public class DriverImmutableFieldValidationStrategy
      */
     @Override
     public void validateCreate(DriverValidationContext context) {
-
         // nothing to validate during create
-
     }
 
     /**
@@ -32,11 +29,8 @@ public class DriverImmutableFieldValidationStrategy
     @Override
     public void validateUpdate(DriverValidationContext context) {
         validateLicenseNumber(context);
-
         validateEmployee(context);
-
         validateLicenseIssuedDate(context);
-
     }
 
     /**
@@ -45,19 +39,10 @@ public class DriverImmutableFieldValidationStrategy
      * @param context the validation context containing the data for validation
      * @throws BusinessRuleViolationException if the license number is modified
      */
-    private void validateLicenseNumber(
-            DriverValidationContext context
-    ) {
-
-        if (!context.getExistingLicenseNumber()
-                .equalsIgnoreCase(context.getLicenseNumber())) {
-
-            throw new BusinessRuleViolationException(
-                    "License number cannot be changed"
-            );
-
+    private void validateLicenseNumber(DriverValidationContext context) {
+        if (!context.getExistingLicenseNumber().equalsIgnoreCase(context.getLicenseNumber())) {
+            throw new BusinessRuleViolationException("License number cannot be changed");
         }
-
     }
 
     /**
@@ -66,19 +51,10 @@ public class DriverImmutableFieldValidationStrategy
      * @param context the validation context containing the data for validation
      * @throws BusinessRuleViolationException if the employee is reassigned
      */
-    private void validateEmployee(
-            DriverValidationContext context
-    ) {
-
-        if (!context.getExistingEmployeeId()
-                .equals(context.getEmployeeId())) {
-
-            throw new BusinessRuleViolationException(
-                    "Employee cannot be reassigned"
-            );
-
+    private void validateEmployee(DriverValidationContext context) {
+        if (!context.getExistingEmployeeId().equals(context.getEmployeeId())) {
+            throw new BusinessRuleViolationException("Employee cannot be reassigned");
         }
-
     }
 
     /**
@@ -87,19 +63,10 @@ public class DriverImmutableFieldValidationStrategy
      * @param context the validation context containing the data for validation
      * @throws BusinessRuleViolationException if the license issued date is modified
      */
-    private void validateLicenseIssuedDate(
-            DriverValidationContext context
-    ) {
-
-        if (!context.getExistingLicenseIssued()
-                .equals(context.getLicenseIssued())) {
-
-            throw new BusinessRuleViolationException(
-                    "License issued date cannot be modified"
-            );
-
+    private void validateLicenseIssuedDate(DriverValidationContext context) {
+        if (!context.getExistingLicenseIssued().equals(context.getLicenseIssued())) {
+            throw new BusinessRuleViolationException("License issued date cannot be modified");
         }
-
     }
 
 }

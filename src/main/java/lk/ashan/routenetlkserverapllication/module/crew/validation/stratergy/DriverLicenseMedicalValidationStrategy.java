@@ -29,7 +29,6 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
      */
     @Override
     public void validateCreate(DriverValidationContext context) {
-
         validateLicenseDates(context.getLicenseIssued(), context.getLicenseExpired());
         validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
 

@@ -28,12 +28,12 @@ public class MailBody {
     private String subject;
 
     @Builder.Default
-    private String greetings = "Dear Valued Customer";
+    private String greetings = "Dear Employee";
 
     private String content;
 
     @Builder.Default
-    private String closing = "Thank you for your attention";
+    private String closing = "Thank you for join with us";
 
     @Builder.Default
     private String signature = "Best regards,\nAdmin";

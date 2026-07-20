@@ -24,7 +24,7 @@ public class PermitController {
     
     private final PermitService permitService;
 
-    @PreAuthorize("hasAuthority('permits-view')")
+    @PreAuthorize("hasAuthority('permit-view')")
     @GetMapping( produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PermitDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -43,7 +43,7 @@ public class PermitController {
     }
 
 
-    @PreAuthorize("hasAuthority('permits-add')")
+    @PreAuthorize("hasAuthority('permit-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>> add(
             @RequestBody @Valid PermitCreateRequestDto permitCreateRequestDto)
@@ -52,7 +52,7 @@ public class PermitController {
         return APIResponseBuilder.list(savedPermit, savedPermit.getId());
     }
 
-    @PreAuthorize("hasAuthority('permits-transfer')")
+    @PreAuthorize("hasAuthority('permit-transfer')")
     @PutMapping("/transfer/{permitId}")
     public ResponseEntity<APISuccessResponse<PermitDetailResponseDto>>  transferPermit(
             @PathVariable Integer permitId

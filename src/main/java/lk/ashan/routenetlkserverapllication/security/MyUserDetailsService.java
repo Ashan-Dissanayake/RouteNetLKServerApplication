@@ -214,8 +214,8 @@ public class MyUserDetailsService implements UserDetailsService {
                     "trip-execution-view", "trip-suspend", "trip-view",
                     "user-add", "user-change-password", "user-delete", "user-reset-password", "user-role-assign",
                     "user-role-replace", "user-role-revoke", "user-role-view", "user-update", "user-view",
-                    "vehicle-add", "vehicle-delete", "vehicle-service-add", "vehicle-service-complete",
-                    "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view", "vehicle-update", "vehicle-view"
+                    "vehicle-view", "vehicle-add","vehicle-update", "vehicle-delete",
+                    "vehicle-service-add", "vehicle-service-complete", "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
             );
 
 

@@ -26,7 +26,7 @@ public class PartController {
 
     private final PartService partService;
 
-    @PreAuthorize("hasAuthority('parts-view')")
+    @PreAuthorize("hasAuthority('part-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -45,7 +45,7 @@ public class PartController {
         return APIResponseBuilder.list(parts, parts.size());
     }
 
-    @PreAuthorize("hasAuthority('parts-add')")
+    @PreAuthorize("hasAuthority('part-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> add(
             @RequestBody @Valid PartCreateRequestDto partRequest
@@ -54,7 +54,7 @@ public class PartController {
         return APIResponseBuilder.created(savedPart, savedPart.getId());
     }
 
-    @PreAuthorize("hasAuthority('parts-update')")
+    @PreAuthorize("hasAuthority('part-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> update(
             @RequestBody @Valid PartUpdateRequestDto partUpdateRequest
@@ -63,7 +63,7 @@ public class PartController {
         return APIResponseBuilder.updated(updatedPart, updatedPart.getId());
     }
 
-    @PreAuthorize("hasAuthority('parts-delete')")
+    @PreAuthorize("hasAuthority('part-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivate(
             @RequestBody List<Integer> ids
