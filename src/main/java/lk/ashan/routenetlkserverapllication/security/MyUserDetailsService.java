@@ -162,44 +162,119 @@ public class MyUserDetailsService implements UserDetailsService {
      * @return a set of {@link SimpleGrantedAuthority} instances representing the administrative authorities for all modules.
      */
     protected Set<SimpleGrantedAuthority> getAdminAuthorities() {
-        log.debug("Generating admin authorities");
 
-        var standardOperations = Set.of("select", "insert", "update", "delete");
+        log.debug("Generating authorities for in-memory test user");
 
-        // Define bootstrap modules to guarantee in-memory user can access everything without seeded DB
-        var bootstrapModules = Set.of(
-                "branch", "employee", "crew", "driver", "conductor", "vehicle", "permit",
-                "part", "part-request", "grn", "roster", "trip", "trip-execution",
-                "incident", "incident-vehicle-allocation", "fare-collection", "vehicle-service", "user"
-        );
+        TestRole activeTestRole = TestRole.SYSTEM_ADMIN;
 
-        // Map bootstrap modules to authorities
-        Set<SimpleGrantedAuthority> authorities = bootstrapModules.stream()
-                .flatMap(mod -> {
-                    var operations = mod.equalsIgnoreCase("user")
-                            ? Stream.concat(standardOperations.stream(), Stream.of("lock"))
-                            : standardOperations.stream();
-                    return operations.map(op -> new SimpleGrantedAuthority(mod + "-" + op));
-                })
+        Set<String> permissions = switch (activeTestRole) {
+
+
+            case SYSTEM_ADMIN -> Set.of(
+                    "branch-add", "branch-delete", "branch-update", "branch-view",
+                    "conductor-add", "conductor-update", "conductor-view",
+                    "driver-view",
+                    "report-view",
+                    "employee-add", "employee-delete", "employee-update", "employee-view",
+                    "fare-collection-add", "fare-collection-reconcile", "fare-collection-view",
+                    "grn-update", "grn-view",
+                    "incident-add", "incident-close", "incident-pending-allocation", "incident-resolve", "incident-start",
+                    "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled",
+                    "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released",
+                    "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
+                    "part-request-add", "part-request-approve", "part-request-reject", "part-request-update", "part-request-view",
+                    "part-add", "part-delete", "part-update", "part-view",
+                    "permit-add", "permit-transfer", "permit-view",
+                    "privilege-assign", "privilege-revoke", "privilege-view",
+                    "roster-create", "roster-shift-assignment-approved", "roster-shift-assignment-cancelled",
+                    "roster-shift-assignment-generate", "roster-shift-assignment-view",
+                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown",
+                    "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed",
+                    "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize",
+                    "trip-execution-view", "trip-suspend", "trip-view",
+                    "user-add", "user-change-password", "user-delete", "user-reset-password", "user-role-assign",
+                    "user-role-replace", "user-role-revoke", "user-role-view", "user-update", "user-view",
+                    "vehicle-add", "vehicle-delete", "vehicle-service-add", "vehicle-service-complete",
+                    "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view", "vehicle-update", "vehicle-view"
+            );
+
+
+
+            // DEPOT MANAGER: Full administrative and operational control over the specific depot branch.
+            case DEPOT_MANAGER -> Set.of(
+                    "branch-view", "branch-update",
+                    "conductor-add", "conductor-update", "conductor-view",
+                    "driver-view",
+                    "employee-add", "employee-delete", "employee-update", "employee-view",
+                    "fare-collection-reconcile", "fare-collection-view",
+                    "grn-view",
+                    "incident-add", "incident-close", "incident-pending-allocation", "incident-resolve", "incident-start",
+                    "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled", "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released", "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
+                    "part-request-approve", "part-request-reject", "part-request-view",
+                    "part-view",
+                    "permit-view",
+                    "privilege-view",
+                    "roster-create", "roster-shift-assignment-approved", "roster-shift-assignment-cancelled", "roster-shift-assignment-generate", "roster-shift-assignment-view",
+                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown", "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed", "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize", "trip-execution-view", "trip-suspend", "trip-view",
+                    "user-view",
+                    "vehicle-add", "vehicle-delete", "vehicle-service-complete", "vehicle-service-view", "vehicle-update", "vehicle-view"
+            );
+
+// OPERATIONS OFFICER: Manages scheduling, timetables, routes, and live transport execution.
+            case OPERATIONS_OFFICER -> Set.of(
+                    "branch-view",
+                    "conductor-view",
+                    "driver-view",
+                    "employee-view",
+                    "fare-collection-add", "fare-collection-view",
+                    "incident-add", "incident-pending-allocation", "incident-start", "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled", "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released", "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
+                    "permit-view",
+                    "roster-create", "roster-shift-assignment-generate", "roster-shift-assignment-view",
+                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown", "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed", "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize", "trip-execution-view", "trip-suspend", "trip-view",
+                    "vehicle-view"
+            );
+
+// MAINTENANCE OFFICER: Manages garage operations, breakdowns, and vehicle health statuses.
+            case MAINTENANCE_OFFICER -> Set.of(
+                    "branch-view",
+                    "incident-view", "incident-vehicle-recovery",
+                    "part-request-add", "part-request-update", "part-request-view",
+                    "part-view",
+                    "trip-execution-breakdown", "trip-execution-view",
+                    "vehicle-service-add", "vehicle-service-complete", "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view", "vehicle-update", "vehicle-view"
+            );
+
+// INVENTORY OFFICER: Manages stores, physical part stock levels, and Goods Received Notes (GRN).
+            case INVENTORY_OFFICER -> Set.of(
+                    "branch-view",
+                    "grn-update", "grn-view",
+                    "part-request-update", "part-request-view",
+                    "part-add", "part-delete", "part-update", "part-view"
+            );
+
+        };
+
+
+        Set<SimpleGrantedAuthority> authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
 
-        // Also query database modules if any exist
-        try {
-            moduleRepository.findAll().forEach(module -> {
-                String modName = module.getName().toLowerCase();
-                var operations = modName.equalsIgnoreCase("user")
-                        ? Stream.concat(standardOperations.stream(), Stream.of("lock"))
-                        : standardOperations.stream();
-                operations.forEach(op -> authorities.add(new SimpleGrantedAuthority(modName + "-" + op)));
-            });
-        } catch (Exception e) {
-            log.warn("Failed to retrieve modules from database: {}", e.getMessage());
-        }
 
-        // Grant the in-memory admin user the DEPOT_SUPERINTENDENT role
-        authorities.add(new SimpleGrantedAuthority("ROLE_DEPOT_SUPERINTENDENT"));
+        // Keep role authority for @PreAuthorize("hasRole(...)") checks
+        authorities.add(
+                new SimpleGrantedAuthority(
+                        "ROLE_" + activeTestRole.name()
+                )
+        );
 
-        log.debug("Generated {} admin authorities (including DEPOT_SUPERINTENDENT role)", authorities.size());
+
+        log.debug(
+                "Generated {} authorities for test role {}",
+                authorities.size(),
+                activeTestRole
+        );
+
+
         return authorities;
     }
 
@@ -285,4 +360,12 @@ public class MyUserDetailsService implements UserDetailsService {
             return false; // Fail open - don't lock on errors
         }
     }
+}
+
+ enum TestRole {
+    SYSTEM_ADMIN,
+    DEPOT_MANAGER,
+    OPERATIONS_OFFICER,
+    MAINTENANCE_OFFICER,
+    INVENTORY_OFFICER
 }

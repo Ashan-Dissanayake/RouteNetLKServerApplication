@@ -65,4 +65,10 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
      * @return a list of drivers associated with the given branch ID
      */
     List<Driver> findByEmployee_Branch_Id(Integer branchId);
+
+    //dashboard
+    @Query("SELECT COUNT(d) FROM Driver d " +
+            "WHERE d.employee.branch.id = :branchId " +
+            "AND d.crewstatus.name = 'Standby'")
+    long countStandbyDriversByBranch(@Param("branchId") Integer branchId);
 }

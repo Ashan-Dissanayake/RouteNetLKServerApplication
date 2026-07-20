@@ -90,6 +90,12 @@ public enum ErrorCode {
             "Service unavailable",
             HttpStatus.SERVICE_UNAVAILABLE,
             "/errors/service-unavailable"
+    ),
+
+    ACCESS_DENIED(
+            "Access denied",
+            HttpStatus.FORBIDDEN,
+            "/errors/access-denied"
     );
 
     private final String title;

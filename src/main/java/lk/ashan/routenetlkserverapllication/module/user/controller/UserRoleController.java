@@ -22,9 +22,11 @@ public class UserRoleController {
     private final UserRoleService userRoleService;
 
     @PreAuthorize("hasAuthority('user-role-view')")
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<APISuccessResponse<List<UserRoleResponseDto>>> get() {
-        List<UserRoleResponseDto> userRoles = userRoleService.getUserRoles();
+    @GetMapping(value = "/{userId}/roles",produces = "application/json")
+    public ResponseEntity<APISuccessResponse<List<UserRoleResponseDto>>> get(
+            @PathVariable Integer userId)
+    {
+        List<UserRoleResponseDto> userRoles = userRoleService.getUserRoles(userId);
         return APIResponseBuilder.list(userRoles, userRoles.size());
     }
 

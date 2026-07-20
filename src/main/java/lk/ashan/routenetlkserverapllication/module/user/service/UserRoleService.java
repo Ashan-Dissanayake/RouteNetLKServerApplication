@@ -30,54 +30,26 @@ public class UserRoleService {
     private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public List<UserRoleResponseDto> getUserRoles() {
-        return userRoleMapper.toDtoList(userRoleRepository.findAll());
+    public List<UserRoleResponseDto> getUserRoles(Integer userId) {
+        return userRoleMapper.toDtoList(userRoleRepository.findByUserId(userId));
     }
 
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public void assignRoles(
-            Integer userId,
-            UserRoleAssignRequestDto requestDto
-    ) {
+    public void assignRoles(Integer userId, UserRoleAssignRequestDto requestDto) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User with id : " + userId + " not found"
-                        )
-                );
-
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id : " + userId + " not found"));
 
         List<UserRole> userRoles = new ArrayList<>();
 
-
         for (RoleDto roleDto : requestDto.getRoles()) {
+            Role role = roleRepository.findById(roleDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Role with id : " + roleDto.getId() + " not found"));
 
-
-            Role role = roleRepository.findById(roleDto.getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException(
-                                    "Role with id : "
-                                            + roleDto.getId()
-                                            + " not found"
-                            )
-                    );
-
-
-            if (userRoleRepository.existsByUserIdAndRoleId(
-                    userId,
-                    roleDto.getId()
-            )) {
-
-                throw new ResourceExistsException(
-                        "User already has role : "
-                                + role.getName()
-                );
+            if (userRoleRepository.existsByUserIdAndRoleId(userId, roleDto.getId())) {
+                throw new ResourceExistsException("User already has role : " + role.getName());
             }
 
             UserRole userRole = new UserRole();
-
             userRole.setUser(user);
             userRole.setRole(role);
 
@@ -89,69 +61,39 @@ public class UserRoleService {
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
     public void removeRole(Integer userId, Integer roleId) {
-        userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User with id : " + userId + " not found"
-                        )
-                );
+        userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id : " + userId + " not found"));
 
-        roleRepository.findById(roleId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Role with id : " + roleId + " not found"
-                        )
-                );
+        roleRepository.findById(roleId).orElseThrow(() -> new ResourceNotFoundException("Role with id : " + roleId + " not found"));
 
         if (!userRoleRepository.existsByUserIdAndRoleId(userId, roleId)) {
-            throw new ResourceNotFoundException(
-                    "Role is not assigned to the user"
-            );
+            throw new ResourceNotFoundException("Role is not assigned to the user");
         }
-
         userRoleRepository.deleteByUserIdAndRoleId(userId, roleId);
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
     public void replaceRoles(Integer userId, UserRoleAssignRequestDto requestDto) {
 
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException(
-                                    "User with id : "
-                                            + userId
-                                            + " not found"
-                            )
-                    );
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User with id : " + userId + " not found"));
 
+        List<UserRole> newUserRoles = new ArrayList<>();
 
-            List<UserRole> newUserRoles = new ArrayList<>();
+        for (RoleDto roleDto : requestDto.getRoles()) {
 
+            Role role = roleRepository.findById(roleDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Role with id : " + roleDto.getId() + " not found"));
 
-            for (RoleDto roleDto : requestDto.getRoles()) {
+            UserRole userRole = new UserRole();
 
-                Role role = roleRepository.findById(roleDto.getId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Role with id : "
-                                                + roleDto.getId()
-                                                + " not found"
-                                )
-                        );
+            userRole.setUser(user);
+            userRole.setRole(role);
 
+            newUserRoles.add(userRole);
+        }
 
-                UserRole userRole = new UserRole();
+        // Remove existing roles
+        userRoleRepository.deleteByUserId(userId);
 
-                userRole.setUser(user);
-                userRole.setRole(role);
-
-                newUserRoles.add(userRole);
-            }
-
-            // Remove existing roles
-            userRoleRepository.deleteByUserId(userId);
-
-            // Assign new roles
-            userRoleRepository.saveAll(newUserRoles);
+        // Assign new roles
+        userRoleRepository.saveAll(newUserRoles);
     }
 }

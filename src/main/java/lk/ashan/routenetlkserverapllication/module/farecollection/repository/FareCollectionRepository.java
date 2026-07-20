@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.F
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report2Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +21,13 @@ public interface FareCollectionRepository extends JpaRepository<FareCollection, 
             "JOIN branch b ON f.branch_id = b.id " +
             "GROUP BY b.id, b.name", nativeQuery = true)
     List<Report2Projection> getDepotFinancialReconciliationMetrics();
+
+    //dashboard
+    @Query("SELECT COALESCE(SUM(f.totaltickets), 0), " +
+            "       COALESCE(SUM(f.cashcollected), 0), " +
+            "       COALESCE(SUM(f.digitalpayments), 0) " +
+            "FROM FareCollection f " +
+            "WHERE f.branch.id = :branchId " +
+            "AND f.tripexecution.doservice = CURRENT_DATE")
+    Object[] getDailyRevenueSummaryByBranch(@Param("branchId") Integer branchId);
 }

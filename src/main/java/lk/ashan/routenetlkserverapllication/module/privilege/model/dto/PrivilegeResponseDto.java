@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.privilege.model.dto;
 
+import lk.ashan.routenetlkserverapllication.module.user.model.dto.RoleDto;
 import lombok.*;
 
 @Getter
@@ -12,4 +13,5 @@ public class PrivilegeResponseDto {
     private String authority;
     private ModuleDto module;
     private OperationDto operation;
+    private RoleDto role;
 }

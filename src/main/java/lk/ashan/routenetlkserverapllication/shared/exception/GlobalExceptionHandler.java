@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +48,18 @@ public class GlobalExceptionHandler {
         return APIResponseBuilder.error(
                 ErrorCode.VALIDATION_FAILED,
                 details,
+                request
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<APIErrorResponse> handleAccessDeniedException(
+            AccessDeniedException e,
+            HttpServletRequest request) {
+
+        return APIResponseBuilder.error(
+                ErrorCode.ACCESS_DENIED,
+                List.of("You do not have permission to perform this operation."),
                 request
         );
     }

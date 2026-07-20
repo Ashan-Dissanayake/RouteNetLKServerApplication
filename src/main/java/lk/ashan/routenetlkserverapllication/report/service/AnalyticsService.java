@@ -4,14 +4,13 @@ import lk.ashan.routenetlkserverapllication.module.farecollection.repository.Far
 import lk.ashan.routenetlkserverapllication.module.incident.repository.IncidentRepository;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.repository.VehicleServiceRepository;
-import lk.ashan.routenetlkserverapllication.report.model.dto.ChartDataDTO;
+import lk.ashan.routenetlkserverapllication.report.model.dto.*;
 import lk.ashan.routenetlkserverapllication.report.model.projection.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,59 +22,111 @@ public class AnalyticsService {
     private final VehicleServiceRepository vehicleServiceRepository;
     private final IncidentRepository incidentRepository;
 
-    public ChartDataDTO getReport1Metrics() {
-        List<Report1Projection> records = incidentRepository.getFleetDispatchAndBreakdownMetrics();
-        return ChartDataDTO.builder()
-                .labels(records.stream().map(Report1Projection::getDayName).collect(Collectors.toList()))
-                .datasets(List.of(
-                        new ChartDataDTO.DatasetDTO("Successful Trip Executions", records.stream().map(Report1Projection::getSuccessfulTrips).collect(Collectors.toList())),
-                        new ChartDataDTO.DatasetDTO("Logged Breakdown Incidents", records.stream().map(Report1Projection::getBreakdownCount).collect(Collectors.toList()))
-                )).build();
+    public Report1ResponseDto getFleetDispatchAndBreakdownMetrics() {
+        // 1. Define standard order of days matching MySQL's WEEKDAY() (0 = Monday, 6 = Sunday)
+        List<String> days =
+                Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+
+        // 2. Initialize fixed-size structures with 0s for all 7 days
+        Integer[] successfulTripsArray = new Integer[7];
+        Integer[] breakdownCountsArray = new Integer[7];
+        Arrays.fill(successfulTripsArray, 0);
+        Arrays.fill(breakdownCountsArray, 0);
+
+        // 3. Fetch data from the 2 separate queries (3 = Completed, 1 = Breakdown)
+        List<Object[]> tripsData = incidentRepository.getTripsCountByDay(3);
+        List<Object[]> incidentsData = incidentRepository.getIncidentsCountByDay(1);
+
+        // 4. Map trip counts into the correct day index positions
+        for (Object[] row : tripsData) {
+            int dayIdx = ((Number) row[0]).intValue();
+            int count = ((Number) row[1]).intValue();
+            successfulTripsArray[dayIdx] = count;
+        }
+
+        // 5. Map incident counts into the correct day index positions
+        for (Object[] row : incidentsData) {
+            int dayIdx = ((Number) row[0]).intValue();
+            int count = ((Number) row[1]).intValue();
+            breakdownCountsArray[dayIdx] = count;
+        }
+
+        // 6. Build and return the final DTO
+        return Report1ResponseDto.builder()
+                .days(days)
+                .successfulTrips(Arrays.asList(successfulTripsArray))
+                .breakdownCounts(Arrays.asList(breakdownCountsArray))
+                .build();
     }
 
-    public ChartDataDTO getReport2Metrics() {
+    public Report2ResponseDto getDepotRevenueMetrics() {
         List<Report2Projection> records = fareCollectionRepository.getDepotFinancialReconciliationMetrics();
-        return ChartDataDTO.builder()
-                .labels(records.stream().map(Report2Projection::getDepotName).collect(Collectors.toList()))
-                .datasets(List.of(
-                        new ChartDataDTO.DatasetDTO("Physical Cash Vault (LKR)", records.stream().map(Report2Projection::getCashAmount).collect(Collectors.toList())),
-                        new ChartDataDTO.DatasetDTO("Digital ETM Validations (LKR)", records.stream().map(Report2Projection::getDigitalAmount).collect(Collectors.toList()))
-                )).build();
+
+        List<String> depots = new ArrayList<>();
+        List<BigDecimal> cashAmounts = new ArrayList<>();
+        List<BigDecimal> digitalAmounts = new ArrayList<>();
+
+        for (Report2Projection record : records) {
+            depots.add(record.getDepotName());
+            cashAmounts.add(record.getCashAmount() != null ? record.getCashAmount() : BigDecimal.ZERO);
+            digitalAmounts.add(record.getDigitalAmount() != null ? record.getDigitalAmount() : BigDecimal.ZERO);
+        }
+
+        return Report2ResponseDto.builder()
+                .depots(depots)
+                .cashAmounts(cashAmounts)
+                .digitalAmounts(digitalAmounts)
+                .build();
     }
 
-    public ChartDataDTO getReport3Metrics() {
+    public Report3ResponseDto getMaintenanceTrendsMetrics() {
         List<Report3Projection> records = vehicleServiceRepository.getMaintenanceLifecycleMetrics();
-        var labels = records.stream().map(Report3Projection::getWeekLabel).collect(Collectors.toList());
-        var completed = records.stream().map(Report3Projection::getCompletedServices).collect(Collectors.toList());
-        var pending = records.stream().map(Report3Projection::getPendingBacklog).collect(Collectors.toList());
 
-        Collections.reverse(labels);
+        List<String> weeks = records.stream().map(Report3Projection::getWeekLabel).collect(Collectors.toList());
+        List<Integer> completed = records.stream().map(Report3Projection::getCompletedServices).collect(Collectors.toList());
+        List<Integer> pending = records.stream().map(Report3Projection::getPendingBacklog).collect(Collectors.toList());
+
+        Collections.reverse(weeks);
         Collections.reverse(completed);
         Collections.reverse(pending);
 
-        return ChartDataDTO.builder().labels(labels).datasets(List.of(
-                new ChartDataDTO.DatasetDTO("Completed Vehicle Services", completed),
-                new ChartDataDTO.DatasetDTO("Pending Maintenance Backlog", pending)
-        )).build();
+        return Report3ResponseDto.builder()
+                .weeks(weeks)
+                .completedServices(completed)
+                .pendingBacklog(pending)
+                .build();
     }
 
-    public ChartDataDTO getReport4Metrics(Date start, Date end) {
+    public Report4ResponseDto getDynamicPerformanceMetrics(Date start, Date end) {
         List<Report4Projection> records = tripExecutionRepository.getDynamicPerformanceMetrics(start, end);
-        return ChartDataDTO.builder()
-                .labels(records.stream().map(Report4Projection::getLogDate).collect(Collectors.toList()))
-                .datasets(List.of(
-                        new ChartDataDTO.DatasetDTO("Aggregated Passenger Count", records.stream().map(Report4Projection::getTotalPassengers).collect(Collectors.toList())),
-                        new ChartDataDTO.DatasetDTO("Distance Traveled (KM)", records.stream().map(Report4Projection::getTotalDistance).collect(Collectors.toList()))
-                )).build();
+
+        List<String> logDates = new ArrayList<>();
+        List<Long> totalPassengers = new ArrayList<>();
+        List<Double> totalDistances = new ArrayList<>();
+
+        for (Report4Projection record : records) {
+            logDates.add(record.getLogDate());
+            totalPassengers.add(record.getTotalPassengers() != null ? record.getTotalPassengers() : 0L);
+            totalDistances.add(record.getTotalDistance() != null ? record.getTotalDistance() : 0.0);
+        }
+
+        return Report4ResponseDto.builder()
+                .logDates(logDates)
+                .totalPassengers(totalPassengers)
+                .totalDistances(totalDistances)
+                .build();
     }
 
-    public ChartDataDTO getReport5Metrics() {
+    public Report5ResponseDto getIncidentDistributionMetrics() {
         List<Report5Projection> records = incidentRepository.getIncidentDistributionMetrics();
-        return ChartDataDTO.builder()
-                .labels(records.stream().map(Report5Projection::getIncidentTypeName).collect(Collectors.toList()))
-                .datasets(List.of(
-                        new ChartDataDTO.DatasetDTO("Incidents Proportion", records.stream().map(Report5Projection::getIncidentCount).collect(Collectors.toList()))
-                )).build();
+
+        List<String> types = records.stream().map(Report5Projection::getIncidentTypeName).collect(Collectors.toList());
+        List<Long> counts = records.stream().map(Report5Projection::getIncidentCount).collect(Collectors.toList());
+
+        return Report5ResponseDto.builder()
+                .types(types)
+                .counts(counts)
+                .build();
     }
 
 }

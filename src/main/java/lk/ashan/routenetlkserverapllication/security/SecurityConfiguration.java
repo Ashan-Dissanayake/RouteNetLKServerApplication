@@ -58,6 +58,9 @@ import java.util.List;
 @Profile("!test")
 public class SecurityConfiguration {
 
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
+
     /**
      * Provides user details service for authentication and authorization purposes within the security configuration.
      * It interacts with the user details system to load user-specific data.
@@ -149,6 +152,7 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_CONFLICT);
                         })
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/", "*").permitAll() // Allow all pages to public (Only testing purpose)
