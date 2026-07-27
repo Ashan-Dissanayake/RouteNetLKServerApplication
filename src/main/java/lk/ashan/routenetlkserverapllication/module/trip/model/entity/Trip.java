@@ -3,9 +3,17 @@ package lk.ashan.routenetlkserverapllication.module.trip.model.entity;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalTime;
 import java.util.Collection;
@@ -22,6 +30,12 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//@FilterDef(name = "branchAndUserFilter", parameters = {
+//        @ParamDef(name = "branchId", type = Integer.class),
+//        @ParamDef(name = "userId", type = Integer.class)
+//})
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Trip {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +63,7 @@ public class Trip {
     @JoinColumn(name = "triptype_id", referencedColumnName = "id", nullable = false)
     private Triptype triptype;
 
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -68,13 +83,18 @@ public class Trip {
     @OneToMany(mappedBy = "trip")
     private Collection<TripExecution> tripExecutions;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "opcalender_id", referencedColumnName = "id", nullable = false)
     private Opcalender opcalender;
+
+    @ManyToOne
+    @JoinColumn(name = "shift_id", referencedColumnName = "id", nullable = false)
+    private Shift shift;
 
     /**
      * Checks if this Trip is equal to another object.

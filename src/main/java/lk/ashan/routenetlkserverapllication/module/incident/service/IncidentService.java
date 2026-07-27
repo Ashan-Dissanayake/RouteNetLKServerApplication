@@ -15,11 +15,12 @@ import lk.ashan.routenetlkserverapllication.module.incident.state.IncidentStatus
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentContext;
 import lk.ashan.routenetlkserverapllication.module.incident.validation.IncidentStrategy;
-import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

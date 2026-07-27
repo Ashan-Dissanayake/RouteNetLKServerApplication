@@ -3,7 +3,6 @@ package lk.ashan.routenetlkserverapllication.module.tripexecution.service;
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
@@ -25,6 +24,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -115,6 +115,8 @@ public class TripExecutionService {
 
         // 2. Fetch all active trips for this branch
         List<Trip> activeTrips = tripRepository.findByBranch_IdAndTripstatus_Name(branchId, "Active");
+
+        System.out.println(activeTrips.size());
 
         // 3. Identify trips already initialized for this date to avoid duplicates
         Set<Integer> alreadyInitializedTripIds = tripExecutionRepository

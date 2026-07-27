@@ -12,13 +12,14 @@ import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFacto
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.FuelType;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidationStrategy;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -124,6 +125,7 @@ public class BranchService {
      */
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
         BranchContext context = branchContextBuilder.buildForCreate(request);
         validationStrategies.forEach(s -> s.validateCreate(context));
@@ -150,6 +152,7 @@ public class BranchService {
      */
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));

@@ -45,10 +45,10 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
     @Override
     public void validateUpdate(DriverValidationContext context) {
 
-        Driver existingDriver = driverRepository.findById(context.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+//        Driver existingDriver = driverRepository.findById(context.getId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
 
-        validateLicenseCategoryChange(existingDriver, context);
+       // validateLicenseCategoryChange(existingDriver, context);
 
         validateLicenseDates(context.getLicenseIssued(), context.getLicenseExpired());
         validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());

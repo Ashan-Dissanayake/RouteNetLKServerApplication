@@ -18,13 +18,15 @@ import java.util.Optional;
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Integer> {
 
-    /**
-     * Finds all trips by the origin terminal ID.
+
+/**
+     * Finds all trips associated with a specific route ID.
      *
-     * @param originterminalId the ID of the origin terminal
-     * @return a list of trips associated with the specified origin terminal
+     * @param tripId the ID of the route
+     * @return a list of trips associated with the specified route ID
      */
-    List<Trip> findByOriginterminal_Id(Integer originterminalId);
+    List<Trip> findByPermite_Route_Id(Integer tripId);
+
 
     /**
      * Checks if a trip exists with the specified permit ID, origin terminal ID, departure time,
@@ -50,31 +52,30 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     long countByPermite_IdAndTripstatus_Name(Integer permitId, String active);
 
     /**
-     * Finds all trips by the specified permit ID and trip status name.
+     * Finds all trips assigned to a permit.
      *
      * @param permitId the ID of the permit
-     * @param active the name of the trip status
-     * @return a list of trips matching the criteria
+     * @return all trips associated with the permit
      */
-    List<Trip> findByPermite_IdAndTripstatus_Name(Integer permitId, String active);
+    List<Trip> findByPermite_Id(Integer permitId);
 
     /**
      * Counts the distinct number of permits for a shift within a specified time range.
      *
      * @param branchId the ID of the branch
-     * @param startTime the start time of the shift
-     * @param endTime the end time of the shift
+     * @param shiftId the ID of the shift
      * @return the count of distinct permits for the shift
      */
-    @Query("SELECT COUNT(DISTINCT t.permite.id) FROM Trip t " +
-            "WHERE t.permite.branch.id = :branchId " +
-            "AND t.tripstatus.name = 'Active' " +
-            "AND t.todepature >= :startTime " +
-            "AND t.todepature < :endTime")
+    @Query("""
+        SELECT COUNT(DISTINCT t.permite.id)
+        FROM Trip t
+        WHERE t.branch.id=:branchId
+        AND t.shift.id=:shiftId
+        AND t.tripstatus.name='Active'
+""")
     long countDistinctPermitsForShift(
             @Param("branchId") Integer branchId,
-            @Param("startTime") LocalTime startTime,
-            @Param("endTime") LocalTime endTime
+            @Param("shiftId") Integer shiftId
     );
 
     /**
@@ -88,10 +89,10 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
     @Query("SELECT COUNT(t) > 0 FROM Trip t " +
             "JOIN t.permite p " +
             "JOIN p.route r " +
-            "WHERE t.branch.id = :branchId " +
+            "WHERE t.branch.id=:branchId " +
             "AND r.routetype.id = 2 " + // 2 = Interprovincial/High Skill
-            "AND t.todepature >= :shiftStart " +
-            "AND t.todepature < :shiftEnd")
+            "AND t.todepature>=:shiftStart " +
+            "AND t.todepature<:shiftEnd")
     boolean existsInterprovincialTripInShift(
             @Param("branchId") Integer branchId,
             @Param("shiftStart") LocalTime shiftStart,
@@ -106,4 +107,13 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
      * @return a list of trips matching the criteria
      */
     List<Trip> findByBranch_IdAndTripstatus_Name(Integer branchId, String active);
+
+/**
+     * Checks if a trip exists for the specified branch ID and trip status name.
+     *
+     * @param id the ID of the branch
+     * @param active the name of the trip status
+     * @return true if a trip exists with the specified branch ID and trip status name, false otherwise
+     */
+    boolean existsByBranchIdAndTripstatus_Name(Integer id, String active);
 }

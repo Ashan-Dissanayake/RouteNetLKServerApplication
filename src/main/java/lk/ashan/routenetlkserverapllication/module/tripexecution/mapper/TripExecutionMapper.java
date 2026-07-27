@@ -48,7 +48,9 @@ public interface TripExecutionMapper {
         String number = (route.getNumber() != null) ? route.getNumber() : "";
         String origin = (route.getOrigin() != null) ? route.getOrigin() : "";
         String destination = (route.getDestination() != null) ? route.getDestination() : "";
-        return String.format("%s %s - %s", number, origin, destination);
+        String todeparture = (entity.getTrip().getTodepature()!= null) ? entity.getTrip().getTodepature().toString() : "";
+        String toarrivale = (entity.getTrip().getToarrival()!= null) ?entity.getTrip().getToarrival().toString() :"";
+        return String.format("%s %s - %s - %s - %s", number, origin, destination,todeparture,toarrivale);
     }
 
     @Mapping(target = "departureTime", source = "trip.todepature")

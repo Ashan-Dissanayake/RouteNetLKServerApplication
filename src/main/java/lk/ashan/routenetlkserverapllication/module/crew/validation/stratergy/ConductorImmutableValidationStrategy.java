@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ConductorImmutableValidationStrategy
-        implements ConductorValidationStrategy {
+public class ConductorImmutableValidationStrategy implements ConductorValidationStrategy {
 
     private final ConductorRepository conductorRepository;
 

@@ -62,14 +62,14 @@ public class DriverService {
     public List<DriverDetailResponseDto> searchDriver(
             @NotNull HashMap<String, String> params) {
 
-        String number = params.get("ssnumber");
+        String number = params.get("sslicensenumber");
         String crewStatusId = params.get("sscrewstatus");
         String routeFamiliarityLevelId = params.get("ssroutefamilitylevel");
 
         Stream<Driver> driverStream = driverRepository.findAll().stream();
 
         if (number != null)
-            driverStream = driverStream.filter(d -> d.getNumber().equalsIgnoreCase(number));
+            driverStream = driverStream.filter(d -> d.getLicensenumber().equalsIgnoreCase(number));
         if (crewStatusId != null)
             driverStream = driverStream.filter(d -> d.getCrewstatus().getId() == Integer.parseInt(crewStatusId));
         if (routeFamiliarityLevelId != null)

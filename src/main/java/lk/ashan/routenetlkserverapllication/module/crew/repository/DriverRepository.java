@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.crew.repository;
 
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
 /**
  * Repository interface for managing `Driver` entities.
  * Extends JpaRepository to provide CRUD operations and custom queries.
@@ -71,4 +75,21 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
             "WHERE d.employee.branch.id = :branchId " +
             "AND d.crewstatus.name = 'Standby'")
     long countStandbyDriversByBranch(@Param("branchId") Integer branchId);
+
+    boolean existsByEmployeeId(Integer employeeId);
+
+    boolean existsByEmployeeIdAndIdNot(Integer employeeId, Integer id);
+
+    Optional<Driver> findByEmployeeId(Integer id);
+
+
+
+    @Query("""
+    SELECT d
+    FROM Driver d
+    JOIN FETCH d.employee e
+    WHERE e.branch.id = :branchId
+    AND e.employeestatus.name = 'Active'
+    """)
+    List<Driver> findAvailableDrivers(@Param("branchId") Integer branchId);
 }

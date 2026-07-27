@@ -17,8 +17,8 @@ public class VehicleRequestDto {
     @Pattern(regexp = "^N[A-Z]-[0-9]{4}$",message = "Invalid Plate Number")
     private String number;
 
-    @NotNull(message = "Mileage Can Not be Empty")
-    @Digits(integer = 7, fraction = 2,message = "Numeric value out of bounds (<7 digits> expected)")
+//    @NotNull(message = "Mileage Can Not be Empty")
+    //@Digits(integer = 7, fraction = 2,message = "Numeric value out of bounds (<7 digits> expected)")
     @Positive(message = "Mileage must be positive")
     private Integer mileage;
 
@@ -33,8 +33,8 @@ public class VehicleRequestDto {
     @NotNull(message = "Vehicle Status Can Not be Empty")
     private VehiclestatusDto vehiclestatus;
 
-    @NotNull(message = "Branch Can Not be Empty")
-    private BranchSummaryDto branch;
+//    @NotNull(message = "Branch Can Not be Empty")
+//    private BranchSummaryDto branch;
 
     @NotNull(message = "Model can not be Empty")
     private ModelDto model;

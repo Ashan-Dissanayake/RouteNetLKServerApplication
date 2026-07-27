@@ -4,7 +4,14 @@ import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,6 +24,12 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "partrequest", schema = "routenetlk")
+//@FilterDef(name = "branchAndUserFilter", parameters = {
+//        @ParamDef(name = "branchId", type = Integer.class),
+//        @ParamDef(name = "userId", type = Integer.class)
+//})
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class PartRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -31,6 +44,8 @@ public class PartRequest {
     @Basic
     @Column(name = "remarks")
     private String remarks;
+
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -38,8 +53,9 @@ public class PartRequest {
     @JoinColumn(name = "partrequeststatus_id", referencedColumnName = "id", nullable = false)
     private PartRequestStatus partrequeststatus;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
 

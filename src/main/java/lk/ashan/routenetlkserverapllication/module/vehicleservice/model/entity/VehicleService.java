@@ -5,7 +5,13 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,6 +23,12 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "vehicleservice",schema = "routenetlk")
+//@FilterDef(name = "branchAndUserFilter", parameters = {
+//        @ParamDef(name = "branchId", type = Integer.class),
+//        @ParamDef(name = "userId", type = Integer.class)
+//})
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class VehicleService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -51,9 +63,11 @@ public class VehicleService {
     @JoinColumn(name = "vehicleservicestatus_id", referencedColumnName = "id", nullable = false)
     private VehicleServiceStatus vehicleservicestatus;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
+
     @OneToMany(mappedBy = "vehicleservice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<VehicleServiceExecution> vehicleServiceExecutions;
 

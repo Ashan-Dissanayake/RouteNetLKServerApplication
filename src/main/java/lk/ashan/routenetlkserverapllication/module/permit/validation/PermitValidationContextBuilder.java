@@ -13,10 +13,9 @@ public class PermitValidationContextBuilder {
                 .vehicleId(requestDto.getVehicle().getId())
                 .routeId(requestDto.getRoute().getId())
                 .vehicleId(requestDto.getVehicle().getId())
-                .requestBranchId(requestDto.getBranch().getId())
                 .serviceTypeId(requestDto.getServicetype().getId())
                 .doissued(requestDto.getDoissued())
-                .doexpired(requestDto.getDoexpired())
+//                .doexpired(requestDto.getDoexpired())
                 .build();
     }
 

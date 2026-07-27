@@ -5,8 +5,15 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -19,6 +26,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "permite",schema = "routenetlk")
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Permite extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -39,6 +48,8 @@ public class Permite extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id", nullable = false)
     private Vehicle vehicle;
+
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -55,8 +66,9 @@ public class Permite extends BaseEntity {
     @OneToMany(mappedBy = "permite")
     private Collection<Trip> trips;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
     @Override

@@ -28,8 +28,8 @@ public class DriverUniquenessValidationStrategy implements DriverValidationStrat
             throw new ResourceExistsException("License number already exists");
         }
 
-        if (driverRepository.existsByNumber(context.getNumber())) {
-            throw new ResourceExistsException("Driver number already exists");
+        if (driverRepository.existsByEmployeeId(context.getEmployeeId())) {
+            throw new ResourceExistsException("A driver profile already exists for this employee");
         }
 
     }
@@ -48,8 +48,9 @@ public class DriverUniquenessValidationStrategy implements DriverValidationStrat
             throw new ResourceExistsException("License number already exists");
         }
 
-        if (driverRepository.existsByNumberAndIdNot(context.getNumber(), context.getId())) {
-            throw new ResourceExistsException("Driver number already exists");
+        // Employee uniqueness check for update (excluding current driver id)
+        if (driverRepository.existsByEmployeeIdAndIdNot(context.getEmployeeId(), context.getId())) {
+            throw new ResourceExistsException("A driver profile already exists for this employee");
         }
 
     }

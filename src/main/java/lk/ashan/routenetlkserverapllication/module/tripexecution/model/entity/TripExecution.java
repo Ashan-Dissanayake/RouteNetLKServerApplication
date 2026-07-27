@@ -9,7 +9,14 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Inciden
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -25,6 +32,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tripexecution",schema = "routenetlk")
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class TripExecution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -54,10 +63,14 @@ public class TripExecution {
     @Basic
     @Column(name = "remarks")
     private String remarks;
+
     @OneToMany(mappedBy = "tripexecution")
     private Collection<FareCollection> fareCollections;
+
     @OneToMany(mappedBy = "tripexecution")
     private Collection<Incident> incidents;
+
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -73,11 +86,14 @@ public class TripExecution {
     @ManyToOne
     @JoinColumn(name = "conductor_id", referencedColumnName = "id")
     private Conductor conductor;
+
     @ManyToOne
     @JoinColumn(name = "tripexecutionstatus_id", referencedColumnName = "id", nullable = false)
     private TripExecutionStatus tripexecutionstatus;
+
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
 

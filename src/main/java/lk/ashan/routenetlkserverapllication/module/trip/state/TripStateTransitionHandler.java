@@ -31,17 +31,13 @@ public class TripStateTransitionHandler {
         String currentStatusName = trip.getTripstatus().getName();
         String newStatusName = newStatus.getName();
         
-        log.info("Transitioning trip {} from {} to {}", 
-            trip.getId(), currentStatusName, newStatusName);
+        log.info("Transitioning trip {} from {} to {}", trip.getId(), currentStatusName, newStatusName);
         
-        // Execute exit behavior for current state
         executeOnExit(trip, currentStatusName);
         
-        // Validate transition is allowed
         TripState currentState = tripStatusFactory.getState(currentStatusName);
         currentState.transitionTo(trip, newStatus);
         
-        // Execute entry behavior for new state
         executeOnEnter(trip, newStatusName);
     }
     

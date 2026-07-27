@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Strategy for discontinuing a trip. This class handles the validation and state transition
+ * required to mark a trip as discontinued.
+ */
 @Component
 @RequiredArgsConstructor
 public class TripDiscontinuedStrategy {
@@ -20,13 +24,19 @@ public class TripDiscontinuedStrategy {
     private final TripStatusService tripStatusService;
     private final TripStateTransitionHandler tripStateTransitionHandler;
 
-
+    /**
+     * Discontinues a trip after performing necessary validations.
+     * Validations include checking for live trips and unsettled accounts.
+     *
+     * @param trip The trip to be discontinued.
+     * @throws BusinessRuleViolationException if there are live trips in progress
+     *                                        or completed trips with unsettled accounts.
+     */
     public void discontinueTrip(Trip trip) {
         List<TripExecution> tripExecutions = tripExecutionService.getTripExecutionByTripId(trip.getId());
 
-        // 1. Check for Active Journeys (The Hard Block)
         boolean hasLiveTrips = tripExecutions.stream()
-                .anyMatch(t -> t.getTripexecutionstatus().getName().equals("IN PROGRESS"));
+                .anyMatch(t -> t.getTripexecutionstatus().getName().equalsIgnoreCase("in progress"));
 
         if (hasLiveTrips) {
             throw new BusinessRuleViolationException(
@@ -34,10 +44,8 @@ public class TripDiscontinuedStrategy {
             );
         }
 
-        // 2. Check for Financial Integrity (The Audit Block)
-        // If a trip is COMPLETED but not yet SETTLED, we can't discontinue the route master
         boolean hasUnsettledAccounts = tripExecutions.stream()
-                .anyMatch(t -> t.getTripexecutionstatus().getName().equals("COMPLETED"));
+                .anyMatch(t -> t.getTripexecutionstatus().getName().equalsIgnoreCase("Completed"));
 
         if (hasUnsettledAccounts) {
             throw new BusinessRuleViolationException(
@@ -45,14 +53,6 @@ public class TripDiscontinuedStrategy {
             );
         }
 
-        // 3. Perform Cleanup (Future-proofing)
-        // Remove or Cancel all future/assigned trips that haven't happened
-//        List<String> removableStatuses = List.of("SCHEDULED", "ASSIGNED", "READY");
-//        tripExecutions.stream()
-//                .filter(t -> removableStatuses.contains(t.getTripexecutionstatus().getName()))
-//                .forEach(t -> tripExecutionService.deleteOrCancelExecution(t.getId()));
-
-        // 4. Final Transition
         Tripstatus discontinuedStatus = tripStatusService.getByName("Discontinued");
         tripStateTransitionHandler.transitionTo(trip, discontinuedStatus);
     }

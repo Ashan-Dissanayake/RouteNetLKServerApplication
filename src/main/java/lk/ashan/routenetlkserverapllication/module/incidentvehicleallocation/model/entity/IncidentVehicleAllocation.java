@@ -5,7 +5,14 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Incident;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,6 +24,12 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "incidentvehicleallocation", schema = "routenetlk")
+//@FilterDef(name = "branchAndUserFilter", parameters = {
+//        @ParamDef(name = "branchId", type = Integer.class),
+//        @ParamDef(name = "userId", type = Integer.class)
+//})
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class IncidentVehicleAllocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -34,16 +47,23 @@ public class IncidentVehicleAllocation {
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id", nullable = false)
     private Vehicle vehicle;
+
     @ManyToOne
     @JoinColumn(name = "providedbranch_id", referencedColumnName = "id", nullable = false)
     private Branch providedbranch;
+
+    @CurrentBranch
+    @ManyToOne
+    @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
+    private Branch branch;
 
     @ManyToOne
     @JoinColumn(name = "incidentvehicleallocationstatus_id", referencedColumnName = "id", nullable = false)
     private IncidentVehicleAllocationStatus incidentvehicleallocationstatus;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
 

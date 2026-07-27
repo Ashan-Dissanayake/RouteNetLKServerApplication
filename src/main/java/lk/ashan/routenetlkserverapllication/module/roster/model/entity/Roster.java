@@ -3,8 +3,16 @@ package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.shared.audit.AuditorAwareImpl;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,6 +25,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Roster  extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,6 +38,8 @@ public class Roster  extends BaseEntity {
     @Basic
     @Column(name = "doendofweek")
     private LocalDate doendofweek;
+
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -35,8 +47,9 @@ public class Roster  extends BaseEntity {
     @OneToMany(mappedBy = "roster", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private Collection<RosterShift> rostershifts;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
 
     @Override

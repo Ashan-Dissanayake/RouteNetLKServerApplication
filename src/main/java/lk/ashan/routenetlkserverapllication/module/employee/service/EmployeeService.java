@@ -19,6 +19,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeV
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,7 @@ public class EmployeeService {
 
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
 
         EmployeeValidationContext context = employeeContextBuilder.buildForCreate(request);
@@ -117,6 +119,7 @@ public class EmployeeService {
 
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
         Employee existing = employeeRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
@@ -165,18 +168,6 @@ public class EmployeeService {
             driver.setCrewstatus(new CrewStatus(4,"Inactive"));
         }
         driverRepository.saveAll(drivers);
-
-        return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<Integer> activateEmployees(List<Integer> branchIds) {
-        List<Employee> employees = employeeRepository.findAllById(branchIds);
-
-        if (employees.isEmpty())
-            throw new ResourceNotFoundException("No employees found for the given IDs");
-
-        employeeRepository.restoreAll(branchIds);
 
         return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
     }

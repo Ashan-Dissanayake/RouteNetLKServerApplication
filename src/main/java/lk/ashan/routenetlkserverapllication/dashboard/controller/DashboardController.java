@@ -25,30 +25,53 @@ public class DashboardController {
 
     private final DashboardService dashboardService;
 
+//    @GetMapping("/overview")
+//    public ResponseEntity<APISuccessResponse<DashboardOverviewDto>> getDepotDashboardOverview(
+//            @AuthenticationPrincipal CustomUserPrincipal principal) // 1. Catch the wrapper type cleanly
+//    {
+//        // Safety check: Ensure the security context principal exists
+//        if (principal == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        // 2. Extract your rich database entity directly from the custom wrapper principal
+//        User loggedInUser = principal.getUserEntity();
+//
+//        // 3. Extract the operational branch ID via the authenticated user's profile
+//        // Safe check: Ensure user and their employee/branch associations are present
+//        if (loggedInUser.getEmployee() == null || loggedInUser.getEmployee().getBranch() == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        Integer branchId = loggedInUser.getEmployee().getBranch().getId();
+//
+//        // 4. Fetch the aggregated dashboard metrics for this branch
+//        DashboardOverviewDto overviewData = dashboardService.getDepotDashboardOverviewDummy(branchId);
+//
+//        // 5. Return a clean HTTP 200 OK using the unified API response wrapper
+//        return APIResponseBuilder.ok(overviewData);
+//    }
+
     @GetMapping("/overview")
     public ResponseEntity<APISuccessResponse<DashboardOverviewDto>> getDepotDashboardOverview(
-            @AuthenticationPrincipal CustomUserPrincipal principal) // 1. Catch the wrapper type cleanly
-    {
-        // Safety check: Ensure the security context principal exists
+            @AuthenticationPrincipal CustomUserPrincipal principal) {
+
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // 2. Extract your rich database entity directly from the custom wrapper principal
         User loggedInUser = principal.getUserEntity();
-
-        // 3. Extract the operational branch ID via the authenticated user's profile
-        // Safe check: Ensure user and their employee/branch associations are present
         if (loggedInUser.getEmployee() == null || loggedInUser.getEmployee().getBranch() == null) {
             return ResponseEntity.badRequest().build();
         }
 
         Integer branchId = loggedInUser.getEmployee().getBranch().getId();
 
-        // 4. Fetch the aggregated dashboard metrics for this branch
-        DashboardOverviewDto overviewData = dashboardService.getDepotDashboardOverview(branchId);
+        // Dummy data
+        DashboardOverviewDto overviewData = dashboardService.getDepotDashboardOverviewDummy(branchId);
 
-        // 5. Return a clean HTTP 200 OK using the unified API response wrapper
+        // Wrap inside API response envelope
         return APIResponseBuilder.ok(overviewData);
     }
+
 }

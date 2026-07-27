@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing Trip Types.
+ * Provides methods to retrieve trip type data.
+ */
 @Service
 @RequiredArgsConstructor
 public class TripTypeService {
@@ -17,6 +21,11 @@ public class TripTypeService {
     private final TripTypeRepository triptypeRepository;
     private final TripTypeMapper triptypeMapper;
 
+    /**
+     * Retrieves all trip types.
+     *
+     * @return a list of TripTypeDto objects representing all trip types.
+     */
     @Transactional(readOnly = true)
     public List<TripTypeDto> getTripTypes() {
         return triptypeMapper.toDtoList(triptypeRepository.findAll());

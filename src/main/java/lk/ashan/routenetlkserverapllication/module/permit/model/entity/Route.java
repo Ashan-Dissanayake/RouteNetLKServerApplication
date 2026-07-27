@@ -5,8 +5,12 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamili
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,9 +46,10 @@ public class Route {
     @OneToMany(mappedBy = "route")
     private Collection<Permite> permites;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+//    @CreatedBy
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
+//    private User user;
 
     @ManyToOne
     @JoinColumn(name = "routetype_id", referencedColumnName = "id", nullable = false)

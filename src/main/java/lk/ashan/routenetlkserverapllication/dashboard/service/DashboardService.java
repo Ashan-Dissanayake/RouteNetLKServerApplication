@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -116,6 +117,74 @@ public class DashboardService {
         }
 
         return coverageList;
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardOverviewDto getDepotDashboardOverviewDummy(Integer branchId) {
+
+        // 1. Dummy KPI Metrics
+        DashboardKpiDto kpis = DashboardKpiDto.builder()
+                .activeTrips(12)
+                .pendingIncidents(3)
+                .standbyDrivers(5)
+                .standbyConductors(4)
+                .build();
+
+        // 2. Dummy Revenue
+        DepotRevenueDto revenue = DepotRevenueDto.builder()
+                .totalTickets(250L)
+                .cashCollected(new BigDecimal("125000.50"))
+                .digitalPayments(new BigDecimal("42000.75"))
+                .isReconciled(true)
+                .build();
+
+        // 3. Dummy Active Incidents
+        List<ActiveIncidentDto> incidentDTOs = Arrays.asList(
+                ActiveIncidentDto.builder()
+                        .routeNumber("1-Colombo-Kandy")
+                        .vehicleNumber("NB-4567")
+                        .issueDescription("Engine overheating detected during trip")
+                        .status("Active")
+                        .build(),
+                ActiveIncidentDto.builder()
+                        .routeNumber("2-Colombo-Matara")
+                        .vehicleNumber("NC-2234")
+                        .issueDescription("Flat tire reported near Galle")
+                        .status("Active")
+                        .build(),
+                ActiveIncidentDto.builder()
+                        .routeNumber("45-Kandy-Jaffna")
+                        .vehicleNumber("ND-7890")
+                        .issueDescription("Brake inspection required")
+                        .status("Pending")
+                        .build()
+        );
+
+        // 4. Dummy Shift Coverage
+        List<ShiftCoverageDto> shiftCoverageDTOs = Arrays.asList(
+                ShiftCoverageDto.builder()
+                        .shiftName("Morning Shift")
+                        .timeRange("06:00 - 14:00")
+                        .requiredCount(10)
+                        .assignedCount(9)
+                        .status("UNDERSTAFFED")
+                        .build(),
+                ShiftCoverageDto.builder()
+                        .shiftName("Evening Shift")
+                        .timeRange("14:00 - 22:00")
+                        .requiredCount(8)
+                        .assignedCount(8)
+                        .status("FULLY STAFFED")
+                        .build()
+        );
+
+        // 5. Assemble Dummy Response
+        return DashboardOverviewDto.builder()
+                .kpis(kpis)
+                .revenue(revenue)
+                .activeIncidents(incidentDTOs)
+                .todayShiftCoverage(shiftCoverageDTOs)
+                .build();
     }
 
 }

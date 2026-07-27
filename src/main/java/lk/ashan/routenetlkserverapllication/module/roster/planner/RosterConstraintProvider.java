@@ -26,7 +26,7 @@ public class RosterConstraintProvider implements ConstraintProvider {
                 noOverlappingShifts(factory),
                 designationMatch(factory),
                 oneDriverOneConductorPerShift(factory),
-                routeFamiliarityMatchConstraint(factory),
+                //routeFamiliarityMatchConstraint(factory),
 
                 // Soft Constraints (Preferences)
                 fairWorkloadDistribution(factory)

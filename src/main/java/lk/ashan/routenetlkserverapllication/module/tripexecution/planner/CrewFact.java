@@ -11,5 +11,5 @@ public class CrewFact {
     private Integer id;
     private Integer familiarityLevel;
     private Integer licenseCategory;
-    private Integer totalDutyMinutes;
+    private Integer totalDutyMinutes = 0;
 }

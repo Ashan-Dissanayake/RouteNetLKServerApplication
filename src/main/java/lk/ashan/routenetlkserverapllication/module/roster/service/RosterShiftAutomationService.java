@@ -1,5 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
+import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
+import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Designation;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.DesignationRepository;
 import lk.ashan.routenetlkserverapllication.module.roster.event.RosterShiftAssignmentEvent;
@@ -10,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepos
 import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RosterShiftAutomationService {
 
     private final TripRepository tripRepository;
@@ -27,6 +31,7 @@ public class RosterShiftAutomationService {
     private final DesignationRepository designationRepository;
     private final RosterRepository rosterRepository;
     private final ApplicationEventPublisher eventPublisher;
+
 
     @Transactional
     public void generateWeeklyRosterSlots(Roster roster) {
@@ -36,9 +41,10 @@ public class RosterShiftAutomationService {
         LocalDate currentDay = roster.getDostartofweek();
         LocalDate endDate = roster.getDoendofweek();
 
-        // Initialize the collection if it's null to avoid NPE
         if (roster.getRostershifts() == null) {
             roster.setRostershifts(new ArrayList<>());
+        } else {
+            roster.getRostershifts().clear();
         }
 
         while (!currentDay.isAfter(endDate)) {
@@ -46,9 +52,9 @@ public class RosterShiftAutomationService {
 
                 int demandCount = (int) tripRepository.countDistinctPermitsForShift(
                         roster.getBranch().getId(),
-                        shift.getTostart(),
-                        shift.getToend()
+                        shift.getId()
                 );
+
 
                 int requiredCount = (demandCount > 0) ? demandCount + 1 : 0;
 
@@ -59,7 +65,6 @@ public class RosterShiftAutomationService {
                     rostershift.setDoshift(currentDay);
                     rostershift.setRequiredemployeecount(requiredCount);
 
-                    // Use the helper method to link child to parent
                     roster.addRosterShift(rostershift);
                 }
             }

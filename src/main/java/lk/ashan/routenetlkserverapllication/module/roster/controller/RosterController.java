@@ -28,7 +28,7 @@ public class RosterController {
         return APIResponseBuilder.list(rosterSummaryDtoList,rosterSummaryDtoList.size());
     }
 
-    @PreAuthorize("hasAuthority('roster-create')")
+    @PreAuthorize("hasAuthority('roster-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<RosterSummaryDto>> createRoster(
             @RequestBody @Valid RosterRequestDto rosterRequestDto)

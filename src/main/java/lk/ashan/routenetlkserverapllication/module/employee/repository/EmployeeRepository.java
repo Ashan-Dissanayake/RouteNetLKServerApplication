@@ -39,13 +39,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT e FROM Employee e WHERE e.designation.name = :designation AND e.conductor IS NULL")
     List<Employee> findEmployeesWithoutConductor(@Param("designation") String designation);
 
-    @Query("SELECT e FROM Employee e " +
-            "WHERE e.employeestatus.name = 'Active' " +
-            "AND e.deleted = false " +
-            "AND e.designation.id IN :designationIds")
-    List<Employee> findActiveEmployeesByDesignations(@Param("designationIds") List<Integer> designationIds);
-
-
     @Query("SELECT e.id as id, e.fullname as fullname, e.designation.id as designationId, " +
             "COALESCE(d.routefamiliaritylevel.id, c.routefamiliaritylevel.id) as familiarityLevel " +
             "FROM Employee e " +

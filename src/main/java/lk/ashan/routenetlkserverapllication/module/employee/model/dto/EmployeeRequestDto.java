@@ -29,8 +29,8 @@ public class EmployeeRequestDto {
     private  String callingname;
 
     @NotBlank(message = "NIC is mandatory")
-    @Pattern(regexp = "^(([\\d]{9}[vVxX])|([\\d]{12}))$", message = "Invalid NIC")
-    private  String nic;
+    @Pattern(regexp = "^(\\d{9}[V]|\\d{12})$", message = "Invalid NIC")
+    private String nic;
 
     @NotNull(message = "Gender is mandatory")
     private  GenderDto gender;

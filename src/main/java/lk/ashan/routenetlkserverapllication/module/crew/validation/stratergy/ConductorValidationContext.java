@@ -11,6 +11,8 @@ public class ConductorValidationContext {
     private Integer employeeId;
     private LocalDate medicalIssued;
     private LocalDate medicalExpired;
+    private String routeFamiliarityLevel;
+    private String crewStatus;
 }
 
 

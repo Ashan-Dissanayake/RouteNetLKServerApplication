@@ -7,8 +7,15 @@ import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import java.util.Collection;
@@ -20,6 +27,12 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+//@FilterDef(name = "branchAndUserFilter", parameters = {
+//        @ParamDef(name = "branchId", type = Integer.class),
+//        @ParamDef(name = "userId", type = Integer.class)
+//})
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Vehicle extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -43,6 +56,7 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "vehiclestatus_id", referencedColumnName = "id", nullable = false)
     private VehicleStatus vehiclestatus;
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id", referencedColumnName = "id", nullable = false)
     private Branch branch;
@@ -52,21 +66,22 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "model_id", referencedColumnName = "id", nullable = false)
     private Model model;
-
     @OneToMany(mappedBy = "vehicle")
     private Collection<Permite> permites;
-
     @OneToMany(mappedBy = "vehicle")
     private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
-
     @OneToMany(mappedBy = "vehicle")
     private Collection<VehicleService> vehicleServices;
-
     @OneToMany(mappedBy = "vehicle")
     private Collection<TripExecution> tripExecutions;
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
+
+    @Basic
+    @Column(name = "deleted")
+    private Boolean deleted;
 
     @Override
     public boolean equals(Object o) {
@@ -80,4 +95,6 @@ public class Vehicle extends BaseEntity {
     public int hashCode() {
         return Objects.hash(id, number,mileage, remarks);
     }
+
+
 }

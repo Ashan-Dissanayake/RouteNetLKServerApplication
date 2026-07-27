@@ -11,4 +11,5 @@ public class ShiftSummaryDto {
     private String name;
     private LocalTime tostart;
     private LocalTime toend;
+    private String shiftFullName;
 }

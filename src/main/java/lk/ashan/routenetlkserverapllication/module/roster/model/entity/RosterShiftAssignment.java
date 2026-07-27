@@ -19,12 +19,15 @@ public class RosterShiftAssignment {
     @Id
     @Column(name = "id")
     private Integer id;
+
     @ManyToOne
     @JoinColumn(name = "rostershift_id", referencedColumnName = "id", nullable = false)
     private RosterShift rostershift;
+
     @ManyToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
+
     @ManyToOne
     @JoinColumn(name = "rostershiftassignmentstatus_id", referencedColumnName = "id", nullable = false)
     private RosterShiftAssignmentStatus rostershiftassignmentstatus;

@@ -2,8 +2,13 @@ package lk.ashan.routenetlkserverapllication.module.roster.service;
 
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
+import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
+import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.projection.EmployeeFamiliarityProjection;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.event.RosterAssignmentConfirmedEvent;
 import lk.ashan.routenetlkserverapllication.module.roster.event.RosterShiftAssignmentEvent;
 import lk.ashan.routenetlkserverapllication.module.roster.mapper.RosterAssignmentMapper;
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterShiftAssignmentResponseDto;
@@ -21,6 +26,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +48,10 @@ public class RosterShiftAssignmentService {
     private final TripRepository tripRepository;
     private final RosterAssignmentMapper rosterAssignmentMapper;
     private final RosterShiftRepository rosterShiftRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
+    private final DriverRepository driverRepository;
+    private final ConductorRepository conductorRepository;
 
     @Qualifier("rosterSolver")
     private final SolverManager<RosterShiftAssignmentSolution, Integer> solverManager;
@@ -68,13 +78,35 @@ public class RosterShiftAssignmentService {
         Integer branchId = entities.get(0).getRostershift().getRoster().getBranch().getId();
         List<Integer> targetDesignations = List.of(1, 2); // 1=Driver, 2=Conductor
 
-        List<EmployeeFamiliarityProjection> employeeResults =
-                employeeRepository.findActiveEmployeesWithFamiliarity(branchId, targetDesignations);
+        List<EmployeeFact> employeeFacts = new ArrayList<>();
 
-        // Use the mapper to convert the Projection results into Solver Facts
-        List<EmployeeFact> employeeFacts = employeeResults.stream()
-                .map(rosterAssignmentMapper::toFact)
-                .toList();
+        List<Driver> drivers = driverRepository.findAvailableDrivers(branchId);
+
+        drivers.forEach(driver -> {
+            employeeFacts.add(
+                    new EmployeeFact(
+                            driver.getId(),
+                            driver.getEmployee().getFullname(),
+                            1,
+                            driver.getRoutefamiliaritylevel().getId()
+                    )
+            );
+        });
+
+
+        List<Conductor> conductors =
+                conductorRepository.findAvailableConductors(branchId);
+
+        conductors.forEach(conductor -> {
+            employeeFacts.add(
+                    new EmployeeFact(
+                            conductor.getId(),
+                            conductor.getEmployee().getFullname(),
+                            2,
+                            conductor.getRoutefamiliaritylevel().getId()
+                    )
+            );
+        });
 
         // 3. Prepare Planning Entities and dynamically set Familiarity Requirements
         List<RosterShiftAssignmentPlanning> planningEntities = entities.stream()
@@ -189,6 +221,21 @@ public class RosterShiftAssignmentService {
         rosterShiftAssignmentStateTransitionHandler.transitionTo(assignment, confirmedStatus);
 
         assignmentRepository.save(assignment);
+
+//        eventPublisher.publishEvent(
+//                new RosterAssignmentConfirmedEvent(
+//                        assignment.getId(),
+//                        assignment.getEmployee().getId()
+//                )
+//        );
+
+
+        log.info(
+                "Manager confirmed assignment ID: {} for Employee: {}",
+                assignment.getId(),
+                assignment.getEmployee().getFullname()
+        );
+
         log.info("Manager confirmed assignment ID: {} for Employee: {}",
                 assignment.getId(), assignment.getEmployee().getFullname());
     }

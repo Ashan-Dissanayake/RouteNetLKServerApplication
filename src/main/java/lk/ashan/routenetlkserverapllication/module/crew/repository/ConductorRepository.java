@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.repository;
 
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for managing `Conductor` entities.
@@ -29,4 +31,19 @@ public interface ConductorRepository extends JpaRepository<Conductor, Integer> {
             "WHERE c.employee.branch.id = :branchId " +
             "AND c.crewstatus.name = 'Standby'")
     long countStandbyConductorsByBranch(@Param("branchId") Integer branchId);
+
+    boolean existsByEmployeeId(Integer employeeId);
+
+    boolean existsByEmployeeIdAndIdNot(Integer employeeId, Integer id);
+
+    Optional<Conductor> findByEmployeeId(Integer id);
+
+    @Query("""
+    SELECT c
+    FROM Conductor c
+    JOIN FETCH c.employee e
+    WHERE e.branch.id = :branchId
+    AND e.employeestatus.name = 'Active'
+    """)
+    List<Conductor> findAvailableConductors(@Param("branchId") Integer branchId);
 }

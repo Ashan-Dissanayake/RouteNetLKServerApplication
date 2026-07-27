@@ -6,6 +6,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.Trip
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.repository.VehicleServiceRepository;
 import lk.ashan.routenetlkserverapllication.report.model.dto.*;
 import lk.ashan.routenetlkserverapllication.report.model.projection.*;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class AnalyticsService {
     private final VehicleServiceRepository vehicleServiceRepository;
     private final IncidentRepository incidentRepository;
 
+    @DisableUserFilter
     public Report1ResponseDto getFleetDispatchAndBreakdownMetrics() {
         // 1. Define standard order of days matching MySQL's WEEKDAY() (0 = Monday, 6 = Sunday)
         List<String> days =
@@ -59,6 +61,7 @@ public class AnalyticsService {
                 .build();
     }
 
+    @DisableUserFilter
     public Report2ResponseDto getDepotRevenueMetrics() {
         List<Report2Projection> records = fareCollectionRepository.getDepotFinancialReconciliationMetrics();
 
@@ -79,13 +82,24 @@ public class AnalyticsService {
                 .build();
     }
 
+
+    @DisableUserFilter
     public Report3ResponseDto getMaintenanceTrendsMetrics() {
         List<Report3Projection> records = vehicleServiceRepository.getMaintenanceLifecycleMetrics();
 
-        List<String> weeks = records.stream().map(Report3Projection::getWeekLabel).collect(Collectors.toList());
-        List<Integer> completed = records.stream().map(Report3Projection::getCompletedServices).collect(Collectors.toList());
-        List<Integer> pending = records.stream().map(Report3Projection::getPendingBacklog).collect(Collectors.toList());
+        List<String> weeks = records.stream()
+                .map(Report3Projection::getWeekLabel)
+                .collect(Collectors.toList());
 
+        List<Integer> completed = records.stream()
+                .map(Report3Projection::getCompletedServices)
+                .collect(Collectors.toList());
+
+        List<Integer> pending = records.stream()
+                .map(Report3Projection::getPendingBacklog)
+                .collect(Collectors.toList());
+
+        // Reverse to show oldest → latest
         Collections.reverse(weeks);
         Collections.reverse(completed);
         Collections.reverse(pending);
@@ -97,6 +111,7 @@ public class AnalyticsService {
                 .build();
     }
 
+    @DisableUserFilter
     public Report4ResponseDto getDynamicPerformanceMetrics(Date start, Date end) {
         List<Report4Projection> records = tripExecutionRepository.getDynamicPerformanceMetrics(start, end);
 
@@ -117,6 +132,7 @@ public class AnalyticsService {
                 .build();
     }
 
+    @DisableUserFilter
     public Report5ResponseDto getIncidentDistributionMetrics() {
         List<Report5Projection> records = incidentRepository.getIncidentDistributionMetrics();
 
@@ -130,3 +146,6 @@ public class AnalyticsService {
     }
 
 }
+
+//    Integer[] dummysuccessfulTripsArray = {12, 15, 9, 20, 18, 10, 5};
+//    Integer[] dummybreakdownCountsArray = {2, 1, 3, 0, 4, 2, 1};

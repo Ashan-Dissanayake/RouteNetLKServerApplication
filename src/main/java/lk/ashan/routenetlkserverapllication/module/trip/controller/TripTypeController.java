@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing trip types.
+ * Provides endpoints for retrieving trip type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/trip-types")
@@ -24,6 +28,13 @@ public class TripTypeController {
 
     private final TripTypeService tripTypeService;
 
+    /**
+     * Retrieves a list of trip type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of TripTypeDto objects
+     *         and the total count of trip types.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripTypeDto>>> get() {

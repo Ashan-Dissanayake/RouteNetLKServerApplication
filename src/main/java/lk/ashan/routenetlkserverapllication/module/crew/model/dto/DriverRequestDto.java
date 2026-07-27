@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
+import jakarta.validation.constraints.Pattern;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,12 +18,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 @ToString
-//@ValidLicenseCategoryLicenseNumber
 public class DriverRequestDto {
 //    @NotNull(message = "Number can not be empty")
 //    @Pattern(regexp = "^DRV-\\d{4}$",message = "Invalid driver number")
 //    private String number;
 
+    @Pattern(regexp = "^B\\d{7}$",message = "Invalid License Number")
     @NotNull(message = "License number can not be empty")
     private String licensenumber;
 

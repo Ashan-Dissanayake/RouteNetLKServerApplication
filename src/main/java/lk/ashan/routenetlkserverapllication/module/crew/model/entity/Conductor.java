@@ -1,10 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.crew.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,6 +22,8 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Conductor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -44,9 +52,15 @@ public class Conductor {
     @JoinColumn(name = "crewstatus_id", referencedColumnName = "id", nullable = false)
     private CrewStatus crewstatus;
 
+    @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id",nullable = false)
     private User user;
+
+    @CurrentBranch
+    @ManyToOne
+    @JoinColumn(name = "branch_id", referencedColumnName = "id",nullable = false)
+    private Branch branch;
 
     @OneToMany(mappedBy = "conductor")
     private Collection<TripExecution> tripExecutions;

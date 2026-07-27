@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing operational calendars.
+ * Provides endpoints for retrieving operational calendar summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/op-calenders")
@@ -24,6 +28,13 @@ public class OpCalenderController {
 
     private final OpCalenderService opCalenderService;
 
+    /**
+     * Retrieves a list of operational calendar summaries.
+     *
+     * @return a ResponseEntity containing a list of OpCalenderSummaryDto objects
+     *         wrapped in an APISuccessResponse, along with the HTTP status.
+     * @throws SecurityException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<OpCalenderSummaryDto>>> get() {

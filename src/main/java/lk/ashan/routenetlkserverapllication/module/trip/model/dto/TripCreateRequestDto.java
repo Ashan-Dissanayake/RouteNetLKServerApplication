@@ -1,7 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
+import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -21,64 +21,28 @@ import java.time.LocalTime;
 @Builder
 public class TripCreateRequestDto {
 
-    /**
-     * The branch associated with the trip.
-     * This field is mandatory.
-     */
-    @NotNull(message = "Branch is mandatory")
-    private BranchSummaryDto branch;
-
-    /**
-     * The type of the trip.
-     * This field is mandatory.
-     */
     @NotNull(message = "Trip type is mandatory")
     private TripTypeDto triptype;
 
-    /**
-     * The permit associated with the trip.
-     * This field is mandatory.
-     */
     @NotNull(message = "Permit is mandatory")
     private PermitSummaryRequestDto permite;
 
-    /**
-     * The departure time of the trip.
-     * This field is mandatory.
-     */
     @NotNull(message = "Departure time is mandatory")
     private LocalTime todepature;
 
-    /**
-     * The arrival time of the trip.
-     * This field is mandatory.
-     */
     @NotNull(message = "Arrival time is mandatory")
     private LocalTime toarrival;
 
-    /**
-     * Additional remarks about the trip.
-     * This field is optional.
-     */
     private String remarks;
 
-    /**
-     * The status of the trip.
-     * This field is optional.
-     */
     private TripStatusDto tripstatus;
 
-    /**
-     * The origin terminal of the trip.
-     * This field is mandatory.
-     */
+    @NotNull(message = "Shift is Mandatory")
+    private Shift shift;
+
     @NotNull(message = "Origin terminal is mandatory")
     private OriginTerminalDto originterminal;
 
-    /**
-     * The operational calendar associated with the trip.
-     * This field is mandatory.
-     */
     @NotNull(message = "OP Calender is mandatory")
     private OpCalenderSummaryDto opcalender;
 }

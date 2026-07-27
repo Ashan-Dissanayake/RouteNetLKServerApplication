@@ -16,18 +16,18 @@ import java.time.LocalDate;
 @ToString
 public class PermitRequestDto {
     @NotBlank(message = "Number is mandatory")
-    @Pattern(regexp = "^(\\d{4}|[A-Z]{3}-[A-Z]{2}\\d+-\\d+(?:-\\d+)*(?:\\\\[A-Z]{3}-[A-Z]{2}\\d+(?:-\\d+)*)*)$",message = "Invalid Permit Number")
+    @Pattern(regexp = "^(?:[AF]\\d{5}|\\d{4})$",message = "Invalid Permit Number")
     private String number;
     @NotNull(message = "Vehicle is mandatory")
     private VehicleSummaryDto vehicle;
     @NotNull(message = "Date of issued is mandatory")
     @PastOrPresent(message = "Issued date cannot be in the future")
     private LocalDate doissued;
-    @NotNull(message = "Date of Exp is mandatory")
-    @Future(message = "Exp date cannot be in the past or present")
-    private LocalDate doexpired;
-    @NotNull(message = "Branch is mandatory")
-    private BranchSummaryDto branch;
+
+    @NotNull(message = "Trip count is mandatory")
+    @Positive(message = "Negative values are not allowed")
+    private Integer notripsperday;
+
     @NotNull(message = "Permit status is mandatory")
     private PermitStatusDto permitestatus;
     @NotNull(message = "Service type is mandatory")

@@ -7,8 +7,15 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
+import lk.ashan.routenetlkserverapllication.shared.audit.BranchAnnotationListener;
+import lk.ashan.routenetlkserverapllication.shared.audit.CurrentBranch;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -21,6 +28,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Filter(name = "branchFilter", condition = "branch_id = :branchId")
+@EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Employee extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -59,6 +68,8 @@ public class Employee extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "gender_id", referencedColumnName = "id", nullable = false)
     private Gender gender;
+
+    @CurrentBranch
     @ManyToOne
     @JoinColumn(name = "branch_id",referencedColumnName = "id",nullable = false)
     private Branch branch;
@@ -85,6 +96,7 @@ public class Employee extends BaseEntity {
     @OneToMany(mappedBy = "employee")
     private Collection<RosterShiftAssignment> rosterShiftAssignments;
 
+    @CreatedBy
     @OneToMany(mappedBy = "employee")
     private Collection<User> users;
 

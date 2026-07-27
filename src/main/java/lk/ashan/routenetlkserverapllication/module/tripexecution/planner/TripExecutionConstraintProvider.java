@@ -83,28 +83,40 @@ public class TripExecutionConstraintProvider implements ConstraintProvider {
                 .asConstraint("Insufficient rest");
     }
 
-    // 7. Driver Workload Fairness
     Constraint fairnessDriverDuty(ConstraintFactory factory) {
         return factory.forEach(TripExecutionPlanning.class)
-                .groupBy(TripExecutionPlanning::getDriver,
-                        // Use sumLong since getDurationMinutes returns long
-                        ConstraintCollectors.sumLong(TripExecutionPlanning::getDurationMinutes))
+                .groupBy(
+                        TripExecutionPlanning::getDriver,
+                        ConstraintCollectors.sumLong(TripExecutionPlanning::getDurationMinutes)
+                )
                 .penalize(HardSoftScore.ONE_SOFT, (driver, newMinutes) -> {
-                    // Ensure this matches the getter generated for 'totalDutyMinutes' in CrewFact
-                    long total = driver.getTotalDutyMinutes() + newMinutes;
-                    // Quadratic penalty for load balancing
+
+                    long existingMinutes = driver.getTotalDutyMinutes() == null
+                            ? 0
+                            : driver.getTotalDutyMinutes();
+
+                    long total = existingMinutes + newMinutes;
+
                     return (int) (total * total);
                 })
                 .asConstraint("Driver workload fairness");
     }
 
-    // 8. Conductor Workload Fairness
+
     private Constraint fairnessConductorDuty(ConstraintFactory factory) {
         return factory.forEach(TripExecutionPlanning.class)
-                .groupBy(TripExecutionPlanning::getConductor,
-                        ConstraintCollectors.sumLong(TripExecutionPlanning::getDurationMinutes))
+                .groupBy(
+                        TripExecutionPlanning::getConductor,
+                        ConstraintCollectors.sumLong(TripExecutionPlanning::getDurationMinutes)
+                )
                 .penalize(HardSoftScore.ONE_SOFT, (conductor, newMinutes) -> {
-                    long total = conductor.getTotalDutyMinutes() + newMinutes;
+
+                    long existingMinutes = conductor.getTotalDutyMinutes() == null
+                            ? 0
+                            : conductor.getTotalDutyMinutes();
+
+                    long total = existingMinutes + newMinutes;
+
                     return (int) (total * total);
                 })
                 .asConstraint("Conductor workload fairness");

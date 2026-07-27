@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterReques
 import lk.ashan.routenetlkserverapllication.module.roster.model.dto.RosterSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
+import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 public class RosterService{
 
     private final RosterRepository rosterRepository;
+    private final TripRepository tripRepository;
     private final RosterMapper rosterMapper;
     private final RosterShiftAutomationService rosterShiftAutomationService;
 
@@ -46,19 +48,34 @@ public class RosterService{
             throw new BusinessRuleViolationException("A roster must span exactly 7 days.");
         }
 
-        // 2. Check for overlapping rosters
-        boolean exists = rosterRepository.existsByBranchIdAndDateRange(
+        boolean exists = rosterRepository.existsOverlappingRoster(
                 requestDto.getBranch().getId(),
                 requestDto.getDostartofweek(),
                 requestDto.getDoendofweek()
         );
 
         if (exists) {
-            throw new BusinessRuleViolationException("A roster already exists for this branch.");
+            throw new BusinessRuleViolationException(
+                    "A roster already exists for this branch during the selected period."
+            );
         }
 
         // 3. Map to Entity
         Roster roster = rosterMapper.toEntity(requestDto);
+
+
+        boolean hasActiveTrips = tripRepository.existsByBranchIdAndTripstatus_Name(
+                requestDto.getBranch().getId(),
+                "Active"
+        );
+
+        if (!hasActiveTrips) {
+            throw new BusinessRuleViolationException(
+                    "Cannot generate roster. No active trips available for this branch."
+            );
+        }
+
+
 
         // 4. Populate and Save everything at once
         rosterShiftAutomationService.generateWeeklyRosterSlots(roster);

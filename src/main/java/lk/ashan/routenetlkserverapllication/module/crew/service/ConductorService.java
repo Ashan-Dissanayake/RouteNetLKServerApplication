@@ -15,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Con
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,19 +85,19 @@ public class ConductorService {
      * @throws BusinessRuleViolationException if the crew status is not "ELIGIBLE" or the route familiarity level is not "LOW".
      */
     @Transactional
+    @DisableBranchFilter
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
 
         ConductorValidationContext context = conductorContextBuilder.buildForCreate(dto);
-
         validationStrategies.forEach(s -> s.validateCreate(context));
 
-        if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-            throw new BusinessRuleViolationException("New conductor must have status 'ELIGIBLE'");
-        }
-
-        if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-            throw new BusinessRuleViolationException("New conductor route familiarity must have 'LOW'");
-        }
+//        if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
+//            throw new BusinessRuleViolationException("New conductor must have status 'ELIGIBLE'");
+//        }
+//
+//        if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
+//            throw new BusinessRuleViolationException("New conductor route familiarity must have 'LOW'");
+//        }
 
         Conductor entity = conductorMapper.toEntity(dto);
         entity.setNumber(numberGeneratorService.nextConductorNumber());
@@ -113,6 +114,7 @@ public class ConductorService {
      * @throws ResourceNotFoundException if the conductor with the specified ID is not found.
      */
     @Transactional
+    @DisableBranchFilter
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
         Conductor existing = conductorRepository.findById(dto.getId())

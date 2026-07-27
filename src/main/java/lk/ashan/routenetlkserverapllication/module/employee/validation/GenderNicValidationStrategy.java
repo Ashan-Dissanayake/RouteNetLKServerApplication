@@ -25,17 +25,25 @@ public class GenderNicValidationStrategy implements EmployeeValidationStrategy {
     }
 
     private String extractGender(String nic) {
-        if (nic == null) throw new IllegalArgumentException("NIC cannot be null");
-        nic = nic.trim().toUpperCase();
+        if (nic == null) {
+            throw new BusinessRuleViolationException("NIC cannot be null.");
+        }
 
-        if (nic.matches("^\\d{12}$")) {
-            int dayCode = Integer.parseInt(nic.substring(4, 7));
-            return (dayCode > 500) ? "Female" : "Male";
+        String cleanedNic = nic.trim().toUpperCase();
+
+        int dayCode;
+
+        if (cleanedNic.matches("^\\d{12}$")) {
+            dayCode = Integer.parseInt(cleanedNic.substring(4, 7));
         }
-        if (nic.matches("^\\d{9}[VvXx]$")) {
-            int dayCode = Integer.parseInt(nic.substring(2, 5));
-            return (dayCode > 500) ? "Female" : "Male";
+        else if (cleanedNic.matches("^\\d{9}[V]$")) {
+            dayCode = Integer.parseInt(cleanedNic.substring(2, 5));
         }
-        throw new IllegalArgumentException("Invalid NIC format");
+        else {
+            throw new BusinessRuleViolationException("Invalid NIC format.");
+        }
+
+        return dayCode > 500 ? "Female" : "Male";
     }
+
 }

@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing origin terminals.
+ * Provides endpoints to retrieve origin terminal data.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/origin-terminals")
@@ -24,6 +28,12 @@ public class OriginTerminalController {
 
     private final OriginTerminalService originTerminalService;
 
+    /**
+     * Retrieves a list of origin terminal summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of OriginTerminalDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<OriginTerminalDto>>> get() {

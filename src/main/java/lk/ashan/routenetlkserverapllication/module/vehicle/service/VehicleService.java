@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
@@ -17,6 +16,8 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,22 +51,22 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
+    @DisableUserFilter
     public List<VehicleSummaryDto> getVehicleSummary(){
         return vehicleMapper.toSummaryDtoList(vehicleRepository.findAll());
     }
-
 
     @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
 
         String conditionrateid = params.get("ssconditionrate");
         String bustypeId = params.get("ssbustype");
+        String mileageRangeId = params.get("ssmileagerange");
 
         Stream<Vehicle> vehicleStream = vehicleRepository.findAll().stream();
 
         if (bustypeId != null) vehicleStream = vehicleStream.filter(v->v.getBustype().getId()==Integer.parseInt(bustypeId));
-        if (conditionrateid != null)
-            vehicleStream = vehicleStream.filter(v -> v.getConditionrate().getId() == Integer.parseInt(conditionrateid));
+        if (conditionrateid != null) vehicleStream = vehicleStream.filter(v -> v.getConditionrate().getId() == Integer.parseInt(conditionrateid));
 
         return vehicleMapper.toDtoList(vehicleStream.collect(Collectors.toList()));
 
@@ -79,6 +80,7 @@ public class VehicleService {
 
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request){
 
         if (vehicleRepository.existsByNumber(request.getNumber())) {
@@ -99,12 +101,15 @@ public class VehicleService {
 
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public VehicleDetailResponseDto updateVehicle(@Valid @NotNull VehicleUpdateRequestDto request) {
 
         Vehicle existingVehicle = vehicleRepository.findByMyId(request.getId());
 
-        if (request.getMileage() < existingVehicle.getMileage()) {
-            throw new BusinessRuleViolationException("Mileage cannot be less than current value.");
+        if (request.getMileage() != null && existingVehicle.getMileage() != null) {
+            if (request.getMileage() < existingVehicle.getMileage()) {
+                throw new BusinessRuleViolationException("Mileage cannot be less than current value.");
+            }
         }
 
         vehicleMapper.updateEntityFromDto(request,existingVehicle);
@@ -117,11 +122,11 @@ public class VehicleService {
             VehicleStatus targetStatus = vehicleStatusService.getById(request.getVehiclestatus().getId());
             vehicleStateTransitionHandler.transitionTo(existingVehicle, targetStatus);
         }
-
-        if (request.getBranch().getId()!=null){
-            Branch targetBranch = branchService.getById(request.getBranch().getId());
-            existingVehicle.setBranch(targetBranch);
-        }
+//
+//        if (request.getBranch().getId()!=null){
+//            Branch targetBranch = branchService.getById(request.getBranch().getId());
+//            existingVehicle.setBranch(targetBranch);
+//        }
 
         if (request.getBustype().getId()!=null){
             BusType targetBuType = busTypeService.getById(request.getBustype().getId());

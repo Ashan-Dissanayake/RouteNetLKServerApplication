@@ -1,6 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.branch.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.FareCollection;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.TicketMachine;
@@ -19,6 +21,9 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -31,6 +36,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "branch")
+@FilterDef(name = "branchFilter", parameters = {
+        @ParamDef(name = "branchId", type = Integer.class),
+})
 public class Branch extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -72,6 +80,12 @@ public class Branch extends BaseEntity {
     private Collection<Employee> employees;
 
     @OneToMany(mappedBy = "branch")
+    private Collection<Driver> drivers;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Conductor> conductors;
+
+    @OneToMany(mappedBy = "branch")
     private Collection<Vehicle> vehicles;
 
     @OneToMany(mappedBy = "branch")
@@ -85,6 +99,9 @@ public class Branch extends BaseEntity {
 
     @OneToMany(mappedBy = "providedbranch")
     private Collection<IncidentVehicleAllocation> incidentVehicleAllocations;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<IncidentVehicleAllocation> incidentVehicleAllocationss;
 
     @OneToMany(mappedBy = "branch")
     private Collection<Part> parts;

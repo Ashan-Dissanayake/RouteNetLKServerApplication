@@ -29,8 +29,6 @@ public interface IncidentRepository extends JpaRepository<Incident, Integer> {
             "GROUP BY WEEKDAY(doreported)", nativeQuery = true)
     List<Object[]> getIncidentsCountByDay(@Param("typeId") Integer typeId);
 
-
-
     // --- REPORT 5: Proportional Distribution of Fleet Route Incidents ---
     @Query(value = "SELECT it.name as incidentTypeName, COUNT(i.id) as incidentCount " +
             "FROM incident i " +

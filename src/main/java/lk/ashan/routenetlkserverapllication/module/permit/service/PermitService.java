@@ -21,6 +21,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRep
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,7 @@ public class PermitService {
 
     @Transactional
     @DisableSoftDeleteFilter
+    @DisableBranchFilter
     public PermitDetailResponseDto createPermit(@NotNull PermitCreateRequestDto requestDto) {
 
         if (permitRepository.existsByNumber(requestDto.getNumber())) {

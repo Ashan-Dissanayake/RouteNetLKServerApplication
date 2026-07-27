@@ -1,9 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.roster.model.entity;
 
 import jakarta.persistence.*;
+import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Objects;
 
 @Setter
@@ -29,6 +31,10 @@ public class Shift {
     @ManyToOne
     @JoinColumn(name = "shiftstatus_id", referencedColumnName = "id", nullable = false)
     private ShiftStatus shiftstatus;
+
+    @OneToMany(mappedBy = "shift")
+    private Collection<Trip> trips;
+
 
     @Override
     public boolean equals(Object o) {

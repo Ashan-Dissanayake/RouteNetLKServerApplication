@@ -189,34 +189,107 @@ public class MyUserDetailsService implements UserDetailsService {
 
         Set<String> permissions = switch (activeTestRole) {
 
-
             case SYSTEM_ADMIN -> Set.of(
+                    // Branch
                     "branch-add", "branch-delete", "branch-update", "branch-view",
+
+                    // Conductor
                     "conductor-add", "conductor-update", "conductor-view",
+
+                    // Driver
                     "driver-view",
+
+                    // Report
                     "report-view",
+
+                    // Employee
                     "employee-add", "employee-delete", "employee-update", "employee-view",
+
+                    // Fare Collection
                     "fare-collection-add", "fare-collection-reconcile", "fare-collection-view",
+
+                    // GRN
                     "grn-update", "grn-view",
-                    "incident-add", "incident-close", "incident-pending-allocation", "incident-resolve", "incident-start",
+
+                    // Incident
+                    "incident-add", "incident-close", "incident-pending-allocation",
+                    "incident-resolve", "incident-start",
                     "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled",
                     "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released",
                     "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
-                    "part-request-add", "part-request-approve", "part-request-reject", "part-request-update", "part-request-view",
+
+                    // Part Request
+                    "part-request-add", "part-request-approve", "part-request-reject",
+                    "part-request-update", "part-request-view",
+
+                    // Part
                     "part-add", "part-delete", "part-update", "part-view",
+
+                    // Permit
                     "permit-add", "permit-transfer", "permit-view",
+
+                    // Privilege
                     "privilege-assign", "privilege-revoke", "privilege-view",
-                    "roster-create", "roster-shift-assignment-approved", "roster-shift-assignment-cancelled",
+
+                    // Roster
+                    "roster-add", "roster-view",
+                    "roster-shift-assignment-approved", "roster-shift-assignment-cancelled",
                     "roster-shift-assignment-generate", "roster-shift-assignment-view",
-                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown",
-                    "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed",
-                    "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize",
-                    "trip-execution-view", "trip-suspend", "trip-view",
-                    "user-add", "user-change-password", "user-delete", "user-reset-password", "user-role-assign",
-                    "user-role-replace", "user-role-revoke", "user-role-view", "user-update", "user-view",
-                    "vehicle-view", "vehicle-add","vehicle-update", "vehicle-delete",
-                    "vehicle-service-add", "vehicle-service-complete", "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
+
+                    // Trip
+                    "trip-activate", "trip-add", "trip-discontinue",
+                    "trip-suspend", "trip-view",
+
+                    // Trip Execution
+                    "trip-execution-arrived", "trip-execution-breakdown",
+                    "trip-execution-cancelled", "trip-execution-checked-in",
+                    "trip-execution-completed", "trip-execution-dispatched",
+                    "trip-execution-generate-assignments", "trip-execution-initialize",
+                    "trip-execution-view",
+
+                    // User
+                    "user-add", "user-change-password", "user-delete",
+                    "user-reset-password", "user-role-assign", "user-role-replace",
+                    "user-role-revoke", "user-role-view", "user-update", "user-view",
+
+                    // Vehicle
+                    "vehicle-add", "vehicle-update", "vehicle-delete", "vehicle-view",
+
+                    // Vehicle Service
+                    "vehicle-service-add", "vehicle-service-complete",
+                    "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
             );
+
+
+
+//            case SYSTEM_ADMIN -> Set.of(
+//                    "branch-add", "branch-delete", "branch-update", "branch-view",
+//                    "conductor-add", "conductor-update", "conductor-view",
+//                    "driver-view",
+//                    "report-view",
+//                    "employee-add", "employee-delete", "employee-update", "employee-view",
+//                    "fare-collection-add", "fare-collection-reconcile", "fare-collection-view",
+//                    "grn-update", "grn-view",
+//                    "incident-add", "incident-close", "incident-pending-allocation", "incident-resolve", "incident-start",
+//                    "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled",
+//                    "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released",
+//                    "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
+//                    "part-request-add", "part-request-approve", "part-request-reject", "part-request-update", "part-request-view",
+//                    "part-add", "part-delete", "part-update", "part-view",
+//                    "permit-add", "permit-transfer", "permit-view",
+//                    "privilege-assign", "privilege-revoke", "privilege-view",
+//                    "roster-add", "roster-view",
+//                    "roster-shift-assignment-approved", "roster-shift-assignment-cancelled",
+//                    "roster-shift-assignment-generate", "roster-shift-assignment-view",
+//                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown",
+//                    "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed",
+//                    "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize",
+//                    "trip-execution-view", "trip-suspend", "trip-view",
+//                    "user-add", "user-change-password", "user-delete", "user-reset-password", "user-role-assign",
+//                    "user-role-replace", "user-role-revoke", "user-role-view", "user-update", "user-view",
+//                    "vehicle-view", "vehicle-add","vehicle-update", "vehicle-delete",
+//                    "vehicle-service-add", "vehicle-service-complete", "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
+//            );
 
 
 
@@ -232,10 +305,13 @@ public class MyUserDetailsService implements UserDetailsService {
                     "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled", "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released", "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
                     "part-request-approve", "part-request-reject", "part-request-view",
                     "part-view",
-                    "permit-view",
+                    "permit-view","permit-add","permit-transfer",
                     "privilege-view",
                     "roster-create", "roster-shift-assignment-approved", "roster-shift-assignment-cancelled", "roster-shift-assignment-generate", "roster-shift-assignment-view",
-                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown", "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed", "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize", "trip-execution-view", "trip-suspend", "trip-view",
+                    "trip-activate", "trip-add", "trip-discontinue","trip-suspend", "trip-view",
+                    "trip-execution-arrived", "trip-execution-breakdown", "trip-execution-cancelled",
+                    "trip-execution-checked-in", "trip-execution-completed", "trip-execution-dispatched",
+                    "trip-execution-generate-assignments", "trip-execution-initialize", "trip-execution-view",
                     "user-view",
                     "vehicle-add", "vehicle-delete", "vehicle-service-complete", "vehicle-service-view", "vehicle-update", "vehicle-view"
             );

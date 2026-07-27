@@ -1,5 +1,6 @@
  package lk.ashan.routenetlkserverapllication.module.employee.model.dto;
 
+import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lombok.*;
 
 @Getter
@@ -11,5 +12,6 @@ import lombok.*;
 public class EmployeeSummaryDto {
     Integer id;
     String callingname;
+    BranchSummaryDto branch;
 }
 

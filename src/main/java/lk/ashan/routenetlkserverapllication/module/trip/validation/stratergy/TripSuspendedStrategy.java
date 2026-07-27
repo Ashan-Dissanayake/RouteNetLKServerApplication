@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Strategy for suspending a trip. This class handles the validation and state transition
+ * required to suspend a trip.
+ */
 @Component
 @RequiredArgsConstructor
 public class TripSuspendedStrategy {
@@ -20,14 +24,17 @@ public class TripSuspendedStrategy {
     private final TripStatusService tripStatusService;
     private final TripStateTransitionHandler tripStateTransitionHandler;
 
-
+    /**
+     * Suspends the given trip if there are no active trips in progress.
+     *
+     * @param trip the trip to be suspended
+     * @throws BusinessRuleViolationException if there are trips currently 'IN PROGRESS'
+     */
     public void suspendTrip(Trip trip) {
-        // 1. Define the Hard Blockers
         List<String> hardBlockers = List.of("IN PROGRESS");
 
         List<TripExecution> tripExecutions = tripExecutionService.getTripExecutionByTripId(trip.getId());
 
-        // 2. Check if any active execution is a hard blocker
         boolean hasActiveTrips = tripExecutions.stream()
                 .anyMatch(t -> hardBlockers.contains(t.getTripexecutionstatus().getName()));
 
@@ -37,13 +44,6 @@ public class TripSuspendedStrategy {
             );
         }
 
-//         3. Handle Soft Blockers (Optional: Auto-cancel trips that haven't started)
-//        List<String> softBlockers = List.of("ASSIGNED", "READY");
-//         tripExecutions.stream()
-//                       .filter(t -> softBlockers.contains(t.getTripexecutionstatus().getName()))
-//                .forEach(t -> tripExecutionService.cancelExecution(t.getId(), "Master trip suspended"));
-
-        // 4. Update Master Status
         Tripstatus suspendStatus = tripStatusService.getByName("Suspended");
         tripStateTransitionHandler.transitionTo(trip, suspendStatus);
     }

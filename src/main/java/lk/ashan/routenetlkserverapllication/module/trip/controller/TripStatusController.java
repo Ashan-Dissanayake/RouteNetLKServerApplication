@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing trip statuses.
+ * Provides endpoints to retrieve trip status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/trip-statuses")
@@ -22,6 +26,12 @@ public class TripStatusController {
 
     private final TripStatusService tripStatusService;
 
+    /**
+     * Retrieves a list of trip status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of TripStatusDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripStatusDto>>> get() {

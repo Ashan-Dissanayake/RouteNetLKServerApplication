@@ -26,6 +26,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,7 @@ public class PartRequestService {
 
 
     @Transactional
+    @DisableBranchFilter
     public PartRequestDetailResponseDto createRequest(@NotNull PartRequestCreateRequestDto dto) {
 
         PartRequestValidationContext context = contextBuilder.buildForCreate(dto);

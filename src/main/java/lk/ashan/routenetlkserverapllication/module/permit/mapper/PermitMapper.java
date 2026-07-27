@@ -24,8 +24,12 @@ public interface PermitMapper {
     Permite toEntity(PermitCreateRequestDto request);
 
     @Mapping(target = "vehicle",source = "vehicle.number")
-    PermitSummaryResponseDto toSummaryDto(Permite permite);
-    List<PermitSummaryResponseDto> toSummaryDtoList(List<Permite> permites);
+    @Mapping(
+            target = "number",
+            expression = "java(permit.getNumber() + \"-\" + permit.getRoute().getOrigin() + \"-\" + permit.getRoute().getDestination())"
+    )
+    PermitSummaryResponseDto toSummaryDto(Permite permit);
+    List<PermitSummaryResponseDto> toSummaryDtoList(List<Permite> permits);
 
 
 

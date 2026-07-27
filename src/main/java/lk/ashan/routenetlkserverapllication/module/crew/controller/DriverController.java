@@ -54,7 +54,7 @@ public class DriverController {
      * @throws SecurityException if the user does not have the 'branch-insert' authority.
      * @throws jakarta.validation.ConstraintViolationException if the input data is invalid.
      */
-    @PreAuthorize("hasAuthority('branch-add')")
+    @PreAuthorize("hasAuthority('driver-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> add(
             @RequestBody @Valid DriverCreateRequestDto driverCreateRequestDto)
@@ -71,7 +71,7 @@ public class DriverController {
      * @throws SecurityException if the user does not have the 'branch-update' authority.
      * @throws jakarta.validation.ConstraintViolationException if the input data is invalid.
      */
-    @PreAuthorize("hasAuthority('branch-update')")
+    @PreAuthorize("hasAuthority('driver-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<DriverDetailResponseDto>> update(
             @RequestBody @Valid DriverUpdateRequestDto driverUpdateRequestDto)

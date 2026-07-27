@@ -10,7 +10,6 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Inciden
 import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.model.entity.IncidentVehicleAllocation;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
-import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
@@ -91,8 +90,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Collection<Roster> rosters;
 
-    @OneToMany(mappedBy = "user")
-    private Collection<Route> routes;
+//    @OneToMany(mappedBy = "user")
+//    private Collection<Route> routes;
 
     @OneToMany(mappedBy = "user")
     private Collection<Trip> trips;

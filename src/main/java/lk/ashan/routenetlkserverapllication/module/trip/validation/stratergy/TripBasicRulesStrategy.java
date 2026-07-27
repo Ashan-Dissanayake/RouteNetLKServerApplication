@@ -1,7 +1,9 @@
 package lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
+import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Route;
 import lk.ashan.routenetlkserverapllication.module.permit.repository.PermitRepository;
+import lk.ashan.routenetlkserverapllication.module.permit.repository.RouteRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Originterminal;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.OriginTerminalRepository;
@@ -25,6 +27,7 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
 
     private final TripRepository tripRepository;
     private final PermitRepository permitRepository;
+    private final RouteRepository routeRepository;
     private final OriginTerminalRepository originTerminalRepository;
 
     /**
@@ -36,11 +39,13 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
     @Override
     public void validateCreate(TripValidationContext context) {
         validateTimeLogic(context);
-        validateTerminalGaps(context);
+        validateSameRouteTripsMinGaps(context);
         validateIdempotency(context);
         validatePermittedDailyTripQuota(context);
         validateTripOverlap(context);
         validateTerminalLocation(context);
+        validatePermittedDailyTripQuota(context);
+
     }
 
     /**
@@ -71,21 +76,30 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
         }
     }
 
-    /**
-     * Validates the gaps between trips at the terminal to ensure minimum gap requirements are met.
+
+/**
+     * Validates that there is sufficient time gap between the departure of the new trip
+     * and the departure of existing trips on the same route.
      *
-     * @param context the context containing trip details and existing trips at the terminal
-     * @throws BusinessRuleViolationException if the gap between trips is less than the minimum required
+     * @param context the context containing trip details
+     * @throws ResourceNotFoundException if the route is not found
+     * @throws BusinessRuleViolationException if the time gap between trips is less than the minimum allowed
      */
-    private void validateTerminalGaps(TripValidationContext context) {
-        for (Trip existing : context.getExistingTripsAtTerminal()) {
+    private void validateSameRouteTripsMinGaps(TripValidationContext context) {
+
+        Route permitRoute = routeRepository.findById(context.getRouteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
+
+        List<Trip> sameRouteTrips = tripRepository.findByPermite_Route_Id(context.getId());
+
+        for (Trip existing : sameRouteTrips) {
             if (context.getId() != null && existing.getId().equals(context.getId())) {
                 continue;
             }
 
             long gap = calculateCircularGap(existing.getTodepature(), context.getDeparture());
 
-            if (gap < context.getMinGapMinutes()) {
+            if (gap < permitRoute.getMingapminutes()) {
                 throw new BusinessRuleViolationException(
                         String.format("Gap violation! Only %d minutes from trip at %s", gap, existing.getTodepature())
                 );
@@ -154,30 +168,52 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
     }
 
     /**
-     * Validates that trips for a single permit do not overlap in time.
+     * Validates that the new trip does not overlap with any existing trips for the same permit.
+     * Ensures that no two trips for the same permit have overlapping time ranges, considering
+     * overnight trips and midnight crossings.
      *
      * @param context the context containing trip details
      * @throws BusinessRuleViolationException if a scheduling conflict is detected
      */
     private void validateTripOverlap(TripValidationContext context) {
-        List<Trip> activeTrips = tripRepository.findByPermite_IdAndTripstatus_Name(
-                context.getPermitId(),
-                "Active"
+
+        List<Trip> existingTrips = tripRepository.findByPermite_Id(
+                context.getPermitId()
         );
 
         LocalTime newDep = context.getDeparture();
         LocalTime newArr = context.getArrival();
+
         boolean isNewOvernight = Integer.valueOf(5).equals(context.getTriptypeId());
 
-        for (Trip existing : activeTrips) {
+        for (Trip existing : existingTrips) {
+
+            // Skip current trip during update
+            if (context.getId() != null && existing.getId().equals(context.getId())) {
+                continue;
+            }
+
             LocalTime exDep = existing.getTodepature();
             LocalTime exArr = existing.getToarrival();
-            boolean isExOvernight = Integer.valueOf(5).equals(existing.getTriptype().getId());
 
-            if (isOverlapping(newDep, newArr, isNewOvernight, exDep, exArr, isExOvernight)) {
+            boolean isExOvernight =
+                    Integer.valueOf(5).equals(existing.getTriptype().getId());
+
+            if (isOverlapping(
+                    newDep,
+                    newArr,
+                    isNewOvernight,
+                    exDep,
+                    exArr,
+                    isExOvernight
+            )) {
                 throw new BusinessRuleViolationException(
-                        String.format("Scheduling Conflict! This permit is already active for a trip from %s to %s. " +
-                                "A bus cannot operate two trips simultaneously.", exDep, exArr)
+                        String.format(
+                                "Scheduling Conflict! This permit already has a trip from %s to %s. " +
+                                        "A bus cannot operate two trips simultaneously.",
+                                exDep,
+                                exArr
+                        )
                 );
             }
         }
@@ -232,5 +268,84 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
                                     "but this permit is only authorized for the %s - %s route.", terminalCity, routeOrigin, routeDestination)
             );
         }
+    }
+
+/**
+     * Validates the sequence of trips for a permit, ensuring that there is sufficient turnaround time
+     * between consecutive trips and that no conflicts arise.
+     *
+     * @param context the context containing trip details
+     * @throws ResourceNotFoundException if the route is not found
+     * @throws BusinessRuleViolationException if the turnaround time between trips is insufficient
+     */
+    private void validatePermitTripSequence(TripValidationContext context) {
+        List<Trip> existingTrips = tripRepository.findByPermite_Id(context.getPermitId());
+
+        LocalTime newDeparture = context.getDeparture();
+        LocalTime newArrival = context.getArrival();
+
+        boolean newOvernight = Integer.valueOf(5).equals(context.getTriptypeId());
+
+        int minGapMinutes = routeRepository.findById(context.getRouteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Route not found"))
+                .getMingapminutes();
+
+        for (Trip existing : existingTrips) {
+            // update case
+            if (context.getId() != null && existing.getId().equals(context.getId()))
+                continue;
+
+            LocalTime existingDeparture = existing.getTodepature();
+            LocalTime existingArrival = existing.getToarrival();
+
+            boolean existingOvernight = Integer.valueOf(5).equals(existing.getTriptype().getId());
+
+            /*
+             * Existing trip finishes -> New trip starts
+             */
+            long forwardGap = calculateTimeGap(existingArrival, newDeparture, existingOvernight);
+
+            /*
+             * New trip finishes -> Existing trip starts
+             */
+            long backwardGap = calculateTimeGap(newArrival, existingDeparture, newOvernight);
+
+            if (forwardGap >= 0 && forwardGap < minGapMinutes) {
+                throw new BusinessRuleViolationException(
+                        String.format(
+                                "Insufficient turnaround time. Previous trip ends at %s. " +
+                                "Minimum required gap is %d minutes.",
+                                existingArrival,
+                                minGapMinutes
+                        )
+                );
+            }
+
+            if (backwardGap >= 0 && backwardGap < minGapMinutes) {
+                throw new BusinessRuleViolationException(
+                        String.format(
+                                "Insufficient turnaround time before existing trip starts at %s.",
+                                existingDeparture
+                        )
+                );
+            }
+        }
+    }
+
+    /**
+     * Calculates the time gap between two times, considering whether the time range crosses midnight.
+     *
+     * @param end the end time of the first range
+     * @param start the start time of the second range
+     * @param overnight whether the time range crosses midnight
+     * @return the time gap in minutes
+     */
+    private long calculateTimeGap(LocalTime end, LocalTime start, boolean overnight) {
+        long endMinutes = end.toSecondOfDay() / 60;
+        long startMinutes = start.toSecondOfDay() / 60;
+
+        if (overnight && startMinutes < endMinutes) startMinutes += 1440;
+
+        return startMinutes - endMinutes;
     }
 }

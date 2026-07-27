@@ -19,4 +19,19 @@ public interface RosterRepository extends JpaRepository<Roster, Integer> {
             @Param("branchId") Integer branchId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
-    );}
+    );
+
+    @Query("""
+SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
+FROM Roster r
+WHERE r.branch.id = :branchId
+AND r.dostartofweek <= :endDate
+AND r.doendofweek >= :startDate
+""")
+    boolean existsOverlappingRoster(
+            @Param("branchId") Integer branchId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+}

@@ -14,5 +14,4 @@ public interface PermitRepository extends JpaRepository<Permite, Integer> {
     List<Permite> findByPermitestatus_NameAndDoexpiredBefore(String name, LocalDate date);
     List<Permite> findByPermitestatus_NameAndDoexpiredBetween(String name, LocalDate startDate, LocalDate endDate);
 
-    Permite findByVehicle_Id(Integer id);
 }

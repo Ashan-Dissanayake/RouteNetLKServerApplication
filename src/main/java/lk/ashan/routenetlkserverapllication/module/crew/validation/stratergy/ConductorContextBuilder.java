@@ -22,6 +22,8 @@ public class ConductorContextBuilder {
                 .employeeId(dto.getEmployee().getId())
                 .medicalIssued(dto.getDomedicalissued())
                 .medicalExpired(dto.getDomedicalexpired())
+                .crewStatus(dto.getCrewstatus().getName())
+                .routeFamiliarityLevel(dto.getRoutefamiliaritylevel().getName())
                 .build();
     }
 
