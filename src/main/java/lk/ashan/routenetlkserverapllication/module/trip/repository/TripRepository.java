@@ -18,7 +18,6 @@ import java.util.Optional;
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Integer> {
 
-
 /**
      * Finds all trips associated with a specific route ID.
      *
@@ -116,4 +115,30 @@ public interface TripRepository extends JpaRepository<Trip, Integer> {
      * @return true if a trip exists with the specified branch ID and trip status name, false otherwise
      */
     boolean existsByBranchIdAndTripstatus_Name(Integer id, String active);
+
+    /**
+         * Checks if an active trip exists for the specified route ID, origin terminal ID, departure time,
+         * and optionally excludes a trip with the given trip ID.
+         *
+         * @param routeId the ID of the route
+         * @param originTerminalId the ID of the origin terminal
+         * @param departure the departure time
+         * @param tripId the ID of the trip to exclude (can be null)
+         * @return true if an active trip exists matching the criteria, false otherwise
+         */
+        @Query("""
+            SELECT COUNT(t) > 0
+            FROM Trip t
+            WHERE t.permite.route.id = :routeId
+            AND t.originterminal.id = :originTerminalId
+            AND t.todepature = :departure
+            AND UPPER(t.tripstatus.name) = 'ACTIVE'
+            AND (:tripId IS NULL OR t.id <> :tripId)
+        """)
+        boolean existsActiveTrip(
+                Integer routeId,
+                Integer originTerminalId,
+                LocalTime departure,
+                Integer tripId
+        );
 }
