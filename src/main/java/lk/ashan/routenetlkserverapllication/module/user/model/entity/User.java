@@ -17,6 +17,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
+import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -89,6 +90,10 @@ public class User {
     private Collection<Permite> permites;
     @OneToMany(mappedBy = "user")
     private Collection<Roster> rosters;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<Notification> notifications;
+
 
 //    @OneToMany(mappedBy = "user")
 //    private Collection<Route> routes;

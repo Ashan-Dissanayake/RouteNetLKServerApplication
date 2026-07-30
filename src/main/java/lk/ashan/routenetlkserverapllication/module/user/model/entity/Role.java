@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Privilege;
+import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
 import lombok.*;
 
 import java.util.Collection;
@@ -27,6 +28,10 @@ public class Role {
 
     @OneToMany(mappedBy = "role")
     private Collection<UserRole> userRoles;
+
+    @OneToMany(mappedBy = "role")
+    private Collection<Notification> notifications;
+
 
 
     @Override

@@ -20,6 +20,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
+import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
 import lombok.*;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
@@ -130,8 +131,12 @@ public class Branch extends BaseEntity {
     @OneToMany(mappedBy = "branch")
     private Collection<FareCollection> farecollections;
 
- @OneToMany(mappedBy = "branch")
+    @OneToMany(mappedBy = "branch")
     private Collection<Incident> incidents;
+
+    @OneToMany(mappedBy = "branch")
+    private Collection<Notification> notifications;
+
 
 
     @Override
