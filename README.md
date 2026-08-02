@@ -1,143 +1,159 @@
-# RouteNetLK - Fleet, Operation and Service Delivery Management System for SLTB
+# RouteNetLK - Fleet, Operation and Service Delivery Management System for SLTB (Server Application)
 
 ## 🌴 Overview
 
-RouteNetLK streamlines depot-level operations by automating complex workflows including crew rostering, automated trip planning, trip execution, incident management, and vehicle maintenance. It replaces legacy fragmented systems with a centralized, data-driven platform.
+**RouteNetLK Server Application** is the robust, high-performance backend system engineered for Sri Lanka Transport Board (SLTB) depot management. Built on **Spring Boot 3** and **Java 17**, it powers depot-level operations by automating complex workflows including metaheuristic crew rostering, automated trip planning, trip dispatch execution, breakdown & incident handling, vehicle maintenance, fare collection, and comprehensive operational reporting. It replaces legacy fragmented systems with a secure, RESTful, data-driven platform.
 
 ## 🎯 Project Objectives
 
-- **Enhance Service Efficiency:** Simplify weekly roster creation and daily trip scheduling.
-- **Digital Transformation:** Eliminate error-prone manual logs with automated, constraint-based scheduling.
-- **Centralized Communication:** Improve coordination among depot administrators, crews, and operational managers.
-- **Data-Driven Decisions:** Provide insightful analytics on trip execution vs. breakdowns and daily revenue collection.
+- **Enhance Operational Efficiency:** Automate complex weekly roster generation and daily trip scheduling using constraint optimization algorithms.
+- **Digital Transformation:** Eliminate error-prone manual logs with automated validation pipelines and automated lifecycle state transitions.
+- **Centralized Data & Communication:** Provide centralized RESTful API endpoints for depot officers, maintenance engineers, and administration modules.
+- **Data-Driven Analytics:** Aggregate daily revenue collection, vehicle breakdown metrics, and operational performance metrics for decision-making.
 
 ## 🚀 Key Features
 
-* **Fleet & Permit Management:** Comprehensive vehicle database and validity tracking.
-* **Crew Management:** Driver and conductor profiling and fair-way allocation.
-* **Automated Trip Planning:** Intelligent roster generation and daily trip scheduling.
-* **Incident & Breakdown Handling:** Real-time logging and vehicle re-allocation during transit issues.
-* **Fare Collection & Reporting:** Digital and mechanical ticketing aggregation with comprehensive revenue insights.
-* **Maintenance & Inventory:** Scheduled bus servicing and spare parts tracking.
+* **Planning & Scheduling:**
+  * **Employee & Crew Allocation:** Driver and conductor profiling, license validation, and fair-workload distribution logic.
+  * **Permit Management:** Registration, route assignment, and validity constraint enforcement for SLTB route permits.
+  * **Automated Rostering (Timefold Engine):** Metaheuristic constraint solver for automated crew assignment and shift generation.
+* **Depot Operations:**
+  * **Trip Execution & State Engine:** Real-time trip status tracking (*Scheduled* ➔ *Dispatched* ➔ *In-Transit* ➔ *Completed* / *Interrupted*).
+  * **Incident & Breakdown Re-Allocation:** Real-time incident logging and automated alternative vehicle allocation during transit breakdowns.
+  * **Fare Collection Aggregation:** Aggregation of manual paper ticketing and Electronic Ticketing Machine (ETM) collections with daily revenue insights.
+* **Maintenance & Inventory:**
+  * **Fleet & Vehicle Registry:** Database tracking vehicle availability, fitness certificates, and depot assignments.
+  * **Vehicle Service Logging:** Scheduled preventive maintenance, service history, and repair management.
+  * **Spare Parts & Inventory (GRN):** Spare parts catalog management, inventory adjustments, internal part requests, and Goods Received Notes (GRN).
+* **Operational Reporting & Analytics:**
+  * Aggregated endpoints for Dispatch Summaries, Revenue by Payment Method, Maintenance Trends, Fleet Utilization, and Incident Breakdown reports.
+* **System Administration & Security:**
+  * **Stateless JWT Security:** Token-based authentication and role-based authorization.
+  * **User & Privilege Management:** Dynamic user management, privilege assignments, and depot/branch configuration.
+  * **Notification Engine:** Automated email notifications via Spring Mail and Thymeleaf templates.
 
 ## 🏗️ System Architecture & Engineering Highlights
 
-This backend is architected using a **Modular Layered Architecture** combined with robust object-oriented design patterns to ensure scalability, clean separation of concerns, and high maintainability.
+This backend is architected using a **Modular Layered Architecture** combined with enterprise design patterns to ensure high performance, maintainability, and clean separation of concerns.
 
 ### 🧠 Design Patterns & Clean Architecture
-* **Metaheuristic Optimization (Timefold):** Integrated the **Timefold** engine to solve complex crew rostering constraints automatically, moving away from tedious manual allocations.
+* **Metaheuristic Optimization (Timefold Solver):** Integrated **Timefold Solver 1.32** to automatically solve complex multi-constraint driver/conductor shift allocation problems, eliminating manual roster generation errors.
 * **Design Patterns Implemented:**
-  * **Strategy Pattern (Business-Level Validations):** 
-  * Decomposed complex validations out of the service layer into dedicated, single-responsibility strategy classes.
-  * Examples include **Uniqueness Validation Strategies**, **Create-New-Entry Validation Strategies**, and modular validation pipelines that execute rules dynamically based on context.
-  * **State Pattern:** Cleanly manages complex lifecycle transitions for trips (e.g., *Scheduled* ➔ *Dispatched* ➔ *In-Transit* ➔ *Completed* or *Interrupted*) preventing invalid state jumps.
-  * **Clean DTO Mapping (MapStruct):** 
-  * Enforced strict separation of concerns between database entities and API contracts. 
-  * Utilized **MapStruct** for compile-time, type-safe object mapping, eliminating runtime reflection overhead and boilerplate mapping code.
-* **Security** Stateless authentication via Spring Security/JWT
+  * **Strategy Pattern (Business Validations):** Decomposed business validation rules into single-responsibility strategy implementations (e.g., *Uniqueness Validation Strategies*, *Create-New-Entry Strategies*), executed dynamically based on operational context.
+  * **State Pattern (Trip Lifecycle):** Enforces rigid state transitions for transit dispatches, preventing invalid state jumps and guaranteeing audit compliance.
+  * **Compile-Time DTO Mapping (MapStruct):** Enforces strict separation between JPA entities and API DTO contracts using **MapStruct 1.5** and **Lombok**, eliminating reflection runtime overhead.
+* **Stateless Authentication & Security:** Integrated Spring Security with **JJWT 0.11** for stateless token authentication and fine-grained method-level security.
 
 ### Technology Stack
-* **Core Framework:** Java 17, Spring Boot 3
-* **Database:** MySQL Server 8.0.31, Spring Data JPA / Hibernate
-* **Optimization Engine:** Timefold Solver
-* **Testing & Tooling:** Postman, Maven, JUnit
+* **Core Framework:** Java 17, Spring Boot 3.5.3
+* **Database & Persistence:** MySQL 8.0.33, Spring Data JPA / Hibernate
+* **Optimization Engine:** Timefold Solver Starter 1.32.0
+* **Security & Auth:** Spring Security, JJWT (io.jsonwebtoken 0.11.5)
+* **DTO Mapping & Tooling:** MapStruct 1.5.5, Project Lombok 1.18.30
+* **Notifications:** Spring Boot Starter Mail, Thymeleaf
+* **Testing & Quality Assurance:** JUnit 5, Spring Security Test, Testcontainers (MySQL), Postman, Maven
 
 ### System Requirements
 
-#### Development Environment
-- **CPU**: Intel Core i5-11300H @ 3.10GHz or equivalent
-- **RAM**: 8 GB (recommended)
-- **Storage**: 1.5 TB NVMe SSD
-- **OS**: Windows 10
+#### Production / Development Server
+- **CPU**: Intel Core i5 @ 3.0GHz or AMD Ryzen 5 equivalent (Recommended: Intel Core i7 / AMD Ryzen 7)
+- **RAM**: Minimum 8 GB (Recommended: 16 GB for Timefold Solver optimizations)
+- **Storage**: 100 GB NVMe SSD space
+- **Database**: MySQL Server 8.0.31+
+- **Java Runtime**: OpenJDK 17 or Oracle JDK 17
 
-#### Production Server
-- **CPU**: Intel Core i5 or higher
-- **RAM**: Minimum 16 GB
-- **Storage**: Minimum 100 GB
-- **Database**: MySQL 8.0.31
-
-#### Client Requirements
-- **CPU**: Intel Core i3 or equivalent
-- **RAM**: Minimum 8 GB
-- **Storage**: Minimum 256 GB
-- **Browser**: JavaScript-enabled (Chrome, Edge, Firefox)
+#### Client Web Browser Requirements
+- **Supported Browsers**: Google Chrome, Microsoft Edge, Firefox, Safari (JavaScript enabled)
 
 ## 📋 Project Scope
 
 ### Included Features
 ✅ Fleet & Crew Management  
-✅ Automated Weekly/Daily Trip Planning  
-✅ Incident Reporting & Vehicle Re-allocation  
-✅ Fare Collection Tracking  
-✅ Vehicle Service & Inventory Management  
+✅ Metaheuristic Weekly Roster & Daily Trip Planning  
+✅ Breakdown Logging & Instant Vehicle Re-allocation  
+✅ Fare Collection & Multi-Source Revenue Aggregation  
+✅ Vehicle Service Records, Spare Part Inventory & GRN Workflow  
+✅ Stateless JWT Authentication & Role-Based Authorization  
+✅ Spring Mail Automated Email Notifications  
 
 ### Out of Scope
-❌ Live GPS streaming / real-time map tracking (restricted by scope constraints)  
-❌ Major accident legal/insurance workflows
+❌ Live GPS real-time map tracking on backend streams (restricted by hardware scope)  
+❌ Major legal accident insurance claims processing  
 
 ## 🔧 Installation & Setup
 
 ### Prerequisites
+Ensure Java JDK 17 and MySQL Server are installed:
 ```bash
-# Java JDK 17
+# Verify Java JDK 17
 java -version
 
-# Node.js v20.17.0
-node --version
+# Verify Maven
+mvn -v
 
-# MySQL Server 8.0.31
+# Verify MySQL Server
 mysql --version
 ```
 
 ### Getting Started
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Ashan-Dissanayake/RouteNetLKServerApplication
-   cd RouteNetLK
+   cd RouteNetLKServerApplication
    ```
 
 2. **Database Setup**
    ```bash
-   # Create database and import schema
-   mysql -u root -p < database/db_backup.sql
+   # Connect to MySQL and create the database
+   mysql -u root -p
+   CREATE DATABASE routenetlk;
+   EXIT;
+
+   # Import initial schema and data backup (if available)
+   mysql -u root -p routenetlk < database/db_backup.sql
    ```
 
-3. **Backend Setup**
+3. **Configure Database Connection**  
+   Edit `src/main/resources/application.properties` (or `application.yml`):
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/routenetlk?createDatabaseIfNotExist=true&useSSL=false
+   spring.datasource.username=your_mysql_user
+   spring.datasource.password=your_mysql_password
+   spring.jpa.hibernate.ddl-auto=update
+   ```
+
+4. **Build and Run the Server Application**
    ```bash
-   # Navigate to backend directory
-   cd backend
-   #Configure Application Properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/routenetlk
-   spring.datasource.username=root
-   spring.datasource.password=your_password
-   # Install dependencies and run
+   # Clean compile and install dependencies
    ./mvnw clean install
+
+   # Run Spring Boot Application
    ./mvnw spring-boot:run
    ```
+   The backend API will start on `http://localhost:8080`.
 
-4. **Frontend Setup**
-   ```bash
-   # Navigate to frontend directory
-   cd frontend
-   npm install
-   ng serve
-   ```
+5. **Client Application Integration**  
+   To run the frontend dashboard, refer to the [RouteNetLK Client Application Repository](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication).
 
 ## 🧪 Testing
 
-The project follows comprehensive testing protocols:
-- **Unit Testing**: Individual component testing
-- **Integration Testing**: API testing using Postman
-- **User Acceptance Testing**: Client validation testing
-- **Regression Testing**: Continuous testing during development
+The server application includes unit, integration, and API testing suites:
+
+- **Unit & Constraint Solver Testing:** Tested with JUnit 5 and `timefold-solver-test`.
+  ```bash
+  ./mvnw test
+  ```
+- **Database Integration Testing:** Integration tests run against isolated MySQL containers via **Testcontainers**.
+- **API Contract Testing:** Validated using Postman API test collections.
 
 ## 📊 Development Methodology
 
 This project follows an **Iterative Incremental Development** approach:
-1. **Requirements Gathering**: Stakeholder interviews and system analysis
-2. **System Design**: Incremental architecture and UI/UX design
-3. **Development**: Modular feature development
-4. **Testing**: Comprehensive testing at each iteration
+1. **Requirements & Domain Modeling:** Stakeholder interviews and UCSC system analysis.
+2. **Database Schema & Architecture Design:** Entity-relationship modeling, DTO abstraction, and validation strategy design.
+3. **Core Development & Solver Tuning:** Spring Boot REST controller building and Timefold Solver constraint score balancing.
+4. **Integration Testing & Security Hardening:** JWT token verification, Testcontainers integration testing, and Postman API verification.
 
 ## 🎓 Academic Context
 
@@ -146,8 +162,8 @@ This project was developed as part of the **IT5106 - Software Development Projec
 ## 📞 Contact
 
 **Developer**: Ashan Dissanayake  
-**Email**: ashanpathum899@gmail.com 
-**Phone**: +94 71 60 42 647
+**Email**: ashanpathum899@gmail.com  
+**Phone**: +94 71 60 42 647  
 
 ## 🤝 Contributing
 
