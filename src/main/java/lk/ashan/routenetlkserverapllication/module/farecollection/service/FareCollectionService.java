@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.farecollection.service;
 
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.module.farecollection.event.FareReconciledEvent;
 import lk.ashan.routenetlkserverapllication.module.farecollection.mapper.FareCollectionMapper;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.dto.FareCollectionCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.dto.FareCollectionDetailResponseDto;
@@ -14,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecutionStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +32,7 @@ public class FareCollectionService {
     private final FareCollectionRepository fareCollectionRepository;
     private final BranchRepository branchRepository;
     private final FareCollectionMapper fareCollectionMapper;
-
+    private final ApplicationEventPublisher eventPublisher;
     private final FareCollectionContextBuilder contextBuilder;
     private final FareCollectionCreationValidationStrategy creationValidationStrategy;
 
@@ -72,7 +74,6 @@ public class FareCollectionService {
         return fareCollectionMapper.toDto(saved);
     }
 
-
     @Transactional
     public void  reconciled(@NotNull Integer fareCollectionId) {
         FareCollection execution = fareCollectionRepository.findById(fareCollectionId)
@@ -81,6 +82,7 @@ public class FareCollectionService {
                 ));
 
         execution.setIsreconciled(true);
+        eventPublisher.publishEvent(new FareReconciledEvent(fareCollectionId, execution.getBranch()));
     }
 
 
