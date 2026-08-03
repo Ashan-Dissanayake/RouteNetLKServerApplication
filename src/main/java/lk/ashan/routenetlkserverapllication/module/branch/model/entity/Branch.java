@@ -20,9 +20,8 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceExecution;
 import lk.ashan.routenetlkserverapllication.shared.model.BaseEntity;
-import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
+import lk.ashan.routenetlkserverapllication.shared.notification.model.Notification;
 import lombok.*;
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 

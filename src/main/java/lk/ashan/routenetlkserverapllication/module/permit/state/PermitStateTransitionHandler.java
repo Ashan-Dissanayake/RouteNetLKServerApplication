@@ -1,14 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.permit.state;
 
-
+import lk.ashan.routenetlkserverapllication.module.permit.event.PermitTransferredEvent;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
-import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleStatus;
-import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleStatusService;
-import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateTransitionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,9 +14,7 @@ import org.springframework.stereotype.Component;
 public class PermitStateTransitionHandler {
 
     private final PermitStateFactory permitStateFactory;
-    private final VehicleStatusService vehicleStatusService;
-    private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     public void transitionTo(Permite permite, PermiteStatus targetStatus) {
         String currentStatus = permite.getPermitestatus().getName();
@@ -45,21 +40,17 @@ public class PermitStateTransitionHandler {
     private void executeOnEnter(Permite permite, String statusName) {
         String normalized = statusName.trim().toUpperCase();
 
-        /* No entry behavior for other states */
         if (normalized.equals("TRANSFERRED")) {
             onEnterTransferred(permite);
         }
     }
 
     private void onEnterTransferred(Permite permite) {
-        Vehicle vehicle =
-                permite.getVehicle();
-
-        VehicleStatus available =
-                vehicleStatusService
-                        .getByName("Available");
-
-        vehicleStateTransitionHandler
-                .transitionTo(vehicle, available);
+        log.info("Publishing PermitTransferredEvent for permit ID {}", permite.getId());
+        eventPublisher.publishEvent(new PermitTransferredEvent(
+                permite,
+                permite.getVehicle(),
+                permite.getBranch()
+        ));
     }
 }

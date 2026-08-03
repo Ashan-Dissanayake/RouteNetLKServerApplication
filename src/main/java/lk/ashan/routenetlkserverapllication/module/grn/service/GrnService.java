@@ -14,7 +14,6 @@ import lk.ashan.routenetlkserverapllication.module.grn.validation.GrnContext;
 import lk.ashan.routenetlkserverapllication.module.grn.validation.GrnProcessingStrategy;
 import lk.ashan.routenetlkserverapllication.module.partreqest.event.PartRequestApprovedEvent;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.partreqest.service.PartRequestService;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
@@ -139,6 +138,7 @@ public class GrnService {
 
             // Announce Stock Update
             eventPublisher.publishEvent(new PartReceivedEvent(
+                    existingItem.getGrn().getBranch(),
                     existingItem.getPartrequestitem().getPart().getId(),
                     actualReceived
             ));

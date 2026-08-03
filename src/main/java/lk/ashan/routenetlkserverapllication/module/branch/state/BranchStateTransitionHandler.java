@@ -2,7 +2,6 @@ package lk.ashan.routenetlkserverapllication.module.branch.state;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
-import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -3,7 +3,7 @@ package lk.ashan.routenetlkserverapllication.shared.notification.service;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepository;
-import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
+import lk.ashan.routenetlkserverapllication.shared.notification.model.Notification;
 import lk.ashan.routenetlkserverapllication.shared.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,9 +62,17 @@ public class NotificationService {
         List<User> branchUsers = userRepository.findByEmployee_Branch_Id(branch.getId());
 
         for (User user : branchUsers) {
-            // Check Many-to-Many roles list for the required role
             boolean hasRole = user.getUserRoles().stream()
-                    .anyMatch(userRole -> userRole.getRole().getName().equalsIgnoreCase(targetRoleName));
+                    .filter(userRole -> userRole.getRole() != null && userRole.getRole().getName() != null)
+                    .anyMatch(userRole -> {
+                        String formattedRole = "ROLE_" + userRole.getRole()
+                                .getName()
+                                .trim()
+                                .toUpperCase()
+                                .replace(" ", "_");
+
+                        return formattedRole.equals(targetRoleName);
+                    });
 
             if (hasRole) {
                 // A. Save to Database

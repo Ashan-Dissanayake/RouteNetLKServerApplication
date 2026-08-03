@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.shared.notification.controller;
 
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
-import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
+import lk.ashan.routenetlkserverapllication.shared.notification.model.Notification;
 import lk.ashan.routenetlkserverapllication.shared.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

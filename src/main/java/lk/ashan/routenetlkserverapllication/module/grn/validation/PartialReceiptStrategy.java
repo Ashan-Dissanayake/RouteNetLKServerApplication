@@ -45,7 +45,6 @@ public class PartialReceiptStrategy implements GrnProcessingStrategy {
         Grn nextDraft = grnDraftFactory.createBalanceDraft(currentGrn, balanceQty);
         grnRepository.save(nextDraft);
 
-        // Notify PartRequest Module: "I received some items, but not all"
         eventPublisher.publishEvent(new GrnProcessedEvent(
                 context.getPartRequestId(),
                 currentGrn.getId(),

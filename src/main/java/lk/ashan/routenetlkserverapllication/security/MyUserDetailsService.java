@@ -62,7 +62,7 @@ public class MyUserDetailsService implements UserDetailsService {
      * @param username the username provided for locating the user
      * @return a {@code UserDetails} object containing the user's information and authorities
      * @throws UsernameNotFoundException if no user with the specified username is found
-     */
+     **/
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Loading user details for username: {}", username);
@@ -84,7 +84,7 @@ public class MyUserDetailsService implements UserDetailsService {
      * @param username the username of the user to be searched
      * @return the {@code User} entity corresponding to the provided username
      * @throws UsernameNotFoundException if no user is found with the provided username
-     */
+     **/
     private User findUserByUsername(String username) {
         if (username.equals(inMemoryUserName)) {
             log.debug("Loading in-memory admin user: {}", username);
@@ -98,41 +98,6 @@ public class MyUserDetailsService implements UserDetailsService {
                     return new UsernameNotFoundException("User not found: " + username);
                 });
     }
-
-    /**
-     * Builds a {@link UserDetails} object from the provided {@link User} entity.
-     * This method configures the user's account settings (e.g., locked, expired)
-     * and assigns roles or authorities based on their username and stored privileges.
-     *
-     * @param user the user entity containing necessary information such as username,
-     *             password, and roles to be converted into a {@link UserDetails} object.
-     * @return a {@link UserDetails} object configured with the user's data and authorities.
-     */
-//    private UserDetails buildUserDetails(User user) {
-//        boolean isInMemoryUser = user.getUsername().equals(inMemoryUserName);
-//        boolean isLocked = isUserAccountLocked(user.getUsername());
-//
-//        Set<SimpleGrantedAuthority> authorities = isInMemoryUser
-//                ? getAdminAuthorities()
-//                : getUserAuthorities(user);
-//
-//        if (isLocked) {
-//            log.warn("User '{}' account is locked", user.getUsername());
-//        }
-//
-//        log.debug("Building UserDetails for '{}': locked={}, authorities={}",
-//                user.getUsername(), isLocked, authorities.size());
-//
-//        return org.springframework.security.core.userdetails.User.builder()
-//                .username(user.getUsername())
-//                .password(user.getPassword())
-//                .authorities(authorities)
-//                .accountExpired(false)
-//                .accountLocked(isLocked)
-//                .credentialsExpired(false)
-//                .disabled(false)
-//                .build();
-//    }
 
     private UserDetails buildUserDetails(User user) {
         boolean isInMemoryUser = user.getUsername().equals(inMemoryUserName);
@@ -259,38 +224,6 @@ public class MyUserDetailsService implements UserDetailsService {
                     "vehicle-service-add", "vehicle-service-complete",
                     "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
             );
-
-
-
-//            case SYSTEM_ADMIN -> Set.of(
-//                    "branch-add", "branch-delete", "branch-update", "branch-view",
-//                    "conductor-add", "conductor-update", "conductor-view",
-//                    "driver-view",
-//                    "report-view",
-//                    "employee-add", "employee-delete", "employee-update", "employee-view",
-//                    "fare-collection-add", "fare-collection-reconcile", "fare-collection-view",
-//                    "grn-update", "grn-view",
-//                    "incident-add", "incident-close", "incident-pending-allocation", "incident-resolve", "incident-start",
-//                    "incident-vehicle-allocation-add", "incident-vehicle-allocation-cancelled",
-//                    "incident-vehicle-allocation-in-progress", "incident-vehicle-allocation-released",
-//                    "incident-vehicle-allocation-view", "incident-vehicle-recovery", "incident-view",
-//                    "part-request-add", "part-request-approve", "part-request-reject", "part-request-update", "part-request-view",
-//                    "part-add", "part-delete", "part-update", "part-view",
-//                    "permit-add", "permit-transfer", "permit-view",
-//                    "privilege-assign", "privilege-revoke", "privilege-view",
-//                    "roster-add", "roster-view",
-//                    "roster-shift-assignment-approved", "roster-shift-assignment-cancelled",
-//                    "roster-shift-assignment-generate", "roster-shift-assignment-view",
-//                    "trip-activate", "trip-add", "trip-discontinue", "trip-execution-arrived", "trip-execution-breakdown",
-//                    "trip-execution-cancelled", "trip-execution-checked-in", "trip-execution-completed",
-//                    "trip-execution-dispatched", "trip-execution-generate-assignments", "trip-execution-initialize",
-//                    "trip-execution-view", "trip-suspend", "trip-view",
-//                    "user-add", "user-change-password", "user-delete", "user-reset-password", "user-role-assign",
-//                    "user-role-replace", "user-role-revoke", "user-role-view", "user-update", "user-view",
-//                    "vehicle-view", "vehicle-add","vehicle-update", "vehicle-delete",
-//                    "vehicle-service-add", "vehicle-service-complete", "vehicle-service-hold", "vehicle-service-start", "vehicle-service-view"
-//            );
-
 
 
             // DEPOT MANAGER: Full administrative and operational control over the specific depot branch.

@@ -1,4 +1,4 @@
-package lk.ashan.routenetlkserverapllication.shared.notification.entity;
+package lk.ashan.routenetlkserverapllication.shared.notification.model;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
@@ -6,7 +6,6 @@ import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

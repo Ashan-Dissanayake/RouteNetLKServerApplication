@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.user.model.entity;
 
 import jakarta.persistence.*;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Privilege;
-import lk.ashan.routenetlkserverapllication.shared.notification.entity.Notification;
+import lk.ashan.routenetlkserverapllication.shared.notification.model.Notification;
 import lombok.*;
 
 import java.util.Collection;
