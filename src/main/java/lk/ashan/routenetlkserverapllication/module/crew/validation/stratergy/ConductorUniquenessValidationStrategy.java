@@ -1,11 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy;
 
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
-import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.repository.CrewStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.repository.RouteFamiliarityLevelRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.state;
 
-import lk.ashan.routenetlkserverapllication.module.partreqest.event.PartRequestApprovedEvent;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestStatus;
-import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Component;
 public class PartRequestStateTransitionHandler {
 
     private final PartRequestStatusFactory requestStatusFactory;
-    private final ApplicationEventPublisher eventPublisher;
-
 
     public void transitionTo(PartRequest request, PartRequestStatus newStatus) {
 
@@ -53,7 +49,7 @@ public class PartRequestStateTransitionHandler {
             case "APPROVED" -> {
                 log.info("Request {} approved", request.getId());
                 // 2. Publish the Event here
-                eventPublisher.publishEvent(new PartRequestApprovedEvent(request.getId()));
+                //eventPublisher.publishEvent(new PartRequestApprovedEvent(request.getId()));
             }
             case "REJECTED" -> log.info("Request {} rejected", request.getId());
             case "COMPLETED" -> log.info("Request {} completed", request.getId());

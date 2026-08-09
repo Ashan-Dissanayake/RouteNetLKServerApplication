@@ -19,8 +19,6 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class DriverLicenseMedicalValidationStrategy implements DriverValidationStrategy {
 
-    private final DriverRepository driverRepository;
-
     /**
      * Validates the creation of a driver by checking license and medical dates.
      *
@@ -31,7 +29,6 @@ public class DriverLicenseMedicalValidationStrategy implements DriverValidationS
     public void validateCreate(DriverValidationContext context) {
         validateLicenseDates(context.getLicenseIssued(), context.getLicenseExpired());
         validateMedicalDates(context.getMedicalIssued(), context.getMedicalExpired());
-
     }
 
     /**
