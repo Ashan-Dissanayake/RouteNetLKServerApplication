@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import org.springframework.stereotype.Component;
 
