@@ -43,9 +43,9 @@ public class TripBasicRulesStrategy implements TripValidationStrategy {
         validateIdempotency(context);
         validatePermittedDailyTripQuota(context);
         validateTripOverlap(context);
+        validatePermitTripSequence(context);
         validateTerminalLocation(context);
-        validatePermittedDailyTripQuota(context);
-
+        validatePermitTripSequence(context);
     }
 
     /**

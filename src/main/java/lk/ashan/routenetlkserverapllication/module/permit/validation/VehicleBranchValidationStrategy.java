@@ -20,14 +20,11 @@ public class VehicleBranchValidationStrategy implements PermitValidationStrategy
                         String.format("Vehicle with id %d does not exist", context.getVehicleId())
                 ));
 
-        if (vehicle.getBranch() == null ||
-                context.getRequestBranchId() == null) {
+        if (vehicle.getBranch() == null || context.getRequestBranchId() == null) {
             return;
         }
 
-        if (!vehicle.getBranch().getId()
-                .equals(context.getRequestBranchId())) {
-
+        if (!vehicle.getBranch().getId().equals(context.getRequestBranchId())) {
             throw new BusinessRuleViolationException(
                     "Vehicle is not in corresponding branch"
             );

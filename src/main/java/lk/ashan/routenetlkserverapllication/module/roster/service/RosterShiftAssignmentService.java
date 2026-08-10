@@ -44,11 +44,9 @@ public class RosterShiftAssignmentService {
 
     private final RosterShiftAssignmentRepository assignmentRepository;
     private final RosterShiftAssignmentStatusService rosterShiftAssignmentStatusService;
-    private final EmployeeRepository employeeRepository;
     private final TripRepository tripRepository;
     private final RosterAssignmentMapper rosterAssignmentMapper;
     private final RosterShiftRepository rosterShiftRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     private final DriverRepository driverRepository;
     private final ConductorRepository conductorRepository;

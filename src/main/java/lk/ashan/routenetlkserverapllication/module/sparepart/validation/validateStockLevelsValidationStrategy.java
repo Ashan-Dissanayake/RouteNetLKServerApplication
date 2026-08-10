@@ -9,9 +9,7 @@ public class validateStockLevelsValidationStrategy implements PartCreationStrate
     @Override
     public void validate(PartContext context) {
 
-        if (context.getMaxlevel() == null ||
-                context.getRop() == null ||
-                context.getQoh() == null) {
+        if (context.getMaxlevel() == null || context.getRop() == null || context.getQoh() == null) {
             return;
         }
 
