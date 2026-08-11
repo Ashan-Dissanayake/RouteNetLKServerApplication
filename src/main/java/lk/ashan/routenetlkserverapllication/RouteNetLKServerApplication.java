@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 @SpringBootApplication
-@EnableJpaAuditing(auditorAwareRef = "auditorAware")
+//@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class RouteNetLKServerApplication {
 
 	public static void main(String[] args) {
