@@ -1,8 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.mapper;
 
 
-import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
-import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverUpdateRequestDto;

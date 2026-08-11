@@ -2,8 +2,8 @@ package lk.ashan.routenetlkserverapllication.shared.validation;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorRequestDto;
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverRequestDto;
-import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitRequestDto;
 import lk.ashan.routenetlkserverapllication.module.user.model.dto.UserCreateRequestDto;
@@ -30,7 +30,7 @@ public class RegexController {
 
     @GetMapping(path ="/employees", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> employeeStatic() {
-       HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new EmployeeRequestDto());
+       HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new EmployeeCreateRequestDto());
         assert regexes != null;
         return APIResponseBuilder.list(regexes, regexes.size());
     }
@@ -45,7 +45,7 @@ public class RegexController {
 
     @GetMapping(path ="/drivers", produces = "application/json")
     public ResponseEntity<APISuccessResponse<HashMap<String,HashMap<String,String>>>> driverStatic() {
-        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new DriverRequestDto());
+        HashMap<String,HashMap<String,String>> regexes =  RegexProvider.get(new DriverCreateRequestDto());
         assert regexes != null;
         return APIResponseBuilder.list(regexes, regexes.size());
     }

@@ -2,13 +2,13 @@ package lk.ashan.routenetlkserverapllication.module.crew.validation.annotation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverRequestDto;
+import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
 
 /**
  * Validator for ensuring the validity of the license category and license number
  * in a `DriverRequestDto` object.
  */
-public class LicenseCategoryLicenseNumberValidator implements ConstraintValidator<ValidLicenseCategoryLicenseNumber, DriverRequestDto> {
+public class LicenseCategoryLicenseNumberValidator implements ConstraintValidator<ValidLicenseCategoryLicenseNumber, DriverCreateRequestDto> {
 
     private LicenseCategoryLicenseNumberValidationStrategy strategy;
 
@@ -31,7 +31,7 @@ public class LicenseCategoryLicenseNumberValidator implements ConstraintValidato
      *         `false` otherwise
      */
     @Override
-    public boolean isValid(DriverRequestDto dto, ConstraintValidatorContext context) {
+    public boolean isValid(DriverCreateRequestDto dto, ConstraintValidatorContext context) {
         if (dto.getLicensecategory() == null || dto.getLicensenumber() == null) return true;
         return strategy.isValid(dto.getLicensecategory().getName(), dto.getLicensenumber());
     }

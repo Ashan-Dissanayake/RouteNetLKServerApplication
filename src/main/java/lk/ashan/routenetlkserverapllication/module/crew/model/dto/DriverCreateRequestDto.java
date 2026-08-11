@@ -16,12 +16,9 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @ToString
-public class DriverRequestDto {
-//    @NotNull(message = "Number can not be empty")
-//    @Pattern(regexp = "^DRV-\\d{4}$",message = "Invalid driver number")
-//    private String number;
+public class DriverCreateRequestDto {
 
     @Pattern(regexp = "^B\\d{7}$",message = "Invalid License Number")
     @NotNull(message = "License number can not be empty")

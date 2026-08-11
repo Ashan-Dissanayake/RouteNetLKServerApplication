@@ -1,15 +1,36 @@
 package lk.ashan.routenetlkserverapllication.module.crew.model.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeSummaryDto;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
-@SuperBuilder
+@ToString
+@Builder
 @NoArgsConstructor
-public class ConductorCreateRequestDto extends ConductorRequestDto{
+@AllArgsConstructor
+public class ConductorCreateRequestDto{
+
+    @NotNull(message = "Medical issued date is mandatory")
+    @PastOrPresent(message = "Medical issued date is cannot be in the future")
+    private LocalDate domedicalissued;
+
+    @NotNull(message = "Medical expired date is mandatory")
+    @Future(message = "Medical expired date cannot be in the past or present")
+    private LocalDate domedicalexpired;
+
+    @NotNull(message = "Crew status is mandatory")
+    private CrewStatusDto crewstatus;
+
+    @NotNull(message = "Route Familiarity Level is mandatory")
+    private RouteFamiliarityLevelDto routefamiliaritylevel;
+
+    @NotNull(message = "Employee is mandatory")
+    private EmployeeSummaryDto employee;
 }
