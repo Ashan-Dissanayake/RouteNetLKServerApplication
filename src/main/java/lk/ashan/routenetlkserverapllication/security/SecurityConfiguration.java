@@ -55,7 +55,7 @@ import java.util.List;
 @EnableMethodSecurity
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Profile("!test")
+//@Profile("!test")
 public class SecurityConfiguration {
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
