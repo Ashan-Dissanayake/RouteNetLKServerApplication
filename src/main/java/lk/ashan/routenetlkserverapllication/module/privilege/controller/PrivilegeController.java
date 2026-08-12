@@ -1,17 +1,14 @@
 package lk.ashan.routenetlkserverapllication.module.privilege.controller;
 
 import jakarta.validation.Valid;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.dto.PrivilegeAssignRequestDto;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.dto.PrivilegeResponseDto;
-import lk.ashan.routenetlkserverapllication.module.privilege.model.dto.RolePrivilegeResponseDto;
 import lk.ashan.routenetlkserverapllication.module.privilege.service.PrivilegeService;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
