@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.incident.controller;
 
+import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
@@ -44,7 +45,7 @@ public class IncidentController {
     @PreAuthorize("hasAuthority('incident-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<IncidentDetailResponseDto>> create(
-            @RequestBody IncidentCreateRequestDto createRequestDto
+            @RequestBody @Valid IncidentCreateRequestDto createRequestDto
     ) {
         IncidentDetailResponseDto savedIncident = incidentService.create(createRequestDto);
         return APIResponseBuilder.created(savedIncident,savedIncident.getId());

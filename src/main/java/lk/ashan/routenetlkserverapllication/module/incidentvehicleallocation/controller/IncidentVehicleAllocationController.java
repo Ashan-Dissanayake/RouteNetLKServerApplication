@@ -27,10 +27,10 @@ public class IncidentVehicleAllocationController {
     public ResponseEntity<APISuccessResponse<List<IncidentVehicleAllocationDetailsResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
-        List<IncidentVehicleAllocationDetailsResponseDto> incidentVhicleAllocations = params.isEmpty()
+        List<IncidentVehicleAllocationDetailsResponseDto> incidentVehicleAllocations = params.isEmpty()
                 ? allocationService.getIncidentVehicleAllocations()
                 : allocationService.searchIncidentAllocations(params);
-        return APIResponseBuilder.list(incidentVhicleAllocations, incidentVhicleAllocations.size());
+        return APIResponseBuilder.list(incidentVehicleAllocations, incidentVehicleAllocations.size());
     }
 
     @PreAuthorize("hasAuthority('incident-vehicle-allocation-add')")

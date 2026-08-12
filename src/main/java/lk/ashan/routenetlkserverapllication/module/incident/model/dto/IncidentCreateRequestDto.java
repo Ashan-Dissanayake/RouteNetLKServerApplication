@@ -13,7 +13,7 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-//@Builder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class IncidentCreateRequestDto{

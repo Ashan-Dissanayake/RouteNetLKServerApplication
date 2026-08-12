@@ -22,6 +22,5 @@ public class IncidentVehicleAllocationCreateRequestDto{
     private BranchSummaryDto providedbranch;
     @NotNull(message = "Status is mandatory")
     private IncidentVehicleAllocationStatusDto incidentvehicleallocationstatus;
-//    @NotNull(message = "Assigned date is mandatory")
-//    private LocalDateTime doassigned;
+
 }
