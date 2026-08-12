@@ -80,15 +80,4 @@ public class PartRequestController {
         PartRequestDetailResponseDto request = partRequestService.rejectRequest(id);
         return APIResponseBuilder.ok(request);
     }
-
-    /*
-    @PreAuthorize("hasAuthority('part-requests-update')")
-    @PostMapping("/{id}/complete")
-    public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> complete(
-            @PathVariable Integer id
-    ) {
-        PartRequestDetailResponseDto request = partRequestService.completeRequest(id);
-        return APIResponseBuilder.ok(request);
-    }
-    */
 }
