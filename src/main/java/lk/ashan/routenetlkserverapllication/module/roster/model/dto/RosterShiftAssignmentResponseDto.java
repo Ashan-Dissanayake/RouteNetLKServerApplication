@@ -1,11 +1,16 @@
 package lk.ashan.routenetlkserverapllication.module.roster.model.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class RosterShiftAssignmentResponseDto {
     private Integer id;
     private String rosterName;

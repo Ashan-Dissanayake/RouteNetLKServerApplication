@@ -23,8 +23,9 @@ public class RosterShiftAssignmentController {
 
     @PreAuthorize("hasAuthority('roster-shift-assignment-view')")
     @GetMapping("/view/{rosterId}")
-    public ResponseEntity<APISuccessResponse<List<RosterShiftAssignmentResponseDto>>> getFullRoster
-            (@PathVariable Integer rosterId) {
+    public ResponseEntity<APISuccessResponse<List<RosterShiftAssignmentResponseDto>>> getFullRoster(
+            @PathVariable Integer rosterId
+    ) {
         List<RosterShiftAssignmentResponseDto> assignments =
                 rosterShiftAssignmentService.getAssignmentsByRosterId(rosterId);
         return APIResponseBuilder.list(assignments, assignments.size());
