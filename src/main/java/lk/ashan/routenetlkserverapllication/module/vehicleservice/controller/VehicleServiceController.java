@@ -57,7 +57,9 @@ public class VehicleServiceController {
 
     @PreAuthorize("hasAuthority('vehicle-service-hold')")
     @PostMapping("/{id}/hold-parts")
-    public ResponseEntity<APISuccessResponse<VehicleServiceDetailResponseDto>> placeOnHold(@PathVariable Integer id) {
+    public ResponseEntity<APISuccessResponse<VehicleServiceDetailResponseDto>> placeOnHold(
+            @PathVariable Integer id
+    ) {
         return APIResponseBuilder.ok(vehicleServiceIdentificationService.placeOnHold(id));
     }
 

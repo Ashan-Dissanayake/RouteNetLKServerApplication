@@ -15,9 +15,6 @@ public class ChangePasswordRequestDto {
     private String currentPassword;
 
     @NotBlank(message = "New password is mandatory")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
-            message = "Invalid Password"
-    )
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "Invalid Password")
     private String newPassword;
 }

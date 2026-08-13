@@ -1,11 +1,11 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleservice.model.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter

@@ -32,6 +32,7 @@ public class VehicleController {
         return APIResponseBuilder.list(vehicles, vehicles.size());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleSummaryDto>>> get() {
         List<VehicleSummaryDto> vehicleSummaries = vehicleService.getVehicleSummary();
@@ -58,7 +59,9 @@ public class VehicleController {
 
     @PreAuthorize("hasAuthority('vehicle-delete')")
     @DeleteMapping
-    public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {
+    public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(
+            @RequestBody List<Integer> ids
+    ) {
         List<Integer> deactivatedIds = vehicleService.deactivateVehicle(ids);
         return APIResponseBuilder.deleted(deactivatedIds);
     }
