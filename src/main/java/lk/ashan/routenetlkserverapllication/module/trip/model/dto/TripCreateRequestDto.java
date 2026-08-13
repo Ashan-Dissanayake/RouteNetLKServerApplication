@@ -1,10 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.trip.model.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryRequestDto;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
+import lk.ashan.routenetlkserverapllication.module.roster.model.dto.ShiftSummaryDto;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 /**
@@ -38,7 +38,7 @@ public class TripCreateRequestDto {
     private TripStatusDto tripstatus;
 
     @NotNull(message = "Shift is Mandatory")
-    private Shift shift;
+    private ShiftSummaryDto shift;
 
     @NotNull(message = "Origin terminal is mandatory")
     private OriginTerminalDto originterminal;

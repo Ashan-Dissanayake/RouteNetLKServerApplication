@@ -1,10 +1,12 @@
 package lk.ashan.routenetlkserverapllication.module.tripexecution.model.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TripExecutionSummaryDto {
     private Integer id;
     private String name;

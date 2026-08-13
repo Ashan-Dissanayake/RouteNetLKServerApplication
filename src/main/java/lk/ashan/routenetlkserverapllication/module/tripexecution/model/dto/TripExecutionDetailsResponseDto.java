@@ -8,8 +8,11 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
 @Builder
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TripExecutionDetailsResponseDto {
     private BranchSummaryDto branch;
     private Integer id;

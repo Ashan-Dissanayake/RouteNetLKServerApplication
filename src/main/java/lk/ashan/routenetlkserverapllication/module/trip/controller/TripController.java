@@ -50,7 +50,9 @@ public class TripController {
      */
     @PreAuthorize("hasAuthority('trip-add')")
     @PostMapping
-    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> createTrip(@RequestBody @Valid TripCreateRequestDto createRequestDto){
+    public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> createTrip(
+            @Valid  @RequestBody TripCreateRequestDto createRequestDto
+    ){
         TripDetailResponseDto savedTrip = tripService.createTrip(createRequestDto);
         return APIResponseBuilder.created(savedTrip,savedTrip.getId());
     }
@@ -64,10 +66,9 @@ public class TripController {
     @PreAuthorize("hasAuthority('trip-activate')")
     @PostMapping("/{tripId}/activate-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> activate(
-            @PathVariable Integer tripId) {
-
+            @PathVariable Integer tripId
+    ) {
         TripDetailResponseDto response = tripService.activateTrip(tripId);
-
         return APIResponseBuilder.ok(
                 response,
                 Map.of("action", "trip_activated", "status", response.getTripstatus().getName())
@@ -83,10 +84,9 @@ public class TripController {
     @PreAuthorize("hasAuthority('trip-suspend')")
     @PostMapping("/{tripId}/suspend-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> suspend(
-            @PathVariable Integer tripId) {
-
+            @PathVariable Integer tripId
+    ) {
         TripDetailResponseDto response = tripService.suspendTrip(tripId);
-
         return APIResponseBuilder.ok(
                 response,
                 Map.of("action", "trip_suspended", "status", response.getTripstatus().getName())
@@ -102,10 +102,9 @@ public class TripController {
     @PreAuthorize("hasAuthority('trip-discontinue')")
     @PostMapping("/{tripId}/discontinue-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> discontinue(
-            @PathVariable Integer tripId) {
-
+            @PathVariable Integer tripId
+    ) {
         TripDetailResponseDto response = tripService.discontinueTrip(tripId);
-
         return APIResponseBuilder.ok(
                 response,
                 Map.of("action", "trip_discontinued", "status", response.getTripstatus().getName())
