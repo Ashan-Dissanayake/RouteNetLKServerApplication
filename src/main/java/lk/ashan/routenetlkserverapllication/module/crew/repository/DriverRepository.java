@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.crew.repository;
 
+import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
@@ -68,12 +69,14 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
      * @param branchId the ID of the branch to filter by
      * @return a list of drivers associated with the given branch ID
      */
-    List<Driver> findByEmployee_Branch_Id(Integer branchId);
+    @Query("SELECT d FROM Driver d WHERE d.employee.branch.id = :branchId")
+    List<Driver> findByEmployee_Branch_Id(@Param("branchId") Integer branchId);
+
 
     //dashboard
     @Query("SELECT COUNT(d) FROM Driver d " +
             "WHERE d.employee.branch.id = :branchId " +
-            "AND d.crewstatus.name = 'Standby'")
+            "AND d.crewstatus.name = 'Eligible'")
     long countStandbyDriversByBranch(@Param("branchId") Integer branchId);
 
     boolean existsByEmployeeId(Integer employeeId);

@@ -22,7 +22,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     boolean existsByMobileAndIdNot(String mobile, Integer employeeId);
     boolean existsByEmergencycontactAndIdNot(String mobile, Integer employeeId);
 
-
     @Modifying
     @Transactional
     @Query("UPDATE Employee  e SET e.deleted=true WHERE e.id in :ids")

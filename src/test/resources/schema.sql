@@ -236,6 +236,7 @@ CREATE TABLE `driver` (
                           `routefamiliaritylevel_id` int NOT NULL,
                           `totaldutyminute` int DEFAULT NULL,
                           `user_id` int DEFAULT NULL,
+                          `branch_id` int DEFAULT NULL,
                           PRIMARY KEY (`id`),
                           UNIQUE KEY `number_UNIQUE` (`number`),
                           UNIQUE KEY `licensenumber_UNIQUE` (`licensenumber`),
@@ -245,11 +246,14 @@ CREATE TABLE `driver` (
                           KEY `fk_driver_employee1_idx` (`employee_id`),
                           KEY `fk_driver_routefamiliaritylevel1_idx` (`routefamiliaritylevel_id`),
                           KEY `fk_driver_user1_idx` (`user_id`),
+                          KEY `fk_driver_branch1_idx` (`branch_id`),
                           CONSTRAINT `fk_driver_crewstatus1` FOREIGN KEY (`crewstatus_id`) REFERENCES `crewstatus` (`id`),
                           CONSTRAINT `fk_driver_employee1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
                           CONSTRAINT `fk_driver_licensecategory1` FOREIGN KEY (`licensecategory_id`) REFERENCES `licensecategory` (`id`),
                           CONSTRAINT `fk_driver_routefamiliaritylevel1` FOREIGN KEY (`routefamiliaritylevel_id`) REFERENCES `routefamiliaritylevel` (`id`),
-                          CONSTRAINT `fk_driver_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+                          CONSTRAINT `fk_driver_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+                          CONSTRAINT `fk_driver_branch1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`id`)
+
 );
 
 CREATE TABLE `fueltype` (
