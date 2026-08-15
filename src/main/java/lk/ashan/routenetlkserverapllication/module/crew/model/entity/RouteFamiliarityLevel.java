@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.Collection;
 import java.util.Objects;
+
 @Setter
 @Getter
 @Entity
@@ -42,11 +43,4 @@ public class RouteFamiliarityLevel {
         return Objects.hash(id, name);
     }
 
-    public Collection<Conductor> getConductors() {
-        return conductors;
-    }
-
-    public void setConductors(Collection<Conductor> conductors) {
-        this.conductors = conductors;
-    }
 }

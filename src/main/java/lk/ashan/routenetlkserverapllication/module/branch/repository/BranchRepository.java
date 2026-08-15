@@ -98,9 +98,9 @@ public interface BranchRepository extends JpaRepository<Branch, Integer> {
      *
      * @param ids the list of branch IDs to mark as deleted
      */
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
-    @Query("UPDATE Branch b SET b.deleted=true WHERE b.id in :ids")
+    @Query("UPDATE Branch b SET b.deleted = true WHERE b.id IN :ids")
     void removeAll(@Param("ids") List<Integer> ids);
 
 }

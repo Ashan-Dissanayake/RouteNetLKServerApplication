@@ -24,12 +24,13 @@ public interface ConductorRepository extends JpaRepository<Conductor, Integer> {
      * @param branchId the ID of the branch to filter Conductors by
      * @return a list of Conductors associated with the specified branch ID
      */
-    List<Conductor> findByEmployee_Branch_Id(Integer branchId);
+    @Query("SELECT c FROM Conductor c WHERE c.employee.branch.id = :branchId")
+    List<Conductor> findByEmployee_Branch_Id(@Param("branchId") Integer branchId);
 
     //dashboard
     @Query("SELECT COUNT(c) FROM Conductor c " +
             "WHERE c.employee.branch.id = :branchId " +
-            "AND c.crewstatus.name = 'Standby'")
+            "AND c.crewstatus.name = 'Eligible'")
     long countStandbyConductorsByBranch(@Param("branchId") Integer branchId);
 
     boolean existsByEmployeeId(Integer employeeId);

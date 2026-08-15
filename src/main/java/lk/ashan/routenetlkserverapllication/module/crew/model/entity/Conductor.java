@@ -45,9 +45,11 @@ public class Conductor {
     @OneToOne
     @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;
+
     @ManyToOne
     @JoinColumn(name = "routefamiliaritylevel_id", referencedColumnName = "id", nullable = false)
     private RouteFamiliarityLevel routefamiliaritylevel;
+
     @ManyToOne
     @JoinColumn(name = "crewstatus_id", referencedColumnName = "id", nullable = false)
     private CrewStatus crewstatus;

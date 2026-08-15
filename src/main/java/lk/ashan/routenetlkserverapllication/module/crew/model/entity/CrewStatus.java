@@ -42,11 +42,4 @@ public class CrewStatus {
         return Objects.hash(id, name);
     }
 
-    public Collection<Conductor> getConductors() {
-        return conductors;
-    }
-
-    public void setConductors(Collection<Conductor> conductors) {
-        this.conductors = conductors;
-    }
 }
