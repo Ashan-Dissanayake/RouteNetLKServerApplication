@@ -30,10 +30,6 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@FilterDef(name = "branchAndUserFilter", parameters = {
-//        @ParamDef(name = "branchId", type = Integer.class),
-//        @ParamDef(name = "userId", type = Integer.class)
-//})
 @Filter(name = "branchFilter", condition = "branch_id = :branchId")
 @EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class Trip {

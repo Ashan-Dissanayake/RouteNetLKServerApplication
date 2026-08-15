@@ -21,13 +21,9 @@ public class AuditorAwareImpl implements AuditorAware<User> {
 
         if (authentication != null && authentication.isAuthenticated() &&
                 authentication.getPrincipal() instanceof CustomUserPrincipal principal) {
-
-            // Logged user ge entity eka return karai
             return Optional.ofNullable(principal.getUserEntity());
         }
 
-        // Authentication nethnam witharak fallback user kenek (Optional)
-        // Nethnam meka ain karala Optional.empty() denna puluwan
         return Optional.empty();
     }
 }

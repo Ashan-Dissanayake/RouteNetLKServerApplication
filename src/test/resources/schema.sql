@@ -712,6 +712,7 @@ CREATE TABLE `trip` (
                         `originterminal_id` int NOT NULL,
                         `user_id` int DEFAULT NULL,
                         `opcalender_id` int NOT NULL,
+                        `shift_id` int NOT NULL,
                         PRIMARY KEY (`id`),
                         KEY `fk_trip_permite1_idx` (`permite_id`),
                         KEY `fk_trip_triptype1_idx` (`triptype_id`),
@@ -720,13 +721,15 @@ CREATE TABLE `trip` (
                         KEY `fk_trip_originterminal1_idx` (`originterminal_id`),
                         KEY `fk_trip_user1_idx` (`user_id`),
                         KEY `fk_trip_opcalender1_idx` (`opcalender_id`),
+                        KEY `fk_trip_shift1_idx` (`shift_id`),
                         CONSTRAINT `fk_trip_branch1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`id`),
                         CONSTRAINT `fk_trip_opcalender1` FOREIGN KEY (`opcalender_id`) REFERENCES `opcalender` (`id`),
                         CONSTRAINT `fk_trip_originterminal1` FOREIGN KEY (`originterminal_id`) REFERENCES `originterminal` (`id`),
                         CONSTRAINT `fk_trip_permite1` FOREIGN KEY (`permite_id`) REFERENCES `permite` (`id`),
                         CONSTRAINT `fk_trip_tripstatus1` FOREIGN KEY (`tripstatus_id`) REFERENCES `tripstatus` (`id`),
                         CONSTRAINT `fk_trip_triptype1` FOREIGN KEY (`triptype_id`) REFERENCES `triptype` (`id`),
-                        CONSTRAINT `fk_trip_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+                        CONSTRAINT `fk_trip_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+                        CONSTRAINT `fk_trip_shift1` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`id`)
 );
 
 CREATE TABLE `tripexecutionstatus` (

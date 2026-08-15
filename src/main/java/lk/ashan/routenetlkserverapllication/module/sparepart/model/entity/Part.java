@@ -23,10 +23,6 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@FilterDef(name = "branchAndUserFilter", parameters = {
-//        @ParamDef(name = "branchId", type = Integer.class),
-//        @ParamDef(name = "userId", type = Integer.class)
-//})
 @Filter(name = "branchFilter", condition = "branch_id = :branchId")
 public class Part extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

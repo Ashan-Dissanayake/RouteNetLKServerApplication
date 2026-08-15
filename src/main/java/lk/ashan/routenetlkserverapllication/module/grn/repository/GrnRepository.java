@@ -8,8 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GrnRepository extends JpaRepository<Grn, Integer> {
-    List<Grn> findByPartrequestIdAndGrnstatusNameIn(Integer id, List<String> received);
 
-    //for testing
-    List<Grn> findByGrnstatus_Name(String draft);
 }

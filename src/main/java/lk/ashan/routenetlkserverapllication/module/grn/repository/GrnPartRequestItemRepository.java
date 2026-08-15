@@ -11,9 +11,12 @@ import java.util.List;
 
 @Repository
 public interface GrnPartRequestItemRepository extends JpaRepository<GrnPartRequestItem, Integer> {
-    @Query("SELECT SUM(gp.quantity) FROM GrnPartRequestItem gp " +
-            "WHERE gp.partrequestitem.id = :id " +
-            "AND gp.grn.grnstatus.name IN :statusNames")
+    @Query("""
+            SELECT SUM(gp.quantity)
+            FROM GrnPartRequestItem gp
+            WHERE gp.partrequestitem.id = :id
+            AND gp.grn.grnstatus.name IN :statusNames
+            """)
     BigDecimal sumQuantityByPartRequestItemId(
             @Param("id") Integer id,
             @Param("statusNames") List<String> statusNames

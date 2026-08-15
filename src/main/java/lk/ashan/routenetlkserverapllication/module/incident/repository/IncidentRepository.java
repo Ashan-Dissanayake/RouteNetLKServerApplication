@@ -14,38 +14,52 @@ import java.util.Optional;
 
 @Repository
 public interface IncidentRepository extends JpaRepository<Incident, Integer> {
+
     // --- REPORT 1: Fleet Dispatch & Breakdown Proportions ---
-    // Query to count successful dispatches per weekday
-    @Query(value = "SELECT WEEKDAY(doservice) as dayIdx, COUNT(id) as trips " +
-            "FROM tripexecution " +
-            "WHERE tripexecutionstatus_id = :statusId " +
-            "GROUP BY WEEKDAY(doservice)", nativeQuery = true)
+
+    @Query(value = """
+            SELECT WEEKDAY(doservice) AS dayIdx,
+                   COUNT(id) AS trips
+            FROM tripexecution
+            WHERE tripexecutionstatus_id = :statusId
+            GROUP BY WEEKDAY(doservice)
+            """, nativeQuery = true)
     List<Object[]> getTripsCountByDay(@Param("statusId") Integer statusId);
 
-    // Query to count breakdowns per weekday
-    @Query(value = "SELECT WEEKDAY(doreported) as dayIdx, COUNT(id) as incidents " +
-            "FROM incident " +
-            "WHERE incidenttype_id = :typeId " +
-            "GROUP BY WEEKDAY(doreported)", nativeQuery = true)
+    @Query(value = """
+            SELECT WEEKDAY(doreported) AS dayIdx,
+                   COUNT(id) AS incidents
+            FROM incident
+            WHERE incidenttype_id = :typeId
+            GROUP BY WEEKDAY(doreported)
+            """, nativeQuery = true)
     List<Object[]> getIncidentsCountByDay(@Param("typeId") Integer typeId);
 
     // --- REPORT 5: Proportional Distribution of Fleet Route Incidents ---
-    @Query(value = "SELECT it.name as incidentTypeName, COUNT(i.id) as incidentCount " +
-            "FROM incident i " +
-            "JOIN incidenttype it ON i.incidenttype_id = it.id " +
-            "GROUP BY it.id, it.name", nativeQuery = true)
+
+    @Query(value = """
+            SELECT it.name AS incidentTypeName,
+                   COUNT(i.id) AS incidentCount
+            FROM incident i
+            JOIN incidenttype it ON i.incidenttype_id = it.id
+            GROUP BY it.id, it.name
+            """, nativeQuery = true)
     List<Report5Projection> getIncidentDistributionMetrics();
 
+    // --- Dashboard ---
 
-    //dashboard
-    @Query("SELECT i FROM Incident i " +
-            "WHERE i.tripexecution.branch.id = :branchId " +
-            "AND i.incidentstatus.name != 'Resolved' " +
-            "ORDER BY i.id DESC")
+    @Query("""
+            SELECT i FROM Incident i
+            WHERE i.tripexecution.branch.id = :branchId
+            AND i.incidentstatus.name != 'Resolved'
+            ORDER BY i.id DESC
+            """)
     List<Incident> findActiveIncidentsByBranch(@Param("branchId") Integer branchId);
 
-    @Query("SELECT COUNT(i) FROM Incident i " +
-            "WHERE i.tripexecution.branch.id = :branchId " +
-            "AND i.incidentstatus.name = 'Pending'")
+    @Query("""
+            SELECT COUNT(i) FROM Incident i
+            WHERE i.tripexecution.branch.id = :branchId
+            AND i.incidentstatus.name = 'Pending Allocation'
+            """)
     long countPendingIncidentsByBranch(@Param("branchId") Integer branchId);
 }
