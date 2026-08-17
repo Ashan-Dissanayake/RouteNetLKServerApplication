@@ -20,10 +20,12 @@ public interface PartRequestRepository extends JpaRepository<PartRequest, Intege
         WHERE pr.branch.id = :branchId
           AND pri.part.id = :partId
           AND prs.name IN :statusNames
-          """)
+          AND pr.dorequested = :requestDate
+        """)
     boolean existsByBranchAndPartAndStatusInAndDoRequested(
             @Param("branchId") Integer branchId,
             @Param("partId") Integer partId,
             @Param("statusNames") List<String> statusNames,
             @Param("requestDate") LocalDate requestDate
-    );}
+    );
+}

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Repository
 public interface PermitRepository extends JpaRepository<Permite, Integer> {
     boolean existsByNumber(String number);
@@ -13,5 +14,4 @@ public interface PermitRepository extends JpaRepository<Permite, Integer> {
 
     List<Permite> findByPermitestatus_NameAndDoexpiredBefore(String name, LocalDate date);
     List<Permite> findByPermitestatus_NameAndDoexpiredBetween(String name, LocalDate startDate, LocalDate endDate);
-
 }

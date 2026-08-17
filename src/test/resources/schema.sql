@@ -829,18 +829,52 @@ CREATE TABLE `incidentvehicleallocation` (
                                              `incidentvehicleallocationstatus_id` int NOT NULL,
                                              `doassigned` datetime DEFAULT NULL,
                                              `doreleased` datetime DEFAULT NULL,
-                                             `user_id` int DEFAULT NULL,
+                                             `user_id` int NOT NULL,
+                                             `branch_id` int NOT NULL,
+
                                              PRIMARY KEY (`id`),
-                                             KEY `fk_incidentvehicleallocation_incident1_idx` (`incident_id`),
-                                             KEY `fk_incidentvehicleallocation_vehicle1_idx` (`vehicle_id`),
-                                             KEY `fk_incidentvehicleallocation_branch1_idx` (`providedbranch_id`),
-                                             KEY `fk_incidentvehicleallocation_incidentvehicleallocationstatu_idx` (`incidentvehicleallocationstatus_id`),
-                                             KEY `fk_incidentvehicleallocation_user1_idx` (`user_id`),
-                                             CONSTRAINT `fk_incidentvehicleallocation_branch1` FOREIGN KEY (`providedbranch_id`) REFERENCES `branch` (`id`),
-                                             CONSTRAINT `fk_incidentvehicleallocation_incident1` FOREIGN KEY (`incident_id`) REFERENCES `incident` (`id`),
-                                             CONSTRAINT `fk_incidentvehicleallocation_incidentvehicleallocationstatus1` FOREIGN KEY (`incidentvehicleallocationstatus_id`) REFERENCES `incidentvehicleallocationstatus` (`id`),
-                                             CONSTRAINT `fk_incidentvehicleallocation_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-                                             CONSTRAINT `fk_incidentvehicleallocation_vehicle1` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicle` (`id`)
+
+                                             KEY `fk_incidentvehicleallocation_incident1_idx`
+                                                 (`incident_id`),
+
+                                             KEY `fk_incidentvehicleallocation_vehicle1_idx`
+                                                 (`vehicle_id`),
+
+                                             KEY `fk_incidentvehicleallocation_branch1_idx`
+                                                 (`providedbranch_id`),
+
+                                             KEY `fk_incidentvehicleallocation_incidentvehicleallocationstatus_idx`
+                                                 (`incidentvehicleallocationstatus_id`),
+
+                                             KEY `fk_incidentvehicleallocation_user1_idx`
+                                                 (`user_id`),
+
+                                             KEY `fk_incidentvehicleallocation_branch2_idx`
+                                                 (`branch_id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_incident1`
+                                                 FOREIGN KEY (`incident_id`)
+                                                     REFERENCES `incident` (`id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_vehicle1`
+                                                 FOREIGN KEY (`vehicle_id`)
+                                                     REFERENCES `vehicle` (`id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_branch1`
+                                                 FOREIGN KEY (`providedbranch_id`)
+                                                     REFERENCES `branch` (`id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_incidentvehicleallocationstatus1`
+                                                 FOREIGN KEY (`incidentvehicleallocationstatus_id`)
+                                                     REFERENCES `incidentvehicleallocationstatus` (`id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_user1`
+                                                 FOREIGN KEY (`user_id`)
+                                                     REFERENCES `user` (`id`),
+
+                                             CONSTRAINT `fk_incidentvehicleallocation_branch2`
+                                                 FOREIGN KEY (`branch_id`)
+                                                     REFERENCES `branch` (`id`)
 );
 
 CREATE TABLE `userrole` (
