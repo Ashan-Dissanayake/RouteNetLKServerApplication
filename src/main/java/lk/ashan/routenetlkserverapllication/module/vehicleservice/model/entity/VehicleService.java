@@ -23,10 +23,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "vehicleservice",schema = "routenetlk")
-//@FilterDef(name = "branchAndUserFilter", parameters = {
-//        @ParamDef(name = "branchId", type = Integer.class),
-//        @ParamDef(name = "userId", type = Integer.class)
-//})
 @Filter(name = "branchFilter", condition = "branch_id = :branchId")
 @EntityListeners({AuditingEntityListener.class, BranchAnnotationListener.class})
 public class VehicleService {

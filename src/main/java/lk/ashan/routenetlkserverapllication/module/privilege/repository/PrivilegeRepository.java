@@ -22,7 +22,5 @@ public interface PrivilegeRepository extends JpaRepository<Privilege, Integer> {
             Integer privilegeId
     );
 
-    void deleteByRoleId(Integer roleId);
-
     boolean existsByRoleIdAndId(Integer roleId, Integer privilegeId);
 }

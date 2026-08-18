@@ -43,6 +43,6 @@ public interface TripExecutionRepository extends JpaRepository<TripExecution, In
     @Query("SELECT COUNT(te) FROM TripExecution te " +
             "WHERE te.branch.id = :branchId " +
             "AND te.doservice = CURRENT_DATE " +
-            "AND te.tripexecutionstatus.name = 'Active'")
+            "AND te.tripexecutionstatus.name = 'Dispatched'")
     long countActiveTripsByBranch(@Param("branchId") Integer branchId);
 }

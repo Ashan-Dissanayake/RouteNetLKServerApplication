@@ -27,17 +27,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     @Query("UPDATE Vehicle  v SET v.deleted=true WHERE v.id in :ids")
     void removeAll(@Param("ids") List<Integer> ids);
 
-//    @Modifying
-//    @Transactional
-//    @Query("UPDATE Vehicle  v SET v.deleted=false WHERE v.id in :ids")
-//    void restoreAll(@Param("ids") List<Integer> ids);
-
     List<Vehicle> findByBranch_Id(Integer branchId);
-
-    // --- REPORT 5: Proportional Distribution of Fleet Route Incidents ---
-    @Query(value = "SELECT it.name as incidentTypeName, COUNT(i.id) as incidentCount " +
-            "FROM incident i " +
-            "JOIN incidenttype it ON i.incidenttype_id = it.id " +
-            "GROUP BY it.id, it.name", nativeQuery = true)
-    List<Report5Projection> getIncidentDistributionMetrics();
 }

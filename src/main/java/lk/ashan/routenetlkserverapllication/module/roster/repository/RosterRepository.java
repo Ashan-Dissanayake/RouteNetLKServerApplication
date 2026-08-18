@@ -10,16 +10,6 @@ import java.time.LocalDate;
 
 @Repository
 public interface RosterRepository extends JpaRepository<Roster, Integer> {
-    @Query("SELECT COUNT(r) > 0 FROM Roster r " +
-            "WHERE r.branch.id = :branchId " +
-            "AND r.deleted = false " +
-            "AND r.dostartofweek <= :endDate " +
-            "AND r.doendofweek >= :startDate")
-    boolean existsByBranchIdAndDateRange(
-            @Param("branchId") Integer branchId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
-    );
 
     @Query("""
 SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
