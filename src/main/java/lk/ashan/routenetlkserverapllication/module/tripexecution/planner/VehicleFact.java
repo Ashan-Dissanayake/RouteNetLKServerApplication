@@ -11,5 +11,4 @@ public class VehicleFact {
     private Integer id;
     private String busType;
     private int mileage;
-//    private int nextServiceMilestone;
 }

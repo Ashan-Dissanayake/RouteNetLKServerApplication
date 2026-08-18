@@ -32,7 +32,7 @@ public class TripExecutionConstraintProvider implements ConstraintProvider {
     }
 
     // 2. Driver Overlap
-    private Constraint driverOverlap(ConstraintFactory factory) {
+    Constraint driverOverlap(ConstraintFactory factory) {
         return factory.forEachUniquePair(TripExecutionPlanning.class,
                         Joiners.equal(TripExecutionPlanning::getDriver),
                         Joiners.overlapping(TripExecutionPlanning::getDepartureTime, TripExecutionPlanning::getArrivalTime))
@@ -41,7 +41,7 @@ public class TripExecutionConstraintProvider implements ConstraintProvider {
     }
 
     // 3. Conductor Overlap
-    private Constraint conductorOverlap(ConstraintFactory factory) {
+    Constraint conductorOverlap(ConstraintFactory factory) {
         return factory.forEachUniquePair(TripExecutionPlanning.class,
                         Joiners.equal(TripExecutionPlanning::getConductor),
                         Joiners.overlapping(TripExecutionPlanning::getDepartureTime, TripExecutionPlanning::getArrivalTime))
@@ -59,7 +59,7 @@ public class TripExecutionConstraintProvider implements ConstraintProvider {
     }
 
     // 5. Conductor Familiarity
-    private Constraint conductorFamiliarity(ConstraintFactory factory) {
+    Constraint conductorFamiliarity(ConstraintFactory factory) {
         return factory.forEach(TripExecutionPlanning.class)
                 .filter(planning -> planning.getConductor().getFamiliarityLevel() <
                         planning.getRoute().getRequiredFamiliarityLevel())
@@ -103,7 +103,7 @@ public class TripExecutionConstraintProvider implements ConstraintProvider {
     }
 
 
-    private Constraint fairnessConductorDuty(ConstraintFactory factory) {
+    Constraint fairnessConductorDuty(ConstraintFactory factory) {
         return factory.forEach(TripExecutionPlanning.class)
                 .groupBy(
                         TripExecutionPlanning::getConductor,
