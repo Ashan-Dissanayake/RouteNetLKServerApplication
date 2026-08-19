@@ -7,7 +7,7 @@ WORKDIR /workspace
 # Cache dependencies first
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
-RUN chmod +x ./mvnw && ./mvnw dependency:go-offline -B
+RUN chmod +x ./mvnw && ./mvnw package -DskipTests
 
 # Copy source code and build production artifact (skipping tests for build speed)
 COPY src src
