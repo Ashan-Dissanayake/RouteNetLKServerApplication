@@ -9,9 +9,23 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Repository interface for managing `PartRequest` entities.
+ * Extends the `JpaRepository` to provide CRUD operations and custom queries.
+ */
 @Repository
 public interface PartRequestRepository extends JpaRepository<PartRequest, Integer> {
 
+    /**
+     * Checks if a `PartRequest` exists for a specific branch, part, status, and request date.
+     *
+     * @param branchId    the ID of the branch to check
+     * @param partId      the ID of the part to check
+     * @param statusNames the list of status names to check
+     * @param requestDate the date of the request to check
+     * @return `true` if a matching `PartRequest` exists, otherwise `false`
+     * @throws IllegalArgumentException if any parameter is invalid
+     */
     @Query("""
         SELECT CASE WHEN COUNT(pri) > 0 THEN true ELSE false END
         FROM PartRequest pr

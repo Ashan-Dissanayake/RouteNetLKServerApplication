@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+/**
+ * Strategy implementation for processing GRNs (Goods Receipt Notes)
+ * when the received quantity matches the expected quantity.
+ */
 @Component
 @RequiredArgsConstructor
 public class FullReceiptStrategy implements GrnProcessingStrategy {
@@ -20,11 +24,24 @@ public class FullReceiptStrategy implements GrnProcessingStrategy {
     private final GrnStatusRepository statusRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    /**
+     * Determines if this strategy is applicable based on the received and expected quantities.
+     *
+     * @param receivedQty the quantity of goods received
+     * @param expectedQty the quantity of goods expected
+     * @return true if the received quantity matches the expected quantity, false otherwise
+     */
     @Override
     public boolean isApplicable(BigDecimal receivedQty, BigDecimal expectedQty) {
         return receivedQty.compareTo(expectedQty) == 0;
     }
 
+    /**
+     * Processes the GRN context by transitioning its state and publishing an event.
+     *
+     * @param context the GRN context containing the GRN and related information
+     * @throws IllegalStateException if the "Received" status is not found in the repository
+     */
     @Override
     public void process(GrnContext context) {
         Grn grn = context.getGrn();

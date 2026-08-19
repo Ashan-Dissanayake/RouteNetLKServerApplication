@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing roles in the application.
+ * Provides endpoints for retrieving role summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/roles")
@@ -22,6 +26,13 @@ public class RoleController {
 
     private final RoleService roleService;
 
+    /**
+     * Retrieves a list of role summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of RoleDto objects
+     *         and the total count of roles.
+     * @throws SecurityException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RoleDto>>> get() {

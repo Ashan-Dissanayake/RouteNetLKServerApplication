@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing bus types.
+ * Provides endpoints for retrieving bus type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/bus-types")
@@ -22,13 +26,16 @@ public class BusTypeController {
 
     private final BusTypeService busTypeService;
 
+    /**
+     * Retrieves a list of bus type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of BusTypeDto objects.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<BusTypeDto>>> get() {
-        List<BusTypeDto>busTypes = busTypeService.getBusTypes();
-        return APIResponseBuilder.list(busTypes,busTypes.size());
+        List<BusTypeDto> busTypes = busTypeService.getBusTypes();
+        return APIResponseBuilder.list(busTypes, busTypes.size());
     }
-
-
-
 }

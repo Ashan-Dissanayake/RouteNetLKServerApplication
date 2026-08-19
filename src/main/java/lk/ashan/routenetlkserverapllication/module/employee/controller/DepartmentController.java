@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing department-related operations.
+ * Provides endpoints for retrieving department summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/departments")
@@ -22,6 +26,12 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
 
+    /**
+     * Retrieves a list of department summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of DepartmentDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DepartmentDto>>> get() {

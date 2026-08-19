@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing shift-related operations.
+ * Provides endpoints for retrieving shift summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/shifts")
@@ -22,6 +26,12 @@ public class ShiftController {
 
     private final ShiftService shiftService;
 
+    /**
+     * Retrieves a list of shift summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of ShiftSummaryDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ShiftSummaryDto>>> get() {

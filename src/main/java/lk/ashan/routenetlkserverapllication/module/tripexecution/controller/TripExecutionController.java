@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for managing Trip Execution operations.
+ * Provides endpoints for viewing, initializing, and updating trip executions.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/trip-execution")
@@ -24,6 +28,12 @@ public class TripExecutionController {
 
     private final TripExecutionService tripExecutionService;
 
+    /**
+     * Retrieves a list of trip executions based on the provided parameters.
+     *
+     * @param params A map of query parameters for filtering trip executions.
+     * @return A ResponseEntity containing a list of TripExecutionDetailsResponseDto.
+     */
     @PreAuthorize("hasAuthority('trip-execution-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripExecutionDetailsResponseDto>>> get(
@@ -36,6 +46,11 @@ public class TripExecutionController {
         return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
     }
 
+    /**
+     * Retrieves a summary of trip executions.
+     *
+     * @return A ResponseEntity containing a list of TripExecutionSummaryDto.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripExecutionSummaryDto>>> get() {
@@ -43,6 +58,12 @@ public class TripExecutionController {
         return APIResponseBuilder.list(tripExecutions, tripExecutions.size());
     }
 
+    /**
+     * Initializes daily trip executions.
+     *
+     * @param tripExecutionInitializationDto The initialization details.
+     * @return A ResponseEntity containing a list of initialized TripExecutionDetailsResponseDto.
+     */
     @PreAuthorize("hasAuthority('trip-execution-initialize')")
     @PostMapping("/initialize")
     public ResponseEntity<APISuccessResponse<List<TripExecutionDetailsResponseDto>>> createTrip(
@@ -53,6 +74,12 @@ public class TripExecutionController {
         return APIResponseBuilder.created(initializedTripExecutions,initializedTripExecutions.size());
     }
 
+    /**
+     * Generates assignments for trip executions.
+     *
+     * @param tripExecutionAssignmentDto The assignment details.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-generate-assignments')")
     @PostMapping("/generate-assignments")
     public ResponseEntity<Map<String, String>> generateAssignments(
@@ -65,6 +92,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as checked-in.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-checked-in')")
     @PostMapping("/{tripExecutionId}/checked-in")
     public ResponseEntity<Map<String, String>> checkedInTripExecution(
@@ -77,6 +110,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as dispatched.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-dispatched')")
     @PostMapping("/{tripExecutionId}/dispatched")
     public ResponseEntity<Map<String, String>> dispatchedTripExecution(
@@ -89,6 +128,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as arrived.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-arrived')")
     @PostMapping("/{tripExecutionId}/arrived")
     public ResponseEntity<Map<String, String>> arrivedTripExecution(
@@ -101,6 +146,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as having a breakdown.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-breakdown')")
     @PostMapping("/{tripExecutionId}/breakdown")
     public ResponseEntity<Map<String, String>> breakDownTripExecution(
@@ -113,6 +164,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as completed.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-completed')")
     @PostMapping("/{tripExecutionId}/completed")
     public ResponseEntity<Map<String, String>> completedTripExecution(
@@ -125,6 +182,12 @@ public class TripExecutionController {
         ));
     }
 
+    /**
+     * Marks a trip execution as cancelled.
+     *
+     * @param tripExecutionId The ID of the trip execution.
+     * @return A ResponseEntity containing a success message and status.
+     */
     @PreAuthorize("hasAuthority('trip-execution-cancelled')")
     @PostMapping("/{tripExecutionId}/cancelled")
     public ResponseEntity<Map<String, String>> cancelledTripExecution(

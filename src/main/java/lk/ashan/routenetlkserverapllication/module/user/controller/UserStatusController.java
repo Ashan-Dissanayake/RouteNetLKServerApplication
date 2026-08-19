@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing user statuses.
+ * Provides endpoints to retrieve user status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/user-statuses")
@@ -22,6 +26,12 @@ public class UserStatusController {
 
     private final UserStatusService userStatusService;
 
+    /**
+     * Retrieves a list of user status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of UserStatusDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<UserStatusDto>>> get() {

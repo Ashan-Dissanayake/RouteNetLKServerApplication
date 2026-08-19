@@ -11,18 +11,34 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing Employee Status operations.
+ * Provides methods to retrieve employee statuses by various criteria.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmployeeStatusService {
-    
+
     private final EmployeeStatusRepository employeeStatusRepository;
     private final EmployeeStatusMapper employeeStatusMapper;
 
+    /**
+     * Retrieves all employee statuses as a list of DTOs.
+     *
+     * @return a list of {@link EmployeeStatusDto} representing all employee statuses.
+     */
     @Transactional(readOnly = true)
     public List<EmployeeStatusDto> getEmployeeStatuses(){
        return employeeStatusMapper.toDtoList(employeeStatusRepository.findAll());
     }
 
+    /**
+     * Retrieves an employee status by its name.
+     *
+     * @param name the name of the employee status to retrieve.
+     * @return the {@link EmployeeStatus} with the specified name.
+     * @throws ResourceNotFoundException if no employee status with the given name is found.
+     */
     @Transactional(readOnly = true)
     public EmployeeStatus getByName(String name) {
         return employeeStatusRepository.findByName(name)
@@ -31,6 +47,13 @@ public class EmployeeStatusService {
                 ));
     }
 
+    /**
+     * Retrieves an employee status by its ID.
+     *
+     * @param id the ID of the employee status to retrieve.
+     * @return the {@link EmployeeStatus} with the specified ID.
+     * @throws ResourceNotFoundException if no employee status with the given ID is found.
+     */
     @Transactional(readOnly = true)
     public EmployeeStatus getById(Integer id) {
         return employeeStatusRepository.findById(id)

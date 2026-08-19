@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing Incident Status operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class IncidentStatusService {
@@ -18,11 +21,23 @@ public class IncidentStatusService {
     private final IncidentStatusRepository incidentStatusRepository;
     private final IncidentStatusMapper incidentStatusMapper;
 
+    /**
+     * Retrieves all incident statuses.
+     *
+     * @return a list of {@link IncidentStatusDto} representing all incident statuses.
+     */
     @Transactional(readOnly = true)
-    public List<IncidentStatusDto> getIncidentStatuses(){
+    public List<IncidentStatusDto> getIncidentStatuses() {
         return incidentStatusMapper.toDtoList(incidentStatusRepository.findAll());
     }
 
+    /**
+     * Retrieves an incident status by its name.
+     *
+     * @param name the name of the incident status to retrieve.
+     * @return the {@link IncidentStatus} with the specified name.
+     * @throws ResourceNotFoundException if no incident status with the specified name is found.
+     */
     @Transactional(readOnly = true)
     public IncidentStatus getByName(String name) {
         return incidentStatusRepository.findByName(name)

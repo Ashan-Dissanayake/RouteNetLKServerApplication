@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing Part Master resources.
+ * Provides endpoints for retrieving part master summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/part-masters")
@@ -22,6 +26,12 @@ public class PartMasterController {
 
     private final PartMasterService partMasterService;
 
+    /**
+     * Retrieves a list of part master summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of PartMasterDto objects.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartMasterDto>>> get() {

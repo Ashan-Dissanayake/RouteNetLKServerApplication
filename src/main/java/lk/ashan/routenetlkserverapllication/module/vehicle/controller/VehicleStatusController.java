@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing vehicle statuses.
+ * Provides endpoints to retrieve vehicle status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/vehicle-statuses")
@@ -22,6 +26,12 @@ public class VehicleStatusController {
 
     private final VehicleStatusService vehicleStatusService;
 
+    /**
+     * Retrieves a list of vehicle status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of VehiclestatusDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehiclestatusDto>>> get() {

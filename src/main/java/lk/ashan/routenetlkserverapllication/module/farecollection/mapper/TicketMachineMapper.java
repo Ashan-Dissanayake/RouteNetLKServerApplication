@@ -11,10 +11,28 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING,uses = {
+/**
+ * Mapper interface for converting between TicketMachine entities and DTOs.
+ * Utilizes MapStruct for automatic mapping and BranchMapper for nested mappings.
+ */
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {
         BranchMapper.class
 })
 public interface TicketMachineMapper {
+
+    /**
+     * Converts a TicketMachine entity to a TicketMachineDto.
+     *
+     * @param ticketMachine the TicketMachine entity to be converted
+     * @return the converted TicketMachineDto
+     */
     TicketMachineDto toDto(TicketMachine ticketMachine);
+
+    /**
+     * Converts a list of TicketMachine entities to a list of TicketMachineDto objects.
+     *
+     * @param ticketMachines the list of TicketMachine entities to be converted
+     * @return the list of converted TicketMachineDto objects
+     */
     List<TicketMachineDto> toDtoList(List<TicketMachine> ticketMachines);
 }

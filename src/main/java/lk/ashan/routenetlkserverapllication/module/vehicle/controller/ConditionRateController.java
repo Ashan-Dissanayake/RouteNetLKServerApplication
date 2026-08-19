@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing condition rates.
+ * Provides endpoints to retrieve condition rate summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/condition-rates")
@@ -22,6 +26,12 @@ public class ConditionRateController {
 
     private final ConditionRateService conditionRateService;
 
+    /**
+     * Retrieves a list of condition rate summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of ConditionrateDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ConditionrateDto>>> get() {

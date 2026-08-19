@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing module-related operations.
+ * Provides endpoints for retrieving module summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/modules")
@@ -22,6 +26,13 @@ public class ModuleController {
 
     private final ModuleService moduleService;
 
+    /**
+     * Retrieves a list of module summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of ModuleDto objects
+     *         and the total count of modules.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ModuleDto>>> get() {

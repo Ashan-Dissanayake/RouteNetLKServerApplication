@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing Part Request Statuses.
+ * Provides endpoints to retrieve summaries of part request statuses.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/part-request-statuses")
@@ -22,6 +26,13 @@ public class PartRequestStatusController {
 
     private final PartRequestStatusService partRequeststatusService;
 
+    /**
+     * Retrieves a list of part request status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of PartRequestStatusDto objects
+     *         and the total count of statuses.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestStatusDto>>> get() {

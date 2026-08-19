@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 
 
+/**
+ * Controller for managing privileges. Provides endpoints for viewing, assigning,
+ * and revoking privileges.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/privileges")
@@ -23,6 +27,13 @@ public class PrivilegeController {
 
     private final PrivilegeService privilegeService;
 
+    /**
+     * Retrieves a list of privileges. If query parameters are provided,
+     * privileges are filtered based on the parameters.
+     *
+     * @param params A map of query parameters for filtering privileges.
+     * @return A ResponseEntity containing a list of privileges and their count.
+     */
     @PreAuthorize("hasAuthority('privilege-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PrivilegeResponseDto>>> get(
@@ -35,6 +46,13 @@ public class PrivilegeController {
         return APIResponseBuilder.list(privileges, privileges.size());
     }
 
+    /**
+     * Assigns privileges to a specific role.
+     *
+     * @param roleId The ID of the role to which privileges will be assigned.
+     * @param requestDto The request body containing the privileges to assign.
+     * @return A ResponseEntity indicating the success of the operation.
+     */
     @PreAuthorize("hasAuthority('privilege-assign')")
     @PostMapping("/{roleId}/assign")
     public ResponseEntity<APISuccessResponse<String>> assignPrivileges(
@@ -47,6 +65,13 @@ public class PrivilegeController {
         );
     }
 
+    /**
+     * Revokes a specific privilege from a role.
+     *
+     * @param roleId The ID of the role from which the privilege will be revoked.
+     * @param privilegeId The ID of the privilege to revoke.
+     * @return A ResponseEntity indicating the success of the operation.
+     */
     @PreAuthorize("hasAuthority('privilege-revoke')")
     @DeleteMapping("/{roleId}/{privilegeId}/revoke")
     public ResponseEntity<APISuccessResponse<String>> removePrivilege(

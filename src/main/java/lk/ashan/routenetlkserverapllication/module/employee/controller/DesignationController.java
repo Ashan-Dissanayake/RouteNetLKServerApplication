@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing designations.
+ * Provides endpoints for retrieving designation summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/designations")
@@ -22,6 +26,12 @@ public class DesignationController {
 
     private final DesignationService designationService;
 
+    /**
+     * Retrieves a list of designation summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of DesignationDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<DesignationDto>>> get() {

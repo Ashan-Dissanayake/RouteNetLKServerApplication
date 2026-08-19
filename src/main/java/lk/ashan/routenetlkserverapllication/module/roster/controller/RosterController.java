@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for managing roster-related operations.
+ * Provides endpoints for retrieving roster summaries and creating new rosters.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/rosters")
@@ -21,6 +25,11 @@ public class RosterController {
 
     private final RosterService rosterService;
 
+    /**
+     * Retrieves a summary of all rosters.
+     *
+     * @return a ResponseEntity containing a success response with a list of RosterSummaryDto objects.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path = "/summaries")
     public ResponseEntity<APISuccessResponse<List<RosterSummaryDto>>> getRosterSummary() {
@@ -28,6 +37,13 @@ public class RosterController {
         return APIResponseBuilder.list(rosterSummaryDtoList,rosterSummaryDtoList.size());
     }
 
+    /**
+     * Creates a new roster based on the provided request data.
+     *
+     * @param rosterRequestDto the data for the new roster, validated for correctness.
+     * @return a ResponseEntity containing a success response with the created RosterSummaryDto object.
+     * @throws jakarta.validation.ConstraintViolationException if the request data is invalid.
+     */
     @PreAuthorize("hasAuthority('roster-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<RosterSummaryDto>> createRoster(

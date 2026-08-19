@@ -10,7 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing `Part` entities.
+ * Extends JpaRepository to provide CRUD operations and custom query methods.
+ */
 @Repository
 public interface PartRepository extends JpaRepository<Part, Integer> {
+
+    /**
+     * Checks if a part exists by the given branch ID and part master ID.
+     *
+     * @param id the ID of the branch
+     * @param id1 the ID of the part master
+     * @return true if a part exists with the specified branch ID and part master ID, false otherwise
+     */
     boolean existsByBranch_IdAndPartmaster_Id(Integer id, Integer id1);
 }

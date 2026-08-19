@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for managing roster shifts.
+ * Provides endpoints to retrieve roster shift details.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/roster-shifts")
@@ -20,6 +24,13 @@ public class RosterShiftController {
 
     private final RosterShiftService rosterShiftService;
 
+    /**
+     * Retrieves a list of roster shift details for a given roster ID.
+     *
+     * @param rosterId the ID of the roster to retrieve shifts for
+     * @return a ResponseEntity containing a success response with the list of roster shift details
+     * @throws IllegalArgumentException if the provided rosterId is invalid
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path = "/{rosterId}")
     public ResponseEntity<APISuccessResponse<List<RosterShiftDetailResponseDto>>> getByRosterId(

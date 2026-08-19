@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for managing user roles.
+ * Provides endpoints for viewing, assigning, revoking, and replacing user roles.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/user-roles")
@@ -21,8 +25,15 @@ public class UserRoleController {
 
     private final UserRoleService userRoleService;
 
+    /**
+     * Retrieves the roles assigned to a specific user.
+     *
+     * @param userId the ID of the user whose roles are to be retrieved
+     * @return a response entity containing a list of user roles and their details
+     * @throws org.springframework.security.access.AccessDeniedException if the user does not have the required authority
+     */
     @PreAuthorize("hasAuthority('user-role-view')")
-    @GetMapping(value = "/{userId}/roles",produces = "application/json")
+    @GetMapping(value = "/{userId}/roles", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<UserRoleResponseDto>>> get(
             @PathVariable Integer userId)
     {
@@ -30,6 +41,15 @@ public class UserRoleController {
         return APIResponseBuilder.list(userRoles, userRoles.size());
     }
 
+    /**
+     * Assigns roles to a specific user.
+     *
+     * @param userId the ID of the user to whom roles are to be assigned
+     * @param requestDto the request body containing the roles to be assigned
+     * @return a response entity indicating the success of the operation
+     * @throws org.springframework.security.access.AccessDeniedException if the user does not have the required authority
+     * @throws jakarta.validation.ConstraintViolationException if the request body validation fails
+     */
     @PreAuthorize("hasAuthority('user-role-assign')")
     @PostMapping("/{userId}/roles")
     public ResponseEntity<APISuccessResponse<String>> assignRoles(
@@ -42,6 +62,14 @@ public class UserRoleController {
         );
     }
 
+    /**
+     * Removes a specific role from a user.
+     *
+     * @param userId the ID of the user from whom the role is to be removed
+     * @param roleId the ID of the role to be removed
+     * @return a response entity indicating the success of the operation
+     * @throws org.springframework.security.access.AccessDeniedException if the user does not have the required authority
+     */
     @PreAuthorize("hasAuthority('user-role-revoke')")
     @DeleteMapping("/{userId}/roles/{roleId}")
     public ResponseEntity<APISuccessResponse<String>> removeRole(
@@ -51,6 +79,15 @@ public class UserRoleController {
         return APIResponseBuilder.ok("Role removed successfully");
     }
 
+    /**
+     * Replaces all roles of a specific user with new roles.
+     *
+     * @param userId the ID of the user whose roles are to be replaced
+     * @param requestDto the request body containing the new roles
+     * @return a response entity indicating the success of the operation
+     * @throws org.springframework.security.access.AccessDeniedException if the user does not have the required authority
+     * @throws jakarta.validation.ConstraintViolationException if the request body validation fails
+     */
     @PreAuthorize("hasAuthority('user-role-replace')")
     @PutMapping("/{userId}/roles")
     public ResponseEntity<APISuccessResponse<String>> replaceRoles(

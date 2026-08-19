@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing GRN (Goods Received Note) statuses.
+ * Provides methods to retrieve GRN statuses by ID, name, or all statuses.
+ */
 @Service
 @RequiredArgsConstructor
 public class GrnStatusService {
@@ -18,11 +22,23 @@ public class GrnStatusService {
     private final GrnStatusRepository grnStatusRepository;
     private final GrnStatusMapper grnStatusMapper;
 
+    /**
+     * Retrieves all GRN statuses.
+     *
+     * @return a list of GRN statuses as DTOs.
+     */
     @Transactional(readOnly = true)
-    public List<GrnStatusDto> getGrnStatuses(){
-       return grnStatusMapper.toDtoList(grnStatusRepository.findAll());
+    public List<GrnStatusDto> getGrnStatuses() {
+        return grnStatusMapper.toDtoList(grnStatusRepository.findAll());
     }
 
+    /**
+     * Retrieves a GRN status by its ID.
+     *
+     * @param id the ID of the GRN status to retrieve.
+     * @return the GRN status entity.
+     * @throws ResourceNotFoundException if no GRN status is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public GrnStatus getById(Integer id) {
         return grnStatusRepository.findById(id)
@@ -31,6 +47,13 @@ public class GrnStatusService {
                 ));
     }
 
+    /**
+     * Retrieves a GRN status by its name.
+     *
+     * @param name the name of the GRN status to retrieve.
+     * @return the GRN status entity.
+     * @throws ResourceNotFoundException if no GRN status is found with the given name.
+     */
     @Transactional(readOnly = true)
     public GrnStatus getByName(String name) {
         return grnStatusRepository.findByName(name)

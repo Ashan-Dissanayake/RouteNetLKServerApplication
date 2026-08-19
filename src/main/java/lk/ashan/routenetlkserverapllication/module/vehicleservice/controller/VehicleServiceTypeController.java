@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing vehicle service types.
+ * Provides endpoints for retrieving vehicle service type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/vehicle-service-types")
@@ -22,6 +26,12 @@ public class VehicleServiceTypeController {
 
     private final VehicleServiceTypeService vehicleServiceTypeService;
 
+    /**
+     * Retrieves a list of vehicle service type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of VehicleServiceTypeDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleServiceTypeDto>>> get() {

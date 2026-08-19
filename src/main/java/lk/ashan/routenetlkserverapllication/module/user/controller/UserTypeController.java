@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing user types.
+ * Provides endpoints for retrieving user type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/user-types")
@@ -22,6 +26,12 @@ public class UserTypeController {
 
     private final UserTypeService userTypeService;
 
+    /**
+     * Retrieves a list of user type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of UserTypeDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<UserTypeDto>>> get() {

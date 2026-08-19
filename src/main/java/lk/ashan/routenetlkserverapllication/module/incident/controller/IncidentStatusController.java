@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing incident statuses.
+ * Provides endpoints to retrieve summaries of incident statuses.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/incident-statuses")
@@ -22,6 +26,12 @@ public class IncidentStatusController {
 
     private final IncidentStatusService incidentStatusService;
 
+    /**
+     * Retrieves a list of incident status summaries.
+     *
+     * @return a ResponseEntity containing a success response with a list of IncidentStatusDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentStatusDto>>> get() {

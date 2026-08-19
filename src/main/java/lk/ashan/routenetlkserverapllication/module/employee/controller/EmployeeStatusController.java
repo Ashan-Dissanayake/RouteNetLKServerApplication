@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing employee statuses.
+ * Provides endpoints to retrieve employee status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/employee-statuses")
@@ -22,6 +26,12 @@ public class EmployeeStatusController {
 
     private final EmployeeStatusService employeestatusService;
 
+    /**
+     * Retrieves a list of employee status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of EmployeeStatusDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeStatusDto>>> get() {

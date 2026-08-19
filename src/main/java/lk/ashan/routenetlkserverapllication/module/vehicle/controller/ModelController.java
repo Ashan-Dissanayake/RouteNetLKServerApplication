@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing vehicle models.
+ * Provides endpoints for retrieving model summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/models")
@@ -22,6 +26,12 @@ public class ModelController {
 
     private final ModelService modelService;
 
+    /**
+     * Retrieves a list of vehicle model summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of ModelDto objects
+     * @throws SecurityException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<ModelDto>>> get() {

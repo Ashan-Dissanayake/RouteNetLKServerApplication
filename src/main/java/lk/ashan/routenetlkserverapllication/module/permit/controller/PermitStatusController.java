@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing permit statuses.
+ * Provides endpoints to retrieve permit status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/permit-statuses")
@@ -22,6 +26,12 @@ public class PermitStatusController {
 
     private final PermitStatusService permitstatusService;
 
+    /**
+     * Retrieves a list of permit status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of PermitStatusDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PermitStatusDto>>> get() {

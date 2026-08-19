@@ -10,9 +10,21 @@ import java.util.List;
 import java.util.Optional;
 
 
+/**
+ * Repository interface for managing `VehicleService` entities.
+ * Provides methods for querying maintenance lifecycle metrics.
+ */
 @Repository
 public interface VehicleServiceRepository extends JpaRepository<VehicleService, Integer> {
-   @Query(value = """
+
+    /**
+     * Retrieves maintenance lifecycle metrics for the last 7 weeks.
+     * The metrics include the number of completed services and pending backlog services per week.
+     *
+     * @return A list of `Report3Projection` containing the week label, completed services, and pending backlog.
+     * @throws org.springframework.dao.DataAccessException if a data access error occurs.
+     */
+    @Query(value = """
             SELECT
                 CONCAT('Week ', week_number) AS weekLabel,
                 SUM(CASE WHEN vehicleservicestatus_id = 4 THEN 1 ELSE 0 END) AS completedServices,
@@ -29,5 +41,5 @@ public interface VehicleServiceRepository extends JpaRepository<VehicleService, 
             ORDER BY year_number DESC, week_number DESC
             LIMIT 7
             """, nativeQuery = true)
-   List<Report3Projection> getMaintenanceLifecycleMetrics();
+    List<Report3Projection> getMaintenanceLifecycleMetrics();
 }

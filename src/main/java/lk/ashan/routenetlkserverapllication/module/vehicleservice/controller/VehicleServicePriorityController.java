@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing vehicle service priorities.
+ * Provides endpoints to retrieve vehicle service priority summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/vehicle-service-priorities")
@@ -22,6 +26,12 @@ public class VehicleServicePriorityController {
 
     private final VehicleServicePriorityService vehicleServicePriorityService;
 
+    /**
+     * Retrieves a list of vehicle service priority summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of VehicleServicePriorityDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleServicePriorityDto>>> get() {

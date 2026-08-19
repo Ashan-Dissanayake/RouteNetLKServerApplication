@@ -8,9 +8,21 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 
+/**
+ * Repository interface for managing `Roster` entities.
+ * Extends the `JpaRepository` to provide CRUD operations and custom queries.
+ */
 @Repository
 public interface RosterRepository extends JpaRepository<Roster, Integer> {
 
+    /**
+     * Checks if there is an overlapping roster for a specific branch within the given date range.
+     *
+     * @param branchId  the ID of the branch to check for overlapping rosters
+     * @param startDate the start date of the range to check
+     * @param endDate   the end date of the range to check
+     * @return `true` if an overlapping roster exists, `false` otherwise
+     */
     @Query("""
 SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
 FROM Roster r

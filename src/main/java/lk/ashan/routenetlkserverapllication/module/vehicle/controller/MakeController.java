@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for handling requests related to vehicle makes.
+ * Provides endpoints for retrieving vehicle make summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/makes")
@@ -22,6 +26,12 @@ public class MakeController {
 
     private final MakeService makeService;
 
+    /**
+     * Retrieves a list of vehicle make summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of MakeRequestDto objects
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<MakeRequestDto>>> get() {

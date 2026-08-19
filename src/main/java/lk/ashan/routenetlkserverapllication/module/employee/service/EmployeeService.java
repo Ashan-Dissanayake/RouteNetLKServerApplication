@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Service class for managing Employee-related operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
@@ -48,11 +51,22 @@ public class EmployeeService {
     private final EmployeeStateFactory employeeStateFactory;
     private final EmployeeStateTransitionHandler employeeStateTransitionHandler;
 
+    /**
+     * Retrieves all employees.
+     *
+     * @return a list of EmployeeDetailResponseDto containing details of all employees.
+     */
     @Transactional(readOnly = true)
-    public List<EmployeeDetailResponseDto> getEmployees(){
-       return employeeMapper.toDtoList(employeeRepository.findAll());
+    public List<EmployeeDetailResponseDto> getEmployees() {
+        return employeeMapper.toDtoList(employeeRepository.findAll());
     }
 
+    /**
+     * Searches for employees based on the provided parameters.
+     *
+     * @param params a map containing search parameters such as name, number, and department ID.
+     * @return a list of EmployeeDetailResponseDto matching the search criteria.
+     */
     @Transactional(readOnly = true)
     public List<EmployeeDetailResponseDto> searchEmployee(@NotNull HashMap<String, String> params) {
 
@@ -69,14 +83,24 @@ public class EmployeeService {
             employeeStream = employeeStream.filter(e -> e.getDepartment().getId() == Integer.parseInt(departmentid));
 
         return employeeMapper.toDtoList(employeeStream.collect(Collectors.toList()));
-
     }
 
+    /**
+     * Retrieves a summary of all employees.
+     *
+     * @return a list of EmployeeSummaryDto containing summary details of all employees.
+     */
     @Transactional(readOnly = true)
-    public List<EmployeeSummaryDto> getSummaryEmployees(){
+    public List<EmployeeSummaryDto> getSummaryEmployees() {
         return employeeMapper.toSummaryDetailList(employeeRepository.findAll());
     }
 
+    /**
+     * Retrieves employees by their designation.
+     *
+     * @param designation the designation to filter employees by.
+     * @return a list of EmployeeSummaryDto containing employees with the specified designation.
+     */
     @Transactional(readOnly = true)
     public List<EmployeeSummaryDto> getEmployeesByDesignation(String designation) {
         List<Employee> employees;
@@ -90,12 +114,26 @@ public class EmployeeService {
         return employeeMapper.toSummaryDetailList(employees);
     }
 
+    /**
+     * Retrieves an employee by their ID.
+     *
+     * @param id the ID of the employee to retrieve.
+     * @return the Employee entity with the specified ID.
+     * @throws ResourceNotFoundException if no employee is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public Employee getById(Integer id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
     }
 
+    /**
+     * Creates a new employee.
+     *
+     * @param request the EmployeeCreateRequestDto containing details for the new employee.
+     * @return the created EmployeeDetailResponseDto.
+     * @throws ValidationException if validation fails during employee creation.
+     */
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
@@ -111,12 +149,20 @@ public class EmployeeService {
                 .validateInitial();
         employee.setEmployeestatus(initialStatus);
         employee.setNumber(numberGeneratorService.nextEmployeeNumber());
-        employee.setEmail(employee.getCallingname()+numberGeneratorService.nextEmployeeNumber()+"@sltb.lk");
+        employee.setEmail(employee.getCallingname() + numberGeneratorService.nextEmployeeNumber() + "@sltb.lk");
 
         Employee saved = employeeRepository.save(employee);
         return employeeMapper.toDto(saved);
     }
 
+    /**
+     * Updates an existing employee.
+     *
+     * @param request the EmployeeUpdateRequestDto containing updated details for the employee.
+     * @return the updated EmployeeDetailResponseDto.
+     * @throws ResourceNotFoundException if the employee to update is not found.
+     * @throws ValidationException if validation fails during employee update.
+     */
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
@@ -130,23 +176,23 @@ public class EmployeeService {
 
         Employee entity = employeeMapper.updateEntityFromDto(request, existing);
 
-        if (request.getEmployeestatus().getId()!=null){
+        if (request.getEmployeestatus().getId() != null) {
             EmployeeStatus targetStatus = employeeStatusService.getById(request.getEmployeestatus().getId());
             employeeStateTransitionHandler.transitionTo(entity, targetStatus);
         }
 
-        if (request.getEmployeetype().getId()!=null){
+        if (request.getEmployeetype().getId() != null) {
             EmployeeType targetType = employeeTypeService.getById(request.getEmployeetype().getId());
             entity.setEmployeetype(targetType);
         }
 
-        if (request.getDesignation().getId()!=null){
+        if (request.getDesignation().getId() != null) {
             Designation targetDesignation = designationService.getById(request.getDesignation().getId());
             entity.setDesignation(targetDesignation);
 
         }
 
-        if (request.getDepartment().getId()!=null){
+        if (request.getDepartment().getId() != null) {
             Department targetDepartment = departmentService.getById(request.getDepartment().getId());
             entity.setDepartment(targetDepartment);
 
@@ -154,6 +200,13 @@ public class EmployeeService {
         return employeeMapper.toDto(entity);
     }
 
+    /**
+     * Deactivates a list of employees by their IDs.
+     *
+     * @param employeeIds the list of employee IDs to deactivate.
+     * @return a list of IDs of the deactivated employees.
+     * @throws ResourceNotFoundException if no employees are found for the given IDs.
+     */
     @Transactional
     public List<Integer> deactivateEmployee(List<Integer> employeeIds) {
         List<Employee> employees = employeeRepository.findAllById(employeeIds);
@@ -165,11 +218,11 @@ public class EmployeeService {
 
         List<Driver> drivers = driverRepository.findAllByEmployeeIds(employeeIds);
         for (Driver driver : drivers) {
-            driver.setCrewstatus(new CrewStatus(4,"Inactive"));
+            driver.setCrewstatus(new CrewStatus(4, "Inactive"));
         }
         driverRepository.saveAll(drivers);
 
-        return employees.stream() .map(Employee::getId) .collect(Collectors.toList());
+        return employees.stream().map(Employee::getId).collect(Collectors.toList());
     }
 
 }

@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Controller for managing part requests.
+ * Provides endpoints for viewing, creating, updating, approving, and rejecting part requests.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/part-requests")
@@ -25,6 +29,12 @@ public class PartRequestController {
 
     private final PartRequestService partRequestService;
 
+    /**
+     * Retrieves a list of part requests based on the provided parameters.
+     *
+     * @param params A map of query parameters for filtering part requests.
+     * @return A response entity containing a list of part request details.
+     */
     @PreAuthorize("hasAuthority('part-request-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestDetailResponseDto>>> get(
@@ -37,6 +47,11 @@ public class PartRequestController {
         return APIResponseBuilder.list(requests, requests.size());
     }
 
+    /**
+     * Retrieves a summary of all part requests.
+     *
+     * @return A response entity containing a list of part request summaries.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartRequestSummaryDto>>> get() {
@@ -44,7 +59,12 @@ public class PartRequestController {
         return APIResponseBuilder.list(partRequests, partRequests.size());
     }
 
-
+    /**
+     * Creates a new part request.
+     *
+     * @param dto The data transfer object containing details for the new part request.
+     * @return A response entity containing the created part request details.
+     */
     @PreAuthorize("hasAuthority('part-request-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> create(
@@ -54,6 +74,12 @@ public class PartRequestController {
         return APIResponseBuilder.created(savedRequest, savedRequest.getId());
     }
 
+    /**
+     * Updates an existing part request.
+     *
+     * @param dto The data transfer object containing updated details for the part request.
+     * @return A response entity containing the updated part request details.
+     */
     @PreAuthorize("hasAuthority('part-request-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> update(
@@ -63,6 +89,12 @@ public class PartRequestController {
         return APIResponseBuilder.updated(updatedRequest, updatedRequest.getId());
     }
 
+    /**
+     * Approves a part request.
+     *
+     * @param id The ID of the part request to approve.
+     * @return A response entity containing the approved part request details.
+     */
     @PreAuthorize("hasAuthority('part-request-approve')")
     @PostMapping("/{id}/approve")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> approve(
@@ -72,6 +104,12 @@ public class PartRequestController {
         return APIResponseBuilder.ok(request);
     }
 
+    /**
+     * Rejects a part request.
+     *
+     * @param id The ID of the part request to reject.
+     * @return A response entity containing the rejected part request details.
+     */
     @PreAuthorize("hasAuthority('part-request-reject')")
     @PostMapping("/{id}/reject")
     public ResponseEntity<APISuccessResponse<PartRequestDetailResponseDto>> reject(

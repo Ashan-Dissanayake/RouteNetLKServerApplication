@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing Incident Vehicle Allocation Statuses.
+ * Provides endpoints to retrieve summaries of allocation statuses.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/incident-vehicle-allocation-statuses")
@@ -22,6 +26,12 @@ public class IncidentVehicleAllocationStatusController {
 
     private final IncidentVehicleAllocationStatusService incidentVehicleAllocationStatusService;
 
+    /**
+     * Retrieves a list of summaries for Incident Vehicle Allocation Statuses.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of IncidentVehicleAllocationStatusDto
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentVehicleAllocationStatusDto>>> get() {

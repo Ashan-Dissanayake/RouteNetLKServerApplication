@@ -21,24 +21,55 @@ public interface ConductorRepository extends JpaRepository<Conductor, Integer> {
     /**
      * Finds a list of Conductors by the branch ID of their associated employee.
      *
-     * @param branchId the ID of the branch to filter Conductors by
-     * @return a list of Conductors associated with the specified branch ID
+     * @param branchId the ID of the branch to filter Conductors by.
+     * @return a list of Conductors associated with the specified branch ID.
      */
     @Query("SELECT c FROM Conductor c WHERE c.employee.branch.id = :branchId")
     List<Conductor> findByEmployee_Branch_Id(@Param("branchId") Integer branchId);
 
-    //dashboard
+    /**
+     * Counts the number of standby Conductors in a specific branch.
+     *
+     * @param branchId the ID of the branch to filter Conductors by.
+     * @return the count of standby Conductors associated with the specified branch ID.
+     */
     @Query("SELECT COUNT(c) FROM Conductor c " +
             "WHERE c.employee.branch.id = :branchId " +
             "AND c.crewstatus.name = 'Eligible'")
     long countStandbyConductorsByBranch(@Param("branchId") Integer branchId);
 
+    /**
+     * Checks if a Conductor exists by their employee ID.
+     *
+     * @param employeeId the ID of the employee to check.
+     * @return true if a Conductor with the specified employee ID exists, false otherwise.
+     */
     boolean existsByEmployeeId(Integer employeeId);
 
+    /**
+     * Checks if a Conductor exists by their employee ID, excluding a specific Conductor ID.
+     *
+     * @param employeeId the ID of the employee to check.
+     * @param id the ID of the Conductor to exclude from the check.
+     * @return true if a Conductor with the specified employee ID exists, false otherwise.
+     */
     boolean existsByEmployeeIdAndIdNot(Integer employeeId, Integer id);
 
+    /**
+     * Finds a Conductor by their employee ID.
+     *
+     * @param id the ID of the employee to find.
+     * @return an Optional containing the Conductor if found, or an empty Optional otherwise.
+     */
     Optional<Conductor> findByEmployeeId(Integer id);
 
+    /**
+     * Finds a list of available Conductors in a specific branch.
+     * Conductors are considered available if their employee status is 'Active'.
+     *
+     * @param branchId the ID of the branch to filter Conductors by.
+     * @return a list of available Conductors associated with the specified branch ID.
+     */
     @Query("""
     SELECT c
     FROM Conductor c

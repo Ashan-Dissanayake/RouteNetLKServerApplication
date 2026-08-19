@@ -6,6 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing `Grn` entities.
+ * Extends the `JpaRepository` to provide CRUD operations and query methods.
+ */
 @Repository
 public interface GrnRepository extends JpaRepository<Grn, Integer> {
 

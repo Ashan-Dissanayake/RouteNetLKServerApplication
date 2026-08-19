@@ -33,6 +33,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Service class for managing GRNs (Goods Receipt Notes).
+ * Provides methods for retrieving, searching, creating, and updating GRNs.
+ */
 @Service
 @RequiredArgsConstructor
 public class GrnService {
@@ -46,12 +50,22 @@ public class GrnService {
 
     private final List<GrnProcessingStrategy> strategies;
 
-
+    /**
+     * Retrieves all GRNs.
+     *
+     * @return a list of {@link GrnDetailResponseDto} representing all GRNs.
+     */
     @Transactional(readOnly = true)
-    public List<GrnDetailResponseDto> getGrns(){
+    public List<GrnDetailResponseDto> getGrns() {
         return grnMapper.toDtoList(grnRepository.findAll());
     }
 
+    /**
+     * Searches for GRNs based on the provided parameters.
+     *
+     * @param params a map of search parameters, including "ssnumber", "sspartrequest", and "ssgrnstatus".
+     * @return a list of {@link GrnDetailResponseDto} matching the search criteria.
+     */
     @Transactional(readOnly = true)
     public List<GrnDetailResponseDto> searchGrns(@NotNull HashMap<String, String> params) {
 
@@ -59,50 +73,37 @@ public class GrnService {
 
         String number = params.get("ssnumber");
         String partRequestId = params.get("sspartrequest");
-        String grnStatusId= params.get("ssgrnstatus");
+        String grnStatusId = params.get("ssgrnstatus");
 
         Stream<Grn> grnStream = grns.stream();
 
-        if(number!=null)grnStream = grnStream.filter(r->r.getNumber().equals(number));
-        if(partRequestId!=null)grnStream = grnStream.filter(r->r.getPartrequest().getId()==Integer.parseInt(partRequestId));
-        if(grnStatusId!=null)grnStream = grnStream.filter(r->r.getGrnstatus().getId()==Integer.parseInt(grnStatusId));
+        if (number != null) grnStream = grnStream.filter(r -> r.getNumber().equals(number));
+        if (partRequestId != null) grnStream = grnStream.filter(r -> r.getPartrequest().getId() == Integer.parseInt(partRequestId));
+        if (grnStatusId != null) grnStream = grnStream.filter(r -> r.getGrnstatus().getId() == Integer.parseInt(grnStatusId));
 
-        return grnMapper.toDtoList( grnStream.collect(Collectors.toList()));
+        return grnMapper.toDtoList(grnStream.collect(Collectors.toList()));
     }
 
+    /**
+     * Handles the event when a part request is approved.
+     * Creates a draft GRN for the approved part request.
+     *
+     * @param event the {@link PartRequestApprovedEvent} containing the part request ID.
+     */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handlePartRequestApproved(PartRequestApprovedEvent event) {
         this.createDraftGrn(event.partRequestId());
     }
 
-    private void createDraftGrn(@NotNull Integer partRequestId) {
-        PartRequest partRequest = partRequestService.getById(partRequestId);
-
-        Grn grn = new Grn();
-        grn.setPartrequest(partRequest);
-        grn.setBranch(partRequest.getBranch());
-
-        String grnNumber = numberGeneratorService.nextGrnNumber(partRequest.getBranch().getCode(), YearMonth.now());
-
-        grn.setNumber(grnNumber);
-
-        GrnStatus draftStatus = grnStatusService.getByName("Draft");
-        grn.setGrnstatus(draftStatus);
-
-        List<GrnPartRequestItem> grnPartRequestItems= partRequest.getPartrequestitems().stream().map(item -> {
-            GrnPartRequestItem grnPart = new GrnPartRequestItem();
-            grnPart.setGrn(grn);
-            grnPart.setPartrequestitem(item); // Link to the M:N associative entity
-            grnPart.setQuantity(item.getQuantity()); // Default to full expected qty
-            return grnPart;
-        }).collect(Collectors.toList());
-
-        grn.setGrnpartrequestitems(grnPartRequestItems);
-
-        Grn saved = grnRepository.save(grn);
-        grnMapper.toDto(saved);
-    }
-
+    /**
+     * Updates an existing GRN based on the provided update request.
+     *
+     * @param dto the {@link GrnUpdateRequestDto} containing the update details.
+     * @return the updated {@link GrnDetailResponseDto}.
+     * @throws ResourceNotFoundException if the GRN with the specified ID is not found.
+     * @throws InvalidStateTransitionException if the GRN is not in a "DRAFT" state.
+     * @throws BusinessRuleViolationException if there is an item ID mismatch for GRN parts.
+     */
     @Transactional
     public GrnDetailResponseDto updateGrn(@NotNull GrnUpdateRequestDto dto) {
         // 1. Fetch
@@ -166,5 +167,36 @@ public class GrnService {
         return grnMapper.toDto(grnRepository.save(existing));
     }
 
+    /**
+     * Creates a draft GRN for the specified part request.
+     *
+     * @param partRequestId the ID of the part request.
+     */
+    private void createDraftGrn(@NotNull Integer partRequestId) {
+        PartRequest partRequest = partRequestService.getById(partRequestId);
 
+        Grn grn = new Grn();
+        grn.setPartrequest(partRequest);
+        grn.setBranch(partRequest.getBranch());
+
+        String grnNumber = numberGeneratorService.nextGrnNumber(partRequest.getBranch().getCode(), YearMonth.now());
+
+        grn.setNumber(grnNumber);
+
+        GrnStatus draftStatus = grnStatusService.getByName("Draft");
+        grn.setGrnstatus(draftStatus);
+
+        List<GrnPartRequestItem> grnPartRequestItems = partRequest.getPartrequestitems().stream().map(item -> {
+            GrnPartRequestItem grnPart = new GrnPartRequestItem();
+            grnPart.setGrn(grn);
+            grnPart.setPartrequestitem(item); // Link to the M:N associative entity
+            grnPart.setQuantity(item.getQuantity()); // Default to full expected qty
+            return grnPart;
+        }).collect(Collectors.toList());
+
+        grn.setGrnpartrequestitems(grnPartRequestItems);
+
+        Grn saved = grnRepository.save(grn);
+        grnMapper.toDto(saved);
+    }
 }

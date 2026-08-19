@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing incident types.
+ * Provides endpoints for retrieving incident type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/incident-types")
@@ -22,6 +26,12 @@ public class IncidentTypeController {
 
     private final IncidentTypeService incidentTypeService;
 
+    /**
+     * Retrieves a list of incident type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of IncidentTypeDto objects.
+     * @throws SecurityException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<IncidentTypeDto>>> get() {

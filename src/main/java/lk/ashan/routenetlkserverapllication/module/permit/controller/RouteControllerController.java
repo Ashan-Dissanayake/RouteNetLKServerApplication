@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing routes.
+ * Provides endpoints for retrieving route summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/routes")
@@ -24,6 +28,12 @@ public class RouteControllerController {
 
     private final RouteService routeService;
 
+    /**
+     * Retrieves a list of route summaries.
+     *
+     * @return a ResponseEntity containing a success response with a list of RouteSummaryResponseDto objects.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<RouteSummaryResponseDto>>> get() {

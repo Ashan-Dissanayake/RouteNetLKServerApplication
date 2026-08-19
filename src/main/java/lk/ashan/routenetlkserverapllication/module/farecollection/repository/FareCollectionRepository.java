@@ -9,11 +9,27 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for managing FareCollection entities.
+ * Provides methods for querying and interacting with the FareCollection database table.
+ */
 @Repository
 public interface FareCollectionRepository extends JpaRepository<FareCollection, Integer> {
+
+    /**
+     * Checks if a FareCollection entry exists for the given trip execution ID.
+     *
+     * @param tripExecutionId the ID of the trip execution to check
+     * @return true if an entry exists, false otherwise
+     */
     boolean existsByTripexecution_Id(Integer tripExecutionId);
 
-    // --- REPORT 2: Depot-Wise Financial Reconciliation ---
+    /**
+     * Retrieves depot-wise financial reconciliation metrics.
+     * This includes the depot name, total cash collected, and total digital payments.
+     *
+     * @return a list of Report2Projection containing depot financial reconciliation metrics
+     */
     @Query(value = "SELECT b.name as depotName, " +
             "COALESCE(SUM(f.cashcollected), 0.0) as cashAmount, " +
             "COALESCE(SUM(f.digitalpayments), 0.0) as digitalAmount " +
@@ -22,7 +38,13 @@ public interface FareCollectionRepository extends JpaRepository<FareCollection, 
             "GROUP BY b.id, b.name", nativeQuery = true)
     List<Report2Projection> getDepotFinancialReconciliationMetrics();
 
-    //dashboard
+    /**
+     * Retrieves a daily revenue summary for a specific branch.
+     * The summary includes the total tickets, cash collected, and digital payments for the current date.
+     *
+     * @param branchId the ID of the branch for which the summary is retrieved
+     * @return an Object array containing the total tickets, cash collected, and digital payments
+     */
     @Query("SELECT COALESCE(SUM(f.totaltickets), 0), " +
             "       COALESCE(SUM(f.cashcollected), 0), " +
             "       COALESCE(SUM(f.digitalpayments), 0) " +

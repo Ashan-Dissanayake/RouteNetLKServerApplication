@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing ticket machine-related operations.
+ * Provides endpoints for retrieving ticket machine summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/ticket-machines")
@@ -22,6 +26,12 @@ public class TicketMachineController {
 
     private final TicketMachineService ticketMachineService;
 
+    /**
+     * Retrieves a list of ticket machine summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of TicketMachineDto objects.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TicketMachineDto>>> get() {

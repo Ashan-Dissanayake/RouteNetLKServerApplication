@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service class responsible for creating draft GRNs (Goods Receipt Notes)
+ * based on the remaining balance quantities.
+ */
 @Service
 @RequiredArgsConstructor
 public class GrnDraftFactory {
@@ -19,6 +23,14 @@ public class GrnDraftFactory {
     private final GrnStatusRepository statusRepository;
     private final GrnPartRequestItemRepository grnPartRepository;
 
+    /**
+     * Creates a new draft GRN based on the remaining balance quantities of the original GRN.
+     *
+     * @param originalGrn The original GRN from which the draft is created.
+     * @param totalBalanceQty The total balance quantity to be considered for the draft.
+     * @return A new GRN object with DRAFT status and balance items.
+     * @throws IllegalArgumentException if the DRAFT status is not found in the repository.
+     */
     public Grn createBalanceDraft(Grn originalGrn, BigDecimal totalBalanceQty) {
         // 1. Initialize the new Header with DRAFT status
         Grn nextDraft = Grn.builder()
@@ -51,6 +63,12 @@ public class GrnDraftFactory {
         return nextDraft;
     }
 
+    /**
+     * Calculates the remaining quantity for a given PartRequestItem.
+     *
+     * @param poLine The PartRequestItem for which the remaining quantity is calculated.
+     * @return The remaining quantity as a BigDecimal.
+     */
     private BigDecimal calculateRemaining(PartRequestItem poLine) {
         // Run the JPQL query to sum all 'RECEIVED' and 'PARTIALLY_RECEIVED' quantities
         BigDecimal totalReceived = grnPartRepository.sumQuantityByPartRequestItemId(
@@ -64,6 +82,12 @@ public class GrnDraftFactory {
         return poLine.getQuantity().subtract(received);
     }
 
+    /**
+     * Generates the next GRN number in sequence by appending a suffix.
+     *
+     * @param oldNumber The original GRN number.
+     * @return The new GRN number with a "-BAL" suffix.
+     */
     private String generateNextNumber(String oldNumber) {
         // Logic to maintain sequence (e.g., GRN-001 -> GRN-001-BAL)
         return oldNumber + "-BAL";

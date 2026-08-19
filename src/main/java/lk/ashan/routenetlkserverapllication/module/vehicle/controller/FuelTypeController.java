@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for managing fuel types.
+ * Provides endpoints for retrieving fuel type summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/fuel-types")
@@ -22,6 +26,13 @@ public class FuelTypeController {
 
     private final FuelTypeService fuelTypeService;
 
+    /**
+     * Retrieves a list of fuel type summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of FueltypeDto objects
+     *         and the total count of fuel types.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<FueltypeDto>>> get() {

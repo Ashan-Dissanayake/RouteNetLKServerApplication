@@ -13,26 +13,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Controller for managing user-related operations.
+ * Provides endpoints for user management such as viewing, adding, updating,
+ * activating/deactivating, and managing passwords.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/users")
 @RequiredArgsConstructor
 public class UserController {
 
-    private  final UserService userService;
+    private final UserService userService;
 
+    /**
+     * Retrieves a list of users. If parameters are provided, performs a search based on the parameters.
+     *
+     * @param params A map of search parameters.
+     * @return A response entity containing a list of user details and the total count.
+     */
     @PreAuthorize("hasAuthority('user-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<UserDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
     ) {
         List<UserDetailResponseDto> users = params.isEmpty()
-                ?userService.getUsers()
-                :userService.searchUsers(params);
+                ? userService.getUsers()
+                : userService.searchUsers(params);
 
         return APIResponseBuilder.list(users, users.size());
     }
 
+    /**
+     * Adds a new user.
+     *
+     * @param userCreateRequestDto The details of the user to be created.
+     * @return A response entity containing the created user's details.
+     */
     @PreAuthorize("hasAuthority('user-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<UserDetailResponseDto>> add(
@@ -42,6 +59,12 @@ public class UserController {
         return APIResponseBuilder.created(savedUser, savedUser.getId());
     }
 
+    /**
+     * Updates an existing user.
+     *
+     * @param updateRequestDto The updated details of the user.
+     * @return A response entity containing the updated user's details.
+     */
     @PreAuthorize("hasAuthority('user-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<UserDetailResponseDto>> update(
@@ -51,6 +74,12 @@ public class UserController {
         return APIResponseBuilder.updated(updatedUser, updatedUser.getId());
     }
 
+    /**
+     * Activates or deactivates a user.
+     *
+     * @param userActiveDeactiveDto The details of the user to be activated or deactivated.
+     * @return A response entity containing a success message.
+     */
     @PreAuthorize("hasAuthority('user-delete')")
     @PutMapping("/activate-or-deactivate-user")
     public ResponseEntity<APISuccessResponse<String>> activateOrDeactivateUser(
@@ -64,6 +93,13 @@ public class UserController {
         );
     }
 
+    /**
+     * Changes the password of a user.
+     *
+     * @param userId The ID of the user whose password is to be changed.
+     * @param request The details of the new password.
+     * @return A response entity containing a success message.
+     */
     @PreAuthorize("hasAuthority('user-change-password')")
     @PutMapping("/{userId}/change-password")
     public ResponseEntity<APISuccessResponse<String>> changePassword(
@@ -77,6 +113,13 @@ public class UserController {
         );
     }
 
+    /**
+     * Resets the password of a user.
+     *
+     * @param userId The ID of the user whose password is to be reset.
+     * @param resetPasswordRequestDto The details of the reset password.
+     * @return A response entity containing a success message.
+     */
     @PreAuthorize("hasAuthority('user-reset-password')")
     @PutMapping("/{userId}/reset-password")
     public ResponseEntity<APISuccessResponse<String>> resetPassword(

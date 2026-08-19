@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+/**
+ * Controller for handling analytics-related endpoints.
+ * Provides various reports such as dispatch summary, depot revenue, maintenance trends, fleet performance, and incident distribution.
+ */
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +24,11 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
+    /**
+     * Retrieves the dispatch summary report.
+     *
+     * @return a ResponseEntity containing the dispatch summary report data.
+     */
     @PreAuthorize("hasAuthority('report-view')")
     @GetMapping("/dispatch-summary")
     public ResponseEntity<APISuccessResponse<Report1ResponseDto>> getDispatchSummaryReport() {
@@ -27,6 +36,11 @@ public class AnalyticsController {
         return APIResponseBuilder.ok(data);
     }
 
+    /**
+     * Retrieves the depot revenue report.
+     *
+     * @return a ResponseEntity containing the depot revenue report data.
+     */
     @PreAuthorize("hasAuthority('report-view')")
     @GetMapping("/depot-revenue")
     public ResponseEntity<APISuccessResponse<Report2ResponseDto>> getDepotRevenueReport() {
@@ -34,6 +48,11 @@ public class AnalyticsController {
         return APIResponseBuilder.ok(data);
     }
 
+    /**
+     * Retrieves the maintenance trends report.
+     *
+     * @return a ResponseEntity containing the maintenance trends report data.
+     */
     @PreAuthorize("hasAuthority('report-view')")
     @GetMapping("/maintenance-trends")
     public ResponseEntity<APISuccessResponse<Report3ResponseDto>> getMaintenanceTrendsReport() {
@@ -41,6 +60,13 @@ public class AnalyticsController {
         return APIResponseBuilder.ok(data);
     }
 
+    /**
+     * Retrieves the fleet performance report for a given date range.
+     *
+     * @param startDate the start date of the report in yyyy-MM-dd format.
+     * @param endDate the end date of the report in yyyy-MM-dd format.
+     * @return a ResponseEntity containing the fleet performance report data.
+     */
     @PreAuthorize("hasAuthority('report-view')")
     @GetMapping("/fleet-performance")
     public ResponseEntity<APISuccessResponse<Report4ResponseDto>> getFleetPerformanceReport(
@@ -50,6 +76,11 @@ public class AnalyticsController {
         return APIResponseBuilder.ok(data);
     }
 
+    /**
+     * Retrieves the incident distribution report.
+     *
+     * @return a ResponseEntity containing the incident distribution report data.
+     */
     @PreAuthorize("hasAuthority('report-view')")
     @GetMapping("/incident-distribution")
     public ResponseEntity<APISuccessResponse<Report5ResponseDto>> getIncidentDistributionReport() {

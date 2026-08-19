@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controller for handling GRN (Goods Received Note) status-related operations.
+ * Provides endpoints for retrieving GRN status summaries.
+ */
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/grn-statuses")
@@ -22,6 +26,13 @@ public class GrnStatusController {
 
     private final GrnStatusService grnstatusService;
 
+    /**
+     * Retrieves a list of GRN status summaries.
+     *
+     * @return a ResponseEntity containing an APISuccessResponse with a list of GrnStatusDto objects
+     *         and the total count of GRN statuses.
+     * @throws org.springframework.security.access.AccessDeniedException if the user is not authenticated.
+     */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path ="/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<GrnStatusDto>>> get() {

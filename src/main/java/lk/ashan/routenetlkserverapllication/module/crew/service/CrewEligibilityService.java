@@ -18,80 +18,63 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Service class responsible for managing and recalculating the eligibility status
+ * of crew members (drivers and conductors), including validation of medical
+ * documentation and route familiarity transitions.
+ */
 @Service
 @RequiredArgsConstructor
 public class CrewEligibilityService {
 
+    private static final CrewStatus STATUS_ACTIVE_ACTIVE = new CrewStatus(1, "Eligible");
+    private static final CrewStatus STATUS_INELIGIBLE = new CrewStatus(2, "Ineligible");
+    private static final CrewStatus STATUS_INACTIVE = new CrewStatus(4, "Inactive");
+
+    private static final Map<String, List<String>> VALID_ROUTE_UPGRADES = Map.of(
+            "Low", List.of("Medium"),
+            "Medium", List.of("High"),
+            "High", List.of()
+    );
+
     private final DriverRepository driverRepository;
     private final ConductorRepository conductorRepository;
 
+    /**
+     * Recalculates and updates the eligibility status for all drivers
+     * based on their employment status, license, and medical validity.
+     */
     @Transactional
     public void recalculateDriverStatuses() {
         List<Driver> drivers = driverRepository.findAll();
-
-        for (Driver driver : drivers) {
-            Employee emp = driver.getEmployee();
-            CrewStatus newStatus = calculateDriverStatus(emp,driver);
-            if (!Objects.equals(driver.getCrewstatus(), newStatus)) {
-                driver.setCrewstatus(newStatus);
-            }
-        }
+        drivers.forEach(driver -> {
+            CrewStatus newStatus = calculateDriverStatus(driver.getEmployee(), driver);
+            updateStatusIfChanged(driver::getCrewstatus, driver::setCrewstatus, newStatus);
+        });
         driverRepository.saveAll(drivers);
     }
-    
+
+    /**
+     * Recalculates and updates the eligibility status for all conductors
+     * based on their employment status and medical validity.
+     */
     @Transactional
     public void recalculateConductorStatuses() {
         List<Conductor> conductors = conductorRepository.findAll();
-
-        for (Conductor conductor : conductors) {
-            Employee emp = conductor.getEmployee();
-            CrewStatus newStatus = calculateConductorStatus(emp,conductor);
-            if (!Objects.equals(conductor.getCrewstatus(), newStatus)) {
-                conductor.setCrewstatus(newStatus);
-            }
-        }
+        conductors.forEach(conductor -> {
+            CrewStatus newStatus = calculateConductorStatus(conductor.getEmployee(), conductor);
+            updateStatusIfChanged(conductor::getCrewstatus, conductor::setCrewstatus, newStatus);
+        });
         conductorRepository.saveAll(conductors);
     }
 
-    private CrewStatus calculateDriverStatus(Employee emp, Driver driver) {
-        LocalDate today = LocalDate.now();
-
-        if (!emp.getEmployeestatus().getName().equalsIgnoreCase("active")) {
-            return new CrewStatus(4,"Inactive");
-        }
-
-        // Check license validity
-        boolean licenseInvalid = driver.getDolicenseissued().isAfter(today)
-                || driver.getDolicenseexpired().isBefore(today);
-
-        // Check medical validity
-        boolean medicalInvalid = driver.getDomedicalissued().isAfter(today)
-                || driver.getDomedicalexpired().isBefore(today);
-
-        // If either is invalid, driver is ineligible
-        if (licenseInvalid || medicalInvalid) {
-            return new CrewStatus(2, "Ineligible");
-        }
-
-        return new CrewStatus(1,"Eligible");
-    }
-
-    private CrewStatus calculateConductorStatus(Employee emp, Conductor conductor) {
-        LocalDate today = LocalDate.now();
-
-        if (!emp.getEmployeestatus().getName().equalsIgnoreCase("active")) {
-            return new CrewStatus(4,"Inactive");
-        }
-
-        // Check license expiry
-        if (conductor.getDomedicalexpired().isBefore(today)
-                || conductor.getDomedicalissued().isAfter(today)) {
-            return new CrewStatus(2,"Ineligible");
-        }
-
-        return new CrewStatus(1,"Eligible");
-    }
-
+    /**
+     * Validates medical document dates against business rules.
+     *
+     * @param issued The date the medical document was issued.
+     * @param expiry The date the medical document expires.
+     * @throws BusinessRuleViolationException If dates are logically invalid or exceed the 6-month validity period.
+     */
     public void validateMedicalDates(LocalDate issued, LocalDate expiry) {
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException("Medical issued date cannot be in the future");
@@ -106,33 +89,78 @@ public class CrewEligibilityService {
         }
     }
 
+    /**
+     * Validates if a transition between route familiarity levels is permitted.
+     *
+     * @param currentLevel The current familiarity level.
+     * @param newLevel     The requested new familiarity level.
+     * @throws IllegalArgumentException If levels are null or unknown.
+     * @throws InvalidStateTransitionException If the transition is not allowed.
+     */
     public void validateRouteFamiliarityTransition(String currentLevel, String newLevel) {
-
         if (currentLevel == null || newLevel == null) {
             throw new IllegalArgumentException("Route familiarity level cannot be null");
         }
 
-        currentLevel = currentLevel.trim();
-        newLevel = newLevel.trim();
+        String trimmedCurrent = currentLevel.trim();
+        String trimmedNew = newLevel.trim();
 
-        if (currentLevel.equals(newLevel)) return;
-
-        List<String> allowedUpgrades = VALID_ROUTE_UPGRADES.get(currentLevel);
-        if (allowedUpgrades == null) {
-            throw new IllegalArgumentException("Unknown route familiarity level: " + currentLevel);
+        if (trimmedCurrent.equals(trimmedNew)) {
+            return;
         }
 
-        if (!allowedUpgrades.contains(newLevel)) {
+        List<String> allowedUpgrades = VALID_ROUTE_UPGRADES.get(trimmedCurrent);
+        if (allowedUpgrades == null) {
+            throw new IllegalArgumentException("Unknown route familiarity level: " + trimmedCurrent);
+        }
+
+        if (!allowedUpgrades.contains(trimmedNew)) {
             throw new InvalidStateTransitionException(
-                    "Invalid route familiarity transition from " + currentLevel + " to " + newLevel
+                    "Invalid route familiarity transition from " + trimmedCurrent + " to " + trimmedNew
             );
         }
     }
 
-    private static final Map<String, List<String>> VALID_ROUTE_UPGRADES = Map.of(
-            "Low", List.of("Medium"),
-            "Medium", List.of("High"),
-            "High", List.of()
-    );
+    private CrewStatus calculateDriverStatus(Employee emp, Driver driver) {
+        if (isInactiveEmployee(emp)) {
+            return STATUS_INACTIVE;
+        }
 
+        LocalDate today = LocalDate.now();
+        boolean isLicenseValid = isDateRangeValid(driver.getDolicenseissued(), driver.getDolicenseexpired(), today);
+        boolean isMedicalValid = isDateRangeValid(driver.getDomedicalissued(), driver.getDomedicalexpired(), today);
+
+        return (isLicenseValid && isMedicalValid) ? STATUS_ACTIVE_ACTIVE : STATUS_INELIGIBLE;
+    }
+
+    private CrewStatus calculateConductorStatus(Employee emp, Conductor conductor) {
+        if (isInactiveEmployee(emp)) {
+            return STATUS_INACTIVE;
+        }
+
+        LocalDate today = LocalDate.now();
+        boolean isMedicalValid = isDateRangeValid(conductor.getDomedicalissued(), conductor.getDomedicalexpired(), today);
+
+        return isMedicalValid ? STATUS_ACTIVE_ACTIVE : STATUS_INELIGIBLE;
+    }
+
+    private boolean isInactiveEmployee(Employee emp) {
+        return emp == null || emp.getEmployeestatus() == null ||
+                !emp.getEmployeestatus().getName().equalsIgnoreCase("active");
+    }
+
+    private boolean isDateRangeValid(LocalDate issued, LocalDate expired, LocalDate targetDate) {
+        if (issued == null || expired == null) {
+            return false;
+        }
+        return !issued.isAfter(targetDate) && !expired.isBefore(targetDate);
+    }
+
+    private void updateStatusIfChanged(java.util.function.Supplier<CrewStatus> getter,
+                                       java.util.function.Consumer<CrewStatus> setter,
+                                       CrewStatus newStatus) {
+        if (!Objects.equals(getter.get(), newStatus)) {
+            setter.accept(newStatus);
+        }
+    }
 }

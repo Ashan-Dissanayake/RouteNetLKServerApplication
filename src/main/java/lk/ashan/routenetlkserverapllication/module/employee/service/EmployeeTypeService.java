@@ -12,18 +12,34 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Service class for managing Employee Types.
+ * Provides methods to retrieve employee types and fetch employee type details by ID.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmployeeTypeService {
-    
+
     private final EmployeeTypeRepository employeeTypeRepository;
     private final EmployeeTypeMapper employeeTypeMapper;
 
+    /**
+     * Retrieves a list of all employee types.
+     *
+     * @return a list of EmployeeTypeDto objects representing all employee types.
+     */
     @Transactional(readOnly = true)
     public List<EmployeeTypeDto> getEmployeeTypes(){
        return employeeTypeMapper.toDtoList(employeeTypeRepository.findAll());
     }
 
+    /**
+     * Retrieves an employee type by its ID.
+     *
+     * @param id the ID of the employee type to retrieve.
+     * @return the EmployeeType object corresponding to the given ID.
+     * @throws ResourceNotFoundException if no employee type is found with the given ID.
+     */
     @Transactional(readOnly = true)
     public EmployeeType getById(Integer id) {
         return employeeTypeRepository.findById(id)
@@ -31,5 +47,5 @@ public class EmployeeTypeService {
                         "Employee type not found"
                 ));
     }
-    
+
 }
