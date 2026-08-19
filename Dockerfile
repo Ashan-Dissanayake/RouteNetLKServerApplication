@@ -14,7 +14,7 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # Extract layers to optimize Docker caching
-RUN java -Djarmode=layertools -jar target/*.war extract --destination target/extracted
+RUN java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
 # ==========================================
 # Stage 2: Minimal Production Runtime
