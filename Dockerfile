@@ -4,16 +4,16 @@
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /workspace
 
-# Cache dependencies first
+# Cache dependencies first (dependency:resolve පාවිච්චි කරන්න, package නෙමෙයි)
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
-RUN chmod +x ./mvnw && ./mvnw package -DskipTests
+RUN chmod +x ./mvnw && ./mvnw dependency:resolve -B
 
-# Copy source code and build production artifact (skipping tests for build speed)
+# Copy source code and build final executable Spring Boot JAR
 COPY src src
 RUN ./mvnw clean package -DskipTests
 
-# Extract layers to optimize Docker caching
+# Extract layers to optimize Docker caching (දැන් මේක හරියටම වැඩ කරයි!)
 RUN java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
 # ==========================================
@@ -36,8 +36,6 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 # JVM Memory Tuning for t3.micro:
-# - UseSerialGC: Lowest memory footprint for < 1GB RAM servers
-# - Xms / Xmx: Cap heap size strictly between 128MB and 256MB
 ENV JAVA_OPTS="-XX:+UseSerialGC -Xms128m -Xmx256m -XX:+ExitOnOutOfMemoryError"
 
 EXPOSE 8080
