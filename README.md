@@ -9,27 +9,9 @@ Beyond standard CRUD operations, this backend addresses complex enterprise engin
 ---
 
 ### System Context
-
-```
-+-------------------------------------------------------------------------+
-|                       RouteNetLK Client Application                     |
-|                           (Angular 19 SPA)                              |
-+-------------------------------------------------------------------------+
-                                     |
-                                     | HTTPS / JSON (REST APIs + JWT)
-                                     v
-+-------------------------------------------------------------------------+
-|                       RouteNetLK Server Application                     |
-|           (Spring Boot 3 + Spring Security + Timefold Solver)           |
-+-------------------------------------------------------------------------+
-                                     |
-                                     | JDBC / JPA (Hibernate ORM)
-                                     v
-+-------------------------------------------------------------------------+
-|                               MySQL 8.x                                 |
-|                 (Relational Persistence & Auditing)                     |
-+-------------------------------------------------------------------------+
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/cd170b44-3341-4036-93fd-9f47bf503a9d" width="250" height="500" alt="System Context Diagram">
+</p>
 
 > [!NOTE]
 > This repository contains exclusively the **backend server application**. The client application and cloud infrastructure are maintained in separate repositories:
@@ -57,46 +39,9 @@ The server application owns and enforces all system-wide business rules, transac
 
 The backend implements a **Modular Layered Architecture** with strict package-by-feature domain boundaries. Domain modules operate independently while relying on centralized cross-cutting infrastructure in the `shared` and `security` packages.
 
-```
-                  ┌───────────────────────────────────────────────┐
-                  │                 HTTP Requests                 │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                  ┌───────────────────────────────────────────────┐
-                  │              Security Filter Chain            │
-                  │   (AuthenticationFilter / AuthorizationFilter) │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                  ┌───────────────────────────────────────────────┐
-                  │               REST Controller Layer           │
-                  │        (Request DTOs, @Valid, HTTP Statuses)  │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                  ┌───────────────────────────────────────────────┐
-                  │               Service / Domain Layer          │
-                  │  ┌──────────────────────────────────────────┐ │
-                  │  │  Validation Context & Strategy Pipeline  │ │
-                  │  ├──────────────────────────────────────────┤ │
-                  │  │  State Factory & State Transition Handler│ │
-                  │  ├──────────────────────────────────────────┤ │
-                  │  │  Timefold Solver (Roster / Trip Planner) │ │
-                  │  └──────────────────────────────────────────┘ │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                  ┌───────────────────────────────────────────────┐
-                  │        Persistence Layer (Spring Data JPA)    │
-                  │   (AOP Branch Scoping & Soft-Delete Filters)  │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                  ┌───────────────────────────────────────────────┐
-                  │                 MySQL Database                │
-                  └───────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/52195e34-d9a1-4474-bd34-cce742433c4b" width="300" height="750" alt="Modular Layered Architecture">
+</p>
 
 ### Layer Responsibilities
 
@@ -197,33 +142,9 @@ The backend enforces strict real-world business constraints across public transp
 
 To prevent large, deeply nested conditional statements (`if-else` blocks) inside service classes, validation logic is structured using the **Strategy Pattern** paired with a **Validation Context**.
 
-```
-                           +-------------------------------+
-                           |      PermitService            |
-                           +---------------+---------------+
-                                           |
-                                           | 1. build context
-                                           v
-                       +---------------------------------------+
-                       |     PermitValidationContextBuilder    |
-                       +-------------------+-------------------+
-                                           |
-                                           | 2. produces immutable
-                                           v
-                       +---------------------------------------+
-                       |        PermitValidationContext        |
-                       +-------------------+-------------------+
-                                           |
-                                           | 3. forEach(strategy -> validate(context))
-                                           v
-         +---------------------------------+---------------------------------+
-         |                                 |                                 |
-         v                                 v                                 v
-+--------------------+           +--------------------+           +--------------------+
-|  BusTypeRouteType  |           | ActivePermitUnique |           |   VehicleBranch    |
-| ValidationStrategy |           | ValidationStrategy |           | ValidationStrategy |
-+--------------------+           +--------------------+           +--------------------+
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/067bf7ac-29c1-459f-89f8-3cad3f0ca073" width="600" height="413" alt="Validation Architecture">
+</p>
 
 ### Key Engineering Benefits:
 1. **Open/Closed Principle (OCP):** New domain rules can be added by implementing a new strategy class annotated with `@Component` without modifying the core service.
@@ -238,33 +159,9 @@ Entities governed by complex operational lifecycles implement the **State Patter
 
 ### State Transition Lifecycle: Incident Management Example
 
-```
-                    ┌──────────────────┐
-                    │     REPORTED     │
-                    └────────┬─────────┘
-                             │ (Breakdown logged)
-                             ▼
-                    ┌──────────────────┐
-             ┌─────►│PENDING_ALLOCATION├─────┐
-             │      └────────┬─────────┘     │
-             │               │ (Alternative  │
-(Recovery    │               │  bus assigned)│
- required)   │               ▼               │ (Direct resolution
-             │      ┌──────────────────┐     │  without replacement)
-             └──────┤   IN_PROGRESS    │     │
-                    └────────┬─────────┘     │
-                             │ (Bus fixed /  │
-                             │  trip resumed)│
-                             ▼               │
-                    ┌──────────────────┐     │
-                    │     RESOLVED     │◄────┘
-                    └────────┬─────────┘
-                             │ (Administrative sign-off)
-                             ▼
-                    ┌──────────────────┐
-                    │      CLOSED      │
-                    └──────────────────┘
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/7883e211-263a-4313-8389-2480bd3c9831" width="400" height="523" alt="State Transition Diagram">
+</p>
 
 ### Implementation Mechanics:
 - **State Interface:** (e.g., [`IncidentState`](src/main/java/lk/ashan/routenetlkserverapllication/module/incident/state/IncidentState.java), [`TripState`](src/main/java/lk/ashan/routenetlkserverapllication/module/trip/state/TripState.java), [`PartRequestState`](src/main/java/lk/ashan/routenetlkserverapllication/module/partreqest/state/PartRequestState.java)) declares `transitionTo(entity, newStatus)` and `validateInitial()`.
@@ -278,44 +175,9 @@ Entities governed by complex operational lifecycles implement the **State Patter
 
 Manual assignment of crew shifts and daily bus dispatches leads to resource conflicts, contract violations, and unbalanced workloads. RouteNetLK uses **Timefold Solver 1.32.0** (`ai.timefold.solver`) to solve two NP-hard combinatorial problems.
 
-```
-+-------------------------------------------------------------------------+
-|                              Problem Facts                              |
-|           (Employees, Vehicles, Routes, Shifts, Familiarities)          |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                             Planning Model                              |
-|         Planning Entities: RosterShiftAssignment / TripExecution        |
-|         Planning Variables: EmployeeFact / VehicleFact / CrewFact       |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                        Constraint Provider                              |
-|                                                                         |
-|  [HARD CONSTRAINTS] (Score: -1 Hard per violation)                      |
-|  - Overlapping assignments (crew / vehicle)                             |
-|  - Designation match (Driver vs. Conductor)                             |
-|  - Route familiarity threshold fulfillment                              |
-|  - Minimum mandatory rest period (>= 30 mins)                           |
-|                                                                         |
-|  [SOFT CONSTRAINTS] (Score: -1 Soft per variance)                       |
-|  - Uniform workload distribution (penalizing squared total duty hours)  |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                            Timefold Solver                              |
-|          (Local Search + Construction Heuristics Score Calculation)     |
-+-------------------------------------------------------------------------+
-                                     |
-                                     v
-+-------------------------------------------------------------------------+
-|                  Optimized Schedule / Dispatch Solution                 |
-+-------------------------------------------------------------------------+
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9501888c-ea01-42a3-b4ff-25269b63d052" width="250" alt="Timefold Solver Architecture">
+</p>
 
 ### 1. Crew Shift Rostering (`module/roster/planner`)
 - **Planning Entity:** `RosterShiftAssignmentPlanning`
@@ -343,39 +205,9 @@ Manual assignment of crew shifts and daily bus dispatches leads to resource conf
 
 The backend implements stateless security using **Spring Security 6** and **JSON Web Tokens (JJWT 0.11.5)**.
 
-```
-Client Request
-      │
-      │ 1. POST /login (Credentials)
-      ▼
-┌───────────────────────────┐
-│   AuthenticationFilter    │
-└─────────────┬─────────────┘
-              │ 2. Authenticate via AuthenticationManager
-              ▼
-┌───────────────────────────┐
-│  MyAuthenticationProvider │ ◄── Checks Guava LoadingCache (Brute-force lockout)
-└─────────────┬─────────────┘
-              │ 3. Issues JWT (HMAC-SHA512)
-              ▼
-Client receives JWT Token
-      │
-      │ 4. Subsequent API Request (Header: "Authorization: Bearer <token>")
-      ▼
-┌───────────────────────────┐
-│    AuthorizationFilter    │ ◄── Validates signature & expiry via JwtTokenUtil
-└─────────────┬─────────────┘
-              │ 5. Loads CustomUserPrincipal into SecurityContextHolder
-              ▼
-┌───────────────────────────┐
-│   @EnableMethodSecurity   │ ◄── Checks role (e.g., ROLE_DEPOT_MANAGER) & privileges
-└─────────────┬─────────────┘
-              │ 6. Authorized
-              ▼
-┌───────────────────────────┐
-│      REST Controller      │
-└───────────────────────────┘
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a48e66f8-a381-4ce5-abd6-9bc93c967e7d" width="200" height="806" alt="Backend Security Architecture">
+</p>
 
 ### Security Highlights:
 - **Brute-Force Lockout Defense:** [`MyAuthenticationProvider`](src/main/java/lk/ashan/routenetlkserverapllication/security/MyAuthenticationProvider.java) and [`LoginAttemptService`](src/main/java/lk/ashan/routenetlkserverapllication/security/LoginAttemptService.java) track failed attempts using a thread-safe Google Guava `LoadingCache`. Accounts/IPs exceeding 5 consecutive failed attempts are automatically locked for 15 minutes.
@@ -431,16 +263,9 @@ Centralized in [`GlobalExceptionHandler`](src/main/java/lk/ashan/routenetlkserve
 
 Data persistence is built on **Spring Data JPA** and **Hibernate ORM** targeting **MySQL 8**.
 
-```
-                                  BaseEntity
-                         (@MappedSuperclass, deleted = false)
-                                      ▲
-                                      │
-            ┌─────────────────────────┼─────────────────────────┐
-            │                         │                         │
-         Branch                    Vehicle                   Permite
-   (Depot Definition)        (Fleet Asset Data)       (Route Authorization)
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2cdf1d40-61e0-4281-8cc6-bca6da3658d1" width="500" height="235" alt="Persistence Data Isolation">
+</p>
 
 ### Multi-Tenant Branch Scoping via Aspect-Oriented Programming (AOP)
 To guarantee that depot officers can only query data belonging to their assigned branch, [`BranchAndUserFilterAspect`](src/main/java/lk/ashan/routenetlkserverapllication/shared/transaction/BranchAndUserFilterAspect.java) intercepts service query executions (`get*` and `search*` methods):
@@ -458,12 +283,9 @@ All domain entities inherit from [`BaseEntity`](src/main/java/lk/ashan/routenetl
 
 Persistence entities are completely decoupled from external REST interfaces using **MapStruct 1.5.5.Final**.
 
-```
-+-------------------+           MapStruct           +-------------------+
-|    JPA Entity     |   <=======================>   |     API DTO       |
-|  (Database Model) |     (Compile-Time CodeGen)    |  (Public Contract)|
-+-------------------+                               +-------------------+
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4754bddb-e5db-4ca6-944d-eb0ce4fd4e8e" width="500" alt="DTO Mapping Flow">
+</p>
 
 - **Compile-Time Generation:** Mappers are generated during compilation using `mapstruct-processor` and `lombok-mapstruct-binding`, eliminating runtime reflection overhead.
 - **Contract Segregation:** Modules separate creation payloads (`*CreateRequestDto`), update payloads (`*UpdateRequestDto`), detailed views (`*DetailResponseDto`), and lightweight search responses (`*SummaryResponseDto`).
@@ -485,19 +307,9 @@ Located under `lk.ashan.routenetlkserverapllication.shared`:
 
 Selected cross-domain interactions use Spring Application Events (`ApplicationEventPublisher`) to decouple core business transactions from secondary side effects.
 
-```
-Operation Executed (e.g. Permit Transferred)
-                     │
-                     ▼
-       PermitTransferredEvent Published
-                     │
-         ┌───────────┴───────────┐
-         │                       │
-         ▼                       ▼
-VehiclePermitEventListener   NotificationEventDispatcher
- (Resets vehicle status       (Sends async in-app alert
-  to "AVAILABLE")              to Depot Manager)
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1064185c-e89e-4df9-b7de-b3a489279c42" width="500" alt="Event-Driven Decoupling Architecture">
+</p>
 
 ### Verified Application Events:
 - **`PermitTransferredEvent`:** Handled by [`VehiclePermitEventListener`](src/main/java/lk/ashan/routenetlkserverapllication/module/vehicle/event/VehiclePermitEventListener.java) to release the bus back into depot availability, and by [`NotificationEventDispatcher`](src/main/java/lk/ashan/routenetlkserverapllication/shared/notification/listener/NotificationEventDispatcher.java) to alert the depot manager.
@@ -511,33 +323,9 @@ VehiclePermitEventListener   NotificationEventDispatcher
 
 The backend maintains an automated testing suite covering unit logic, optimization scoring, web contracts, and relational persistence.
 
-```
-                        ┌────────────────────────┐
-                        │      Unit Tests        │
-                        │  (Strategies, States,  │
-                        │   Mappers, Services)   │
-                        └───────────┬────────────┘
-                                    │
-                                    ▼
-                        ┌────────────────────────┐
-                        │   Optimization Tests   │
-                        │ (ConstraintVerifier:   │
-                        │   Roster & Dispatch)   │
-                        └───────────┬────────────┘
-                                    │
-                                    ▼
-                        ┌────────────────────────┐
-                        │  Web Controller Tests  │
-                        │ (MockMvc, Security,    │
-                        │   Validation, HTTP)    │
-                        └───────────┬────────────┘
-                                    │
-                                    ▼
-                        ┌────────────────────────┐
-                        │  Repository Integration│
-                        │ (Testcontainers MySQL) │
-                        └────────────────────────┘
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/05cbaeb7-7496-4278-816b-268316384fbd" width="250" alt="Testing Strategy Overview">
+</p>
 
 ### Testing Infrastructure:
 - **Real MySQL Testing via Testcontainers:** Repository integration tests extend [`BaseTestContainer`](src/test/java/lk/ashan/routenetlkserverapllication/shared/config/BaseTestContainer.java), which spins up a dedicated `mysql:8.3.0` Docker container dynamically. This validates custom SQL queries, native dialect functions, and soft-deletion filters against real MySQL rather than in-memory emulators like H2.
@@ -550,37 +338,18 @@ The backend maintains an automated testing suite covering unit logic, optimizati
 
 The backend is packaged as an optimized, multi-stage Docker container defined in [`Dockerfile`](Dockerfile).
 
-```
-Stage 1: Builder (eclipse-temurin:17-jdk-alpine)
-- Cache Maven dependencies (pom.xml + mvnw)
-- Compile and package Spring Boot JAR
-- Extract layers via jarmode=layertools
-         │
-         ▼
-Stage 2: Production Runtime (eclipse-temurin:17-jre-alpine)
-- Create non-root system user (appuser:appgroup)
-- Copy extracted layers (dependencies, spring-boot-loader, application)
-- Configure JVM flags for low-memory environments (t3.micro):
-  "-XX:+UseSerialGC -Xms128m -Xmx256m -XX:+ExitOnOutOfMemoryError"
-- Expose application port 8080
-- Run via JarLauncher
-```
-
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a4ade375-453b-4e1e-b20e-a8016472a882" width="250" alt="Containerization Pipeline">
+</p>
 ---
 
 ## CI/CD Pipeline
 
 Automated deployment is configured using GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)):
 
-```
-Git Push (master) ──► GitHub Actions ──► Docker Buildx ──► Push to Docker Hub
-                                                                  │
-                                                                  ▼
-                                                      Deploy to AWS EC2 via SSH
-                                                      - Pull latest backend image
-                                                      - Recreate backend container
-                                                      - Prune dangling images
-```
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e3bce14f-194b-4ba2-9bed-cfdfed1b8e44" width="250" alt="CI/CD Pipeline Flow">
+</p>
 
 1. **Build & Package:** Sets up Docker Buildx and compiles the image with GitHub Actions layer caching (`type=gha`).
 2. **Registry Publication:** Pushes dual tags (`latest` and `${{ github.sha }}`) to Docker Hub.
