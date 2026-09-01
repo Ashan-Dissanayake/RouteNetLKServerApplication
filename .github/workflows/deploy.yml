@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - .gitignore
+      - README.md
+      - .dockerignore
+      - .github/**
+      - HELP.md
   workflow_dispatch:
 
 jobs:
