@@ -15,21 +15,6 @@ Beyond standard CRUD operations, this backend addresses complex enterprise engin
 
 ---
 
-## Backend Responsibilities
-
-The server application owns and enforces all system-wide business rules, transactional boundaries, data isolation policies, and operational workflows:
-
-- **RESTful API Services:** Exposing structured endpoints for all operational domains with standard response envelopes and error handling.
-- **Domain Validation & Business Invariants:** Decoupled execution of domain constraints (e.g., license validity, vehicle-to-route classification, NIC/gender parity) via Strategy-based validation pipelines.
-- **Workflow & State Management:** Explicit state machines managing the lifecycles of trips, incident recoveries, spare part requisitions, vehicle statuses, and permits.
-- **Constraint-Based Optimization:** Automated resolution of multi-variable combinatorial problems (crew shift rostering and daily trip execution dispatch) using Timefold Solver.
-- **Security & Access Control:** Stateless JWT token issuance and validation, BCrypt password hashing, brute-force IP/account lockout, and fine-grained Role- and Privilege-Based Access Control (RBAC/PBAC).
-- **Data Scoping & Relational Integrity:** Multi-tenant branch data isolation and soft-deletion enforced transparently across query execution via Spring AOP and Hibernate `@Filter` definitions.
-- **Asynchronous Domain Events & Notifications:** Internal Spring application events triggering real-time in-app notification routing and automated HTML templated email delivery via Thymeleaf and JavaMail.
-- **Operational Analytics & KPI Aggregation:** Database-level aggregations and native projections delivering financial reconciliation, fleet dispatch metrics, and maintenance backlogs.
-
----
-
 ## Architecture
 
 The backend implements a **Modular Layered Architecture** with strict package-by-feature domain boundaries. Domain modules operate independently while relying on centralized cross-cutting infrastructure in the `shared` and `security` packages.
