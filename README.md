@@ -1,17 +1,12 @@
 # RouteNetLK Server Application
 
-**Production-grade Spring Boot backend engineered for depot-level fleet management, operational scheduling, workflow processing, and constraint-based resource optimization.**
+**A Spring Boot backend engineered for depot-level fleet management, operational scheduling, workflow processing, and constraint-based resource optimization.**
 
-The **RouteNetLK Server Application** serves as the core business logic, persistence, security, and optimization engine of the RouteNetLK public transport management platform. Built on **Java 17** and **Spring Boot 3**, it exposes secure RESTful APIs that govern end-to-end depot operations—including vehicle lifecycle tracking, crew management, route permits, timetable scheduling, incident handling, spare part inventory, Goods Received Notes (GRN), and fare reconciliation.
+The **RouteNetLK Server Application** serves as the core business logic, persistence, security, and optimization engine of the RouteNetLK public transport management platform. Built on **Java 17** and **Spring Boot 3**, it exposes secure RESTfull APIs that govern end-to-end depot operations including vehicle lifecycle tracking, crew management, route permits, timetable scheduling, incident handling, spare part inventory, Goods Received Notes (GRN), and fare reconciliation.
 
 Beyond standard CRUD operations, this backend addresses complex enterprise engineering challenges: **NP-hard crew and dispatch scheduling using constraint satisfaction (Timefold Solver)**, **decoupled business rule enforcement using the Strategy Pattern**, **deterministic lifecycle control using the State Pattern**, **aspect-oriented multi-tenant branch data scoping and soft-deletion using Hibernate filters**, and **stateless JWT security with brute-force lockout protection**.
 
 ---
-
-### System Context
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/cd170b44-3341-4036-93fd-9f47bf503a9d" width="250" height="500" alt="System Context Diagram">
-</p>
 
 > [!NOTE]
 > This repository contains exclusively the **backend server application**. The client application and cloud infrastructure are maintained in separate repositories:
@@ -105,39 +100,6 @@ module/<domain>/
 
 ---
 
-## Business Logic & Domain Rules
-
-The backend enforces strict real-world business constraints across public transport operations. Non-trivial rules are encapsulated in dedicated domain components:
-
-### 1. Bus Classification vs. Route Type Invariant
-- **Business Problem:** Transport regulations dictate that long-distance inter-provincial routes must only operate higher-tier coaches (e.g., luxury or semi-luxury), while regional routes can accommodate standard buses.
-- **Implementation:** [`BusTypeRouteTypeValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/permit/validation/BusTypeRouteTypeValidationStrategy.java) verifies that when a permit is issued or updated, the vehicle's `BusType` is strictly present in the permitted set for the designated `RouteType` (e.g., *Inter Provincial* allows only `AA`, `A`, `B+`, and `B`).
-- **Rationale:** Keeps regulatory matrix validation decoupled from basic CRUD persistence.
-
-### 2. Single Active Permit Invariant per Vehicle
-- **Business Problem:** A bus cannot hold multiple overlapping active operating permits across different routes or depots simultaneously.
-- **Implementation:** [`ActivePermitUniquenessValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/permit/validation/ActivePermitUniquenessValidationStrategy.java) queries the persistence layer for existing active permits assigned to the vehicle ID before approving a new registration or transfer.
-
-### 3. Incident Replacement Vehicle Availability & Allocation Ceiling
-- **Business Problem:** When a scheduled bus suffers a road breakdown, depot dispatchers must assign a replacement vehicle. The replacement vehicle must be in `AVAILABLE` status (not in repair or assigned elsewhere), and an incident cannot receive duplicate or excess replacement allocations.
-- **Implementation:**
-  - [`VehicleAvailabilityValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/incidentvehicleallocation/validation/VehicleAvailabilityValidationStrategy.java) guarantees the replacement bus is ready for duty.
-  - [`IncidentAllocationLimitValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/incidentvehicleallocation/validation/IncidentAllocationLimitValidationStrategy.java) and [`IncidentStateValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/incidentvehicleallocation/validation/IncidentStateValidationStrategy.java) ensure allocations only occur for open incidents and do not exceed the single-replacement ceiling.
-
-### 4. Demographic Parity & National Identity Card (NIC) Verification
-- **Business Problem:** Employee registration must strictly prevent data entry inconsistencies between demographic fields and official Sri Lankan National Identity Cards.
-- **Implementation:** [`GenderNicValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/employee/validation/GenderNicValidationStrategy.java) parses 9-digit (old) and 12-digit (new) NIC formats, extracting the embedded day-of-year code (values `> 500` denote female) and verifying exact parity against the specified gender and birth date. [`EmploymentDateValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/employee/validation/EmploymentDateValidationStrategy.java) enforces the legal minimum employment age.
-
-### 5. Crew Fitness & Regulatory License Expiry
-- **Business Problem:** Commercial bus drivers and conductors must hold valid driving licenses and active medical clearances. Assigning non-compliant crew creates legal liability.
-- **Implementation:** [`DriverLicenseMedicalValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/crew/validation/stratergy/DriverLicenseMedicalValidationStrategy.java) and [`ConductorMedicalValidationStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/crew/validation/stratergy/ConductorMedicalValidationStrategy.java) enforce that license expiry and medical checkup dates remain strictly in the future.
-
-### 6. Goods Received Note (GRN) Quantity Reconciliation
-- **Business Problem:** Requisition fulfillment must prevent inventory over-receipt. Delivered spare parts must match the quantities authorized in the original internal part request.
-- **Implementation:** [`FullReceiptStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/grn/validation/FullReceiptStrategy.java) and [`PartialReceiptStrategy`](src/main/java/lk/ashan/routenetlkserverapllication/module/grn/validation/PartialReceiptStrategy.java) compute remaining balances and update line item fulfillment states without permitting deliveries exceeding approved quantities.
-
----
-
 ## Validation Architecture
 
 To prevent large, deeply nested conditional statements (`if-else` blocks) inside service classes, validation logic is structured using the **Strategy Pattern** paired with a **Validation Context**.
@@ -188,17 +150,6 @@ Manual assignment of crew shifts and daily bus dispatches leads to resource conf
   - `oneDriverOneConductorPerShift`: Penalizes shifts that do not have distinct driver and conductor assignments.
 - **Soft Constraints:**
   - `fairWorkloadDistribution`: Groups assignments by employee and penalizes the square of shift counts ($count^2$), driving the solver toward an even distribution.
-
-### 2. Daily Trip Execution & Dispatch (`module/tripexecution/planner`)
-- **Planning Entity:** `TripExecutionPlanning`
-- **Planning Variables:** `VehicleFact`, `CrewFact driver`, `CrewFact conductor`
-- **Hard Constraints ([`TripExecutionConstraintProvider`](src/main/java/lk/ashan/routenetlkserverapllication/module/tripexecution/planner/TripExecutionConstraintProvider.java)):**
-  - `vehicleOverlap`, `driverOverlap`, `conductorOverlap`: Zero tolerance for overlapping departure-to-arrival trip intervals.
-  - `driverFamiliarity` & `conductorFamiliarity`: Crew route familiarity score must meet or exceed the route's minimum threshold.
-  - `requiredRestPeriod`: Mandates at least 30 minutes of turnaround buffer time between consecutive trips for a driver.
-- **Soft Constraints:**
-  - `fairnessDriverDuty` & `fairnessConductorDuty`: Minimizes total active duty minute disparity across available crew members.
-
 ---
 
 ## Security Architecture
@@ -279,19 +230,6 @@ All domain entities inherit from [`BaseEntity`](src/main/java/lk/ashan/routenetl
 
 ---
 
-## DTO & Mapping Strategy
-
-Persistence entities are completely decoupled from external REST interfaces using **MapStruct 1.5.5.Final**.
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/4754bddb-e5db-4ca6-944d-eb0ce4fd4e8e" width="500" alt="DTO Mapping Flow">
-</p>
-
-- **Compile-Time Generation:** Mappers are generated during compilation using `mapstruct-processor` and `lombok-mapstruct-binding`, eliminating runtime reflection overhead.
-- **Contract Segregation:** Modules separate creation payloads (`*CreateRequestDto`), update payloads (`*UpdateRequestDto`), detailed views (`*DetailResponseDto`), and lightweight search responses (`*SummaryResponseDto`).
-
----
-
 ## Cross-Cutting Infrastructure
 
 Located under `lk.ashan.routenetlkserverapllication.shared`:
@@ -332,15 +270,6 @@ The backend maintains an automated testing suite covering unit logic, optimizati
 - **Constraint Scoring Verification:** Timefold planning rules are verified using `ConstraintVerifier` (`RosterConstraintProviderTest`, `TripExecutionConstraintProviderTest`) to prove penalization of overlapping shifts and fair workload distributions.
 - **Web Layer Testing:** Controller endpoints are tested using `@WebMvcTest` and `MockMvc` with active security filters (`TestSecurityConfiguration`).
 
----
-
-## Containerization
-
-The backend is packaged as an optimized, multi-stage Docker container defined in [`Dockerfile`](Dockerfile).
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/a4ade375-453b-4e1e-b20e-a8016472a882" width="250" alt="Containerization Pipeline">
-</p>
 ---
 
 ## CI/CD Pipeline
