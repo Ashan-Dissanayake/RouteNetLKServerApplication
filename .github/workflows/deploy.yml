@@ -21,10 +21,11 @@ on:
 
 jobs:
   # ==========================================================
-  # STAGE 1: Automated Unit & Integration Testing
+  # STAGE 1: Unit Tests Only (No Docker/Testcontainers required)
+  # Repository Integration Tests should be run locally with Docker Desktop
   # ==========================================================
   run-tests:
-    name: Run Unit & Integration Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -39,21 +40,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Log in to Docker Hub (for Testcontainers)
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Grant Execute Permission for mvnw
         run: chmod +x mvnw
 
-      - name: Run Maven Tests (with Test Profile)
-        run: ./mvnw test
+      - name: Run Unit Tests (CI profile - excludes Testcontainer tests)
+        run: ./mvnw test -Pci
         env:
           SPRING_PROFILES_ACTIVE: test
-
-
 
 
   # ==========================================================
