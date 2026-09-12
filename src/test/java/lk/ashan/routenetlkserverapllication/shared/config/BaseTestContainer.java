@@ -1,23 +1,23 @@
 package lk.ashan.routenetlkserverapllication.shared.config;
 
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+@Testcontainers
 public abstract class BaseTestContainer {
 
-    protected static final MySQLContainer<?> MYSQL_CONTAINER;
-
-    static {
-        MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.3.0")
-                .withDatabaseName("routenetlk")
-                .withUsername("test")
-                .withPassword("test")
-                .withUrlParam("serverTimezone", "UTC")
-                .withUrlParam("useSSL", "false")
-                .withUrlParam("allowPublicKeyRetrieval", "true");
-        MYSQL_CONTAINER.start();
-    }
+    @Container
+    protected static final MySQLContainer<?> MYSQL_CONTAINER =
+            new MySQLContainer<>("mysql:8.3.0")
+                    .withDatabaseName("routenetlk")
+                    .withUsername("test")
+                    .withPassword("test")
+                    .withUrlParam("serverTimezone", "UTC")
+                    .withUrlParam("useSSL", "false")
+                    .withUrlParam("allowPublicKeyRetrieval", "true");
 
     @DynamicPropertySource
     static void configureDatasource(DynamicPropertyRegistry registry) {
@@ -27,4 +27,5 @@ public abstract class BaseTestContainer {
         registry.add("spring.datasource.driver-class-name", MYSQL_CONTAINER::getDriverClassName);
     }
 }
+
 

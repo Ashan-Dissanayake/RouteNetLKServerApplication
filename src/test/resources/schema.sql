@@ -1,23 +1,25 @@
+SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE `branchstatus` (
+CREATE TABLE IF NOT EXISTS `branchstatus` (
                                 `id` int NOT NULL AUTO_INCREMENT,
                                 `name` varchar(255) DEFAULT NULL,
                                 PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `branchtype` (
+CREATE TABLE IF NOT EXISTS `branchtype` (
                               `id` int NOT NULL AUTO_INCREMENT,
                               `name` varchar(255) DEFAULT NULL,
                               PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `regionaloffice` (
+CREATE TABLE IF NOT EXISTS `regionaloffice` (
                                   `id` int NOT NULL AUTO_INCREMENT,
                                   `name` varchar(45) DEFAULT NULL,
                                   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `branch` (
+CREATE TABLE IF NOT EXISTS `branch` (
+
                           `id` int NOT NULL AUTO_INCREMENT,
                           `name` varchar(255) DEFAULT NULL,
                           `code` varchar(255) DEFAULT NULL,
