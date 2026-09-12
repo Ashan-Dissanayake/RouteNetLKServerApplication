@@ -390,3 +390,11 @@ The server will start on port `8080` (accessible at `http://localhost:8080`).
 - **High-Integrity Testing:** Employs Testcontainers MySQL 8.3.0 to validate persistence, transactions, and custom query behavior against real database engines.
 - **Defensive Security:** Implements JWT stateless authorization with automatic brute-force lockout defenses backed by thread-safe Guava caches.
 - **Optimized Containerization:** Multi-stage, layer-extracted Docker build with JVM memory tuning tailored for resource-efficient cloud execution.
+
+## Author
+
+**Ashan Dissanayake**  
+*Full-Stack Software Engineer*
+- **LinkedIn**: [https://www.linkedin.com/in/Ashan-PDissanayake](https://www.linkedin.com/in/Ashan-PDissanayake)
+- **GitHub**: [https://github.com/Ashan-Dissanayake](https://github.com/Ashan-Dissanayake)
+- **Email**: [ashanpathum899@gmail.com](mailto:ashanpathum899@gmail.com)
