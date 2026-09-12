@@ -49,6 +49,9 @@ logs/
 # Node
 node_modules/
 
-# Additional patterns
-*.env
+# Environment files
+.env
+.env.*
+!.env.example
+
 
