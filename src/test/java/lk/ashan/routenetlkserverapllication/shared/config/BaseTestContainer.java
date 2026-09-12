@@ -27,3 +27,5 @@ public abstract class BaseTestContainer {
         registry.add("spring.datasource.driver-class-name", MYSQL_CONTAINER::getDriverClassName);
     }
 }
+
+

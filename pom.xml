@@ -199,4 +199,32 @@
 		</plugins>
 	</build>
 
+	<!-- ============================================================ -->
+	<!-- CI Profile: Excludes Testcontainer-dependent tests           -->
+	<!-- Usage: ./mvnw test -Pci                                      -->
+	<!-- Run locally (all tests): ./mvnw test                         -->
+	<!-- ============================================================ -->
+	<profiles>
+		<profile>
+			<id>ci</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<!-- Exclude all Repository Integration Tests (require Docker/Testcontainers) -->
+								<exclude>**/*RepositoryTest.java</exclude>
+								<!-- Exclude main context load test (extends BaseTestContainer) -->
+								<exclude>**/RouteNetLKServerApplicationTests.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
+

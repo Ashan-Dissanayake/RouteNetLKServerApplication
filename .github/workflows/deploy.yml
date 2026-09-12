@@ -21,11 +21,13 @@ on:
 
 jobs:
   # ==========================================================
-  # STAGE 1: Automated Unit & Integration Testing
+  # STAGE 1: Unit Tests Only (No Docker/Testcontainers required)
+  # Repository Integration Tests should be run locally with Docker Desktop
   # ==========================================================
   run-tests:
-    name: Run Unit & Integration Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout Code
@@ -41,8 +43,11 @@ jobs:
       - name: Grant Execute Permission for mvnw
         run: chmod +x mvnw
 
-      - name: Run Maven Tests (with Test Profile)
-        run: ./mvnw test -Dspring.profiles.active=test
+      - name: Run Unit Tests (CI profile - excludes Testcontainer tests)
+        run: ./mvnw test -Pci
+        env:
+          SPRING_PROFILES_ACTIVE: test
+
 
   # ==========================================================
   # STAGE 2: Build & Deploy to AWS (Runs ONLY if tests pass on master branch)
