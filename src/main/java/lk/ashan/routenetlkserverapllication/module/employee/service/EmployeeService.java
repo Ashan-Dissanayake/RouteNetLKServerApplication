@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.employee.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
@@ -16,19 +17,19 @@ import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateT
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationContext;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service class for managing Employee-related operations.
@@ -65,24 +66,56 @@ public class EmployeeService {
      * Searches for employees based on the provided parameters.
      *
      * @param params a map containing search parameters such as name, number, and department ID.
-     * @return a list of EmployeeDetailResponseDto matching the search criteria.
+     * @return a list of {@link EmployeeDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<EmployeeDetailResponseDto> searchEmployee(@NotNull HashMap<String, String> params) {
+    public List<EmployeeDetailResponseDto> searchEmployee(
+            @NotNull HashMap<String, String> params) {
 
-        String fullName = params.get("ssname");
-        String number = params.get("ssnumber");
-        String departmentid = params.get("ssdepartment");
+        Specification<Employee> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<Employee> employeeStream = employeeRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (fullName != null)
-            employeeStream = employeeStream.filter(e -> e.getFullname().toLowerCase().contains(fullName.toLowerCase()));
-        if (number != null) employeeStream = employeeStream.filter(e -> e.getNumber().equalsIgnoreCase(number));
-        if (departmentid != null)
-            employeeStream = employeeStream.filter(e -> e.getDepartment().getId() == Integer.parseInt(departmentid));
+            String fullName = params.get("ssname");
+            String number = params.get("ssnumber");
+            String departmentId = params.get("ssdepartment");
 
-        return employeeMapper.toDtoList(employeeStream.collect(Collectors.toList()));
+            if (fullName != null && !fullName.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("fullname")),
+                                "%" + fullName.toLowerCase() + "%"
+                        )
+                );
+            }
+
+            if (number != null && !number.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("number")),
+                                number.toLowerCase()
+                        )
+                );
+            }
+
+            if (departmentId != null && !departmentId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("department").get("id"),
+                                Integer.parseInt(departmentId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Employee> employees =
+                employeeRepository.findAll(specification);
+
+        return employeeMapper.toDtoList(employees);
     }
 
     /**

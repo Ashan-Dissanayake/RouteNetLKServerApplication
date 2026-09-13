@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.incident.model.entity.Inciden
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report1Projection;
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report5Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import java.util.Optional;
  * Provides methods for querying incident-related data for reports and dashboards.
  */
 @Repository
-public interface IncidentRepository extends JpaRepository<Incident, Integer> {
+public interface IncidentRepository extends JpaRepository<Incident, Integer>, JpaSpecificationExecutor<Incident> {
 
     // --- REPORT 1: Fleet Dispatch & Breakdown Proportions ---
 

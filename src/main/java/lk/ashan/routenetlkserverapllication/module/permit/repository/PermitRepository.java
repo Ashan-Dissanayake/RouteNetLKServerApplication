@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.permit.repository;
 
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ import java.util.List;
  * Extends JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface PermitRepository extends JpaRepository<Permite, Integer> {
+public interface PermitRepository extends JpaRepository<Permite, Integer>, JpaSpecificationExecutor<Permite> {
 
     /**
      * Checks if a permit exists with the given number.

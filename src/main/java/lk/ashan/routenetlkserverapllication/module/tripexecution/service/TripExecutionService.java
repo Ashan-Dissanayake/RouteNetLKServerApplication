@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.tripexecution.service;
 
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
@@ -24,10 +25,10 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
-import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -67,25 +67,44 @@ public class TripExecutionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TripExecutionDetailsResponseDto> searchTripExecutions(@NotNull HashMap<String, String> params) {
+    public List<TripExecutionDetailsResponseDto> searchTripExecutions(
+            @NotNull HashMap<String, String> params) {
 
-        List<TripExecution> tripExecutions = tripExecutionRepository.findAll();
+        Specification<TripExecution> specification = (root, query, criteriaBuilder) -> {
 
-        if (!params.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
 
             String doservice = params.get("ssdoservice");
-            String tripexecutionstatusId= params.get("sstripexecutionstatus");
+            String tripexecutionstatusId = params.get("sstripexecutionstatus");
 
-            Stream<TripExecution> tripExecutionStream = tripExecutions.stream();
+            if (doservice != null && !doservice.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("doservice"),
+                                LocalDate.parse(doservice)
+                        )
+                );
+            }
 
-            if(doservice!=null)tripExecutionStream = tripExecutionStream.filter(t->t.getDoservice().isEqual(LocalDate.parse(doservice)));
-            if(tripexecutionstatusId!=null)tripExecutionStream = tripExecutionStream.filter(t->t.getTripexecutionstatus().getId()==Integer.parseInt(tripexecutionstatusId));
+            if (tripexecutionstatusId != null && !tripexecutionstatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("tripexecutionstatus").get("id"),
+                                Integer.parseInt(tripexecutionstatusId)
+                        )
+                );
+            }
 
-            return tripExecutionMapper.toDtoList( tripExecutionStream.collect(Collectors.toList()));
-        }
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<TripExecution> tripExecutions =
+                tripExecutionRepository.findAll(specification);
+
         return tripExecutionMapper.toDtoList(tripExecutions);
     }
-
     @Transactional(readOnly = true)
     public List<TripExecution> getTripExecutionByTripId(@NotNull Integer tripId){
         return tripExecutionRepository.findAllByTrip_Id(tripId).

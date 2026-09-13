@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.farecollection.repository;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.FareCollection;
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report2Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.List;
  * Provides methods for querying and interacting with the FareCollection database table.
  */
 @Repository
-public interface FareCollectionRepository extends JpaRepository<FareCollection, Integer> {
+public interface FareCollectionRepository extends JpaRepository<FareCollection, Integer> , JpaSpecificationExecutor<FareCollection> {
 
     /**
      * Checks if a FareCollection entry exists for the given trip execution ID.

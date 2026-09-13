@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.grn.repository;
 
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,6 +12,6 @@ import java.util.List;
  * Extends the `JpaRepository` to provide CRUD operations and query methods.
  */
 @Repository
-public interface GrnRepository extends JpaRepository<Grn, Integer> {
+public interface GrnRepository extends JpaRepository<Grn, Integer> , JpaSpecificationExecutor<Grn> {
 
 }

@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleSummaryDto;
@@ -20,14 +20,15 @@ import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilt
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,6 @@ public class VehicleService {
     private final BusTypeService busTypeService;
     private final ConditionRateService conditionRateService;
     private final FuelTypeService fuelTypeService;
-    private final BranchService branchService;
     private final ModelService modelService;
     private final VehicleMapper vehicleMapper;
 
@@ -57,19 +57,42 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
+    public List<VehicleDetailResponseDto> searchVehicle(
+            @NotNull HashMap<String, String> params) {
 
-        String conditionrateid = params.get("ssconditionrate");
-        String bustypeId = params.get("ssbustype");
-        String mileageRangeId = params.get("ssmileagerange");
+        Specification<Vehicle> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<Vehicle> vehicleStream = vehicleRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (bustypeId != null) vehicleStream = vehicleStream.filter(v->v.getBustype().getId()==Integer.parseInt(bustypeId));
-        if (conditionrateid != null) vehicleStream = vehicleStream.filter(v -> v.getConditionrate().getId() == Integer.parseInt(conditionrateid));
+            String conditionrateid = params.get("ssconditionrate");
+            String bustypeId = params.get("ssbustype");
 
-        return vehicleMapper.toDtoList(vehicleStream.collect(Collectors.toList()));
+            if (bustypeId != null && !bustypeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("bustype").get("id"),
+                                Integer.parseInt(bustypeId)
+                        )
+                );
+            }
 
+            if (conditionrateid != null && !conditionrateid.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("conditionrate").get("id"),
+                                Integer.parseInt(conditionrateid)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Vehicle> vehicles = vehicleRepository.findAll(specification);
+
+        return vehicleMapper.toDtoList(vehicles);
     }
 
     @Transactional(readOnly = true)

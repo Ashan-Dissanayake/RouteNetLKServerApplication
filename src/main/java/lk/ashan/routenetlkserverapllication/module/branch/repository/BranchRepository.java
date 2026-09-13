@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.branch.repository;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,7 @@ import java.util.List;
  * Extends JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface BranchRepository extends JpaRepository<Branch, Integer> {
+public interface BranchRepository extends JpaRepository<Branch, Integer> , JpaSpecificationExecutor<Branch> {
 
     /**
      * Checks if a branch exists with the given code (case-insensitive).

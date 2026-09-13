@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.partreqest.repository;
 
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.List;
  * Extends the `JpaRepository` to provide CRUD operations and custom queries.
  */
 @Repository
-public interface PartRequestRepository extends JpaRepository<PartRequest, Integer> {
+public interface PartRequestRepository extends JpaRepository<PartRequest, Integer> , JpaSpecificationExecutor<PartRequest> {
 
     /**
      * Checks if a `PartRequest` exists for a specific branch, part, status, and request date.

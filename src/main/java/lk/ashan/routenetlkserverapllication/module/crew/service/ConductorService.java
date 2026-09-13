@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.criteria.Predicate;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.ConductorMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.ConductorDetailResponseDto;
@@ -15,15 +16,17 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Con
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service class for managing conductors.
@@ -55,26 +58,59 @@ public class ConductorService {
     /**
      * Searches for conductors based on the provided parameters.
      *
-     * @param params a map of search parameters, including "ssnumber", "sscrewstatus", and "ssroutefamilitylevel".
+     * @param params a map of search parameters, including "ssnumber", "sscrewstatus",
+     *               and "ssroutefamilitylevel".
      * @return a list of {@link ConductorDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
     public List<ConductorDetailResponseDto> searchConductor(@NotNull HashMap<String, String> params) {
 
-        String number = params.get("ssnumber");
-        String crewStatusId = params.get("sscrewstatus");
-        String routeFamiliarityLevelId = params.get("ssroutefamilitylevel");
+        Specification<Conductor> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<Conductor> conductorStream = conductorRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (number != null)
-            conductorStream = conductorStream.filter(d -> d.getNumber().equalsIgnoreCase(number));
-        if (crewStatusId != null)
-            conductorStream = conductorStream.filter(d -> d.getCrewstatus().getId() == Integer.parseInt(crewStatusId));
-        if (routeFamiliarityLevelId != null)
-            conductorStream = conductorStream.filter(d -> d.getRoutefamiliaritylevel().getId() == Integer.parseInt(routeFamiliarityLevelId));
+            String number = params.get("ssnumber");
+            String crewStatusId = params.get("sscrewstatus");
+            String routeFamiliarityLevelId = params.get("ssroutefamilitylevel");
 
-        return conductorMapper.toDtoList(conductorStream.collect(Collectors.toList()));
+            if (number != null && !number.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("number")),
+                                number.toLowerCase()
+                        )
+                );
+            }
+
+            if (crewStatusId != null && !crewStatusId.isBlank()) {
+                predicates.add(
+                        CommonPredicates.hasId(
+                                root,
+                                criteriaBuilder,
+                                "crewstatus",
+                                Integer.parseInt(crewStatusId)
+                        )
+                );
+            }
+
+            if (routeFamiliarityLevelId != null && !routeFamiliarityLevelId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("routefamiliaritylevel").get("id"),
+                                Integer.parseInt(routeFamiliarityLevelId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Conductor> conductors =
+                conductorRepository.findAll(specification);
+
+        return conductorMapper.toDtoList(conductors);
     }
 
     /**

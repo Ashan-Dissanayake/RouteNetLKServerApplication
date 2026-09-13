@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicleservice.repository;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleService;
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report3Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
  * Provides methods for querying maintenance lifecycle metrics.
  */
 @Repository
-public interface VehicleServiceRepository extends JpaRepository<VehicleService, Integer> {
+public interface VehicleServiceRepository extends JpaRepository<VehicleService, Integer>, JpaSpecificationExecutor<VehicleService> {
 
     /**
      * Retrieves maintenance lifecycle metrics for the last 7 weeks.

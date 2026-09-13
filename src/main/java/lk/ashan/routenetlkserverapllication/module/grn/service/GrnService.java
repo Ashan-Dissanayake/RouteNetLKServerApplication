@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.grn.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.grn.event.PartReceivedEvent;
 import lk.ashan.routenetlkserverapllication.module.grn.model.dto.GrnDetailResponseDto;
@@ -21,6 +22,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
@@ -28,10 +30,11 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * Service class for managing GRNs (Goods Receipt Notes).
@@ -67,21 +70,52 @@ public class GrnService {
      * @return a list of {@link GrnDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<GrnDetailResponseDto> searchGrns(@NotNull HashMap<String, String> params) {
+    public List<GrnDetailResponseDto> searchGrns(
+            @NotNull HashMap<String, String> params) {
 
-        List<Grn> grns = grnRepository.findAll();
+        Specification<Grn> specification = (root, query, criteriaBuilder) -> {
 
-        String number = params.get("ssnumber");
-        String partRequestId = params.get("sspartrequest");
-        String grnStatusId = params.get("ssgrnstatus");
+            List<Predicate> predicates = new ArrayList<>();
 
-        Stream<Grn> grnStream = grns.stream();
+            String number = params.get("ssnumber");
+            String partRequestId = params.get("sspartrequest");
+            String grnStatusId = params.get("ssgrnstatus");
 
-        if (number != null) grnStream = grnStream.filter(r -> r.getNumber().equals(number));
-        if (partRequestId != null) grnStream = grnStream.filter(r -> r.getPartrequest().getId() == Integer.parseInt(partRequestId));
-        if (grnStatusId != null) grnStream = grnStream.filter(r -> r.getGrnstatus().getId() == Integer.parseInt(grnStatusId));
+            if (number != null && !number.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("number"),
+                                number
+                        )
+                );
+            }
 
-        return grnMapper.toDtoList(grnStream.collect(Collectors.toList()));
+            if (partRequestId != null && !partRequestId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("partrequest").get("id"),
+                                Integer.parseInt(partRequestId)
+                        )
+                );
+            }
+
+            if (grnStatusId != null && !grnStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("grnstatus").get("id"),
+                                Integer.parseInt(grnStatusId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Grn> grns = grnRepository.findAll(specification);
+
+        return grnMapper.toDtoList(grns);
     }
 
     /**

@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.farecollection.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.module.farecollection.event.FareReconciledEvent;
@@ -11,19 +12,18 @@ import lk.ashan.routenetlkserverapllication.module.farecollection.repository.Far
 import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionContextBuilder;
 import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionCreationValidationStrategy;
 import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionValidationContext;
-import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecution;
-import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecutionStatus;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * Service class for managing fare collections.
@@ -58,21 +58,43 @@ public class FareCollectionService {
      * @return a list of {@link FareCollectionDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<FareCollectionDetailResponseDto> searchFareCollections(@NotNull HashMap<String, String> params) {
+    public List<FareCollectionDetailResponseDto> searchFareCollections(
+            @NotNull HashMap<String, String> params) {
 
-        List<FareCollection> fareCollections = fareCollectionRepository.findAll();
+        Specification<FareCollection> specification = (root, query, criteriaBuilder) -> {
 
-        String tripExecutionId = params.get("sstripexecution");
-        String ticketMachineId = params.get("ssticketmachine");
+            List<Predicate> predicates = new ArrayList<>();
 
-        Stream<FareCollection> fareCollectionStream = fareCollections.stream();
+            String tripExecutionId = params.get("sstripexecution");
+            String ticketMachineId = params.get("ssticketmachine");
 
-        if (tripExecutionId != null)
-            fareCollectionStream = fareCollectionStream.filter(r -> r.getTripexecution().getId() == Integer.parseInt(tripExecutionId));
-        if (ticketMachineId != null)
-            fareCollectionStream = fareCollectionStream.filter(r -> r.getTicketmachine().getId() == Integer.parseInt(ticketMachineId));
+            if (tripExecutionId != null && !tripExecutionId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("tripexecution").get("id"),
+                                Integer.parseInt(tripExecutionId)
+                        )
+                );
+            }
 
-        return fareCollectionMapper.toDtoList(fareCollectionStream.collect(Collectors.toList()));
+            if (ticketMachineId != null && !ticketMachineId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("ticketmachine").get("id"),
+                                Integer.parseInt(ticketMachineId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<FareCollection> fareCollections =
+                fareCollectionRepository.findAll(specification);
+
+        return fareCollectionMapper.toDtoList(fareCollections);
     }
 
     /**

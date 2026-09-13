@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.crew.service;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.criteria.Predicate;
 import lk.ashan.routenetlkserverapllication.module.crew.mapper.DriverMapper;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.crew.model.dto.DriverDetailResponseDto;
@@ -15,14 +16,15 @@ import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.Dri
 import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 /**
  * Service class for managing Driver entities.
@@ -55,27 +57,59 @@ public class DriverService {
     /**
      * Searches for drivers based on the provided parameters.
      *
-     * @param params a map containing search parameters such as "ssnumber", "sscrewstatus", and "ssroutefamilitylevel".
-     * @return a list of DriverDetailResponseDto matching the search criteria.
+     * @param params a map containing search parameters such as "sslicensenumber",
+     *               "sscrewstatus", and "ssroutefamilitylevel".
+     * @return a list of {@link DriverDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<DriverDetailResponseDto> searchDriver(
-            @NotNull HashMap<String, String> params) {
+    public List<DriverDetailResponseDto> searchDriver(@NotNull HashMap<String, String> params) {
 
-        String number = params.get("sslicensenumber");
-        String crewStatusId = params.get("sscrewstatus");
-        String routeFamiliarityLevelId = params.get("ssroutefamilitylevel");
+        Specification<Driver> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<Driver> driverStream = driverRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (number != null)
-            driverStream = driverStream.filter(d -> d.getLicensenumber().equalsIgnoreCase(number));
-        if (crewStatusId != null)
-            driverStream = driverStream.filter(d -> d.getCrewstatus().getId() == Integer.parseInt(crewStatusId));
-        if (routeFamiliarityLevelId != null)
-            driverStream = driverStream.filter(d -> d.getRoutefamiliaritylevel().getId() == Integer.parseInt(routeFamiliarityLevelId));
+            String number = params.get("sslicensenumber");
+            String crewStatusId = params.get("sscrewstatus");
+            String routeFamiliarityLevelId = params.get("ssroutefamilitylevel");
 
-        return driverMapper.toDtoList(driverStream.collect(Collectors.toList()));
+            if (number != null && !number.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("licensenumber")),
+                                number.toLowerCase()
+                        )
+                );
+            }
+
+            if (crewStatusId != null && !crewStatusId.isBlank()) {
+                predicates.add(
+                        CommonPredicates.hasId(
+                                root,
+                                criteriaBuilder,
+                                "crewstatus",
+                                Integer.parseInt(crewStatusId)
+                        )
+                );
+            }
+
+            if (routeFamiliarityLevelId != null && !routeFamiliarityLevelId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("routefamiliaritylevel").get("id"),
+                                Integer.parseInt(routeFamiliarityLevelId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Driver> drivers =
+                driverRepository.findAll(specification);
+
+        return driverMapper.toDtoList(drivers);
     }
 
     /**

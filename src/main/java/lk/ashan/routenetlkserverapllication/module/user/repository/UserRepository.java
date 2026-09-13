@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.user.repository;
 
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.Optional;
  * Extends JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
 
     /**
      * Finds a user by their username.

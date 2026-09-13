@@ -4,6 +4,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report1Projection;
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report4Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ import java.util.Optional;
  * Provides methods for querying and retrieving TripExecution data.
  */
 @Repository
-public interface TripExecutionRepository extends JpaRepository<TripExecution, Integer> {
+public interface TripExecutionRepository extends JpaRepository<TripExecution, Integer>, JpaSpecificationExecutor<TripExecution> {
 
     /**
      * Finds all TripExecution records associated with a specific trip ID.
