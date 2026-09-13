@@ -5,6 +5,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ import java.util.Optional;
  * Extends JpaRepository to provide CRUD operations and custom queries.
  */
 @Repository
-public interface DriverRepository extends JpaRepository<Driver, Integer> {
+public interface DriverRepository extends JpaRepository<Driver, Integer>, JpaSpecificationExecutor<Driver> {
 
     /**
      * Checks if a driver exists with the given license number.

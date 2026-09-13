@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.privilege.repository;
 
 import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Privilege;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * Provides methods for querying and manipulating privilege data.
  */
 @Repository
-public interface PrivilegeRepository extends JpaRepository<Privilege, Integer> {
+public interface PrivilegeRepository extends JpaRepository<Privilege, Integer>, JpaSpecificationExecutor<Privilege> {
 
     /**
      * Finds a list of privileges by the given role ID.

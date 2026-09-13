@@ -1,8 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.privilege.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.dto.PartRequestDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequest;
 import lk.ashan.routenetlkserverapllication.module.privilege.mapper.PrivilegeMapper;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Module;
@@ -17,6 +16,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +24,6 @@ import javax.transaction.TransactionRolledbackException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -42,21 +40,53 @@ public class PrivilegeService {
     }
 
     @Transactional(readOnly = true)
-    public List<PrivilegeResponseDto> searchPrivileges(@NotNull HashMap<String, String> params) {
+    public List<PrivilegeResponseDto> searchPrivileges(
+            @NotNull HashMap<String, String> params) {
 
-        List<Privilege> privileges = privilegeRepository.findAll();
+        Specification<Privilege> specification = (root, query, criteriaBuilder) -> {
 
-        String roleId = params.get("ssrole");
-        String moduleId= params.get("ssmodule");
-        String operationId= params.get("ssoperation");
+            List<Predicate> predicates = new ArrayList<>();
 
-        Stream<Privilege> privilegeStream = privileges.stream();
+            String roleId = params.get("ssrole");
+            String moduleId = params.get("ssmodule");
+            String operationId = params.get("ssoperation");
 
-        if(roleId!=null)privilegeStream = privilegeStream.filter(r->r.getRole().getId()==Integer.parseInt(roleId));
-        if(moduleId!=null)privilegeStream = privilegeStream.filter(r->r.getModule().getId()==Integer.parseInt(moduleId));
-        if(operationId!=null)privilegeStream = privilegeStream.filter(r->r.getOperation().getId()==Integer.parseInt(operationId));
+            if (roleId != null && !roleId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("role").get("id"),
+                                Integer.parseInt(roleId)
+                        )
+                );
+            }
 
-        return privilegeMapper.toDtoList( privilegeStream.collect(Collectors.toList()));
+            if (moduleId != null && !moduleId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("module").get("id"),
+                                Integer.parseInt(moduleId)
+                        )
+                );
+            }
+
+            if (operationId != null && !operationId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("operation").get("id"),
+                                Integer.parseInt(operationId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Privilege> privileges =
+                privilegeRepository.findAll(specification);
+
+        return privilegeMapper.toDtoList(privileges);
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
@@ -143,48 +173,5 @@ public class PrivilegeService {
 
         // Remove privilege mapping
         privilegeRepository.deleteByRoleIdAndId(roleId, privilegeId);
-    }
-
-    @Transactional(readOnly = true)
-    public RolePrivilegeResponseDto getRolePrivilege(Integer roleId) {
-
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Role with id : " + roleId + " not found"
-                        )
-                );
-
-
-        List<Privilege> privileges = privilegeRepository.findByRoleId(roleId);
-
-
-        List<PrivilegeResponseDto> privilegeResponseList =
-                privileges.stream()
-                        .map(privilege -> PrivilegeResponseDto.builder()
-                                .id(privilege.getId())
-                                .authority(privilege.getAuthority())
-                                .module(
-                                        ModuleDto.builder()
-                                                .id(privilege.getModule().getId())
-                                                .name(privilege.getModule().getName())
-                                                .build()
-                                )
-                                .operation(
-                                        OperationDto.builder()
-                                                .id(privilege.getOperation().getId())
-                                                .displayname(privilege.getOperation().getDisplayname())
-                                                .operation(privilege.getOperation().getOperation())
-                                                .build()
-                                )
-                                .build()
-                        )
-                        .toList();
-
-        return RolePrivilegeResponseDto.builder()
-                .roleId(role.getId())
-                .roleName(role.getName())
-                .privileges(privilegeResponseList)
-                .build();
     }
 }

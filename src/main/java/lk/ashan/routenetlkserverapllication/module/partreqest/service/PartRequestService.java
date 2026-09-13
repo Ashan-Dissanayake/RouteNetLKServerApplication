@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.partreqest.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
@@ -29,6 +30,7 @@ import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGenerat
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,10 +39,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @RequiredArgsConstructor
@@ -68,19 +70,43 @@ public class PartRequestService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartRequestDetailResponseDto> searchPartRequests(@NotNull HashMap<String, String> params) {
+    public List<PartRequestDetailResponseDto> searchPartRequests(
+            @NotNull HashMap<String, String> params) {
 
-        List<PartRequest> partRequests = partRequestRepository.findAll();
+        Specification<PartRequest> specification = (root, query, criteriaBuilder) -> {
 
-        String requestNumber = params.get("ssnumber");
-        String partRequestStatusId= params.get("sspartrequeststatus");
+            List<Predicate> predicates = new ArrayList<>();
 
-        Stream<PartRequest> partRequestStream = partRequests.stream();
+            String requestNumber = params.get("ssnumber");
+            String partRequestStatusId = params.get("sspartrequeststatus");
 
-        if(requestNumber!=null)partRequestStream = partRequestStream.filter(r->r.getNumber().equalsIgnoreCase(requestNumber));
-        if(partRequestStatusId!=null)partRequestStream = partRequestStream.filter(r->r.getPartrequeststatus().getId()==Integer.parseInt(partRequestStatusId));
+            if (requestNumber != null && !requestNumber.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("number")),
+                                requestNumber.toLowerCase()
+                        )
+                );
+            }
 
-        return partRequestMapper.toDtoList( partRequestStream.collect(Collectors.toList()));
+            if (partRequestStatusId != null && !partRequestStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("partrequeststatus").get("id"),
+                                Integer.parseInt(partRequestStatusId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<PartRequest> partRequests =
+                partRequestRepository.findAll(specification);
+
+        return partRequestMapper.toDtoList(partRequests);
     }
 
     @Transactional(readOnly = true)

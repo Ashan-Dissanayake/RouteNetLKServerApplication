@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.crew.repository;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.roster.planner.EmployeeFact;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * Extends the JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface ConductorRepository extends JpaRepository<Conductor, Integer> {
+public interface ConductorRepository extends JpaRepository<Conductor, Integer>, JpaSpecificationExecutor<Conductor> {
 
     /**
      * Finds a list of Conductors by the branch ID of their associated employee.

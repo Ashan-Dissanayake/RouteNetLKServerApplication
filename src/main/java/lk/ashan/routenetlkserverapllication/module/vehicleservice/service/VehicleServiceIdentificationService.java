@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.vehicleservice.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
@@ -23,15 +24,15 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -60,15 +61,40 @@ public class VehicleServiceIdentificationService {
     public List<VehicleServiceDetailResponseDto> searchVehicleService(
             @NotNull HashMap<String, String> params) {
 
-        String vehicleId = params.get("ssvehicle");
-        String doCreated = params.get("ssdocreated");
+        Specification<VehicleService> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<VehicleService> vehicleServiceStream = vehicleServiceRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (vehicleId != null) vehicleServiceStream = vehicleServiceStream.filter(v->v.getVehicle().getId()==Integer.parseInt(vehicleId));
-        if (doCreated != null) vehicleServiceStream = vehicleServiceStream.filter(v -> v.getDocreated().isEqual(LocalDate.parse(doCreated)));
+            String vehicleId = params.get("ssvehicle");
+            String doCreated = params.get("ssdocreated");
 
-        return vehicleServiceMapper.toDtoList(vehicleServiceStream.collect(Collectors.toList()));
+            if (vehicleId != null && !vehicleId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("vehicle").get("id"),
+                                Integer.parseInt(vehicleId)
+                        )
+                );
+            }
+
+            if (doCreated != null && !doCreated.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("docreated"),
+                                LocalDate.parse(doCreated)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<VehicleService> vehicleServices =
+                vehicleServiceRepository.findAll(specification);
+
+        return vehicleServiceMapper.toDtoList(vehicleServices);
     }
 
     @Transactional

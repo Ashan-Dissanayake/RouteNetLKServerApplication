@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
@@ -9,16 +10,16 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.*;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
-import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * Service class for managing trips. Provides methods for retrieving, creating, and updating trip data.
@@ -55,28 +56,43 @@ public class TripService {
      * @return a list of {@link TripDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<TripDetailResponseDto> searchTrips(@NotNull HashMap<String, String> params) {
+    public List<TripDetailResponseDto> searchTrips(
+            @NotNull HashMap<String, String> params) {
 
-        List<Trip> trips = tripRepository.findAll();
+        Specification<Trip> specification = (root, query, criteriaBuilder) -> {
 
-        if (!params.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
 
             String tripTypeId = params.get("sstriptype");
             String tripStatusId = params.get("sstripstatus");
 
-            Stream<Trip> tripStream = trips.stream();
+            if (tripTypeId != null && !tripTypeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("triptype").get("id"),
+                                Integer.parseInt(tripTypeId)
+                        )
+                );
+            }
 
-            if (tripTypeId != null)
-                tripStream = tripStream.filter(t -> t.getTriptype().getId() == Integer.parseInt(tripTypeId));
-            if (tripStatusId != null)
-                tripStream = tripStream.filter(t -> t.getTripstatus().getId() == Integer.parseInt(tripStatusId));
+            if (tripStatusId != null && !tripStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("tripstatus").get("id"),
+                                Integer.parseInt(tripStatusId)
+                        )
+                );
+            }
 
-            return tripMapper.toDetailList(tripStream.collect(Collectors.toList()));
-        }
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Trip> trips = tripRepository.findAll(specification);
 
         return tripMapper.toDetailList(trips);
     }
-
     /**
      * Retrieves a trip by its ID.
      *

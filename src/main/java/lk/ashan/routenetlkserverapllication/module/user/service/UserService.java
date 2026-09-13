@@ -1,8 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.user.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
-import lk.ashan.routenetlkserverapllication.module.employee.service.EmployeeService;
 import lk.ashan.routenetlkserverapllication.module.user.mapper.UserMapper;
 import lk.ashan.routenetlkserverapllication.module.user.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
@@ -13,17 +12,14 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsExcep
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.transaction.TransactionRolledbackException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -43,22 +39,52 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserDetailResponseDto> searchUsers(@NotNull HashMap<String, String> params) {
+    public List<UserDetailResponseDto> searchUsers(
+            @NotNull HashMap<String, String> params) {
 
-        String employeeId = params.get("ssemployee");
-        String username = params.get("ssuseranme");
-        String userTypeId = params.get("ssusertype");
+        Specification<User> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<User> userStream = userRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (employeeId != null)
-            userStream = userStream.filter(u -> u.getEmployee().getId() == Integer.parseInt(employeeId));
-        if (username != null)
-            userStream = userStream.filter(u -> u.getUsername().equals(username));
-        if (userTypeId != null)
-            userStream = userStream.filter(u -> u.getUsertype().getId() == Integer.parseInt(userTypeId));
+            String employeeId = params.get("ssemployee");
+            String username = params.get("ssuseranme");
+            String userTypeId = params.get("ssusertype");
 
-        return userMapper.toDtoList(userStream.collect(Collectors.toList()));
+            if (employeeId != null && !employeeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("employee").get("id"),
+                                Integer.parseInt(employeeId)
+                        )
+                );
+            }
+
+            if (username != null && !username.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("username"),
+                                username
+                        )
+                );
+            }
+
+            if (userTypeId != null && !userTypeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("usertype").get("id"),
+                                Integer.parseInt(userTypeId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<User> users = userRepository.findAll(specification);
+
+        return userMapper.toDtoList(users);
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)

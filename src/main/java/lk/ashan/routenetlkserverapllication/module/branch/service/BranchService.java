@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.branch.service;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.criteria.Predicate;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
@@ -18,18 +19,16 @@ import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidationStrategy;
-import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * Service class for managing Branch entities and related operations.
  * Provides methods for CRUD operations, searching, and state transitions.
@@ -95,25 +94,48 @@ public class BranchService {
     @Transactional(readOnly = true)
     public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
 
-        List<Branch> branches = branchRepository.findAll();
+        Specification<Branch> specification = (root, query, criteriaBuilder) -> {
 
-        if (!params.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
 
-            String branchname = params.get("ssname");
-            String branchcode = params.get("sscode");
-            String brachstatusid = params.get("ssbranchstatus");
+            String branchName = params.get("ssname");
+            String branchCode = params.get("sscode");
+            String branchStatusId = params.get("ssbranchstatus");
 
-            Stream<Branch> branchStream = branches.stream();
+            if (branchName != null && !branchName.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.like(
+                                criteriaBuilder.lower(root.get("name")),
+                                "%" + branchName.toLowerCase() + "%"
+                        )
+                );
+            }
 
-            if (branchname != null)
-                branchStream = branchStream.filter(i -> i.getName().toLowerCase().contains(branchname.toLowerCase()));
-            if (branchcode != null)
-                branchStream = branchStream.filter(i -> i.getCode().equalsIgnoreCase(branchcode));
-            if (brachstatusid != null)
-                branchStream = branchStream.filter(i -> i.getBranchstatus().getId() == Integer.parseInt(brachstatusid));
+            if (branchCode != null && !branchCode.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("code")),
+                                branchCode.toLowerCase()
+                        )
+                );
+            }
 
-            return branchMapper.toDtoList(branchStream.collect(Collectors.toList()));
-        }
+            if (branchStatusId != null && !branchStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("branchstatus").get("id"),
+                                Integer.parseInt(branchStatusId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Branch> branches = branchRepository.findAll(specification);
+
         return branchMapper.toDtoList(branches);
     }
 

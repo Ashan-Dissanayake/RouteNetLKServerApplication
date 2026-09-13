@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.incident.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.incident.model.dto.IncidentDetailResponseDto;
@@ -19,17 +20,15 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
-import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
-import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service class for managing incidents.
@@ -68,27 +67,51 @@ public class IncidentService {
      * @return a list of {@link IncidentDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<IncidentDetailResponseDto> searchIncidents(@NotNull HashMap<String, String> params) {
+    public List<IncidentDetailResponseDto> searchIncidents(
+            @NotNull HashMap<String, String> params) {
 
-        List<Incident> incidents = incidentRepository.findAll();
+        Specification<Incident> specification = (root, query, criteriaBuilder) -> {
 
-        if (!params.isEmpty()) {
+            List<Predicate> predicates = new ArrayList<>();
 
             String incidentTypeId = params.get("ssincidenttype");
             String doReport = params.get("ssdoreport");
             String tripExecutionId = params.get("sstripexecution");
 
-            Stream<Incident> incidentStream = incidents.stream();
+            if (incidentTypeId != null && !incidentTypeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("incidenttype").get("id"),
+                                Integer.parseInt(incidentTypeId)
+                        )
+                );
+            }
 
-            if (incidentTypeId != null)
-                incidentStream = incidentStream.filter(t -> t.getIncidenttype().getId() == Integer.parseInt(incidentTypeId));
-            if (doReport != null)
-                incidentStream = incidentStream.filter(t -> t.getDoreported() == LocalDate.parse(doReport));
-            if (tripExecutionId != null)
-                incidentStream = incidentStream.filter(t -> t.getTripexecution().getId() == Integer.parseInt(tripExecutionId));
+            if (doReport != null && !doReport.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("doreported"),
+                                LocalDate.parse(doReport)
+                        )
+                );
+            }
 
-            return incidentMapper.toDtoList(incidentStream.collect(Collectors.toList()));
-        }
+            if (tripExecutionId != null && !tripExecutionId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("tripexecution").get("id"),
+                                Integer.parseInt(tripExecutionId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Incident> incidents =
+                incidentRepository.findAll(specification);
 
         return incidentMapper.toDtoList(incidents);
     }

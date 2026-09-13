@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.sparepart.repository;
 
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,7 @@ import java.util.List;
  * Extends JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface PartRepository extends JpaRepository<Part, Integer> {
+public interface PartRepository extends JpaRepository<Part, Integer>, JpaSpecificationExecutor<Part> {
 
     /**
      * Checks if a part exists by the given branch ID and part master ID.

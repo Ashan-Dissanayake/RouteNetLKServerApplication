@@ -1,9 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.permit.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
+import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitDetailResponseDto;
-import lk.ashan.routenetlkserverapllication.module.permit.mapper.PermitMapper;
 import lk.ashan.routenetlkserverapllication.module.permit.model.dto.PermitSummaryResponseDto;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.Permite;
 import lk.ashan.routenetlkserverapllication.module.permit.model.entity.PermiteStatus;
@@ -24,13 +25,13 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -49,23 +50,59 @@ public class PermitService {
     private final PermitValidationContextBuilder permitValidationContextBuilder;
 
 
+    @Transactional(readOnly = true)
     public List<PermitDetailResponseDto> getPermits(){
         return permitMapper.toDtoList(permitRepository.findAll());
     }
 
-    public List<PermitDetailResponseDto> searchPermit(@NotNull HashMap<String, String> params) {
+    @Transactional(readOnly = true)
+    public List<PermitDetailResponseDto> searchPermit(
+            @NotNull HashMap<String, String> params) {
 
-        String number = params.get("ssnumber");
-        String permitStatusId = params.get("sspermitstatus");
-        String routeId = params.get("ssroute");
+        Specification<Permite> specification = (root, query, criteriaBuilder) -> {
 
-        Stream<Permite> permitStream = permitRepository.findAll().stream();
+            List<Predicate> predicates = new ArrayList<>();
 
-        if (number != null) permitStream = permitStream.filter(v->v.getNumber().equalsIgnoreCase(number));
-        if (permitStatusId != null) permitStream = permitStream.filter(v->v.getPermitestatus().getId()==Integer.parseInt(permitStatusId));
-        if (routeId != null) permitStream = permitStream.filter(v -> v.getRoute().getId() == Integer.parseInt(routeId));
+            String number = params.get("ssnumber");
+            String permitStatusId = params.get("sspermitstatus");
+            String routeId = params.get("ssroute");
 
-        return permitMapper.toDtoList(permitStream.collect(Collectors.toList()));
+            if (number != null && !number.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                criteriaBuilder.lower(root.get("number")),
+                                number.toLowerCase()
+                        )
+                );
+            }
+
+            if (permitStatusId != null && !permitStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("permitestatus").get("id"),
+                                Integer.parseInt(permitStatusId)
+                        )
+                );
+            }
+
+            if (routeId != null && !routeId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("route").get("id"),
+                                Integer.parseInt(routeId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Permite> permits =
+                permitRepository.findAll(specification);
+
+        return permitMapper.toDtoList(permits);
     }
 
 

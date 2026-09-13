@@ -1,5 +1,6 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.service;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
@@ -24,16 +25,17 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsExcep
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @RequiredArgsConstructor
@@ -58,19 +60,44 @@ public class PartService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartDetailResponseDto> searchParts(@NotNull HashMap<String, String> params) {
+    public List<PartDetailResponseDto> searchParts(
+            @NotNull HashMap<String, String> params) {
 
-        List<Part> parts = partRepository.findAll();
+        Specification<Part> specification = (root, query, criteriaBuilder) -> {
 
-        String partCategoryId = params.get("sscategory");
-        String partStatusId= params.get("sspartstatus");
+            List<Predicate> predicates = new ArrayList<>();
 
-        Stream<Part> partStream = parts.stream();
+            String partCategoryId = params.get("sscategory");
+            String partStatusId = params.get("sspartstatus");
 
-        if(partCategoryId!=null)partStream = partStream.filter(r->r.getPartmaster().getPartcategory().getId() == Integer.parseInt(partCategoryId));
-        if(partStatusId!=null)partStream = partStream.filter(r->r.getPartstatus().getId()==Integer.parseInt(partStatusId));
+            if (partCategoryId != null && !partCategoryId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("partmaster")
+                                        .get("partcategory")
+                                        .get("id"),
+                                Integer.parseInt(partCategoryId)
+                        )
+                );
+            }
 
-        return partMapper.toDtoList( partStream.collect(Collectors.toList()));
+            if (partStatusId != null && !partStatusId.isBlank()) {
+                predicates.add(
+                        criteriaBuilder.equal(
+                                root.get("partstatus").get("id"),
+                                Integer.parseInt(partStatusId)
+                        )
+                );
+            }
+
+            return criteriaBuilder.and(
+                    predicates.toArray(new Predicate[0])
+            );
+        };
+
+        List<Part> parts = partRepository.findAll(specification);
+
+        return partMapper.toDtoList(parts);
     }
 
 

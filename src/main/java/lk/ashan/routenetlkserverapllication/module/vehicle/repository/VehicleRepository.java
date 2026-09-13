@@ -3,6 +3,7 @@ package lk.ashan.routenetlkserverapllication.module.vehicle.repository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.report.model.projection.Report5Projection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,7 @@ import java.util.Set;
  * Extends JpaRepository to provide CRUD operations and custom queries.
  */
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
+public interface VehicleRepository extends JpaRepository<Vehicle, Integer>, JpaSpecificationExecutor<Vehicle> {
 
     /**
      * Checks if a vehicle exists by its number.

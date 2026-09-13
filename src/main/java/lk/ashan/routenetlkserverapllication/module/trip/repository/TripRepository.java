@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.trip.repository;
 
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * Provides methods for querying and interacting with the `Trip` database table.
  */
 @Repository
-public interface TripRepository extends JpaRepository<Trip, Integer> {
+public interface TripRepository extends JpaRepository<Trip, Integer>, JpaSpecificationExecutor<Trip> {
 
 /**
      * Finds all trips associated with a specific route ID.
