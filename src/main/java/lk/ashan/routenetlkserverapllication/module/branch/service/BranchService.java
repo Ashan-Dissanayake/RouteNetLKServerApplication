@@ -11,14 +11,12 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchTyp
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.RegionalOffice;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFactory;
 import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContext;
-import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchContextBuilder;
+import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
-import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidationStrategy;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +40,8 @@ public class BranchService {
     private final BranchStatusService branchStatusService;
     private final BranchTypeService branchTypeService;
     private final RegionalOfficeService regionalOfficeService;
-
+    private final BranchValidator branchValidator;
     private final BranchMapper branchMapper;
-
-    private final BranchContextBuilder branchContextBuilder;
-    private final List<BranchValidationStrategy> validationStrategies;
     private final BranchStateFactory branchStateFactory;
     private final BranchStateTransitionHandler branchStateTransitionHandler;
 
@@ -148,19 +143,25 @@ public class BranchService {
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
-    public BranchDetailResponseDto createBranch(@NotNull BranchCreateRequestDto request) {
-        BranchContext context = branchContextBuilder.buildForCreate(request);
-        validationStrategies.forEach(s -> s.validateCreate(context));
+    public BranchDetailResponseDto createBranch(
+            @NotNull BranchCreateRequestDto request) {
+
+        branchValidator.validateCreate(request);
 
         Branch branch = branchMapper.toEntity(request);
 
-        BranchStatus initialStatus = branchStatusService.getByName(request.getBranchstatus().getName());
+        BranchStatus initialStatus =
+                branchStatusService.getByName(
+                        request.getBranchstatus().getName());
 
-        branchStateFactory.getState(initialStatus.getName())
+        branchStateFactory
+                .getState(initialStatus.getName())
                 .validateInitial();
+
         branch.setBranchstatus(initialStatus);
 
         Branch saved = branchRepository.save(branch);
+
         return branchMapper.toDto(saved);
     }
 
@@ -175,31 +176,43 @@ public class BranchService {
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
-    public BranchDetailResponseDto updateBranch(@NotNull BranchUpdateRequestDto request) {
+    public BranchDetailResponseDto updateBranch(
+            @NotNull BranchUpdateRequestDto request) {
+
         Branch existing = branchRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Branch not found"));
 
         if (!existing.getCode().equalsIgnoreCase(request.getCode())) {
             throw new BusinessRuleViolationException("Code cannot be changed");
         }
 
-        BranchContext context = branchContextBuilder.buildForUpdate(request);
-        validationStrategies.forEach(s -> s.validateUpdate(context));
+        branchValidator.validateUpdate(request);
 
         branchMapper.updateEntityFromDto(request, existing);
 
         if (request.getBranchstatus().getId() != null) {
-            BranchStatus targetStatus = branchStatusService.getById(request.getBranchstatus().getId());
-            branchStateTransitionHandler.transitionTo(existing, targetStatus);
+            BranchStatus targetStatus =
+                    branchStatusService.getById(
+                            request.getBranchstatus().getId());
+
+            branchStateTransitionHandler.transitionTo(
+                    existing, targetStatus);
         }
 
         if (request.getBranchtype().getId() != null) {
-            BranchType type = branchTypeService.getById(request.getBranchtype().getId());
+            BranchType type =
+                    branchTypeService.getById(
+                            request.getBranchtype().getId());
+
             existing.setBranchtype(type);
         }
 
         if (request.getRegionaloffice().getId() != null) {
-            RegionalOffice ro = regionalOfficeService.getById(request.getRegionaloffice().getId());
+            RegionalOffice ro =
+                    regionalOfficeService.getById(
+                            request.getRegionaloffice().getId());
+
             existing.setRegionaloffice(ro);
         }
 

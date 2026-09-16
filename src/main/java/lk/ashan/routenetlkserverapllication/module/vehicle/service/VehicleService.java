@@ -12,6 +12,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
 import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateTransitionHandler;
+import lk.ashan.routenetlkserverapllication.module.vehicle.validation.VehicleValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
@@ -41,6 +42,7 @@ public class VehicleService {
     private final FuelTypeService fuelTypeService;
     private final ModelService modelService;
     private final VehicleMapper vehicleMapper;
+    private final VehicleValidator vehicleValidator;
 
     private final VehicleStateFactory vehicleStateFactory;
     private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
@@ -104,17 +106,14 @@ public class VehicleService {
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
-    public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request){
+    public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request) {
 
-        if (vehicleRepository.existsByNumber(request.getNumber())) {
-            throw new ResourceExistsException("Vehicle number already exists.");
-        }
+        vehicleValidator.validateCreate(request);
 
         Vehicle entity = vehicleMapper.toEntity(request);
 
         VehicleStatus initialStatus = vehicleStatusService.getByName(request.getVehiclestatus().getName());
-        vehicleStateFactory.getState(initialStatus.getName())
-                .validateInitial();
+        vehicleStateFactory.getState(initialStatus.getName()).validateInitial();
         entity.setVehiclestatus(initialStatus);
 
         Vehicle savedVehicle = vehicleRepository.save(entity);
@@ -129,44 +128,31 @@ public class VehicleService {
 
         Vehicle existingVehicle = vehicleRepository.findByMyId(request.getId());
 
-        if (request.getMileage() != null && existingVehicle.getMileage() != null) {
-            if (request.getMileage() < existingVehicle.getMileage()) {
-                throw new BusinessRuleViolationException("Mileage cannot be less than current value.");
-            }
-        }
+        vehicleValidator.validateUpdate(existingVehicle, request);
 
-        vehicleMapper.updateEntityFromDto(request,existingVehicle);
-
-        ConditionRate currentConditionRate = existingVehicle.getConditionrate();
-
-        validateConditionRateTransition(currentConditionRate.getName(), request.getConditionrate().getName());
+        vehicleMapper.updateEntityFromDto(request, existingVehicle);
 
         if (request.getVehiclestatus().getId() != null) {
             VehicleStatus targetStatus = vehicleStatusService.getById(request.getVehiclestatus().getId());
             vehicleStateTransitionHandler.transitionTo(existingVehicle, targetStatus);
         }
-//
-//        if (request.getBranch().getId()!=null){
-//            Branch targetBranch = branchService.getById(request.getBranch().getId());
-//            existingVehicle.setBranch(targetBranch);
-//        }
 
-        if (request.getBustype().getId()!=null){
-            BusType targetBuType = busTypeService.getById(request.getBustype().getId());
-            existingVehicle.setBustype(targetBuType);
+        if (request.getBustype().getId() != null) {
+            BusType targetBusType = busTypeService.getById(request.getBustype().getId());
+            existingVehicle.setBustype(targetBusType);
         }
 
-        if (request.getConditionrate().getId()!=null){
+        if (request.getConditionrate().getId() != null) {
             ConditionRate targetConditionRate = conditionRateService.getById(request.getConditionrate().getId());
             existingVehicle.setConditionrate(targetConditionRate);
         }
 
-        if (request.getFueltype().getId()!=null){
+        if (request.getFueltype().getId() != null) {
             FuelType targetFuelType = fuelTypeService.getById(request.getFueltype().getId());
             existingVehicle.setFueltype(targetFuelType);
         }
 
-        if (request.getModel().getId()!=null){
+        if (request.getModel().getId() != null) {
             Model targetModel = modelService.getById(request.getModel().getId());
             existingVehicle.setModel(targetModel);
         }
@@ -185,37 +171,5 @@ public class VehicleService {
 
         return vehicles.stream() .map(Vehicle::getId) .collect(Collectors.toList());
     }
-
-    private void validateConditionRateTransition(String currentRate, String newRate) {
-
-        if (currentRate == null || newRate == null) {
-            throw new IllegalArgumentException("Rate cannot be null.");
-        }
-
-        if (currentRate.equalsIgnoreCase(newRate)) return;
-
-        currentRate = currentRate.trim().toUpperCase();
-        newRate = newRate.trim().toUpperCase();
-
-        List<String> allowedRates = VALID_CONDITION_TRANSITIONS.get(currentRate);
-
-        if (allowedRates == null) {
-            throw new IllegalArgumentException("Unknown current Rate: " + currentRate);
-        }
-
-        if (!allowedRates.contains(newRate)) {
-            throw new InvalidStateTransitionException(
-                    "Invalid Rate transition from " + currentRate + " to " + newRate
-            );
-        }
-    }
-
-    private static final Map<String, List<String>> VALID_CONDITION_TRANSITIONS = Map.of(
-            "EXCELLENT", List.of("GOOD"),
-            "GOOD",      List.of("FAIR"),
-            "FAIR",      List.of("POOR"),
-            "POOR",      List.of("CRITICAL"),
-            "CRITICAL",  List.of() // terminal state
-    );
 
 }

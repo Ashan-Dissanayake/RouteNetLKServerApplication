@@ -9,9 +9,7 @@ import lk.ashan.routenetlkserverapllication.module.farecollection.model.dto.Fare
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.dto.FareCollectionDetailResponseDto;
 import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.FareCollection;
 import lk.ashan.routenetlkserverapllication.module.farecollection.repository.FareCollectionRepository;
-import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionCreationValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionValidationContext;
+import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -37,8 +35,7 @@ public class FareCollectionService {
     private final BranchRepository branchRepository;
     private final FareCollectionMapper fareCollectionMapper;
     private final ApplicationEventPublisher eventPublisher;
-    private final FareCollectionContextBuilder contextBuilder;
-    private final FareCollectionCreationValidationStrategy creationValidationStrategy;
+    private final FareCollectionValidator fareCollectionValidator;
 
     /**
      * Retrieves all fare collections.
@@ -100,23 +97,37 @@ public class FareCollectionService {
     /**
      * Creates a new fare collection.
      *
-     * @param request the {@link FareCollectionCreateRequestDto} containing details for the new fare collection.
+     * @param request the {@link FareCollectionCreateRequestDto}
+     *               containing details for the new fare collection.
      * @return the created {@link FareCollectionDetailResponseDto}.
-     * @throws ResourceNotFoundException if the branch specified in the request is not found.
+     * @throws ResourceNotFoundException if the branch specified in the request
+     *                                   is not found.
      */
     @Transactional
-    public FareCollectionDetailResponseDto createFareCollection(FareCollectionCreateRequestDto request) {
+    public FareCollectionDetailResponseDto createFareCollection(
+            FareCollectionCreateRequestDto request) {
+
         branchRepository.findById(request.getBranch().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Branch not found"));
 
-        FareCollectionValidationContext context = contextBuilder.build(request);
-        creationValidationStrategy.validate(context);
+        fareCollectionValidator.validateCreate(
+                request.getBranch().getId(),
+                request.getTripexecution().getId(),
+                request.getTicketmachine().getId(),
+                request.getTotaltickets(),
+                request.getCachecollected(),
+                request.getDigitalpayments()
+        );
 
-        FareCollection fareCollection = fareCollectionMapper.toEntity(request);
+        FareCollection fareCollection =
+                fareCollectionMapper.toEntity(request);
+
         fareCollection.setIsreconciled(false);
         fareCollection.setTocollected(LocalTime.now());
 
-        FareCollection saved = fareCollectionRepository.save(fareCollection);
+        FareCollection saved =
+                fareCollectionRepository.save(fareCollection);
 
         return fareCollectionMapper.toDto(saved);
     }

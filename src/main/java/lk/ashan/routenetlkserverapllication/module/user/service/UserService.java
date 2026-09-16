@@ -8,7 +8,7 @@ import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.UserStatus;
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepository;
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserStatusRepository;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
+import lk.ashan.routenetlkserverapllication.module.user.validation.UserValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserStatusService userStatusService;
+    private final UserValidator userValidator;
     private final UserStatusRepository userStatusRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -88,84 +89,43 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public UserDetailResponseDto createUser(UserCreateRequestDto userCreateRequestDto) {
+    public UserDetailResponseDto createUser(UserCreateRequestDto request) {
 
-        if (userRepository.existsByUsername(userCreateRequestDto.getUsername())) {
-            throw new ResourceExistsException(
-                    "User with name : " + userCreateRequestDto.getUsername() + " already exists"
-            );
-        }
+        userValidator.validateCreate(request);
 
-        // Validate employee already has a user account
-        if (userRepository.existsByEmployee_Id(userCreateRequestDto.getEmployee().getId())) {
-            throw new ResourceExistsException(
-                    "Employee already has a user account"
-            );
-        }
+        User user = userMapper.toEntity(request);
 
-        User userEntity = userMapper.toEntity(userCreateRequestDto);
+        Optional.ofNullable(user.getUserRoles())
+                .ifPresent(userRoles ->
+                        userRoles.forEach(role ->
+                                role.setUser(user)
+                        )
+                );
 
-        // Map bidirectional relationship User -> UserRole
-        Optional.ofNullable(userEntity.getUserRoles())
-                .ifPresent(userRoles -> userRoles.forEach(userRole ->
-                        userRole.setUser(userEntity)
-                ));
+        UserStatus defaultStatus =
+                userStatusService.getByName("Active");
 
-        // Always assign default user status during creation
-        UserStatus defaultStatus = userStatusService.getByName("Active");
+        user.setUserstatus(defaultStatus);
+        user.setAccountlocked(false);
 
-        userEntity.setUserstatus(defaultStatus);
-
-        // Default account lock status
-        userEntity.setAccountlocked(false);
-
-        // Encrypt password
-        userEntity.setPassword(
-                passwordEncoder.encode(userCreateRequestDto.getPassword())
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
         );
 
-        User savedUser =  userRepository.save(userEntity);
-        return userMapper.toDto(savedUser);
+        User savedUser = userRepository.save(user);
 
+        return userMapper.toDto(savedUser);
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public UserDetailResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto) {
+    public UserDetailResponseDto updateUser(UserUpdateRequestDto request) {
 
-        User existingUser = userRepository.findById(
-                userUpdateRequestDto.getId()
-        ).orElseThrow(() ->
-                new ResourceNotFoundException("User not found")
-        );
+        User existingUser = userRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String employeeStatus = existingUser.getEmployee()
-                .getEmployeestatus()
-                .getName();
+        userValidator.validateUpdate(existingUser, request);
 
-
-        if ("RESIGNED".equalsIgnoreCase(employeeStatus)) {
-            throw new ResourceExistsException(
-                    "Cannot update user. Employee has resigned"
-            );
-        }
-
-
-        if (!existingUser.getUsername()
-                .equals(userUpdateRequestDto.getUsername())
-                &&
-                userRepository.existsByUsernameAndIdNot(
-                        userUpdateRequestDto.getUsername(),
-                        existingUser.getId()
-                )) {
-
-            throw new ResourceExistsException(
-                    "Username already exists"
-            );
-        }
-
-
-        User updatedUser = userMapper.toEntity(userUpdateRequestDto);
-
+        User updatedUser = userMapper.toEntity(request);
 
         BeanUtils.copyProperties(
                 updatedUser,
@@ -184,58 +144,44 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public void activateOrDeactivateUser(UserActiveDeactiveDto userActiveDeactiveDTO) {
+    public void activateOrDeactivateUser(UserActiveDeactiveDto request) {
 
-        User user = userRepository.findByUsername(
-                userActiveDeactiveDTO.getUsername()
-        ).orElseThrow(() ->
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() ->
                 new ResourceNotFoundException(
-                        "User with username : "
-                                + userActiveDeactiveDTO.getUsername()
+                                "User with username : "
+                                + request.getUsername()
                                 + " not found"
                 )
         );
 
-        // Employee lifecycle validation
-        String employeeStatus = user.getEmployee()
-                .getEmployeestatus()
-                .getName();
+        userValidator.validateActivation(user, request.getAccountLocked());
 
+        boolean lockAccount = Boolean.TRUE.equals(request.getAccountLocked());
 
-        if ("RESIGNED".equalsIgnoreCase(employeeStatus)
-                && Boolean.FALSE.equals(userActiveDeactiveDTO.getAccountLocked())) {
-
-            throw new ResourceExistsException(
-                    "Cannot activate user. Employee has resigned"
-            );
-        }
-
-
-        boolean lockAccount = Boolean.TRUE.equals(
-                userActiveDeactiveDTO.getAccountLocked()
-        );
-
-
-        UserStatus status;
-
-        if (lockAccount) {
-            status = userStatusRepository.findByName("Locked")
-                    .orElseThrow(() -> new ResourceNotFoundException("Locked status not found"));
-        } else {
-            status = userStatusRepository.findByName("Active")
-                    .orElseThrow(() -> new ResourceNotFoundException("Active status not found"));
-        }
+        UserStatus status = userStatusRepository.findByName(lockAccount ? "Locked" : "Active")
+                .orElseThrow(() -> new ResourceNotFoundException("User status not found"));
 
         user.setUserstatus(status);
         user.setAccountlocked(lockAccount);
 
         userRepository.save(user);
-
-
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public void changePassword(Integer userId, ChangePasswordRequestDto changePasswordRequestDto) {
+    public void changePassword(Integer userId, ChangePasswordRequestDto request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id : " + userId + " not found"));
+
+        userValidator.validateChangePassword(user, request);
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+    }
+
+    @Transactional(rollbackFor = TransactionRolledbackException.class)
+    public void resetPassword(Integer userId, ResetPasswordRequestDto request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
@@ -244,69 +190,11 @@ public class UserService {
                         )
                 );
 
-        // Validate current password
-        if (!passwordEncoder.matches(
-                changePasswordRequestDto.getCurrentPassword(),
-                user.getPassword()
-        )) {
+        userValidator.validateResetPassword(user, request);
 
-            throw new ResourceExistsException(
-                    "Current password is incorrect"
-            );
-        }
-
-
-        // Prevent same password
-        if (passwordEncoder.matches(
-                changePasswordRequestDto.getNewPassword(),
-                user.getPassword()
-        )) {
-
-            throw new ResourceExistsException(
-                    "New password cannot be same as current password"
-            );
-        }
-
-
-        user.setPassword(
-                passwordEncoder.encode(
-                        changePasswordRequestDto.getNewPassword()
-                )
-        );
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
     }
-
-    @Transactional(rollbackFor = TransactionRolledbackException.class)
-    public void resetPassword(Integer userId, ResetPasswordRequestDto resetPasswordRequestDto) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User with id : " + userId + " not found"
-                        )
-                );
-
-        // Prevent setting same password again
-        if (passwordEncoder.matches(
-                resetPasswordRequestDto.getNewPassword(),
-                user.getPassword()
-        )) {
-
-            throw new ResourceExistsException(
-                    "New password cannot be same as current password"
-            );
-        }
-
-        // Encode new password
-        user.setPassword(
-                passwordEncoder.encode(
-                        resetPasswordRequestDto.getNewPassword()
-                )
-        );
-
-        userRepository.save(user);
-    }
-
 
 }

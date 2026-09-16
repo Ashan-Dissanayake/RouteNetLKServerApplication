@@ -10,6 +10,8 @@ import lk.ashan.routenetlkserverapllication.module.privilege.model.entity.Privil
 import lk.ashan.routenetlkserverapllication.module.privilege.repository.ModuleRepository;
 import lk.ashan.routenetlkserverapllication.module.privilege.repository.OperationRepository;
 import lk.ashan.routenetlkserverapllication.module.privilege.repository.PrivilegeRepository;
+import lk.ashan.routenetlkserverapllication.module.privilege.validation.PrivilegeAssignmentContext;
+import lk.ashan.routenetlkserverapllication.module.privilege.validation.PrivilegeValidator;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.Role;
 import lk.ashan.routenetlkserverapllication.module.user.repository.RoleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -30,8 +32,7 @@ import java.util.List;
 public class PrivilegeService {
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
-    private final ModuleRepository moduleRepository;
-    private final OperationRepository operationRepository;
+    private final PrivilegeValidator privilegeValidator;
     private final PrivilegeMapper privilegeMapper;
 
     @Transactional(readOnly = true)
@@ -91,54 +92,34 @@ public class PrivilegeService {
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
     public void assignPrivileges(Integer roleId, PrivilegeAssignRequestDto requestDto) {
-        // Validate role
-        Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Role with id : " + roleId + " not found"));
 
         List<Privilege> privileges = new ArrayList<>();
 
         for (PrivilegeRequestDto privilegeDto : requestDto.getPrivileges()) {
-            // Validate module
-            Module module = moduleRepository.findById(privilegeDto.getModule().getId())
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException(
-                                    "Module with id : " + privilegeDto.getModule().getId() + " not found")
+
+            PrivilegeAssignmentContext context =
+                    privilegeValidator.validateAssignment(
+                            roleId,
+                            privilegeDto
                     );
 
-            // Validate operation
-            Operation operation = operationRepository.findById(privilegeDto.getOperation().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                                    "Operation with id : " + privilegeDto.getOperation().getId() + " not found"
-                    ));
-
-            // Validate operation belongs to selected module
-            if (!operation.getModule().getId().equals(module.getId())) {
-                throw new BusinessRuleViolationException(
-                        "Operation does not belong to the selected module-\t"
-                                + module.getName() + "-" + operation.getDisplayname()
-                );
-            }
-
-            // Prevent duplicate privilege
-            if (privilegeRepository.existsByRoleIdAndModuleIdAndOperationId(
-                    roleId, module.getId(), operation.getId()
-            )) {
-                throw new ResourceExistsException("Privilege already assigned to the role");
-            }
-
-            String authority = generateAuthority(module, operation);
-
             Privilege privilege = new Privilege();
-            privilege.setRole(role);
-            privilege.setModule(module);
-            privilege.setOperation(operation);
-            privilege.setAuthority(authority);
+
+            privilege.setRole(context.role());
+            privilege.setModule(context.module());
+            privilege.setOperation(context.operation());
+
+            privilege.setAuthority(
+                    generateAuthority(
+                            context.module(),
+                            context.operation()
+                    )
+            );
 
             privileges.add(privilege);
         }
 
         privilegeRepository.saveAll(privileges);
-
     }
 
     private String generateAuthority(Module module, Operation operation) {
