@@ -17,11 +17,7 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepo
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartContext;
-import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartCreationStrategy;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
+import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +42,11 @@ public class PartService {
     private final PartMasterService partMasterService;
     private final BranchService branchService;
     private final PartMapper partMapper;
+    private final PartValidator partValidator;
 
-    private final List<PartCreationStrategy> partCreationStrategies;
     private final PartStatusFactory partStatusFactory;
     private final PartStatusRepository partStatusRepository;
     private final PartStateTransitionHandler partStateTransitionHandler;
-    private final PartContextBuilder partContextBuilder;
 
 
     @Transactional(readOnly = true)
@@ -114,23 +109,19 @@ public class PartService {
 
     @Transactional
     @DisableSoftDeleteFilter
-    public PartDetailResponseDto createPart(@NotNull PartCreateRequestDto dto) {
+    public PartDetailResponseDto createPart(
+            @NotNull PartCreateRequestDto dto) {
 
-        boolean exists = partRepository.existsByBranch_IdAndPartmaster_Id(dto.getBranch().getId(), dto.getPartmaster().getId());
-        if (exists) {
-            throw new ResourceExistsException("This part already exists");
-        }
+        partValidator.validateCreate(dto);
 
         Part part = partMapper.toEntity(dto);
-
-        PartContext context = partContextBuilder.buildForCreate(dto);
-        partCreationStrategies.forEach(strategy -> strategy.validate(context));
 
         Partstatus initialStatus = partStatusService.getByName(dto.getPartstatus().getName());
         partStatusFactory.getState(initialStatus.getName()).validateInitial();
         part.setPartstatus(initialStatus);
 
         Part saved = partRepository.save(part);
+
         return partMapper.toDto(saved);
     }
 
@@ -141,9 +132,7 @@ public class PartService {
         Part existingPart = partRepository.findById(dto.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
 
-        PartContext context = partContextBuilder.buildForUpdate(dto, existingPart);
-
-        partCreationStrategies.forEach(strategy -> strategy.validate(context));
+        partValidator.validateUpdate(dto, existingPart);
 
         partMapper.updateFromDto(dto, existingPart);
 
@@ -193,7 +182,7 @@ public class PartService {
             );
         }
 
-        validateNotDecommissioned(parts);
+        partValidator.validateDeactivation(parts);
 
         parts.forEach(part -> part.setDeleted(true));
 
@@ -202,26 +191,6 @@ public class PartService {
         return parts.stream()
                 .map(Part::getId)
                 .toList();
-    }
-
-    private void validateNotDecommissioned(List<Part> parts) {
-
-        parts.stream()
-                .filter(part ->
-                        "DECOMMISSIONED".equalsIgnoreCase(
-                                part.getPartstatus().getName()
-                        )
-                )
-                .findFirst()
-                .ifPresent(part -> {
-                    throw new BusinessRuleViolationException(
-                            String.format(
-                                    "%s parts cannot be deleted. Part ID: %d",
-                                    part.getPartstatus().getName(),
-                                    part.getId()
-                            )
-                    );
-                });
     }
 
     private void updatePartStatus(Part part) {

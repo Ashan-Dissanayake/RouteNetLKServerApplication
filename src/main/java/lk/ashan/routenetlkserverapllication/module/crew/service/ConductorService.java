@@ -11,9 +11,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Conductor;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.CrewStatus;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationContext;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.ConductorValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.ConductorValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
@@ -41,9 +39,8 @@ public class ConductorService {
     private final NumberGeneratorService numberGeneratorService;
     private final CrewStatusService crewStatusService;
     private final RouteFamiliarityLevelService routeFamiliarityLevelService;
+    private final ConductorValidator conductorValidator;
 
-    private final List<ConductorValidationStrategy> validationStrategies;
-    private final ConductorContextBuilder conductorContextBuilder;
 
     /**
      * Retrieves all conductors.
@@ -124,19 +121,11 @@ public class ConductorService {
     @DisableBranchFilter
     public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
 
-        ConductorValidationContext context = conductorContextBuilder.buildForCreate(dto);
-        validationStrategies.forEach(s -> s.validateCreate(context));
-
-//        if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-//            throw new BusinessRuleViolationException("New conductor must have status 'ELIGIBLE'");
-//        }
-//
-//        if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-//            throw new BusinessRuleViolationException("New conductor route familiarity must have 'LOW'");
-//        }
+        conductorValidator.validateCreate(dto);
 
         Conductor entity = conductorMapper.toEntity(dto);
         entity.setNumber(numberGeneratorService.nextConductorNumber());
+
         Conductor saved = conductorRepository.save(entity);
 
         return conductorMapper.toDto(saved);
@@ -154,21 +143,28 @@ public class ConductorService {
     public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
 
         Conductor existing = conductorRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Conductor not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Conductor not found"));
 
-        ConductorValidationContext context = conductorContextBuilder.buildForUpdate(dto);
-        validationStrategies.forEach(s -> s.validateUpdate(context));
+        conductorValidator.validateUpdate(existing, dto);
 
-        Conductor entity = conductorMapper.updateEntityFromDto(dto, existing);
+        Conductor entity =
+                conductorMapper.updateEntityFromDto(dto, existing);
 
         if (dto.getRoutefamiliaritylevel().getId() != null) {
-            RouteFamiliarityLevel targetRouteFamiliarityLevel = routeFamiliarityLevelService.getById(dto.getRoutefamiliaritylevel().getId());
-            entity.setRoutefamiliaritylevel(targetRouteFamiliarityLevel);
+            RouteFamiliarityLevel level =
+                    routeFamiliarityLevelService.getById(
+                            dto.getRoutefamiliaritylevel().getId());
+
+            entity.setRoutefamiliaritylevel(level);
         }
 
         if (dto.getCrewstatus().getId() != null) {
-            CrewStatus targetStatus = crewStatusService.getById(dto.getCrewstatus().getId());
-            entity.setCrewstatus(targetStatus);
+            CrewStatus status =
+                    crewStatusService.getById(
+                            dto.getCrewstatus().getId());
+
+            entity.setCrewstatus(status);
         }
 
         return conductorMapper.toDto(entity);

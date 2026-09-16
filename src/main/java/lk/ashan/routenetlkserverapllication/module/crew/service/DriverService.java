@@ -11,9 +11,7 @@ import lk.ashan.routenetlkserverapllication.module.crew.model.entity.Driver;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.LicenseCategory;
 import lk.ashan.routenetlkserverapllication.module.crew.model.entity.RouteFamiliarityLevel;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationContext;
-import lk.ashan.routenetlkserverapllication.module.crew.validation.stratergy.DriverValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.crew.validation.DriverValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
@@ -40,9 +38,7 @@ public class DriverService {
     private final CrewStatusService crewStatusService;
     private final LicenseCategoryService licenseCategoryService;
     private final DriverMapper driverMapper;
-
-    private final List<DriverValidationStrategy> validationStrategies;
-    private final DriverContextBuilder driverContextBuilder;
+    private final DriverValidator driverValidator;
 
     /**
      * Retrieves all drivers.
@@ -122,20 +118,13 @@ public class DriverService {
     @Transactional
     public DriverDetailResponseDto createDriver(@NotNull DriverCreateRequestDto dto) {
 
-        DriverValidationContext context = driverContextBuilder.buildForCreate(dto);
-        validationStrategies.forEach(s -> s.validateCreate(context));
-
-        if (!dto.getCrewstatus().getName().equalsIgnoreCase("Eligible")) {
-            throw new ValidationException("New driver must have status 'ELIGIBLE'");
-        }
-
-        if (!dto.getRoutefamiliaritylevel().getName().equalsIgnoreCase("Low")) {
-            throw new ValidationException("New driver route familiarity must have 'LOW'");
-        }
+        driverValidator.validateCreate(dto);
 
         Driver driver = driverMapper.toEntity(dto);
         driver.setNumber(numberGeneratorService.nextDriverNumber());
-        return driverMapper.toDto(driverRepository.save(driver));
+
+        return driverMapper.toDto(
+                driverRepository.save(driver));
     }
 
     /**
@@ -147,27 +136,38 @@ public class DriverService {
      */
     @Transactional
     public DriverDetailResponseDto updateDriver(@NotNull DriverUpdateRequestDto dto) {
+
         Driver existingDriver = driverRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Driver not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Driver not found"));
 
-        DriverValidationContext context = driverContextBuilder.buildForUpdate(dto, existingDriver);
-        validationStrategies.forEach(s -> s.validateUpdate(context));
+        driverValidator.validateUpdate(existingDriver, dto);
 
-        Driver entity = driverMapper.updateEntityFromDto(dto, existingDriver);
+        Driver entity =
+                driverMapper.updateEntityFromDto(dto, existingDriver);
 
         if (dto.getRoutefamiliaritylevel().getId() != null) {
-            RouteFamiliarityLevel targetRouteFamiliarityLevel = routeFamiliarityLevelService.getById(dto.getRoutefamiliaritylevel().getId());
-            entity.setRoutefamiliaritylevel(targetRouteFamiliarityLevel);
+            RouteFamiliarityLevel level =
+                    routeFamiliarityLevelService.getById(
+                            dto.getRoutefamiliaritylevel().getId());
+
+            entity.setRoutefamiliaritylevel(level);
         }
 
         if (dto.getLicensecategory().getId() != null) {
-            LicenseCategory targetLicenseCategory = licenseCategoryService.getById(dto.getLicensecategory().getId());
-            entity.setLicensecategory(targetLicenseCategory);
+            LicenseCategory category =
+                    licenseCategoryService.getById(
+                            dto.getLicensecategory().getId());
+
+            entity.setLicensecategory(category);
         }
 
         if (dto.getCrewstatus().getId() != null) {
-            CrewStatus targetStatus = crewStatusService.getById(dto.getCrewstatus().getId());
-            entity.setCrewstatus(targetStatus);
+            CrewStatus status =
+                    crewStatusService.getById(
+                            dto.getCrewstatus().getId());
+
+            entity.setCrewstatus(status);
         }
 
         return driverMapper.toDto(entity);

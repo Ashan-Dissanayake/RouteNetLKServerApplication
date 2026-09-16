@@ -14,9 +14,7 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;
 import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationContext;
-import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidationStrategy;
+import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
@@ -46,9 +44,7 @@ public class EmployeeService {
     private final EmployeeTypeService employeeTypeService;
     private final EmployeeMapper employeeMapper;
     private final NumberGeneratorService numberGeneratorService;
-
-    private final EmployeeContextBuilder employeeContextBuilder;
-    private final List<EmployeeValidationStrategy> validationStrategies;
+    private final EmployeeValidator employeeValidator;
     private final EmployeeStateFactory employeeStateFactory;
     private final EmployeeStateTransitionHandler employeeStateTransitionHandler;
 
@@ -172,19 +168,33 @@ public class EmployeeService {
     @DisableBranchFilter
     public EmployeeDetailResponseDto createEmployee(@NotNull EmployeeCreateRequestDto request) {
 
-        EmployeeValidationContext context = employeeContextBuilder.buildForCreate(request);
-        validationStrategies.forEach(strategy -> strategy.validateCreate(context));
+        employeeValidator.validateCreate(request);
 
         Employee employee = employeeMapper.toEntity(request);
 
-        EmployeeStatus initialStatus = employeeStatusService.getByName(request.getEmployeestatus().getName());
-        employeeStateFactory.getState(initialStatus.getName())
+        EmployeeStatus initialStatus =
+                employeeStatusService.getByName(
+                        request.getEmployeestatus().getName()
+                );
+
+        employeeStateFactory
+                .getState(initialStatus.getName())
                 .validateInitial();
+
         employee.setEmployeestatus(initialStatus);
-        employee.setNumber(numberGeneratorService.nextEmployeeNumber());
-        employee.setEmail(employee.getCallingname() + numberGeneratorService.nextEmployeeNumber() + "@sltb.lk");
+
+        String employeeNumber =
+                numberGeneratorService.nextEmployeeNumber();
+
+        employee.setNumber(employeeNumber);
+        employee.setEmail(
+                employee.getCallingname()
+                        + employeeNumber
+                        + "@sltb.lk"
+        );
 
         Employee saved = employeeRepository.save(employee);
+
         return employeeMapper.toDto(saved);
     }
 
@@ -200,36 +210,59 @@ public class EmployeeService {
     @DisableSoftDeleteFilter
     @DisableBranchFilter
     public EmployeeDetailResponseDto updateEmployee(@NotNull EmployeeUpdateRequestDto request) {
+
         Employee existing = employeeRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Employee not found"));
 
-        EmployeeValidationContext context = employeeContextBuilder.buildForUpdate(request);
+        employeeValidator.validateUpdate(request);
 
-        validationStrategies.forEach(strategy -> strategy.validateUpdate(context));
-
-        Employee entity = employeeMapper.updateEntityFromDto(request, existing);
+        Employee entity =
+                employeeMapper.updateEntityFromDto(request, existing);
 
         if (request.getEmployeestatus().getId() != null) {
-            EmployeeStatus targetStatus = employeeStatusService.getById(request.getEmployeestatus().getId());
-            employeeStateTransitionHandler.transitionTo(entity, targetStatus);
+
+            EmployeeStatus targetStatus =
+                    employeeStatusService.getById(
+                            request.getEmployeestatus().getId()
+                    );
+
+            employeeStateTransitionHandler.transitionTo(
+                    entity,
+                    targetStatus
+            );
         }
 
         if (request.getEmployeetype().getId() != null) {
-            EmployeeType targetType = employeeTypeService.getById(request.getEmployeetype().getId());
+
+            EmployeeType targetType =
+                    employeeTypeService.getById(
+                            request.getEmployeetype().getId()
+                    );
+
             entity.setEmployeetype(targetType);
         }
 
         if (request.getDesignation().getId() != null) {
-            Designation targetDesignation = designationService.getById(request.getDesignation().getId());
-            entity.setDesignation(targetDesignation);
 
+            Designation targetDesignation =
+                    designationService.getById(
+                            request.getDesignation().getId()
+                    );
+
+            entity.setDesignation(targetDesignation);
         }
 
         if (request.getDepartment().getId() != null) {
-            Department targetDepartment = departmentService.getById(request.getDepartment().getId());
-            entity.setDepartment(targetDepartment);
 
+            Department targetDepartment =
+                    departmentService.getById(
+                            request.getDepartment().getId()
+                    );
+
+            entity.setDepartment(targetDepartment);
         }
+
         return employeeMapper.toDto(entity);
     }
 
