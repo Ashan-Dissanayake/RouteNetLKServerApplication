@@ -8,7 +8,7 @@ import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripMapper;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
-import lk.ashan.routenetlkserverapllication.module.trip.validation.stratergy.*;
+import lk.ashan.routenetlkserverapllication.module.trip.validation.TripValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,12 +32,7 @@ public class TripService {
     private final TripRepository tripRepository;
     private final TripStatusService tripStatusService;
     private final TripMapper tripMapper;
-
-    private final TripContextBuilder contextBuilder;
-    private final List<TripValidationStrategy> strategies;
-    private final TripActivationStrategy activationStrategy;
-    private final TripSuspendedStrategy suspendStrategy;
-    private final TripDiscontinuedStrategy discontinuedStrategy;
+    private final TripValidator tripValidator;
 
     /**
      * Retrieves all trips.
@@ -114,16 +109,18 @@ public class TripService {
      */
     @Transactional
     public TripDetailResponseDto createTrip(@NotNull TripCreateRequestDto createRequestDto) {
+        Trip trip = tripMapper.toEntity(createRequestDto);
 
-        TripValidationContext context = contextBuilder.buildForCreate(createRequestDto);
-        strategies.forEach(strategy -> strategy.validateCreate(context));
+        tripValidator.validateCreate(trip);
 
-        Tripstatus initialStatus = tripStatusService.getByName("Draft");
+        Tripstatus initialStatus =
+                tripStatusService.getByName("Draft");
 
-        Trip entity = tripMapper.toEntity(createRequestDto);
-        entity.setTripstatus(initialStatus);
+        trip.setTripstatus(initialStatus);
 
-        Trip savedTrip = tripRepository.save(entity);
+        Trip savedTrip =
+                tripRepository.save(trip);
+
         return tripMapper.toDto(savedTrip);
     }
 
@@ -134,11 +131,18 @@ public class TripService {
      * @return the activated trip as a {@link TripDetailResponseDto}.
      */
     @Transactional
-    public TripDetailResponseDto activateTrip(Integer tripId){
+    public TripDetailResponseDto activateTrip(Integer tripId) {
         Trip trip = getTripById(tripId);
-        activationStrategy.activateTrip(trip);
-        Trip activatedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(activatedTrip);
+
+        tripValidator.validateActivation(trip);
+
+        Tripstatus activeStatus = tripStatusService.getByName("Active");
+
+        changeStatus(trip, activeStatus);
+
+        Trip savedTrip = tripRepository.save(trip);
+
+        return tripMapper.toDto(savedTrip);
     }
 
     /**
@@ -148,13 +152,19 @@ public class TripService {
      * @return the suspended trip as a {@link TripDetailResponseDto}.
      */
     @Transactional
-    public TripDetailResponseDto suspendTrip(Integer tripId){
-         Trip trip = getTripById(tripId);
-        suspendStrategy.suspendTrip(trip);
-        Trip suspendedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(suspendedTrip);
-    }
+    public TripDetailResponseDto suspendTrip(Integer tripId) {
+        Trip trip = getTripById(tripId);
 
+        tripValidator.validateSuspension(trip);
+
+        Tripstatus suspendedStatus = tripStatusService.getByName("Suspended");
+
+        changeStatus(trip, suspendedStatus);
+
+        Trip savedTrip = tripRepository.save(trip);
+
+        return tripMapper.toDto(savedTrip);
+    }
     /**
      * Discontinues a trip by its ID.
      *
@@ -162,10 +172,26 @@ public class TripService {
      * @return the discontinued trip as a {@link TripDetailResponseDto}.
      */
     @Transactional
-    public TripDetailResponseDto discontinueTrip(Integer tripId){
+    public TripDetailResponseDto discontinueTrip(Integer tripId) {
         Trip trip = getTripById(tripId);
-        discontinuedStrategy.discontinueTrip(trip);
-        Trip discontinuedTrip = tripRepository.save(trip);
-        return tripMapper.toDto(discontinuedTrip);
+
+        tripValidator.validateDiscontinuation(trip);
+
+        Tripstatus discontinuedStatus = tripStatusService.getByName("Discontinued");
+
+        changeStatus(trip, discontinuedStatus);
+
+        Trip savedTrip = tripRepository.save(trip);
+
+        return tripMapper.toDto(savedTrip);
+    }
+
+    private void changeStatus(Trip trip, Tripstatus targetStatus) {
+        tripValidator.validateStatusTransition(
+                trip.getTripstatus(),
+                targetStatus
+        );
+
+        trip.setTripstatus(targetStatus);
     }
 }

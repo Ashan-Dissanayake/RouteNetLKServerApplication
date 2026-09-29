@@ -46,4 +46,13 @@ public class CrewStatusService {
                         "Status not found"
                 ));
     }
+
+    @Transactional(readOnly = true)
+    public CrewStatus getByName(String name) {
+        return crewStatusRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Status not found"
+                ));
+    }
+
 }

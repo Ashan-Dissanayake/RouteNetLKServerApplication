@@ -16,10 +16,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.V
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.model.entity.VehicleServiceStatus;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.repository.VehicleServiceExecutionRepository;
 import lk.ashan.routenetlkserverapllication.module.vehicleservice.repository.VehicleServiceRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicleservice.state.VehicleServiceStateFactory;
-import lk.ashan.routenetlkserverapllication.module.vehicleservice.state.VehicleServiceStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.vehicleservice.validation.VehicleServiceCreationValidationStrategy;
-import lk.ashan.routenetlkserverapllication.module.vehicleservice.validation.VehicleServiceValidationContext;
+import lk.ashan.routenetlkserverapllication.module.vehicleservice.validation.VehicleServiceValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
@@ -46,53 +43,49 @@ public class VehicleServiceIdentificationService {
     private final PartService partService;
     private final EmployeeService employeeService;
     private final VehicleServiceExecutionRepository vehicleServiceExecutionRepository;
-
-    private final VehicleServiceCreationValidationStrategy creationValidationStrategy;
-
-    private final VehicleServiceStateFactory vehicleServiceStateFactory;
-    private final VehicleServiceStateTransitionHandler vehicleServiceStateTransitionHandler;
+    private final VehicleServiceValidator vehicleServiceValidator;
 
     @Transactional(readOnly = true)
-    public List<VehicleServiceDetailResponseDto> getVehicleServices(){
-        return vehicleServiceMapper.toDtoList(vehicleServiceRepository.findAll());
+    public List<VehicleServiceDetailResponseDto> getVehicleServices() {
+        return vehicleServiceMapper.toDtoList(
+                vehicleServiceRepository.findAll()
+        );
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleServiceDetailResponseDto> searchVehicleService(
-            @NotNull HashMap<String, String> params) {
+    public List<VehicleServiceDetailResponseDto> searchVehicleService(@NotNull HashMap<String, String> params) {
 
-        Specification<VehicleService> specification = (root, query, criteriaBuilder) -> {
+        Specification<VehicleService> specification =
+                (root, query, criteriaBuilder) -> {
 
-            List<Predicate> predicates = new ArrayList<>();
+                    List<Predicate> predicates = new ArrayList<>();
 
-            String vehicleId = params.get("ssvehicle");
-            String doCreated = params.get("ssdocreated");
+                    String vehicleId = params.get("ssvehicle");
+                    String doCreated = params.get("ssdocreated");
 
-            if (vehicleId != null && !vehicleId.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.equal(
-                                root.get("vehicle").get("id"),
-                                Integer.parseInt(vehicleId)
-                        )
-                );
-            }
+                    if (vehicleId != null && !vehicleId.isBlank()) {
 
-            if (doCreated != null && !doCreated.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.equal(
-                                root.get("docreated"),
-                                LocalDate.parse(doCreated)
-                        )
-                );
-            }
+                        predicates.add(
+                                criteriaBuilder.equal(
+                                        root.get("vehicle").get("id"),
+                                        Integer.parseInt(vehicleId)
+                                )
+                        );
+                    }
 
-            return criteriaBuilder.and(
-                    predicates.toArray(new Predicate[0])
-            );
-        };
+                    if (doCreated != null && !doCreated.isBlank()) {
+                        predicates.add(
+                                criteriaBuilder.equal(
+                                        root.get("docreated"),
+                                        LocalDate.parse(doCreated)
+                                )
+                        );
+                    }
 
-        List<VehicleService> vehicleServices =
-                vehicleServiceRepository.findAll(specification);
+                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+                };
+
+        List<VehicleService> vehicleServices = vehicleServiceRepository.findAll(specification);
 
         return vehicleServiceMapper.toDtoList(vehicleServices);
     }
@@ -100,65 +93,52 @@ public class VehicleServiceIdentificationService {
     @Transactional
     public VehicleServiceDetailResponseDto createVehicleService(@Valid @NotNull VehicleServiceCreateRequestDto request) {
 
-        // 1. System Existence Check (Structural Gatekeeper)
         Branch branch = branchService.getById(request.getBranch().getId());
 
-        // 2. Fetch Status and Perform State Machine Entry Validation (Your Initial Gate passion)
-        VehicleServiceStatus initialStatus = vehicleServiceStatusService.getByName(request.getVehicleservicestatus().getName());
-        vehicleServiceStateFactory.getState(initialStatus.getName())
-                .validateInitial(); // Will pass cleanly if status name is 'PENDING'
+        VehicleServiceStatus initialStatus = vehicleServiceStatusService.getByName(
+                        request.getVehicleservicestatus()
+                                .getName()
+                );
 
-        // 3. Build Validation Context and Execute Business Rule Strategies
-        VehicleServiceValidationContext validationContext = VehicleServiceValidationContext.builder()
-                .branchId(request.getBranch().getId())
-                .vehicleId(request.getVehicle().getId())
-                .serviceTypeName(request.getVehicleservicetype().getName())
-                .incidentId(request.getIncident() != null ? request.getIncident().getId() : null)
-                .parts(request.getVehicleserviceparts())
-                .build();
-        creationValidationStrategy.validate(validationContext);
+        vehicleServiceValidator.validateCreate(request);
 
-        // 4. Map DTO payload to core Entity
         VehicleService service = vehicleServiceMapper.toEntity(request);
-
-        // 5. Apply Automated System-Controlled Audit Properties
         service.setVehicleservicestatus(initialStatus);
         service.setDocreated(LocalDate.now());
-        service.setNumber(numberGeneratorService.nextVehicleServiceNumber(branch.getCode(), YearMonth.now()));
+        service.setNumber(numberGeneratorService.nextVehicleServiceNumber(
+                        branch.getCode(),
+                        YearMonth.now()
+                )
+        );
 
-        // 6. Handle Child Master-Detail Mappings Defensively (Fixes NullPointerException & sets backward link)
         if (request.getVehicleserviceparts() != null && !request.getVehicleserviceparts().isEmpty()) {
+
             for (VehicleServicePartDto partDto : request.getVehicleserviceparts()) {
+
                 Part part = partService.getById(partDto.getPart().getId());
 
                 VehicleServicePart servicePart = new VehicleServicePart();
                 servicePart.setPart(part);
                 servicePart.setQuantity(partDto.getQuantity());
-
                 service.addPart(servicePart);
             }
         }
 
-        // 7. Persist complete aggregated root entity structure
         VehicleService savedService = vehicleServiceRepository.save(service);
-
-        // 8. Broadcast Lifecycle Event for Global State Sync
-        // This allows the Vehicle module to immediately transition the bus status to 'UNDER_MAINTENANCE'
-        //eventPublisher.publishEvent(new VehicleServiceCreatedEvent(this, savedService));
 
         return vehicleServiceMapper.toDto(savedService);
     }
 
     @Transactional
     public VehicleServiceDetailResponseDto startExecution(Integer id, VehicleServiceStartRequestDto dto) {
+
         VehicleService service = getById(id);
+
         VehicleServiceStatus targetStatus = vehicleServiceStatusService.getByName("In Progress");
+        changeStatus(service, targetStatus);
 
-        // 1. Fire state transition logic (Validates if current state allows moving to IN_PROGRESS)
-        vehicleServiceStateTransitionHandler.transitionTo(service, targetStatus);
-
-        // 2. Perform Operational Data Write to child Execution table
         VehicleServiceExecution execution = new VehicleServiceExecution();
+
         execution.setVehicleservice(service);
         execution.setBranch(service.getBranch());
         execution.setDostarted(LocalDate.now());
@@ -166,50 +146,67 @@ public class VehicleServiceIdentificationService {
         execution.setMaintechnician(employeeService.getById(dto.getMaintechnicianId()));
 
         vehicleServiceExecutionRepository.save(execution);
-
-        return vehicleServiceMapper.toDto(vehicleServiceRepository.save(service));
-    }
-
-    @Transactional
-    public VehicleServiceDetailResponseDto placeOnHold(Integer id) {
-        VehicleService service = getById(id);
-        VehicleServiceStatus targetStatus = vehicleServiceStatusService.getByName("On Hold Parts");
-
-        vehicleServiceStateTransitionHandler.transitionTo(service, targetStatus);
-
-        return vehicleServiceMapper.toDto(vehicleServiceRepository.save(service));
-    }
-
-    @Transactional
-    public VehicleServiceDetailResponseDto complete(Integer id, VehicleServiceCompleteRequestDto dto) {
-        VehicleService service = getById(id);
-        VehicleServiceStatus targetStatus = vehicleServiceStatusService.getByName("Completed");
-        // 1. Process State Transition
-        vehicleServiceStateTransitionHandler.transitionTo(service, targetStatus);
-
-        // 2. Fetch the active open execution row matching this service window
-        VehicleServiceExecution activeExecution = vehicleServiceExecutionRepository.findByVehicleserviceAndDoendIsNull(service)
-                .orElseThrow(() -> new BusinessRuleViolationException("No active execution segment found to complete"));
-
-        // 3. Map request remarks across safely via MapStruct target merging
-        vehicleServiceMapper.updateExecutionWithCompletePayload(dto, activeExecution);
-
-        // 4. System level computation & close out data assignment
-        activeExecution.setDoend(LocalDate.now());
-        activeExecution.setNextserviceinkm(activeExecution.getStartodometer() + dto.getServiceIntervalKm());
-
-        // 5. Commit history changes to persistence
-        vehicleServiceExecutionRepository.save(activeExecution);
         vehicleServiceRepository.save(service);
-
-        // 6. Broadcast event so other modules know this bus is fully cleared for passenger routes
-        //eventPublisher.publishEvent(new VehicleServiceCompletedEvent(this, service));
 
         return vehicleServiceMapper.toDto(service);
     }
 
+    @Transactional
+    public VehicleServiceDetailResponseDto placeOnHold(Integer id) {
+
+        VehicleService service = getById(id);
+
+        VehicleServiceStatus targetStatus = vehicleServiceStatusService.getByName("On Hold Parts");
+        changeStatus(service, targetStatus);
+
+        vehicleServiceRepository.save(service);
+        return vehicleServiceMapper.toDto(service);
+    }
+
+    @Transactional
+    public VehicleServiceDetailResponseDto complete(Integer id, VehicleServiceCompleteRequestDto dto) {
+
+        VehicleService service = getById(id);
+
+        VehicleServiceExecution activeExecution =
+                vehicleServiceExecutionRepository
+                        .findByVehicleserviceAndDoendIsNull(
+                                service
+                        )
+                        .orElseThrow(() ->
+                                new BusinessRuleViolationException(
+                                        "No active execution segment found to complete"
+                                )
+                        );
+
+        VehicleServiceStatus targetStatus = vehicleServiceStatusService.getByName("Completed");
+
+        changeStatus(service, targetStatus);
+
+        vehicleServiceMapper.updateExecutionWithCompletePayload(dto, activeExecution);
+
+        activeExecution.setDoend(LocalDate.now());
+        activeExecution.setNextserviceinkm(activeExecution.getStartodometer() + dto.getServiceIntervalKm());
+
+        vehicleServiceExecutionRepository.save(activeExecution);
+        vehicleServiceRepository.save(service);
+
+        return vehicleServiceMapper.toDto(service);
+    }
+
+    private void changeStatus(VehicleService service, VehicleServiceStatus targetStatus) {
+        vehicleServiceValidator.validateStatusTransition(service.getVehicleservicestatus(), targetStatus);
+        service.setVehicleservicestatus(targetStatus);
+    }
+
     private VehicleService getById(Integer id) {
+
         return vehicleServiceRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Vehicle service ticket not found with id: " + id));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Vehicle service ticket not found with id: "
+                                        + id
+                        )
+                );
     }
 }

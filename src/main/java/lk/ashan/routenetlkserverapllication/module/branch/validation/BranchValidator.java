@@ -2,7 +2,9 @@ package lk.ashan.routenetlkserverapllication.module.branch.validation;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -62,6 +64,48 @@ public class BranchValidator {
                 request.getAddress(), id)) {
             throw new ResourceExistsException(
                     "Another branch uses this address.");
+        }
+    }
+
+
+    public void validateStatusTransition(BranchStatus currentStatus, BranchStatus targetStatus) {
+
+        String current = currentStatus.getName().toUpperCase();
+        String target = targetStatus.getName().toUpperCase();
+
+        if (current.equals(target)) {
+            return;
+        }
+
+        boolean valid = switch (current) {
+            case "ACTIVE" -> target.equals("SUSPENDED");
+
+            case "SUSPENDED" ->
+                    target.equals("ACTIVE") || target.equals("CLOSED");
+
+            case "CLOSED" -> false;
+
+            default -> false;
+        };
+
+        if (!valid) {
+            throw new BusinessRuleViolationException(
+                    "Invalid branch status transition from "
+                            + current
+                            + " to "
+                            + target
+            );
+        }
+    }
+
+    public void validateInitialStatus(BranchStatus status) {
+
+        String statusName = status.getName().toUpperCase();
+
+        if (!statusName.equals("ACTIVE")) {
+            throw new BusinessRuleViolationException(
+                    statusName + " cannot be used as an initial branch status."
+            );
         }
     }
 }

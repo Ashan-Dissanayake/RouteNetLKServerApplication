@@ -6,7 +6,7 @@ on:
       - master
     paths-ignore:
       - .gitignore
-      - README.md
+      - README.md+
       - .dockerignore
       - HELP.md
   pull_request:

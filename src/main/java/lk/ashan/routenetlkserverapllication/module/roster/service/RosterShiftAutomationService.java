@@ -1,10 +1,7 @@
 package lk.ashan.routenetlkserverapllication.module.roster.service;
 
-import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
-import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Designation;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.DesignationRepository;
-import lk.ashan.routenetlkserverapllication.module.roster.event.RosterShiftAssignmentEvent;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShift;
 import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Shift;
@@ -13,7 +10,6 @@ import lk.ashan.routenetlkserverapllication.module.roster.repository.ShiftReposi
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +26,6 @@ public class RosterShiftAutomationService {
     private final ShiftRepository shiftRepository;
     private final DesignationRepository designationRepository;
     private final RosterRepository rosterRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
 
     @Transactional
@@ -72,6 +67,5 @@ public class RosterShiftAutomationService {
         }
 
         rosterRepository.save(roster);
-        eventPublisher.publishEvent(new RosterShiftAssignmentEvent(this, roster.getId()));
     }
 }

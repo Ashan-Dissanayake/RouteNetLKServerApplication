@@ -41,16 +41,14 @@ class BranchValidatorTest {
                         .address("123 Main St")
                         .build();
 
-        when(branchRepository.existsByCodeEqualsIgnoreCase("BR001"))
-                .thenReturn(true);
+        when(branchRepository.existsByCodeEqualsIgnoreCase("BR001")).thenReturn(true);
 
         assertThrows(
                 ResourceExistsException.class,
                 () -> validator.validateCreate(request)
         );
 
-        verify(branchRepository)
-                .existsByCodeEqualsIgnoreCase("BR001");
+        verify(branchRepository).existsByCodeEqualsIgnoreCase("BR001");
     }
 
     @Test

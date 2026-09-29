@@ -8,7 +8,6 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.service.BranchService;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepository;
 import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverRepository;
-import lk.ashan.routenetlkserverapllication.module.employee.model.entity.Employee;
 import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Trip;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.mapper.TripExecutionMapper;
@@ -20,7 +19,7 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.TripExecutionStatus;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.planner.*;
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
-import lk.ashan.routenetlkserverapllication.module.tripexecution.state.TripExecutionTransitionHandler;
+import lk.ashan.routenetlkserverapllication.module.tripexecution.validation.TripExecutionValidator;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
@@ -56,7 +55,7 @@ public class TripExecutionService {
     private final BranchService branchService;
     private final TripExecutionMapper tripExecutionMapper;
 
-    private final TripExecutionTransitionHandler tripExecutionTransitionHandler;
+    private final TripExecutionValidator tripExecutionValidator;
 
     @Qualifier("tripExecutionSolver")
     private final SolverManager<TripExecutionSolution, Integer> tripExecutionSolverManager;
@@ -67,8 +66,7 @@ public class TripExecutionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TripExecutionDetailsResponseDto> searchTripExecutions(
-            @NotNull HashMap<String, String> params) {
+    public List<TripExecutionDetailsResponseDto> searchTripExecutions(@NotNull HashMap<String, String> params) {
 
         Specification<TripExecution> specification = (root, query, criteriaBuilder) -> {
 
@@ -105,18 +103,17 @@ public class TripExecutionService {
 
         return tripExecutionMapper.toDtoList(tripExecutions);
     }
+
     @Transactional(readOnly = true)
     public List<TripExecution> getTripExecutionByTripId(@NotNull Integer tripId){
         return tripExecutionRepository.findAllByTrip_Id(tripId).
                 orElseThrow(()->new ResourceNotFoundException("TripExecution with id "+tripId+" not found"));
     }
 
-
     @Transactional(readOnly = true)
     public List<TripExecutionSummaryDto> getSummaryTripExecution(){
         return tripExecutionMapper.toSummaryDtoList(tripExecutionRepository.findByTripexecutionstatus_Name("Breakdown"));
     }
-
 
     @Transactional
     public List<TripExecutionDetailsResponseDto> initializeDailyExecutions(
@@ -281,123 +278,167 @@ public class TripExecutionService {
 
     @Transactional
     public void checkedInTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        Employee d = execution.getDriver().getEmployee();
-        Employee c = execution.getConductor().getEmployee();
+        tripExecutionValidator.validateCheckIn(execution);
 
-        if (d.getEmployeestatus().getName().equals("On leave"))
-            throw new BusinessRuleViolationException("Driver is not Available on Today");
+        TripExecutionStatus checkedInStatus =
+                tripExecutionStatusService.getByName("Checked In");
 
-        if (c.getEmployeestatus().getName().equals("On leave"))
-            throw new BusinessRuleViolationException("Conductor is not Available on Today");
-
-        TripExecutionStatus checkedIndStatus = tripExecutionStatusService.getByName("Checked In");
-        tripExecutionTransitionHandler.transitionTo(execution, checkedIndStatus);
+        changeStatus(
+                execution,
+                checkedInStatus
+        );
     }
 
     @Transactional
     public void dispatchedTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        execution.setToactualdeparture(LocalTime.now());
+        TripExecutionStatus dispatchedStatus =
+                tripExecutionStatusService.getByName("Dispatched");
 
-        Vehicle vehicle = vehicleRepository.findById(execution.getVehicle().getId())
-                .orElseThrow(()-> new ResourceNotFoundException("Vehicle Not Found"));
+        changeStatus(
+                execution,
+                dispatchedStatus
+        );
 
-        Integer lastMileage = vehicle.getMileage();
-        execution.setStartodometer(lastMileage);
+        execution.setToactualdeparture(
+                LocalTime.now()
+        );
 
-        TripExecutionStatus dispatchedStatus = tripExecutionStatusService.getByName("Dispatched");
-        tripExecutionTransitionHandler.transitionTo(execution, dispatchedStatus);
+        Vehicle vehicle =
+                vehicleRepository.findById(
+                                execution.getVehicle().getId()
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Vehicle Not Found"
+                                )
+                        );
+
+        execution.setStartodometer(
+                vehicle.getMileage()
+        );
     }
 
     @Transactional
-    public void  arrivedTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
+    public void arrivedTripExecution(@NotNull Integer tripExecutionId) {
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        Integer routeDistance = execution.getTrip().getPermite().getRoute().getDistancekm();
-        Integer startOdo = execution.getStartodometer();
+        TripExecutionStatus arrivedStatus = tripExecutionStatusService.getByName("Arrived");
 
-        Integer calculatedEndOdo = startOdo + routeDistance;
-        execution.setEndodometer(calculatedEndOdo);
+        changeStatus(execution, arrivedStatus);
+
+        Integer routeDistance =
+                execution.getTrip()
+                        .getPermite()
+                        .getRoute()
+                        .getDistancekm();
+
+        Integer startOdometer = execution.getStartodometer();
+
+        Integer calculatedEndOdometer = startOdometer + routeDistance;
+
+        execution.setEndodometer(calculatedEndOdometer);
+
         execution.setToactualarrival(LocalTime.now());
 
         Vehicle vehicle = execution.getVehicle();
-        vehicle.setMileage(calculatedEndOdo);
+
+        vehicle.setMileage(calculatedEndOdometer);
+
         vehicleRepository.save(vehicle);
-
-        TripExecutionStatus arrivedStatus = tripExecutionStatusService.getByName("Arrived");
-        tripExecutionTransitionHandler.transitionTo(execution, arrivedStatus);
     }
 
     @Transactional
-    public void  breakdownTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
+    public void breakdownTripExecution(@NotNull Integer tripExecutionId) {
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        /*
-        1. The Logical Flow
-        Stop the Clock: Record the time the breakdown was reported.
+        TripExecutionStatus breakdownStatus =
+                tripExecutionStatusService.getByName("Breakdown");
 
-        Lock the Odometer: Since the bus can no longer move, the current mileage
-         is recorded (if known) or estimated.
-        Disable the Vehicle: Update the Vehicle table status to "Under Repair" so the
-        Solver/Scheduler doesn't assign it to a new trip.
-
-        Manage the Crew: In some systems, the crew stays with the broken bus;
-        in others, they are "Released" to take a relief bus.
-        *
-         */
-
-        TripExecutionStatus arrivedStatus = tripExecutionStatusService.getByName("Breakdown");
-        tripExecutionTransitionHandler.transitionTo(execution, arrivedStatus);
+        changeStatus(
+                execution,
+                breakdownStatus
+        );
     }
 
     @Transactional
-    public void  completedTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
+    public void completedTripExecution(@NotNull Integer tripExecutionId) {
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        TripExecutionStatus completedStatus = tripExecutionStatusService.getByName("Completed");
-        tripExecutionTransitionHandler.transitionTo(execution, completedStatus);
+        TripExecutionStatus completedStatus =
+                tripExecutionStatusService.getByName("Completed");
+
+        changeStatus(
+                execution,
+                completedStatus
+        );
     }
 
     @Transactional
-    public void  cancelledTripExecution(@NotNull Integer tripExecutionId) {
-        TripExecution execution = tripExecutionRepository.findById(tripExecutionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "TripExecution not found with id " + tripExecutionId
-                ));
-        /*
-        The Logical Flow
-        Release the Vehicle: Change the Vehicle status from "Assigned" or "Reserved" back to
-        "Available".
+    public void cancelledTripExecution(@NotNull Integer tripExecutionId) {
+        TripExecution execution =
+                tripExecutionRepository.findById(tripExecutionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "TripExecution not found with id "
+                                                + tripExecutionId
+                                )
+                        );
 
-        Release the Crew: Update the Employee status for both the Driver and Conductor back to
-        "Available".
+        TripExecutionStatus cancelledStatus =
+                tripExecutionStatusService.getByName("Cancelled");
 
-        Wipe Operational Data: If the trip was "Checked In," there might be partial data.
-        You should ensure no "Actual Departure" times are saved.
+        changeStatus(
+                execution,
+                cancelledStatus
+        );
+    }
 
-        Audit Reason: (Optional but recommended) Capture why it was cancelled
-        (e.g., "Low passenger count," "Driver emergency").
-       */
-        TripExecutionStatus cancelledStatus = tripExecutionStatusService.getByName("Cancelled");
-        tripExecutionTransitionHandler.transitionTo(execution, cancelledStatus);
+    private void changeStatus(TripExecution tripExecution, TripExecutionStatus targetStatus) {
+        tripExecutionValidator.validateStatusTransition(
+                tripExecution.getTripexecutionstatus(),
+                targetStatus
+        );
+
+        tripExecution.setTripexecutionstatus(targetStatus);
     }
 
 }

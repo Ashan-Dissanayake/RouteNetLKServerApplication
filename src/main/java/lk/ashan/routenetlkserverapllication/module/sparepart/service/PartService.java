@@ -15,8 +15,6 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partma
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.entity.Partstatus;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartRepository;
 import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.sparepart.state.PartStatusFactory;
 import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
@@ -36,65 +34,59 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PartService {
-    
+
     private final PartRepository partRepository;
     private final PartStatusService partStatusService;
     private final PartMasterService partMasterService;
     private final BranchService branchService;
     private final PartMapper partMapper;
     private final PartValidator partValidator;
-
-    private final PartStatusFactory partStatusFactory;
     private final PartStatusRepository partStatusRepository;
-    private final PartStateTransitionHandler partStateTransitionHandler;
-
 
     @Transactional(readOnly = true)
-    public List<PartDetailResponseDto> getParts(){
+    public List<PartDetailResponseDto> getParts() {
         return partMapper.toDtoList(partRepository.findAll());
     }
 
     @Transactional(readOnly = true)
-    public List<PartDetailResponseDto> searchParts(
-            @NotNull HashMap<String, String> params) {
+    public List<PartDetailResponseDto> searchParts(@NotNull HashMap<String, String> params) {
 
-        Specification<Part> specification = (root, query, criteriaBuilder) -> {
+        Specification<Part> specification =
+                (root, query, criteriaBuilder) -> {
 
-            List<Predicate> predicates = new ArrayList<>();
+                    List<Predicate> predicates =
+                            new ArrayList<>();
 
-            String partCategoryId = params.get("sscategory");
-            String partStatusId = params.get("sspartstatus");
+                    String partCategoryId = params.get("sscategory");
+                    String partStatusId = params.get("sspartstatus");
 
-            if (partCategoryId != null && !partCategoryId.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.equal(
-                                root.get("partmaster")
-                                        .get("partcategory")
-                                        .get("id"),
-                                Integer.parseInt(partCategoryId)
-                        )
-                );
-            }
+                    if (partCategoryId != null && !partCategoryId.isBlank()) {
+                        predicates.add(
+                                criteriaBuilder.equal(
+                                        root.get("partmaster")
+                                                .get("partcategory")
+                                                .get("id"),
+                                        Integer.parseInt(partCategoryId)
+                                )
+                        );
+                    }
 
-            if (partStatusId != null && !partStatusId.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.equal(
-                                root.get("partstatus").get("id"),
-                                Integer.parseInt(partStatusId)
-                        )
-                );
-            }
+                    if (partStatusId != null && !partStatusId.isBlank()) {
+                        predicates.add(
+                                criteriaBuilder.equal(
+                                        root.get("partstatus").get("id"),
+                                        Integer.parseInt(partStatusId)
+                                )
+                        );
+                    }
 
-            return criteriaBuilder.and(
-                    predicates.toArray(new Predicate[0])
-            );
-        };
+                    return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+                };
 
         List<Part> parts = partRepository.findAll(specification);
 
         return partMapper.toDtoList(parts);
     }
-
 
     @Transactional(readOnly = true)
     public List<PartSummaryDto> getSummaryParts() {
@@ -104,20 +96,24 @@ public class PartService {
     @Transactional(readOnly = true)
     public Part getById(Integer id) {
         return partRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Part not found"
+                        )
+                );
     }
 
     @Transactional
     @DisableSoftDeleteFilter
-    public PartDetailResponseDto createPart(
-            @NotNull PartCreateRequestDto dto) {
+    public PartDetailResponseDto createPart(@NotNull PartCreateRequestDto dto) {
 
         partValidator.validateCreate(dto);
 
-        Part part = partMapper.toEntity(dto);
-
         Partstatus initialStatus = partStatusService.getByName(dto.getPartstatus().getName());
-        partStatusFactory.getState(initialStatus.getName()).validateInitial();
+
+        partValidator.validateInitialStatus(initialStatus);
+
+        Part part = partMapper.toEntity(dto);
         part.setPartstatus(initialStatus);
 
         Part saved = partRepository.save(part);
@@ -129,43 +125,68 @@ public class PartService {
     @DisableSoftDeleteFilter
     public PartDetailResponseDto updatePart(@NotNull PartUpdateRequestDto dto) {
 
-        Part existingPart = partRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        Part existingPart =
+                partRepository.findById(dto.getId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Part not found"
+                                )
+                        );
 
         partValidator.validateUpdate(dto, existingPart);
-
         partMapper.updateFromDto(dto, existingPart);
 
         if (dto.getBranch() != null && dto.getBranch().getId() != null) {
-            Branch targetBranch = branchService.getById(dto.getBranch().getId());
+
+            Branch targetBranch =
+                    branchService.getById(
+                            dto.getBranch().getId()
+                    );
             existingPart.setBranch(targetBranch);
         }
 
         if (dto.getPartmaster() != null && dto.getPartmaster().getId() != null) {
-            Partmaster targetPartMaster = partMasterService.getById(dto.getPartmaster().getId());
+
+            Partmaster targetPartMaster =
+                    partMasterService.getById(
+                            dto.getPartmaster().getId()
+                    );
+
             existingPart.setPartmaster(targetPartMaster);
         }
 
         if (dto.getPartstatus() != null && dto.getPartstatus().getId() != null) {
-            Partstatus targetStatus = partStatusService.getById(dto.getPartstatus().getId());
-            partStateTransitionHandler.transitionTo(existingPart, targetStatus);
+
+            Partstatus targetStatus =
+                    partStatusService.getById(
+                            dto.getPartstatus().getId()
+                    );
+
+            changeStatus(existingPart, targetStatus);
         }
 
         Part saved = partRepository.save(existingPart);
-
         return partMapper.toDto(saved);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handlePartReceived(PartReceivedEvent event) {
-        Part part = partRepository.findById(event.partId())
-                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
 
-        // 1. Update the actual quantity
-        BigDecimal currentQoh = part.getQoh() != null ? part.getQoh() : BigDecimal.ZERO;
+        Part part =
+                partRepository.findById(event.partId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Part not found"
+                                )
+                        );
+
+        BigDecimal currentQoh =
+                part.getQoh() != null
+                        ? part.getQoh()
+                        : BigDecimal.ZERO;
+
         part.setQoh(currentQoh.add(event.quantityReceived()));
 
-        // 2. Determine and Transition the Status
         updatePartStatus(part);
 
         partRepository.save(part);
@@ -178,7 +199,8 @@ public class PartService {
 
         if (parts.isEmpty()) {
             throw new ResourceNotFoundException(
-                    "No parts found for the given IDs: " + partIds
+                    "No parts found for the given IDs: "
+                            + partIds
             );
         }
 
@@ -194,31 +216,58 @@ public class PartService {
     }
 
     private void updatePartStatus(Part part) {
-        String currentStatusName = part.getPartstatus().getName().toUpperCase();
 
-        // Safety: If it's already DECOMMISSIONED, the Handler/State will throw an
-        // exception if we try to move it. We catch it or check here to prevent crashes.
-        if ("DECOMMISSIONED".equals(currentStatusName)) {
+        String currentStatusName =
+                part.getPartstatus()
+                        .getName()
+                        .trim()
+                        .toUpperCase();
+
+        if ("DECOMMISSIONED".equals(
+                currentStatusName
+        )) {
             return;
         }
 
-        // 1. Calculate what the status SHOULD be based on QOH
-        String targetStatusName = calculateTargetStatus(part.getQoh(), part.getRop());
+        String targetStatusName =
+                calculateTargetStatus(
+                        part.getQoh(),
+                        part.getRop()
+                );
 
-        // 2. Only transition if the status actually needs to change
-        if (!currentStatusName.equalsIgnoreCase(targetStatusName)) {
-            Partstatus newStatus = partStatusRepository.findByName(targetStatusName)
-                    .orElseThrow(() -> new IllegalStateException("Status " + targetStatusName + " not found"));
-
-            // 3. USE YOUR HANDLER: This triggers transitionTo -> currentState.transitionTo -> executeOnEnter
-            partStateTransitionHandler.transitionTo(part, newStatus);
+        if (currentStatusName.equalsIgnoreCase(targetStatusName)) {
+            return;
         }
+
+        Partstatus targetStatus =
+                partStatusRepository.findByName(
+                                targetStatusName
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Part status not found: "
+                                                + targetStatusName
+                                )
+                        );
+
+        changeStatus(part, targetStatus);
+    }
+
+    private void changeStatus(Part part, Partstatus targetStatus) {
+        partValidator.validateStatusTransition(part.getPartstatus(), targetStatus);
+        part.setPartstatus(targetStatus);
     }
 
     private String calculateTargetStatus(BigDecimal qoh, BigDecimal rop) {
-        if (qoh.compareTo(BigDecimal.ZERO) <= 0) return "OUT OF STOCK";
-        if (qoh.compareTo(rop) <= 0) return "LOW STOCK";
+
+        if (qoh.compareTo(BigDecimal.ZERO) <= 0) {
+            return "OUT OF STOCK";
+        }
+
+        if (qoh.compareTo(rop) <= 0) {
+            return "LOW STOCK";
+        }
+
         return "AVAILABLE";
     }
-
 }
