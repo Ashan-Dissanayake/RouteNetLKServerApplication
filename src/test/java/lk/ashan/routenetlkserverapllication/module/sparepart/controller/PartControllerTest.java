@@ -75,7 +75,7 @@ class PartControllerTest {
 
         mockMvc.perform(get(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-view")))
+                                .authorities(() -> "spare-part-view")))
                 .andExpect(status().isOk());
 
         verify(partService).getParts();
@@ -87,7 +87,7 @@ class PartControllerTest {
 
         mockMvc.perform(get(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-add")))
+                                .authorities(() -> "spare-part-add")))
                 .andExpect(status().isForbidden());
 
         verifyNoInteractions(partService);
@@ -115,7 +115,7 @@ class PartControllerTest {
         mockMvc.perform(get(API_URL)
                         .param("remarks", "Brake")
                         .with(user("test-user")
-                                .authorities(() -> "part-view")))
+                                .authorities(() -> "spare-part-view")))
                 .andExpect(status().isOk());
 
         verify(partService).searchParts(any());
@@ -173,7 +173,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-add"))
+                                .authorities(() -> "spare-part-add"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated());
@@ -196,7 +196,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-add"))
+                                .authorities(() -> "spare-part-add"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -269,7 +269,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-add"))
+                                .authorities(() -> "spare-part-add"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -326,7 +326,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-view"))
+                                .authorities(() -> "spare-part-view"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isForbidden());
@@ -365,7 +365,7 @@ class PartControllerTest {
 
         mockMvc.perform(put(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-update"))
+                                .authorities(() -> "spare-part-update"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -388,7 +388,7 @@ class PartControllerTest {
 
         mockMvc.perform(put(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-update"))
+                                .authorities(() -> "spare-part-update"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -468,7 +468,7 @@ class PartControllerTest {
 
         mockMvc.perform(put(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-update"))
+                                .authorities(() -> "spare-part-update"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -525,7 +525,7 @@ class PartControllerTest {
 
         mockMvc.perform(put(API_URL)
                         .with(user("test-user")
-                                .authorities(() -> "part-view"))
+                                .authorities(() -> "spare-part-view"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isForbidden());
@@ -562,7 +562,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL + "/deactivate")
                         .with(user("test-user")
-                                .authorities(() -> "part-delete"))
+                                .authorities(() -> "spare-part-delete"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ids)))
                 .andExpect(status().isOk());
@@ -578,7 +578,7 @@ class PartControllerTest {
 
         mockMvc.perform(post(API_URL + "/deactivate")
                         .with(user("test-user")
-                                .authorities(() -> "part-view"))
+                                .authorities(() -> "spare-part-view"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(ids)))
                 .andExpect(status().isForbidden());
