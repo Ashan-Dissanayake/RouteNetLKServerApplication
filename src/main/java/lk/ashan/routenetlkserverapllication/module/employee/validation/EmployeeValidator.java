@@ -2,6 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.employee.validation;
 
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUpdateRequestDto;
+import lk.ashan.routenetlkserverapllication.module.employee.model.entity.EmployeeStatus;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
@@ -193,7 +194,7 @@ public class EmployeeValidator {
 
     private void validateMobileAndEmergencyContact(String mobile, String emergencyContact) {
 
-        if (mobile != null && emergencyContact != null && mobile.equals(emergencyContact)) {
+        if (mobile != null && mobile.equals(emergencyContact)) {
             throw new BusinessRuleViolationException(
                     "Mobile number and emergency contact cannot be the same."
             );
@@ -256,6 +257,60 @@ public class EmployeeValidator {
                             "%s employees cannot have a Date of Joining older than the current year (%d).",
                             employeeType,
                             currentYear
+                    )
+            );
+        }
+    }
+
+
+    public void validateInitialStatus(EmployeeStatus status) {
+
+        String statusName = status.getName().trim().toLowerCase();
+
+        if (!statusName.equals("active")) {
+            throw new BusinessRuleViolationException(
+                    "New employees must have Active status."
+            );
+        }
+    }
+
+    public void validateStatusTransition(EmployeeStatus currentStatus, EmployeeStatus targetStatus) {
+
+        String current = currentStatus.getName().trim().toLowerCase();
+        String target = targetStatus.getName().trim().toLowerCase();
+
+        // No status change
+        if (current.equals(target)) {
+            return;
+        }
+
+        boolean validTransition = switch (current) {
+
+            case "active" ->
+                    target.equals("suspend");
+
+            case "suspend" ->
+                    target.equals("active")
+                            || target.equals("resigned");
+
+            case "on leave" ->
+                    target.equals("active")
+                            || target.equals("suspend")
+                            || target.equals("resigned");
+
+            case "resigned" ->
+                    false;
+
+            default ->
+                    false;
+        };
+
+        if (!validTransition) {
+            throw new BusinessRuleViolationException(
+                    String.format(
+                            "Invalid employee status transition from %s to %s.",
+                            currentStatus.getName(),
+                            targetStatus.getName()
                     )
             );
         }

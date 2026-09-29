@@ -5,8 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnStatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnStatusFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class PartialReceiptStrategy implements GrnProcessingStrategy {
 
-    private final GrnStatusFactory statusFactory;
+    //private final GrnStatusFactory statusFactory;
     private final GrnStatusRepository statusRepository;
     private final GrnRepository grnRepository;
     private final GrnDraftFactory grnDraftFactory;
@@ -53,8 +51,8 @@ public class PartialReceiptStrategy implements GrnProcessingStrategy {
         GrnStatus partialStatus = statusRepository.findByName("Partially Received").orElseThrow();
 
         // State Transition (DRAFT -> PARTIALLY_RECEIVED)
-        GrnState currentState = statusFactory.getState(currentGrn.getGrnstatus().getName());
-        currentState.transitionTo(currentGrn, partialStatus);
+        //GrnState currentState = statusFactory.getState(currentGrn.getGrnstatus().getName());
+        //currentState.transitionTo(currentGrn, partialStatus);
 
         grnRepository.saveAndFlush(currentGrn);
 

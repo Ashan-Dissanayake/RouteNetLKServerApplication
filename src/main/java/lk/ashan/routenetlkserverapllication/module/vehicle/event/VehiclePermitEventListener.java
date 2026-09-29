@@ -4,7 +4,6 @@ import lk.ashan.routenetlkserverapllication.module.permit.event.PermitTransferre
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleStatus;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleStatusService;
-import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateTransitionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class VehiclePermitEventListener {
 
     private final VehicleStatusService vehicleStatusService;
-    private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
+   // private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
 
     @EventListener
     public void handlePermitTransferred(PermitTransferredEvent event) {
@@ -31,6 +30,6 @@ public class VehiclePermitEventListener {
         Vehicle vehicle = event.vehicle();
         VehicleStatus availableStatus = vehicleStatusService.getByName("Available");
 
-        vehicleStateTransitionHandler.transitionTo(vehicle, availableStatus);
+        //vehicleStateTransitionHandler.transitionTo(vehicle, availableStatus);
     }
 }

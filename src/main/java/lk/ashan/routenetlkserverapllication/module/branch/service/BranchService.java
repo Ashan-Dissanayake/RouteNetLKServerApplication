@@ -9,8 +9,6 @@ import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchUpdate
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchStatus;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.BranchType;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.RegionalOffice;
-import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateFactory;
-import lk.ashan.routenetlkserverapllication.module.branch.state.BranchStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.branch.validation.BranchValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
@@ -42,8 +40,6 @@ public class BranchService {
     private final RegionalOfficeService regionalOfficeService;
     private final BranchValidator branchValidator;
     private final BranchMapper branchMapper;
-    private final BranchStateFactory branchStateFactory;
-    private final BranchStateTransitionHandler branchStateTransitionHandler;
 
     /**
      * Retrieves all branches as detailed response DTOs.
@@ -154,9 +150,7 @@ public class BranchService {
                 branchStatusService.getByName(
                         request.getBranchstatus().getName());
 
-        branchStateFactory
-                .getState(initialStatus.getName())
-                .validateInitial();
+        branchValidator.validateInitialStatus(initialStatus);
 
         branch.setBranchstatus(initialStatus);
 
@@ -171,7 +165,8 @@ public class BranchService {
      * @param request the {@link BranchUpdateRequestDto} containing branch update details.
      * @return the updated branch as a {@link BranchDetailResponseDto}.
      * @throws ResourceNotFoundException if the branch to update is not found.
-     * @throws BusinessRuleViolationException if the branch code is attempted to be changed.
+     * @throws BusinessRuleViolationException if the branch code is attempted to be changed
+     * or an invalid branch status transition is requested.
      */
     @Transactional
     @DisableSoftDeleteFilter
@@ -189,18 +184,25 @@ public class BranchService {
 
         branchValidator.validateUpdate(request);
 
-        branchMapper.updateEntityFromDto(request, existing);
-
+        // Validate branch status transition before updating the entity
         if (request.getBranchstatus().getId() != null) {
+
             BranchStatus targetStatus =
                     branchStatusService.getById(
                             request.getBranchstatus().getId());
 
-            branchStateTransitionHandler.transitionTo(
-                    existing, targetStatus);
+            branchValidator.validateStatusTransition(
+                    existing.getBranchstatus(),
+                    targetStatus
+            );
+
+            existing.setBranchstatus(targetStatus);
         }
 
+        branchMapper.updateEntityFromDto(request, existing);
+
         if (request.getBranchtype().getId() != null) {
+
             BranchType type =
                     branchTypeService.getById(
                             request.getBranchtype().getId());
@@ -209,6 +211,7 @@ public class BranchService {
         }
 
         if (request.getRegionaloffice().getId() != null) {
+
             RegionalOffice ro =
                     regionalOfficeService.getById(
                             request.getRegionaloffice().getId());

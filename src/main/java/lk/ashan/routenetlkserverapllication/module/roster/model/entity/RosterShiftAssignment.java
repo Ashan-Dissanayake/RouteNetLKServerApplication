@@ -32,22 +32,6 @@ public class RosterShiftAssignment {
     @JoinColumn(name = "rostershiftassignmentstatus_id", referencedColumnName = "id", nullable = false)
     private RosterShiftAssignmentStatus rostershiftassignmentstatus;
 
-    public Integer getEffectiveFamiliarity() {
-        if (employee == null) return 0;
-
-        // Check Driver role
-        if (employee.getDriver() != null && employee.getDriver().getRoutefamiliaritylevel() != null) {
-            return employee.getDriver().getRoutefamiliaritylevel().getId();
-        }
-
-        // Check Conductor role
-        if (employee.getConductor() != null && employee.getConductor().getRoutefamiliaritylevel() != null) {
-            return employee.getConductor().getRoutefamiliaritylevel().getId();
-        }
-
-        return 1; // Default to 'Low' (1) rather than 0 to match your logic
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -79,4 +79,8 @@ public interface ConductorRepository extends JpaRepository<Conductor, Integer>, 
     AND e.employeestatus.name = 'Active'
     """)
     List<Conductor> findAvailableConductors(@Param("branchId") Integer branchId);
+
+    boolean existsByEmployee_Id(Integer employeeId);
+
+    Optional<Conductor> findByEmployee_Id(Integer employeeId);
 }

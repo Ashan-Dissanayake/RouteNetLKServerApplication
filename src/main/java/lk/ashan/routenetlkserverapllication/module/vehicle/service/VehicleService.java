@@ -10,12 +10,7 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.VehicleUpda
 import lk.ashan.routenetlkserverapllication.module.vehicle.mapper.VehicleMapper;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
-import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateFactory;
-import lk.ashan.routenetlkserverapllication.module.vehicle.state.VehicleStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.vehicle.validation.VehicleValidator;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
-import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
@@ -28,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,9 +38,6 @@ public class VehicleService {
     private final VehicleMapper vehicleMapper;
     private final VehicleValidator vehicleValidator;
 
-    private final VehicleStateFactory vehicleStateFactory;
-    private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
-
     @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> getVehicles(){
        return vehicleMapper.toDtoList(vehicleRepository.findAll());
@@ -59,8 +50,7 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleDetailResponseDto> searchVehicle(
-            @NotNull HashMap<String, String> params) {
+    public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
 
         Specification<Vehicle> specification = (root, query, criteriaBuilder) -> {
 
@@ -113,7 +103,7 @@ public class VehicleService {
         Vehicle entity = vehicleMapper.toEntity(request);
 
         VehicleStatus initialStatus = vehicleStatusService.getByName(request.getVehiclestatus().getName());
-        vehicleStateFactory.getState(initialStatus.getName()).validateInitial();
+        vehicleValidator.validateInitialStatus(initialStatus);
         entity.setVehiclestatus(initialStatus);
 
         Vehicle savedVehicle = vehicleRepository.save(entity);
@@ -132,9 +122,9 @@ public class VehicleService {
 
         vehicleMapper.updateEntityFromDto(request, existingVehicle);
 
-        if (request.getVehiclestatus().getId() != null) {
+        if (request.getVehiclestatus() != null && request.getVehiclestatus().getId() != null) {
             VehicleStatus targetStatus = vehicleStatusService.getById(request.getVehiclestatus().getId());
-            vehicleStateTransitionHandler.transitionTo(existingVehicle, targetStatus);
+            changeStatus(existingVehicle, targetStatus);
         }
 
         if (request.getBustype().getId() != null) {
@@ -170,6 +160,15 @@ public class VehicleService {
         vehicleRepository.removeAll(vehicleIds);
 
         return vehicles.stream() .map(Vehicle::getId) .collect(Collectors.toList());
+    }
+
+    private void changeStatus(Vehicle vehicle, VehicleStatus targetStatus) {
+        vehicleValidator.validateStatusTransition(
+                vehicle.getVehiclestatus(),
+                targetStatus
+        );
+
+        vehicle.setVehiclestatus(targetStatus);
     }
 
 }

@@ -5,8 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.grn.event.GrnProcessedEvent;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnStatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnStatusFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,8 +21,8 @@ import static org.mockito.Mockito.*;
 
 class FullReceiptStrategyTest {
 
-    @Mock
-    private GrnStatusFactory statusFactory;
+    //@Mock
+    //private GrnStatusFactory statusFactory;
 
     @Mock
     private GrnStatusRepository statusRepository;
@@ -64,16 +62,16 @@ class FullReceiptStrategyTest {
                 .build();
 
         GrnStatus receivedStatus = GrnStatus.builder().name("Received").build();
-        GrnState currentState = mock(GrnState.class);
+        //GrnState currentState = mock(GrnState.class);
 
         when(statusRepository.findByName("Received")).thenReturn(Optional.of(receivedStatus));
-        when(statusFactory.getState("Draft")).thenReturn(currentState);
+       // when(statusFactory.getState("Draft")).thenReturn(currentState);
 
         // Act
         fullReceiptStrategy.process(context);
 
         // Assert
-        verify(currentState).transitionTo(grn, receivedStatus);
+        //verify(currentState).transitionTo(grn, receivedStatus);
         ArgumentCaptor<GrnProcessedEvent> eventCaptor = ArgumentCaptor.forClass(GrnProcessedEvent.class);
         verify(eventPublisher).publishEvent(eventCaptor.capture());
 

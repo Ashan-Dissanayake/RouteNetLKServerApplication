@@ -36,7 +36,7 @@ public class PartController {
      * @param params A map of query parameters for filtering parts.
      * @return A response entity containing a list of part details.
      */
-    @PreAuthorize("hasAuthority('part-view')")
+    @PreAuthorize("hasAuthority('spare-part-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartDetailResponseDto>>> get(
             @RequestParam HashMap<String, String> params
@@ -66,7 +66,7 @@ public class PartController {
      * @param partRequest The request body containing part creation details.
      * @return A response entity containing the details of the created part.
      */
-    @PreAuthorize("hasAuthority('part-add')")
+    @PreAuthorize("hasAuthority('spare-part-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> add(
             @RequestBody @Valid PartCreateRequestDto partRequest
@@ -81,7 +81,7 @@ public class PartController {
      * @param partUpdateRequest The request body containing part update details.
      * @return A response entity containing the details of the updated part.
      */
-    @PreAuthorize("hasAuthority('part-update')")
+    @PreAuthorize("hasAuthority('spare-part-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> update(
             @RequestBody @Valid PartUpdateRequestDto partUpdateRequest
@@ -96,7 +96,7 @@ public class PartController {
      * @param ids A list of part IDs to deactivate.
      * @return A response entity containing the list of deactivated part IDs and additional metadata.
      */
-    @PreAuthorize("hasAuthority('part-delete')")
+    @PreAuthorize("hasAuthority('spare-part-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivate(
             @RequestBody List<Integer> ids

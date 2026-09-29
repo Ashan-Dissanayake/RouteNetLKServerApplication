@@ -1,8 +1,12 @@
 package lk.ashan.routenetlkserverapllication.shared.notification.service;
 
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
+import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.module.roster.event.RosterShiftStatusChangedEvent;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepository;
+import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.notification.model.AppRoles;
 import lk.ashan.routenetlkserverapllication.shared.notification.model.Notification;
 import lk.ashan.routenetlkserverapllication.shared.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,7 @@ public class NotificationService {
     private final Map<Integer, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     private final NotificationRepository notificationRepository;
+    private final BranchRepository branchRepository;
     private final UserRepository userRepository;
 
     public SseEmitter subscribe(Integer userId) {
@@ -98,5 +103,28 @@ public class NotificationService {
                 }
             }
         }
+    }
+
+    @Transactional
+    public void createRosterStatusNotification(RosterShiftStatusChangedEvent event) {
+        Branch branch = branchRepository.findById(event.branchId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Branch not found"));
+
+        String title = "Roster Assignment Status Changed";
+
+        String message = String.format(
+                "%s assignment status changed from %s to %s.",
+                event.crewType(),
+                event.previousStatus(),
+                event.newStatus()
+        );
+
+        sendNotificationToBranchAndRole(
+                branch,
+                AppRoles.DEPOT_MANAGER,
+                title,
+                message
+        );
     }
 }

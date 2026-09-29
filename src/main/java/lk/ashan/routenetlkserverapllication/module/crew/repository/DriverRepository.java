@@ -96,4 +96,8 @@ public interface DriverRepository extends JpaRepository<Driver, Integer>, JpaSpe
     AND e.employeestatus.name = 'Active'
     """)
     List<Driver> findAvailableDrivers(@Param("branchId") Integer branchId);
+
+    boolean existsByEmployee_Id(Integer employeeId);
+
+    Optional<Driver> findByEmployee_Id(Integer employeeId);
 }

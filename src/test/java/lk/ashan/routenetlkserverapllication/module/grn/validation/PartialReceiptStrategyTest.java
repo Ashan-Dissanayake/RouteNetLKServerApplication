@@ -5,8 +5,6 @@ import lk.ashan.routenetlkserverapllication.module.grn.model.entity.Grn;
 import lk.ashan.routenetlkserverapllication.module.grn.model.entity.GrnStatus;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnRepository;
 import lk.ashan.routenetlkserverapllication.module.grn.repository.GrnStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnState;
-import lk.ashan.routenetlkserverapllication.module.grn.state.GrnStatusFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,8 +21,8 @@ import static org.mockito.Mockito.*;
 
 class PartialReceiptStrategyTest {
 
-    @Mock
-    private GrnStatusFactory statusFactory;
+    //@Mock
+   // private GrnStatusFactory statusFactory;
 
     @Mock
     private GrnStatusRepository statusRepository;
@@ -70,21 +68,21 @@ class PartialReceiptStrategyTest {
                 .build();
 
         GrnStatus partialStatus = GrnStatus.builder().name("Partially Received").build();
-        GrnState currentState = mock(GrnState.class);
+        //GrnState currentState = mock(GrnState.class);
 
         Grn nextDraft = Grn.builder()
                 .id(2)
                 .build();
 
         when(statusRepository.findByName("Partially Received")).thenReturn(Optional.of(partialStatus));
-        when(statusFactory.getState("Draft")).thenReturn(currentState);
+        //when(statusFactory.getState("Draft")).thenReturn(currentState);
         when(grnDraftFactory.createBalanceDraft(currentGrn, BigDecimal.valueOf(50))).thenReturn(nextDraft);
 
         // Act
         partialReceiptStrategy.process(context);
 
         // Assert
-        verify(currentState).transitionTo(currentGrn, partialStatus);
+       // verify(currentState).transitionTo(currentGrn, partialStatus);
         verify(grnRepository).saveAndFlush(currentGrn);
         verify(grnRepository).save(nextDraft);
 

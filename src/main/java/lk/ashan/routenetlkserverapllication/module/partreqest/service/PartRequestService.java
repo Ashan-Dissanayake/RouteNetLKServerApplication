@@ -16,15 +16,7 @@ import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartR
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestItem;
 import lk.ashan.routenetlkserverapllication.module.partreqest.model.entity.PartRequestStatus;
 import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestRepository;
-import lk.ashan.routenetlkserverapllication.module.partreqest.repository.PartRequestStatusRepository;
-import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestState;
-import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStateTransitionHandler;
-import lk.ashan.routenetlkserverapllication.module.partreqest.state.PartRequestStatusFactory;
-import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationContext;
-import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationContextBuilder;
-import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidationStrategy;
-import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
-import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
+import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartRequestValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
@@ -50,18 +42,13 @@ import java.util.List;
 public class PartRequestService {
 
     private final PartRequestRepository partRequestRepository;
-    private final PartRequestStatusRepository partRequestStatusRepository;
     private final PartRequestStatusService partRequestStatusService;
     private final NumberGeneratorService numberGeneratorService;
     private final BranchService branchService;
     private final PartRequestMapper partRequestMapper;
     private final PartRequestItemMapper partRequestItemMapper;
     private final GrnPartRequestItemRepository grnPartRequestItemRepository;
-
-    private final PartRequestValidationContextBuilder contextBuilder;
-    private final List<PartRequestValidationStrategy> validationStrategies;
-    private final PartRequestStateTransitionHandler partRequestStateTransitionHandler;
-    private final PartRequestStatusFactory partRequestStatusFactory;
+    private final PartRequestValidator partRequestValidator;
 
 
     @Transactional(readOnly = true)
@@ -125,77 +112,75 @@ public class PartRequestService {
 
     @Transactional
     @DisableBranchFilter
-    public PartRequestDetailResponseDto createRequest(@NotNull PartRequestCreateRequestDto dto) {
+    public PartRequestDetailResponseDto createRequest(
+            @NotNull PartRequestCreateRequestDto dto
+    ) {
 
-        PartRequestValidationContext context = contextBuilder.buildForCreate(dto);
-
-        validationStrategies.forEach(strategy -> strategy.validate(context));
+        partRequestValidator.validateCreate(dto);
 
         PartRequest request = partRequestMapper.toEntity(dto);
 
-        PartRequestStatus initialStatus = partRequestStatusService.getByName(request.getPartrequeststatus().getName());
-        PartRequestState initialState = partRequestStatusFactory.getState(initialStatus.getName());
-        initialState.validateInitial();
+        PartRequestStatus initialStatus =
+                partRequestStatusService.getByName(
+                        request.getPartrequeststatus().getName()
+                );
+
+        partRequestValidator.validateInitialStatus(initialStatus);
+
         request.setPartrequeststatus(initialStatus);
 
-        Branch branch = branchService.getById(request.getBranch().getId());
-
-        request.setNumber(numberGeneratorService.nextPartRequestNumber(branch.getCode(), YearMonth.now()));
-
-        request.getPartrequestitems()
-                .forEach(i ->
-                        log.info("Item id before save: {}", i.getId())
+        Branch branch =
+                branchService.getById(
+                        request.getBranch().getId()
                 );
+
+        request.setNumber(
+                numberGeneratorService.nextPartRequestNumber(
+                        branch.getCode(),
+                        YearMonth.now()
+                )
+        );
 
         if (request.getPartrequestitems() != null) {
             request.getPartrequestitems()
-                    .forEach(item -> item.setPartrequest(request));
+                    .forEach(item ->
+                            item.setPartrequest(request)
+                    );
         }
 
         PartRequest saved = partRequestRepository.save(request);
+
         return partRequestMapper.toDto(saved);
     }
+
 
     @Transactional
     public PartRequestDetailResponseDto updateRequest(@NotNull PartRequestUpdateRequestDto dto) {
 
-        PartRequest request = partRequestRepository.findById(dto.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Request not found with id " + dto.getId()
-                ));
+        PartRequest request =
+                partRequestRepository.findById(dto.getId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Request not found with id "
+                                                + dto.getId()
+                                )
+                        );
 
-        String currentStatus = request.getPartrequeststatus().getName();
-
-        if (!"PENDING".equalsIgnoreCase(currentStatus)) {
-            throw new InvalidStateTransitionException(
-                    "Only PENDING requests can be updated"
-            );
-        }
-
-        if (dto.getPartrequestitems() == null || dto.getPartrequestitems().isEmpty()) {
-            throw new BusinessRuleViolationException(
-                    "Request must contain at least one part"
-            );
-        }
-
-        dto.getPartrequestitems().forEach(item -> {
-            if (item.getQuantity() == null ||
-                    item.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new BusinessRuleViolationException(
-                        "Requested quantity must be greater than zero"
-                );
-            }
-        });
+        partRequestValidator.validateUpdate(request, dto);
 
         partRequestMapper.updateEntity(request, dto);
 
         request.getPartrequestitems().clear();
 
-        dto.getPartrequestitems().forEach(itemDto -> {
-            PartRequestItem item = partRequestItemMapper.toEntity(itemDto);
-            item.setPartrequest(request);
-            request.getPartrequestitems().add(item);
-        });
+        dto.getPartrequestitems()
+                .forEach(itemDto -> {
+
+                    PartRequestItem item = partRequestItemMapper.toEntity(itemDto);
+
+                    item.setPartrequest(request);
+
+                    request.getPartrequestitems().add(item);
+                });
 
         PartRequest saved = partRequestRepository.save(request);
 
@@ -205,18 +190,17 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto approveRequest(@NotNull Integer id) {
 
-        PartRequest request = partRequestRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Request not found with id " + id
-                ));
+        PartRequest request =
+                partRequestRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Request not found with id " + id
+                                )
+                        );
 
-        PartRequestStatus approvedStatus = partRequestStatusRepository
-                .findByName("Approved")
-                .orElseThrow(() -> new IllegalStateException(
-                        "Status APPROVED not found"
-                ));
+        PartRequestStatus approvedStatus = partRequestStatusService.getByName("Approved");
 
-        partRequestStateTransitionHandler.transitionTo(request, approvedStatus);
+        changeStatus(request, approvedStatus);
 
         return partRequestMapper.toDto(request);
     }
@@ -224,18 +208,17 @@ public class PartRequestService {
     @Transactional
     public PartRequestDetailResponseDto rejectRequest(@NotNull Integer id) {
 
-        PartRequest request = partRequestRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Request not found with id " + id
-                ));
+        PartRequest request =
+                partRequestRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Request not found with id " + id
+                                )
+                        );
 
-        PartRequestStatus rejectedStatus = partRequestStatusRepository
-                .findByName("Rejected")
-                .orElseThrow(() -> new IllegalStateException(
-                        "Status REJECTED not found"
-                ));
+        PartRequestStatus rejectedStatus = partRequestStatusService.getByName("Rejected");
 
-        partRequestStateTransitionHandler.transitionTo(request, rejectedStatus);
+        changeStatus(request, rejectedStatus);
 
         return partRequestMapper.toDto(request);
     }
@@ -243,32 +226,62 @@ public class PartRequestService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleGrnProcessed(GrnProcessedEvent event) {
-        PartRequest request = partRequestRepository.findById(event.partRequestId())
-                .orElseThrow(() -> new ResourceNotFoundException("Part Request not found"));
 
-        // 1. Check if every item is fulfilled by summing directly from the DB
-        // This is MUCH faster than looping through lists in Java
-            boolean isFullyReceived = request.getPartrequestitems().stream().allMatch(item -> {
+        PartRequest request =
+                partRequestRepository.findById(
+                                event.partRequestId()
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Part Request not found"
+                                )
+                        );
 
-            // Summing only finalized quantities from the grnpart table
-            BigDecimal totalReceived = grnPartRequestItemRepository.sumQuantityByPartRequestItemId(
-                    item.getId(),
-                    List.of("Received", "Partially Received")
-            );
+        boolean isFullyReceived =
+                request.getPartrequestitems()
+                        .stream()
+                        .allMatch(item -> {
 
-            BigDecimal received = (totalReceived != null) ? totalReceived : BigDecimal.ZERO;
+                            BigDecimal totalReceived =
+                                    grnPartRequestItemRepository
+                                            .sumQuantityByPartRequestItemId(
+                                                    item.getId(),
+                                                    List.of(
+                                                            "Received",
+                                                            "Partially Received"
+                                                    )
+                                            );
 
-            // Compare against the required quantity
-            return received.compareTo(item.getQuantity()) >= 0;
-        });
+                            BigDecimal received =
+                                    totalReceived != null
+                                            ? totalReceived
+                                            : BigDecimal.ZERO;
+
+                            return received.compareTo(
+                                    item.getQuantity()
+                            ) >= 0;
+                        });
 
         if (isFullyReceived) {
-            PartRequestStatus completedStatus = partRequestStatusRepository.findByName("Completed").orElseThrow();
-            partRequestStateTransitionHandler.transitionTo(request, completedStatus);
+
+            PartRequestStatus completedStatus =
+                    partRequestStatusService.getByName(
+                            "Completed"
+                    );
+
+            changeStatus(request, completedStatus);
+
             partRequestRepository.saveAndFlush(request);
         }
     }
 
 
+    private void changeStatus(PartRequest request, PartRequestStatus targetStatus) {
+        PartRequestStatus currentStatus = request.getPartrequeststatus();
+
+        partRequestValidator.validateStatusTransition(currentStatus, targetStatus);
+
+        request.setPartrequeststatus(targetStatus);
+    }
 
 }

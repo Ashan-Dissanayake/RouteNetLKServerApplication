@@ -170,4 +170,23 @@ public class ConductorService {
         return conductorMapper.toDto(entity);
     }
 
+    @Transactional
+    public void updateCrewStatus(
+            Integer employeeId,
+            CrewStatus status
+    ) {
+
+        Conductor conductor = conductorRepository
+                .findByEmployee_Id(employeeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Conductor not found for employee ID: " + employeeId
+                        ));
+
+        conductor.setCrewstatus(status);
+    }
+
+
+
+
 }

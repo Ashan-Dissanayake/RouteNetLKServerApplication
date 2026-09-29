@@ -12,8 +12,6 @@ import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeUp
 import lk.ashan.routenetlkserverapllication.module.employee.mapper.EmployeeMapper;
 import lk.ashan.routenetlkserverapllication.module.employee.model.entity.*;
 import lk.ashan.routenetlkserverapllication.module.employee.repository.EmployeeRepository;
-import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateFactory;
-import lk.ashan.routenetlkserverapllication.module.employee.state.EmployeeStateTransitionHandler;
 import lk.ashan.routenetlkserverapllication.module.employee.validation.EmployeeValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
@@ -45,8 +43,6 @@ public class EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final NumberGeneratorService numberGeneratorService;
     private final EmployeeValidator employeeValidator;
-    private final EmployeeStateFactory employeeStateFactory;
-    private final EmployeeStateTransitionHandler employeeStateTransitionHandler;
 
     /**
      * Retrieves all employees.
@@ -177,10 +173,7 @@ public class EmployeeService {
                         request.getEmployeestatus().getName()
                 );
 
-        employeeStateFactory
-                .getState(initialStatus.getName())
-                .validateInitial();
-
+        employeeValidator.validateInitialStatus(initialStatus);
         employee.setEmployeestatus(initialStatus);
 
         String employeeNumber =
@@ -227,8 +220,8 @@ public class EmployeeService {
                             request.getEmployeestatus().getId()
                     );
 
-            employeeStateTransitionHandler.transitionTo(
-                    entity,
+            employeeValidator.validateStatusTransition(
+                    entity.getEmployeestatus(),
                     targetStatus
             );
         }

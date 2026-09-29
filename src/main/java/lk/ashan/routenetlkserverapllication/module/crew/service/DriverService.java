@@ -173,4 +173,20 @@ public class DriverService {
         return driverMapper.toDto(entity);
     }
 
+    @Transactional
+    public void updateCrewStatus(
+            Integer employeeId,
+            CrewStatus status
+    ) {
+
+        Driver driver = driverRepository
+                .findByEmployee_Id(employeeId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Driver not found for employee ID: " + employeeId
+                        ));
+
+        driver.setCrewstatus(status);
+    }
+
 }

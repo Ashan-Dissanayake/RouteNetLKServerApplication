@@ -1,6 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.crew.schedule;
 
-import lk.ashan.routenetlkserverapllication.module.crew.service.CrewEligibilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
