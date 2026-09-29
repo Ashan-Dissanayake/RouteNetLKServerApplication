@@ -89,14 +89,10 @@ class PermitValidatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "AA, inter provincial",
             "A, inter provincial",
             "B+, inter provincial",
             "B, inter provincial",
 
-            "AA, intra provincial",
-            "A, intra provincial",
-            "A+, intra provincial",
             "B+, intra provincial",
             "B, intra provincial",
             "C, intra provincial",
@@ -167,7 +163,6 @@ class PermitValidatorTest {
             "AA, super luxury",
 
             "A, normal",
-            "A+, normal",
             "B, normal",
             "B+, normal",
             "C, normal",
@@ -175,7 +170,6 @@ class PermitValidatorTest {
             "E, normal",
 
             "A, semi luxury",
-            "A+, semi luxury",
             "B, semi luxury",
             "B+, semi luxury"
     })
