@@ -13,7 +13,8 @@ The application is built with **Java 17** and **Spring Boot 3** and uses **MySQL
 The backend follows a **modular layered architecture**, organizing functionality by business domain while keeping shared infrastructure and security concerns centralized.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/52195e34-d9a1-4474-bd34-cce742433c4b" width="300" height="750" alt="Backend Architecture">
+  <img width="300" alt="Screenshot 2026-09-30 132954" src="https://github.com/user-attachments/assets/392fb010-301d-487d-8543-23680af113d7" />
+
 </p>
 
 ### Layer Responsibilities
