@@ -1,176 +1,206 @@
 # RouteNetLK Server Application
 
-**A Spring Boot backend engineered for depot-level fleet management, operational scheduling, workflow processing, and constraint-based resource optimization.**
+**Spring Boot backend for public transport depot operations, scheduling, fleet management, business processing, and resource optimization.**
 
-The **RouteNetLK Server Application** serves as the core business logic, persistence, security, and optimization engine of the RouteNetLK public transport management platform. Built on **Java 17** and **Spring Boot 3**, it exposes secure RESTfull APIs that govern end-to-end depot operations including vehicle lifecycle tracking, crew management, route permits, timetable scheduling, incident handling, spare part inventory, Goods Received Notes (GRN), and fare reconciliation.
+The **RouteNetLK Server Application** provides the backend services for the RouteNetLK platform. It is responsible for REST APIs, business logic, persistence, authentication and authorization, operational workflows, real-time communication, and constraint-based optimization.
 
-Beyond standard CRUD operations, this backend addresses complex enterprise engineering challenges: **NP-hard crew and dispatch scheduling using constraint satisfaction (Timefold Solver)**, **decoupled business rule enforcement using the Strategy Pattern**, **deterministic lifecycle control using the State Pattern**, **aspect-oriented multi-tenant branch data scoping and soft-deletion using Hibernate filters**, and **stateless JWT security with brute-force lockout protection**.
-
----
-
-> [!NOTE]
-> This repository contains exclusively the **backend server application**. The client application and cloud infrastructure are maintained in separate repositories:
-> - **System Overview & Architecture:** [RouteNetLK System Overview](https://github.com/Ashan-Dissanayake/RouteNetLK)
-> - **Frontend Web Client:** [RouteNetLK Client Application](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication)
+The application is built with **Java 17** and **Spring Boot 3** and uses **MySQL** for persistent data storage.
 
 ---
 
 ## Architecture
 
-The backend implements a **Modular Layered Architecture** with strict package-by-feature domain boundaries. Domain modules operate independently while relying on centralized cross-cutting infrastructure in the `shared` and `security` packages.
+The backend follows a **modular layered architecture**, organizing functionality by business domain while keeping shared infrastructure and security concerns centralized.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/52195e34-d9a1-4474-bd34-cce742433c4b" width="300" height="750" alt="Modular Layered Architecture">
+  <img src="https://github.com/user-attachments/assets/52195e34-d9a1-4474-bd34-cce742433c4b" width="300" height="750" alt="Backend Architecture">
 </p>
 
 ### Layer Responsibilities
 
-| Layer | Primary Responsibilities |
-|---|---|
-| **Security Layer** | Intercepts HTTP requests, validates JWT claims, checks rate-limits and account lockouts, and populates the `SecurityContextHolder` with `CustomUserPrincipal` authorities. |
-| **Controller Layer** | Maps HTTP requests to domain operations, enforces Jakarta input validation (`@Valid`), delegates to services, and packages results into standardized `APISuccessResponse<T>` envelopes. |
-| **Service Layer** | Orchestrates business workflows, demarcates transactional boundaries (`@Transactional`), coordinates validation strategies, triggers state transition hooks, and dispatches domain events. |
-| **Domain Layer** | Encapsulates business logic through validation strategy beans, concrete state transition handlers, and Timefold planning models. |
-| **Persistence Layer** | Manages relational entities, custom JPQL/native queries, and projection interfaces. Transparently applies Hibernate filters for branch isolation and soft-delete suppression. |
-| **Shared Infrastructure** | Centralizes cross-cutting concerns: Global exception handling (`@RestControllerAdvice`), sequential reference number generation, email delivery, auditing, and logging. |
+| Layer                     | Responsibility                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Security**              | Authentication, JWT validation, authorization, account protection, and security filters              |
+| **Controller**            | REST endpoints, request validation, and HTTP response handling                                       |
+| **Service**               | Business rules, transactional operations, workflow processing, and coordination between domains      |
+| **Repository**            | Database access through Spring Data JPA and custom queries                                           |
+| **Entity / DTO**          | Persistence models and API data transfer models                                                      |
+| **Shared Infrastructure** | Exception handling, auditing, notifications, filtering, email, and other cross-cutting functionality |
+
+Business workflows are implemented through explicit service-level business rules and controlled status transitions appropriate to each domain.
 
 ---
 
-## Domain & Module Organization
+## Domain Modules
 
-Functionality is organized into dedicated, self-contained domain modules located under `lk.ashan.routenetlkserverapllication.module`.
+The backend is organized into independent domain modules under:
 
-```
-lk.ashan.routenetlkserverapllication
-├── dashboard                     # Executive KPIs, shift coverage, and active incident metrics
-├── module
-│   ├── branch                    # Depots, regional offices, and branch configurations
-│   ├── crew                      # Driver and conductor profiles, licenses, and medical clearances
-│   ├── employee                  # Staff records, designations, and demographic validation
-│   ├── farecollection            # Daily revenue logs, cash/digital collection, and reconciliation
-│   ├── grn                       # Goods Received Notes, supplier receipt processing, and stock updates
-│   ├── incident                  # Road breakdowns, mechanical issues, and operational disruptions
-│   ├── incidentvehicleallocation # Emergency replacement bus assignment with capacity controls
-│   ├── partreqest                # Depot spare part requisitions, approval lifecycle, and issuance
-│   ├── permit                    # Route permits, route classifications, and transfer tracking
-│   ├── privilege                 # Fine-grained authorization authorities and role-privilege mappings
-│   ├── roster                    # Crew shift scheduling and Timefold roster optimization
-│   ├── sparepart                 # Parts catalogue, reorder thresholds, and unit prices
-│   ├── trip                      # Timetable definitions, route frequencies, and schedule templates
-│   ├── tripexecution             # Live daily trip dispatches, check-ins, and Timefold vehicle/crew dispatch
-│   ├── user                      # User accounts, authentication credentials, and branch assignments
-│   ├── vehicle                   # Bus fleet records, chassis/engine numbers, and seating capacities
-│   └── vehicleservice            # Preventive maintenance schedules, garage logs, and service history
-├── report                        # Analytical projection queries and cross-domain operational reports
-├── security                      # JWT utilities, authentication providers, and filter configurations
-└── shared                        # Cross-cutting filters, exceptions, auditing, mail, and notifications
+```text
+lk.ashan.routenetlkserverapllication.module
 ```
 
-### Module Structure Pattern
-
-Each domain module adheres to a consistent internal package structure:
-
+```text
+module/
+├── branch                    # Depot and branch management
+├── crew                      # Driver and conductor management
+├── employee                  # Employee records and designations
+├── farecollection            # Fare collection and reconciliation
+├── grn                       # Goods Received Notes and stock updates
+├── incident                  # Operational and vehicle incidents
+├── incidentvehicleallocation # Emergency vehicle allocation
+├── partreqest                # Spare part requisitions
+├── permit                    # Route permits and classifications
+├── privilege                 # Roles and privileges
+├── roster                    # Crew roster management and optimization
+├── sparepart                 # Spare part catalogue and inventory
+├── trip                      # Timetable and trip scheduling
+├── tripexecution             # Daily trip execution and dispatch
+├── user                      # User accounts and branch assignments
+├── vehicle                   # Fleet management
+└── vehicleservice            # Vehicle maintenance and service history
 ```
+
+Additional backend components include:
+
+```text
+dashboard/    # Operational dashboard metrics
+report/       # Reporting and analytical queries
+security/     # Authentication and authorization
+shared/       # Common infrastructure and cross-cutting concerns
+```
+
+### Module Structure
+
+Domain modules generally follow a consistent structure:
+
+```text
 module/<domain>/
-├── controller/                   # HTTP REST Controllers
-├── mapper/                       # MapStruct compile-time DTO-Entity mappers
+├── controller/
+├── mapper/
 ├── model/
-│   ├── dto/                      # Request, response, and summary transfer objects
-│   └── entity/                   # JPA persistence entities extending BaseEntity
-├── repository/                   # Spring Data JPA repositories with custom query methods
-├── service/                      # Transactional business service implementations
-├── state/                        # State pattern interfaces, status factories, and transition handlers
-└── validation/                   # Strategy pattern validation interfaces and concrete rules
+│   ├── dto/
+│   └── entity/
+├── repository/
+└── service/
 ```
 
----
-
-## Validation Architecture
-
-To prevent large, deeply nested conditional statements (`if-else` blocks) inside service classes, validation logic is structured using the **Strategy Pattern** paired with a **Validation Context**.
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/067bf7ac-29c1-459f-89f8-3cad3f0ca073" width="600" height="413" alt="Validation Architecture">
-</p>
-
-### Key Engineering Benefits:
-1. **Open/Closed Principle (OCP):** New domain rules can be added by implementing a new strategy class annotated with `@Component` without modifying the core service.
-2. **Single Responsibility Principle (SRP):** Each strategy encapsulates a single invariant and its associated repository lookups.
-3. **Automated Spring Injection:** Services inject `List<TValidationStrategy>`, automatically receiving and running all active strategy beans in the pipeline.
+Individual modules may contain additional packages where required by their implementation.
 
 ---
 
-## Workflow & State Management
+## Business Logic & Workflows
 
-Entities governed by complex operational lifecycles implement the **State Pattern** combined with a **Transition Handler** to guarantee that transitions occur deterministically and execute necessary entry/exit side effects.
+Business rules are handled within the domain services and supporting domain components.
 
-### State Transition Lifecycle: Incident Management Example
+The backend manages workflows such as:
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/7883e211-263a-4313-8389-2480bd3c9831" width="400" height="523" alt="State Transition Diagram">
-</p>
+* Vehicle lifecycle operations
+* Route permit processing
+* Trip scheduling and execution
+* Crew assignment and rostering
+* Incident processing
+* Emergency vehicle allocation
+* Spare part requisition and issuance
+* Vehicle servicing
+* Goods receiving
+* Fare reconciliation
 
-### Implementation Mechanics:
-- **State Interface:** (e.g., [`IncidentState`](src/main/java/lk/ashan/routenetlkserverapllication/module/incident/state/IncidentState.java), [`TripState`](src/main/java/lk/ashan/routenetlkserverapllication/module/trip/state/TripState.java), [`PartRequestState`](src/main/java/lk/ashan/routenetlkserverapllication/module/partreqest/state/PartRequestState.java)) declares `transitionTo(entity, newStatus)` and `validateInitial()`.
-- **Concrete State Classes:** (e.g., `IncidentReportedState`, `IncidentInProgressState`) maintain lists of permitted target states and throw [`InvalidStateTransitionException`](src/main/java/lk/ashan/routenetlkserverapllication/shared/exception/InvalidStateTransitionException.java) on illegal transitions.
-- **Status Factory:** (e.g., `IncidentStatusFactory`) dynamically resolves the corresponding Spring bean for any given status entity or string.
-- **Transition Handler:** (e.g., `IncidentStateTransitionHandler`, `TripStateTransitionHandler`) wraps transitions with lifecycle hooks (`executeOnExit` and `executeOnEnter`), auditing transitions and triggering side effects (e.g., releasing vehicles, updating operational statuses).
+Operations that require controlled status changes validate the requested transition against the current domain state before modifying the persisted record.
+
+This keeps business rules close to the operations they govern without introducing unnecessary architectural abstractions.
 
 ---
 
 ## Constraint-Based Optimization
 
-Manual assignment of crew shifts and daily bus dispatches leads to resource conflicts, contract violations, and unbalanced workloads. RouteNetLK uses **Timefold Solver 1.32.0** (`ai.timefold.solver`) to solve two NP-hard combinatorial problems.
+RouteNetLK uses **Timefold Solver** for operational scheduling and resource allocation problems.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/9501888c-ea01-42a3-b4ff-25269b63d052" width="250" alt="Timefold Solver Architecture">
-</p>
+### Crew Rostering
 
-### 1. Crew Shift Rostering (`module/roster/planner`)
-- **Planning Entity:** `RosterShiftAssignmentPlanning`
-- **Planning Variable:** `EmployeeFact` (supplied via `@ValueRangeProvider(id = "employeeRange")`)
-- **Hard Constraints ([`RosterConstraintProvider`](src/main/java/lk/ashan/routenetlkserverapllication/module/roster/planner/RosterConstraintProvider.java)):**
-  - `requiredDesignation` / `designationMatch`: Penalizes assigning an employee whose designation does not match the shift role.
-  - `noOverlappingShifts`: Penalizes assigning the same employee to overlapping shift intervals on the same date.
-  - `oneDriverOneConductorPerShift`: Penalizes shifts that do not have distinct driver and conductor assignments.
-- **Soft Constraints:**
-  - `fairWorkloadDistribution`: Groups assignments by employee and penalizes the square of shift counts ($count^2$), driving the solver toward an even distribution.
----
+The roster module uses constraint-based optimization to assign employees to shifts while considering operational requirements.
 
-## Security Architecture
+Examples of constraints include:
 
-The backend implements stateless security using **Spring Security 6** and **JSON Web Tokens (JJWT 0.11.5)**.
+* Employee designation compatibility
+* Shift overlap prevention
+* Driver/conductor assignment requirements
+* Workload distribution
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/a48e66f8-a381-4ce5-abd6-9bc93c967e7d" width="200" height="806" alt="Backend Security Architecture">
-</p>
+### Trip Execution & Dispatch
 
-### Security Highlights:
-- **Brute-Force Lockout Defense:** [`MyAuthenticationProvider`](src/main/java/lk/ashan/routenetlkserverapllication/security/MyAuthenticationProvider.java) and [`LoginAttemptService`](src/main/java/lk/ashan/routenetlkserverapllication/security/LoginAttemptService.java) track failed attempts using a thread-safe Google Guava `LoadingCache`. Accounts/IPs exceeding 5 consecutive failed attempts are automatically locked for 15 minutes.
-- **Stateless Session Management:** Configured with `SessionCreationPolicy.STATELESS`. No server-side session state or cookies are stored.
-- **Granular RBAC and PBAC:** Access is evaluated using both high-level roles (e.g., `ROLE_DEPOT_MANAGER`, `ROLE_INVENTORY_OFFICER`, `ROLE_SYSTEM_ADMIN`) and granular action privileges (e.g., `READ_VEHICLE`, `CREATE_TRIP`).
-- **Security Headers:** Enforces Content Security Policy (CSP), `X-XSS-Protection`, and `X-Frame-Options: SAMEORIGIN`.
-- **CORS Configuration:** Explicit origin, method, and header white-listing via `UrlBasedCorsConfigurationSource`.
+The trip execution domain also uses optimization to support vehicle and crew allocation according to operational constraints.
+
+Timefold allows these scheduling problems to be expressed as constraints rather than relying entirely on manually constructed assignment logic.
 
 ---
 
-## API Architecture
+## Security
 
-REST endpoints follow standard HTTP semantics and return unified JSON response wrappers.
+The backend uses **Spring Security** with stateless JWT-based authentication.
 
-### Standard Response Envelopes
+### Authentication
 
-#### Success Response (`APISuccessResponse<T>`)
+* JWT-based authentication
+* Stateless session management
+* BCrypt password hashing
+* Custom authentication provider
+* Failed login tracking
+* Temporary account/IP lockout
+
+### Authorization
+
+The application supports both role-level and privilege-level authorization.
+
+Examples include:
+
+```text
+ROLE_DEPOT_MANAGER
+ROLE_INVENTORY_OFFICER
+ROLE_SYSTEM_ADMIN
+```
+
+and fine-grained privileges such as:
+
+```text
+READ_VEHICLE
+CREATE_TRIP
+```
+
+### Login Protection
+
+Repeated authentication failures are tracked using a thread-safe cache-based mechanism. Accounts or IP addresses exceeding the configured failed-attempt threshold are temporarily locked.
+
+### Security Configuration
+
+The backend also provides:
+
+* CORS configuration
+* Security headers
+* JWT request filtering
+* Method/request authorization
+* Custom authenticated user principals
+
+---
+
+## API
+
+The backend exposes RESTful APIs consumed by the RouteNetLK client application.
+
+Successful and failed operations use standardized response structures.
+
+### Success Response
+
 ```json
 {
   "status": "SUCCESS",
   "message": "Operation completed successfully",
-  "data": { ... },
+  "data": {},
   "timestamp": "2026-08-21T11:27:36"
 }
 ```
 
-#### Error Response (`APIErrorResponse`)
+### Error Response
+
 ```json
 {
   "status": "ERROR",
@@ -180,110 +210,166 @@ REST endpoints follow standard HTTP semantics and return unified JSON response w
 }
 ```
 
-### Global Exception Translation
-Centralized in [`GlobalExceptionHandler`](src/main/java/lk/ashan/routenetlkserverapllication/shared/exception/GlobalExceptionHandler.java), domain exceptions map directly to HTTP statuses and distinct error codes:
+### Exception Handling
 
-| Exception | HTTP Status | Error Code |
-|---|---|---|
-| `ResourceNotFoundException` | `404 NOT FOUND` | `RESOURCE_NOT_FOUND` |
-| `ResourceExistsException` | `409 CONFLICT` | `RESOURCE_EXISTS` |
-| `BusinessRuleViolationException` | `422 UNPROCESSABLE_ENTITY` | `RULE_VIOLATION` |
-| `InvalidStateTransitionException` | `400 BAD REQUEST` | `INVALID_STATE_TRANSITION` |
-| `MethodArgumentNotValidException` | `400 BAD REQUEST` | `VALIDATION_FAILED` |
-| `BadCredentialsException` | `401 UNAUTHORIZED` | `AUTHENTICATION_FAILED` |
-| `LockedException` | `423 LOCKED` | `ACCOUNT_LOCKED` |
+Application exceptions are centrally handled through `GlobalExceptionHandler`.
+
+| Exception                         | HTTP Status | Error Code                 |
+| --------------------------------- | ----------: | -------------------------- |
+| `ResourceNotFoundException`       |       `404` | `RESOURCE_NOT_FOUND`       |
+| `ResourceExistsException`         |       `409` | `RESOURCE_EXISTS`          |
+| `BusinessRuleViolationException`  |       `422` | `RULE_VIOLATION`           |
+| `InvalidStateTransitionException` |       `400` | `INVALID_STATE_TRANSITION` |
+| `MethodArgumentNotValidException` |       `400` | `VALIDATION_FAILED`        |
+| `BadCredentialsException`         |       `401` | `AUTHENTICATION_FAILED`    |
+| `LockedException`                 |       `423` | `ACCOUNT_LOCKED`           |
 
 ---
 
 ## Persistence & Data Isolation
 
-Data persistence is built on **Spring Data JPA** and **Hibernate ORM** targeting **MySQL 8**.
+The backend uses:
+
+* Spring Data JPA
+* Hibernate ORM
+* MySQL 8
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2cdf1d40-61e0-4281-8cc6-bca6da3658d1" width="500" height="235" alt="Persistence Data Isolation">
+  <img src="https://github.com/user-attachments/assets/2cdf1d40-61e0-4281-8cc6-bca6da3658d1" width="500" height="235" alt="Persistence and Data Isolation">
 </p>
 
-### Multi-Tenant Branch Scoping via Aspect-Oriented Programming (AOP)
-To guarantee that depot officers can only query data belonging to their assigned branch, [`BranchAndUserFilterAspect`](src/main/java/lk/ashan/routenetlkserverapllication/shared/transaction/BranchAndUserFilterAspect.java) intercepts service query executions (`get*` and `search*` methods):
-- Extracts the authenticated user's `branchId` from `CustomUserPrincipal`.
-- Automatically activates Hibernate's `branchFilter` on the underlying database session.
-- System administrators bypass this filter automatically.
-- Service methods requiring cross-branch visibility can selectively disable the filter using `@DisableBranchFilter`.
+### Branch-Level Data Isolation
 
-### Transparent Soft-Deletion
-All domain entities inherit from [`BaseEntity`](src/main/java/lk/ashan/routenetlkserverapllication/shared/model/BaseEntity.java), which defines Hibernate `@FilterDef` and `@Filter(name = "softDeleteFilter", condition = "deleted = :is_deleted")`. The [`SoftDeleteFilterAspect`](src/main/java/lk/ashan/routenetlkserverapllication/shared/transaction/SoftDeleteFilterAspect.java) ensures deleted records are omitted by default, while `@DisableSoftDeleteFilter` allows audit queries to inspect historical records.
+Depot and branch users operate within their assigned branch scope.
+
+The backend applies Hibernate filtering to automatically restrict queries according to the authenticated user's branch.
+
+System-level users can access data outside an individual branch where their privileges permit it.
+
+### Soft Deletion
+
+Common domain entities support soft deletion rather than immediate physical removal.
+
+Deleted records are excluded from normal application queries while dedicated operations can access historical records when required.
+
+---
+
+## Event-Driven Features
+
+Spring Application Events are used where a domain operation needs to trigger secondary actions without tightly coupling those actions to the original service operation.
+
+Examples include:
+
+* `PermitTransferredEvent`
+* `FareReconciledEvent`
+* `PartRequestApprovedEvent`
+* `PartReceivedEvent`
+
+These events are used for actions such as notifications and related operational updates.
 
 ---
 
 ## Cross-Cutting Infrastructure
 
-Located under `lk.ashan.routenetlkserverapllication.shared`:
+Common backend functionality is maintained under:
 
-- **Automated Sequential Number Generator (`shared/numbergenerator`):** Generates standardized reference codes (e.g., `PRM-CLM-0001`, `TRP-2026-0042`) using database-backed sequence records (`DocSequence`) categorized by scope and code type.
-- **Asynchronous Templated Email (`shared/email`):** Non-blocking email dispatch using `JavaMailSender` and Thymeleaf HTML templates (`classpath:/templates/email/`).
-- **JPA Entity Auditing (`shared/audit`):** Tracks record modification metadata using `AuditorAwareImpl`.
-- **Centralized Regex Provider (`shared/validation`):** Provides verified regex patterns for Sri Lankan telephone numbers, NIC formats, and vehicle registration plates.
+```text
+lk.ashan.routenetlkserverapllication.shared
+```
+
+### Reference Number Generation
+
+Database-backed sequence records generate standardized business reference numbers for domain documents.
+
+Examples:
+
+```text
+PRM-CLM-0001
+TRP-2026-0042
+```
+
+### Email Notifications
+
+Transactional emails are generated using:
+
+* `JavaMailSender`
+* Thymeleaf templates
+
+Email templates are maintained under:
+
+```text
+src/main/resources/templates/email/
+```
+
+### Auditing
+
+JPA auditing records relevant entity modification metadata through the application's auditing configuration.
+
+### Shared Validation Utilities
+
+Common validation utilities provide reusable validation rules for application-specific data such as:
+
+* Sri Lankan telephone numbers
+* NIC formats
+* Vehicle registration numbers
 
 ---
 
-## Event-Driven Decoupling
+## Testing
 
-Selected cross-domain interactions use Spring Application Events (`ApplicationEventPublisher`) to decouple core business transactions from secondary side effects.
+The backend contains multiple levels of automated testing.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/1064185c-e89e-4df9-b7de-b3a489279c42" width="500" alt="Event-Driven Decoupling Architecture">
-</p>
+### Unit Testing
 
-### Verified Application Events:
-- **`PermitTransferredEvent`:** Handled by [`VehiclePermitEventListener`](src/main/java/lk/ashan/routenetlkserverapllication/module/vehicle/event/VehiclePermitEventListener.java) to release the bus back into depot availability, and by [`NotificationEventDispatcher`](src/main/java/lk/ashan/routenetlkserverapllication/shared/notification/listener/NotificationEventDispatcher.java) to alert the depot manager.
-- **`FareReconciledEvent`:** Triggers depot manager confirmation alerts upon daily revenue reconciliation.
-- **`PartRequestApprovedEvent`:** Alerts inventory officers to prepare spare parts for maintenance.
-- **`PartReceivedEvent`:** Notifies maintenance mechanics that requested parts have been received.
+* JUnit 5
+* Mockito
 
----
+Used for testing domain services and isolated business logic.
 
-## Testing Strategy
+### Web Layer Testing
 
-The backend maintains an automated testing suite covering unit logic, optimization scoring, web contracts, and relational persistence.
+Spring MVC tests use:
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/05cbaeb7-7496-4278-816b-268316384fbd" width="250" alt="Testing Strategy Overview">
-</p>
+* `@WebMvcTest`
+* `MockMvc`
+* Spring Security Test
 
-### Testing Infrastructure:
-- **Real MySQL Testing via Testcontainers:** Repository integration tests extend [`BaseTestContainer`](src/test/java/lk/ashan/routenetlkserverapllication/shared/config/BaseTestContainer.java), which spins up a dedicated `mysql:8.3.0` Docker container dynamically. This validates custom SQL queries, native dialect functions, and soft-deletion filters against real MySQL rather than in-memory emulators like H2.
-- **Constraint Scoring Verification:** Timefold planning rules are verified using `ConstraintVerifier` (`RosterConstraintProviderTest`, `TripExecutionConstraintProviderTest`) to prove penalization of overlapping shifts and fair workload distributions.
-- **Web Layer Testing:** Controller endpoints are tested using `@WebMvcTest` and `MockMvc` with active security filters (`TestSecurityConfiguration`).
+These verify REST endpoints, validation, authorization, and response handling.
 
----
+### Database Integration Testing
 
-## CI/CD Pipeline
+**Testcontainers** is used to run integration tests against a real MySQL container.
 
-Automated deployment is configured using GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)):
+This allows repository tests to verify:
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/e3bce14f-194b-4ba2-9bed-cfdfed1b8e44" width="250" alt="CI/CD Pipeline Flow">
-</p>
+* Custom queries
+* Native SQL
+* Persistence behavior
+* Database-specific functionality
+* Hibernate filtering
 
-1. **Build & Package:** Sets up Docker Buildx and compiles the image with GitHub Actions layer caching (`type=gha`).
-2. **Registry Publication:** Pushes dual tags (`latest` and `${{ github.sha }}`) to Docker Hub.
-3. **Targeted Deployment:** Connects to the AWS EC2 instance via SSH (`appleboy/ssh-action@v1.0.3`), pulls the updated image, and recreates only the backend container (`docker compose up -d --no-deps backend`) without disturbing other services.
+### Optimization Testing
+
+Timefold `ConstraintVerifier` is used to verify optimization constraints independently.
 
 ---
 
 ## Technology Stack
 
-| Category | Technologies / Libraries | Purpose |
-|---|---|---|
-| **Core Framework** | Java 17, Spring Boot 3.5.3, Spring MVC | Enterprise runtime and application framework |
-| **Persistence & ORM** | Spring Data JPA, Hibernate ORM, MySQL Connector (8.0.33) | Relational persistence and query abstraction |
-| **Optimization** | Timefold Solver 1.32.0 (`timefold-solver-spring-boot-starter`) | Constraint satisfaction solver for roster & dispatch |
-| **Security** | Spring Security 6, JJWT (0.11.5), Google Guava (31.1-jre) | Stateless JWT authentication, RBAC, brute-force lockout |
-| **Mapping & Boilerplate**| MapStruct 1.5.5.Final, Project Lombok 1.18.30 | Compile-time DTO-entity mapping and boilerplate reduction |
-| **Notifications & Mail** | Spring Boot Mail, Thymeleaf | HTML templated transactional email notifications |
-| **Testing** | JUnit 5, Mockito, Spring Security Test, Testcontainers MySQL (8.3.0), Timefold Test | Multi-tier unit, constraint, web, and database testing |
-| **Containerization** | Docker (Multi-stage, Layer-extracted, Alpine JRE) | Lightweight, non-root runtime containerization |
-| **CI/CD** | GitHub Actions, Docker Hub, SSH Action | Automated container build, publish, and EC2 deployment |
+| Category             | Technologies                              |
+| -------------------- | ----------------------------------------- |
+| **Language**         | Java 17                                   |
+| **Framework**        | Spring Boot 3.5.3, Spring MVC             |
+| **Persistence**      | Spring Data JPA, Hibernate ORM            |
+| **Database**         | MySQL 8                                   |
+| **Optimization**     | Timefold Solver 1.32.0                    |
+| **Security**         | Spring Security 6, JJWT                   |
+| **Mapping**          | MapStruct                                 |
+| **Utilities**        | Lombok, Google Guava                      |
+| **Email**            | Spring Boot Mail, Thymeleaf               |
+| **Testing**          | JUnit 5, Mockito, MockMvc, Testcontainers |
+| **Containerization** | Docker                                    |
+| **CI/CD**            | GitHub Actions                            |
 
 ---
 
@@ -293,108 +379,133 @@ Automated deployment is configured using GitHub Actions ([`.github/workflows/dep
 RouteNetLKServerApplication/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml            # CI/CD automated build & SSH deployment pipeline
+│       └── deploy.yml
+│
 ├── src/
 │   ├── main/
-│   │   ├── java/lk/ashan/routenetlkserverapllication/
-│   │   │   ├── RouteNetLKServerApplication.java
-│   │   │   ├── dashboard/        # Operational KPIs and dashboard metrics
-│   │   │   ├── module/           # Domain modules (Branch, Crew, Trip, Roster, etc.)
-│   │   │   ├── report/           # Multi-depot analytics and reporting projections
-│   │   │   ├── security/         # Spring Security, JWT filters, authentication providers
-│   │   │   └── shared/           # AOP filters, exception handling, email, auditing
+│   │   ├── java/
+│   │   │   └── lk/ashan/routenetlkserverapllication/
+│   │   │       ├── RouteNetLKServerApplication.java
+│   │   │       ├── dashboard/
+│   │   │       ├── module/
+│   │   │       ├── report/
+│   │   │       ├── security/
+│   │   │       └── shared/
+│   │   │
 │   │   └── resources/
 │   │       ├── application.properties
-│   │       └── templates/email/  # Thymeleaf HTML email templates
+│   │       └── templates/
+│   │           └── email/
+│   │
 │   └── test/
-│       └── java/lk/ashan/routenetlkserverapllication/
-│           ├── module/           # Unit, repository, controller, and constraint tests
-│           └── shared/config/    # BaseTestContainer (MySQL) and TestSecurityConfiguration
-├── Dockerfile                    # Multi-stage layer-extracted container definition
-├── pom.xml                       # Maven build configuration and dependency declarations
-└── README.md                     # Root project documentation
+│       └── java/
+│           └── lk/ashan/routenetlkserverapllication/
+│
+├── Dockerfile
+├── pom.xml
+└── README.md
 ```
 
 ---
 
-## Local Development Setup
+## Local Development
 
 ### Prerequisites
-- **Java Development Kit (JDK):** Version 17+
-- **Apache Maven:** Version 3.8+ (or use the included `./mvnw` wrapper)
-- **MySQL Database Server:** Version 8.x
-- **Docker:** (Optional, required if executing Testcontainers integration tests)
 
-### 1. Clone the Repository
+* JDK 17+
+* Maven 3.8+ or Maven Wrapper
+* MySQL 8+
+* Docker — required for Testcontainers integration tests
+
+### Clone
+
 ```bash
 git clone https://github.com/Ashan-Dissanayake/RouteNetLKServerApplication.git
 cd RouteNetLKServerApplication
 ```
 
-### 2. Configure Database & Properties
-Create a local MySQL database:
+### Database
+
+Create the development database:
+
 ```sql
-CREATE DATABASE routenetlk CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE routenetlk
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 ```
 
-Update your `src/main/resources/application.properties` (or set environment variables):
+Configure the required database, JWT, and mail properties in:
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/routenetlk?createDatabaseIfNotExist=true&useSSL=false
-spring.datasource.username=YOUR_DB_USERNAME
-spring.datasource.password=YOUR_DB_PASSWORD
-
-jwt.secret=YOUR_BASE64_ENCODED_256_BIT_SECRET_KEY
-jwt.expiration=86400000
-
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=YOUR_EMAIL@gmail.com
-spring.mail.password=YOUR_APP_SPECIFIC_PASSWORD
+```text
+src/main/resources/application.properties
 ```
 
-### 3. Build the Application
+Sensitive values should be supplied through environment variables rather than committed to source control.
+
+### Build
+
+Linux / macOS:
+
 ```bash
-# Using Maven wrapper (Linux / macOS)
 ./mvnw clean package
+```
 
-# Using Maven wrapper (Windows)
+Windows:
+
+```bash
 mvnw.cmd clean package
 ```
 
-### 4. Run the Test Suite
+### Run Tests
+
 ```bash
 ./mvnw test
 ```
 
-### 5. Start the Server
+Windows:
+
+```bash
+mvnw.cmd test
+```
+
+### Start the Application
+
 ```bash
 ./mvnw spring-boot:run
 ```
-The server will start on port `8080` (accessible at `http://localhost:8080`).
+
+The application runs on:
+
+```text
+http://localhost:8080
+```
 
 ---
 
 ## Related Repositories
 
-- **[RouteNetLK System Overview](https://github.com/Ashan-Dissanayake/RouteNetLK):** Main system documentation, full microservices/monolith deployment architecture, AWS infrastructure with Terraform, and end-to-end user workflows.
-- **[RouteNetLK Client Application](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication):** Angular 19 single-page application providing responsive depot management interfaces, scheduling boards, and live analytics.
+* **[RouteNetLK System Overview](https://github.com/Ashan-Dissanayake/RouteNetLK)** — Overall system documentation and infrastructure.
+* **[RouteNetLK Client Application](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication)** — Angular frontend application.
 
 ---
 
 ## Engineering Highlights
 
-- **Constraint Optimization:** Solves complex combinatorial driver and vehicle assignments using Timefold Solver, optimizing hard legal constraints and soft fairness metrics.
-- **Design Pattern Discipline:** Applies the Strategy Pattern for modular business validation pipelines and the State Pattern for deterministic lifecycle state management.
-- **AOP-Driven Multi-Tenancy:** Employs Aspect-Oriented Programming and Hibernate filters for automatic branch-level data scoping and transparent soft-deletion.
-- **High-Integrity Testing:** Employs Testcontainers MySQL 8.3.0 to validate persistence, transactions, and custom query behavior against real database engines.
-- **Defensive Security:** Implements JWT stateless authorization with automatic brute-force lockout defenses backed by thread-safe Guava caches.
-- **Optimized Containerization:** Multi-stage, layer-extracted Docker build with JVM memory tuning tailored for resource-efficient cloud execution.
+* **Modular Backend Architecture** — Domain functionality is organized into focused business modules.
+* **Constraint-Based Scheduling** — Timefold Solver handles complex roster and dispatch optimization.
+* **Stateless Security** — JWT authentication with role and privilege-based authorization.
+* **Branch-Level Data Isolation** — Hibernate filtering limits branch users to their permitted operational scope.
+* **Real Database Integration Testing** — Testcontainers validates persistence behavior against MySQL.
+* **Event-Based Decoupling** — Spring Application Events separate selected secondary operations from core business transactions.
+* **Containerized Runtime** — Docker provides a consistent backend runtime for development and deployment.
+
+---
 
 ## Author
 
-**Ashan Dissanayake**  
+**Ashan Dissanayake**
 *Full-Stack Software Engineer*
-- **LinkedIn**: [https://www.linkedin.com/in/Ashan-PDissanayake](https://www.linkedin.com/in/Ashan-PDissanayake)
-- **GitHub**: [https://github.com/Ashan-Dissanayake](https://github.com/Ashan-Dissanayake)
-- **Email**: [ashanpathum899@gmail.com](mailto:ashanpathum899@gmail.com)
+
+* **LinkedIn:** https://www.linkedin.com/in/Ashan-PDissanayake
+* **GitHub:** https://github.com/Ashan-Dissanayake
+* **Email:** [ashanpathum899@gmail.com](mailto:ashanpathum899@gmail.com)
