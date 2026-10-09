@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.user.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.user.service.UserService;
@@ -22,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/users")
 @RequiredArgsConstructor
+@Tag(name = "User Management", description = "Endpoints for managing system users, including creation, updates, and password management.")
 public class UserController {
 
     private final UserService userService;
@@ -32,6 +38,13 @@ public class UserController {
      * @param params A map of search parameters.
      * @return A response entity containing a list of user details and the total count.
      */
+    @Operation(summary = "Get all users or search by parameters", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved users"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'user-view' authority")
+    })
     @PreAuthorize("hasAuthority('user-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<UserDetailResponseDto>>> get(
@@ -50,6 +63,14 @@ public class UserController {
      * @param userCreateRequestDto The details of the user to be created.
      * @return A response entity containing the created user's details.
      */
+    @Operation(summary = "Add a new user", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'user-add' authority")
+    })
     @PreAuthorize("hasAuthority('user-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<UserDetailResponseDto>> add(
@@ -65,6 +86,15 @@ public class UserController {
      * @param updateRequestDto The updated details of the user.
      * @return A response entity containing the updated user's details.
      */
+    @Operation(summary = "Update an existing user", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'user-update' authority"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PreAuthorize("hasAuthority('user-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<UserDetailResponseDto>> update(
@@ -100,6 +130,14 @@ public class UserController {
      * @param request The details of the new password.
      * @return A response entity containing a success message.
      */
+    @Operation(summary = "Change user password", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'user-change-password' authority")
+    })
     @PreAuthorize("hasAuthority('user-change-password')")
     @PutMapping("/{userId}/change-password")
     public ResponseEntity<APISuccessResponse<String>> changePassword(

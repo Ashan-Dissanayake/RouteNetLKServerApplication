@@ -41,6 +41,7 @@ public class BranchService {
     private final BranchValidator branchValidator;
     private final BranchMapper branchMapper;
 
+
     /**
      * Retrieves all branches as detailed response DTOs.
      *
@@ -219,7 +220,8 @@ public class BranchService {
             existing.setRegionaloffice(ro);
         }
 
-        return branchMapper.toDto(existing);
+        BranchDetailResponseDto updated = branchMapper.toDto(existing);
+        return updated;
     }
 
     /**

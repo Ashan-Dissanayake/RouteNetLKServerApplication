@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BranchStatusService {
-
+    
     private final BranchStatusRepository branchStatusRepository;
     private final BranchStatusMapper branchStatusMapper;
 

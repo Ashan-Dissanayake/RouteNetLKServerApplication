@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.dashboard.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lk.ashan.routenetlkserverapllication.dashboard.dto.DashboardOverviewDto;
 import lk.ashan.routenetlkserverapllication.dashboard.service.DashboardService;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Tag(name = "Dashboard", description = "Endpoints for retrieving dashboard overview and metrics.")
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -52,6 +58,13 @@ public class DashboardController {
 //        return APIResponseBuilder.ok(overviewData);
 //    }
 
+    @Operation(summary = "Get depot dashboard overview", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved dashboard overview"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Bad Request - User branch not found")
+    })
     @GetMapping("/overview")
     public ResponseEntity<APISuccessResponse<DashboardOverviewDto>> getDepotDashboardOverview(
             @AuthenticationPrincipal CustomUserPrincipal principal) {

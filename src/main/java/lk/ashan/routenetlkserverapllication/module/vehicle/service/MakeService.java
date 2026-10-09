@@ -21,7 +21,7 @@ public class MakeService {
 
     @Transactional(readOnly = true)
     public List<MakeRequestDto> getMakes(){
-       return makeMapper.toDtoList(makeRepository.findAll());
+        return makeMapper.toDtoList(makeRepository.findAll());
     }
 
     @Transactional(readOnly = true)

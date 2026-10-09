@@ -16,9 +16,9 @@ public class ShiftService {
     private final ShiftRepository shiftRepository;
     private final ShiftMapper shiftMapper;
 
+
     public List<ShiftSummaryDto> getShifts(){
-        List<Shift> shifts = shiftRepository.findAll();
-        return shiftMapper.toDtoList(shifts);
+        return shiftMapper.toDtoList(shiftRepository.findAll());
     }
 
 }

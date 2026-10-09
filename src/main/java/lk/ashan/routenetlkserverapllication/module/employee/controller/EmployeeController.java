@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.employee.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.employee.model.dto.EmployeeDetailResponseDto;
@@ -25,6 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/employees")
 @RequiredArgsConstructor
+@Tag(name = "Employee Management", description = "Endpoints for managing employees in the system.")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -35,6 +41,13 @@ public class EmployeeController {
      * @param params A map of query parameters for filtering employees.
      * @return A response entity containing a list of employee details.
      */
+    @Operation(summary = "Get all employees or search by parameters", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved employees"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'employee-view' authority")
+    })
     @PreAuthorize("hasAuthority('employee-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeDetailResponseDto>>> get(
@@ -52,6 +65,12 @@ public class EmployeeController {
      *
      * @return A response entity containing a list of employee summaries.
      */
+    @Operation(summary = "Get employee summaries for dropdowns", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved summaries"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries",produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get() {
@@ -65,6 +84,12 @@ public class EmployeeController {
      * @param designation The designation to filter employees by.
      * @return A response entity containing a list of employee summaries.
      */
+    @Operation(summary = "Get employee summaries by designation", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved summaries"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries/{designation}")
     public ResponseEntity<APISuccessResponse<List<EmployeeSummaryDto>>> get(
@@ -79,6 +104,14 @@ public class EmployeeController {
      * @param employeeCreateRequest The request body containing employee creation details.
      * @return A response entity containing the details of the created employee.
      */
+    @Operation(summary = "Add a new employee", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Employee created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'employee-add' authority")
+    })
     @PreAuthorize("hasAuthority('employee-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> add(
@@ -94,6 +127,15 @@ public class EmployeeController {
      * @param employeeUpdateRequestDto The request body containing employee update details.
      * @return A response entity containing the details of the updated employee.
      */
+    @Operation(summary = "Update an existing employee", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'employee-update' authority"),
+            @ApiResponse(responseCode = "404", description = "Employee not found")
+    })
     @PreAuthorize("hasAuthority('employee-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<EmployeeDetailResponseDto>> update(
@@ -109,6 +151,13 @@ public class EmployeeController {
      * @param ids A list of employee IDs to deactivate.
      * @return A response entity containing the list of deactivated employee IDs and additional metadata.
      */
+    @Operation(summary = "Deactivate multiple employees", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employees deactivated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'employee-delete' authority")
+    })
     @PreAuthorize("hasAuthority('employee-delete')")
     @DeleteMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(@RequestBody List<Integer> ids) {

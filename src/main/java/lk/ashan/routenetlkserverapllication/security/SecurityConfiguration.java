@@ -155,8 +155,7 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/", "*").permitAll() // Allow all pages to public (Only testing purpose)
-                        .requestMatchers("/", "/**").permitAll() // Allow all pages to public (Only testing purpose)
+                        .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/**").permitAll()
                         .requestMatchers("/email/welcome").permitAll() // Allow test email service
                         .anyRequest().authenticated() // Allow only for authenticated users (remain only this at the time delivered)
                 )

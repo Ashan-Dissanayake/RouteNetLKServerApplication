@@ -29,7 +29,7 @@ public class EmployeeStatusService {
      */
     @Transactional(readOnly = true)
     public List<EmployeeStatusDto> getEmployeeStatuses(){
-       return employeeStatusMapper.toDtoList(employeeStatusRepository.findAll());
+        return employeeStatusMapper.toDtoList(employeeStatusRepository.findAll());
     }
 
     /**

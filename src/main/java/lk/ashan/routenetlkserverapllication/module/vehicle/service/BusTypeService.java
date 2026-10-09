@@ -21,7 +21,7 @@ public class BusTypeService {
 
     @Transactional(readOnly = true)
     public List<BusTypeDto> getBusTypes(){
-       return busTypeMapper.toDtoList(busTypeRepository.findAll());
+        return busTypeMapper.toDtoList(busTypeRepository.findAll());
     }
 
     @Transactional(readOnly = true)

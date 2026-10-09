@@ -43,6 +43,7 @@ public class PartService {
     private final PartValidator partValidator;
     private final PartStatusRepository partStatusRepository;
 
+
     @Transactional(readOnly = true)
     public List<PartDetailResponseDto> getParts() {
         return partMapper.toDtoList(partRepository.findAll());

@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.sparepart.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.branch.model.dto.BranchSummaryDto;
 import lk.ashan.routenetlkserverapllication.module.sparepart.model.dto.PartCreateRequestDto;
@@ -26,6 +31,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/parts")
 @RequiredArgsConstructor
+@Tag(name = "Spare Part Management", description = "Endpoints for managing spare parts in the inventory.")
 public class PartController {
 
     private final PartService partService;
@@ -36,6 +42,13 @@ public class PartController {
      * @param params A map of query parameters for filtering parts.
      * @return A response entity containing a list of part details.
      */
+    @Operation(summary = "Get all parts or search by parameters", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved parts"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'spare-part-view' authority")
+    })
     @PreAuthorize("hasAuthority('spare-part-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartDetailResponseDto>>> get(
@@ -53,6 +66,12 @@ public class PartController {
      *
      * @return A response entity containing a list of part summaries.
      */
+    @Operation(summary = "Get part summaries for dropdowns", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved summaries"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<PartSummaryDto>>> get() {
@@ -66,6 +85,14 @@ public class PartController {
      * @param partRequest The request body containing part creation details.
      * @return A response entity containing the details of the created part.
      */
+    @Operation(summary = "Add a new spare part", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Part created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'spare-part-add' authority")
+    })
     @PreAuthorize("hasAuthority('spare-part-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> add(
@@ -81,6 +108,15 @@ public class PartController {
      * @param partUpdateRequest The request body containing part update details.
      * @return A response entity containing the details of the updated part.
      */
+    @Operation(summary = "Update an existing spare part", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Part updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'spare-part-update' authority"),
+            @ApiResponse(responseCode = "404", description = "Part not found")
+    })
     @PreAuthorize("hasAuthority('spare-part-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<PartDetailResponseDto>> update(
@@ -96,6 +132,13 @@ public class PartController {
      * @param ids A list of part IDs to deactivate.
      * @return A response entity containing the list of deactivated part IDs and additional metadata.
      */
+    @Operation(summary = "Deactivate multiple parts", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Parts deactivated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'spare-part-delete' authority")
+    })
     @PreAuthorize("hasAuthority('spare-part-delete')")
     @PostMapping("/deactivate")
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivate(

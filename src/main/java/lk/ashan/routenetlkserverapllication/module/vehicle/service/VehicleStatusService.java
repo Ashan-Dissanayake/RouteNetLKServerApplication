@@ -20,7 +20,7 @@ public class VehicleStatusService {
 
     @Transactional(readOnly = true)
     public List<VehiclestatusDto> getVehicleStatuses(){
-       return vehicleStatusMapper.toDtoList(vehicleStatusRepository.findAll());
+        return vehicleStatusMapper.toDtoList(vehicleStatusRepository.findAll());
     }
 
     @Transactional(readOnly = true)
