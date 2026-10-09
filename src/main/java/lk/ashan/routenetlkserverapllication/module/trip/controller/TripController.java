@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.trip.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripCreateRequestDto;
 import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripDetailResponseDto;
@@ -23,6 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/trips")
 @RequiredArgsConstructor
+@Tag(name = "Trip Management", description = "Endpoints for managing transport trips, including status changes.")
 public class TripController {
 
     private final TripService tripService;
@@ -33,6 +39,13 @@ public class TripController {
      * @param params a map of query parameters for filtering trips
      * @return a response entity containing a list of trip details
      */
+    @Operation(summary = "Get all trips or search by parameters", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved trips"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'trip-view' authority")
+    })
     @PreAuthorize("hasAuthority('trip-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<TripDetailResponseDto>>> get(
@@ -48,6 +61,14 @@ public class TripController {
      * @param createRequestDto the request DTO containing trip creation details
      * @return a response entity containing the created trip details
      */
+    @Operation(summary = "Add a new trip", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trip created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'trip-add' authority")
+    })
     @PreAuthorize("hasAuthority('trip-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> createTrip(
@@ -63,6 +84,14 @@ public class TripController {
      * @param tripId the ID of the trip to activate
      * @return a response entity containing the activated trip details
      */
+    @Operation(summary = "Activate a trip", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trip activated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'trip-activate' authority"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
     @PreAuthorize("hasAuthority('trip-activate')")
     @PostMapping("/{tripId}/activate-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> activate(
@@ -81,6 +110,14 @@ public class TripController {
      * @param tripId the ID of the trip to suspend
      * @return a response entity containing the suspended trip details
      */
+    @Operation(summary = "Suspend a trip", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trip suspended successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'trip-suspend' authority"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
     @PreAuthorize("hasAuthority('trip-suspend')")
     @PostMapping("/{tripId}/suspend-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> suspend(
@@ -99,6 +136,14 @@ public class TripController {
      * @param tripId the ID of the trip to discontinue
      * @return a response entity containing the discontinued trip details
      */
+    @Operation(summary = "Discontinue a trip", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trip discontinued successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'trip-discontinue' authority"),
+            @ApiResponse(responseCode = "404", description = "Trip not found")
+    })
     @PreAuthorize("hasAuthority('trip-discontinue')")
     @PostMapping("/{tripId}/discontinue-trip")
     public ResponseEntity<APISuccessResponse<TripDetailResponseDto>> discontinue(

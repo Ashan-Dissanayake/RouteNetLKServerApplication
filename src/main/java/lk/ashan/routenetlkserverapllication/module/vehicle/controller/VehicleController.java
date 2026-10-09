@@ -1,5 +1,10 @@
 package lk.ashan.routenetlkserverapllication.module.vehicle.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.dto.*;
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleService;
@@ -21,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/vehicles")
 @RequiredArgsConstructor
+@Tag(name = "Vehicle Management", description = "Endpoints for managing vehicles in the system.")
 public class VehicleController {
 
     private final VehicleService vehicleService;
@@ -31,6 +37,13 @@ public class VehicleController {
      * @param params A map of search parameters.
      * @return A response entity containing a list of vehicle details and the total count.
      */
+    @Operation(summary = "Get all vehicles or search by parameters", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved vehicles"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'vehicle-view' authority")
+    })
     @PreAuthorize("hasAuthority('vehicle-view')")
     @GetMapping(produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleDetailResponseDto>>> get(
@@ -47,6 +60,12 @@ public class VehicleController {
      *
      * @return A response entity containing a list of vehicle summaries and the total count.
      */
+    @Operation(summary = "Get vehicle summaries for dropdowns", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved summaries"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PreAuthorize("isAuthenticated()")
     @GetMapping(path = "/summaries", produces = "application/json")
     public ResponseEntity<APISuccessResponse<List<VehicleSummaryDto>>> get() {
@@ -60,6 +79,14 @@ public class VehicleController {
      * @param vehicleCreateRequest The details of the vehicle to be created.
      * @return A response entity containing the details of the created vehicle.
      */
+    @Operation(summary = "Add a new vehicle", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Vehicle created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'vehicle-add' authority")
+    })
     @PreAuthorize("hasAuthority('vehicle-add')")
     @PostMapping
     public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> add(
@@ -75,6 +102,15 @@ public class VehicleController {
      * @param vehicleUpdateRequestDto The updated details of the vehicle.
      * @return A response entity containing the details of the updated vehicle.
      */
+    @Operation(summary = "Update an existing vehicle", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehicle updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'vehicle-update' authority"),
+            @ApiResponse(responseCode = "404", description = "Vehicle not found")
+    })
     @PreAuthorize("hasAuthority('vehicle-update')")
     @PutMapping
     public ResponseEntity<APISuccessResponse<VehicleDetailResponseDto>> update(
@@ -90,6 +126,13 @@ public class VehicleController {
      * @param ids A list of vehicle IDs to be deactivated.
      * @return A response entity containing the IDs of the deactivated vehicles.
      */
+    @Operation(summary = "Deactivate multiple vehicles", 
+               security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehicles deactivated successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Requires 'vehicle-delete' authority")
+    })
     @PreAuthorize("hasAuthority('vehicle-delete')")
     @DeleteMapping
     public ResponseEntity<APISuccessResponse<List<Integer>>> deactivateBranches(

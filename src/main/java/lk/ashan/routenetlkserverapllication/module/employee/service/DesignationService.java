@@ -22,6 +22,7 @@ public class DesignationService {
     private final DesignationRepository designationRepository;
     private final DesignationMapper designationMapper;
 
+
     /**
      * Retrieves all designations.
      *

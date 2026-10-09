@@ -20,7 +20,7 @@ public class FuelTypeService {
 
     @Transactional(readOnly = true)
     public List<FueltypeDto> getFuelTypes(){
-       return fuelTypeMapper.toDtoList(fuelTypeRepository.findAll());
+        return fuelTypeMapper.toDtoList(fuelTypeRepository.findAll());
     }
 
     @Transactional(readOnly = true)

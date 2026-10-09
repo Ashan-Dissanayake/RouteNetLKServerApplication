@@ -1,7 +1,5 @@
 package lk.ashan.routenetlkserverapllication.module.user.service;
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripStatusDto;
-import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.user.mapper.UserStatusMapper;
 import lk.ashan.routenetlkserverapllication.module.user.model.dto.UserStatusDto;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.UserStatus;

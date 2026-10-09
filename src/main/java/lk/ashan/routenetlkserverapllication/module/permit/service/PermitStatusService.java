@@ -20,7 +20,7 @@ public class PermitStatusService {
 
     @Transactional(readOnly = true)
     public List<PermitStatusDto> getPermitStatuses(){
-       return permitStatusMapper.toDtoList(permitStatusRepository.findAll());
+        return permitStatusMapper.toDtoList(permitStatusRepository.findAll());
     }
 
     @Transactional(readOnly = true)

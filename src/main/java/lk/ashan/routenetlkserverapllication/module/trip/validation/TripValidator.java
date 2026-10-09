@@ -15,6 +15,7 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lk.ashan.routenetlkserverapllication.shared.util.IntervalTree;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -330,67 +331,64 @@ public class TripValidator {
                         trip.getPermite().getId()
                 );
 
-        LocalTime newDeparture = trip.getTodepature();
+        if (existingTrips.isEmpty()) return;
 
-        LocalTime newArrival = trip.getToarrival();
-
-        boolean newOvernight = MIDNIGHT_TRIP_TYPE_ID.equals(
-                        trip.getTriptype().getId()
-                );
+        IntervalTree tree = new IntervalTree();
+        java.util.Map<String, Trip> intervalMap = new java.util.HashMap<>();
 
         for (Trip existing : existingTrips) {
-
-            if (trip.getId() != null
-                    && existing.getId().equals(trip.getId())) {
+            if (trip.getId() != null && existing.getId().equals(trip.getId())) {
                 continue;
             }
 
             boolean existingOvernight = MIDNIGHT_TRIP_TYPE_ID.equals(
-                            existing.getTriptype().getId()
-                    );
+                    existing.getTriptype().getId()
+            );
 
-            if (isOverlapping(
-                    newDeparture,
-                    newArrival,
-                    newOvernight,
-                    existing.getTodepature(),
-                    existing.getToarrival(),
-                    existingOvernight
-            )) {
+            long start = existing.getTodepature().toSecondOfDay() / 60;
+            long end = existingOvernight
+                    ? existing.getToarrival().toSecondOfDay() / 60 + 1440
+                    : existing.getToarrival().toSecondOfDay() / 60;
+
+            tree.insert(start, end);
+            intervalMap.put(start + "-" + end, existing);
+        }
+
+        LocalTime newDeparture = trip.getTodepature();
+        LocalTime newArrival = trip.getToarrival();
+        boolean newOvernight = MIDNIGHT_TRIP_TYPE_ID.equals(
+                trip.getTriptype().getId()
+        );
+
+        long newStart = newDeparture.toSecondOfDay() / 60;
+        long newEnd = newOvernight
+                ? newArrival.toSecondOfDay() / 60 + 1440
+                : newArrival.toSecondOfDay() / 60;
+
+        if (tree.overlaps(newStart, newEnd)) {
+            // Re-find the exact one to keep original error message format if possible
+            // but for performance, we already have the tree.
+            // Let's find the overlapping interval from the tree to report it.
+            IntervalTree.Interval overlap = tree.findOverlapInterval(newStart, newEnd);
+            Trip overlappingTrip = (overlap != null) ? intervalMap.get(overlap.low + "-" + overlap.high) : null;
+
+            if (overlappingTrip != null) {
                 throw new BusinessRuleViolationException(
                         String.format(
                                 "Scheduling Conflict! This permit already has "
                                         + "a trip from %s to %s. A bus cannot "
                                         + "operate two trips simultaneously.",
-                                existing.getTodepature(),
-                                existing.getToarrival()
+                                overlappingTrip.getTodepature(),
+                                overlappingTrip.getToarrival()
                         )
+                );
+            } else {
+                throw new BusinessRuleViolationException(
+                        "Scheduling Conflict! This permit already has an overlapping trip. " +
+                                "A bus cannot operate two trips simultaneously."
                 );
             }
         }
-    }
-
-    private boolean isOverlapping(
-            LocalTime start1,
-            LocalTime end1,
-            boolean overnight1,
-            LocalTime start2,
-            LocalTime end2,
-            boolean overnight2
-    ) {
-        long startMinute1 = start1.toSecondOfDay() / 60;
-
-        long endMinute1 = overnight1
-                        ? end1.toSecondOfDay() / 60 + 1440
-                        : end1.toSecondOfDay() / 60;
-
-        long startMinute2 = start2.toSecondOfDay() / 60;
-
-        long endMinute2 = overnight2
-                        ? end2.toSecondOfDay() / 60 + 1440
-                        : end2.toSecondOfDay() / 60;
-
-        return startMinute1 < endMinute2 && endMinute1 > startMinute2;
     }
 
     private void validateTerminalLocation(Trip trip) {

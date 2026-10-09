@@ -1,8 +1,8 @@
 package lk.ashan.routenetlkserverapllication.module.trip.service;
 
 
-import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripTypeDto;
 import lk.ashan.routenetlkserverapllication.module.trip.mapper.TripTypeMapper;
+import lk.ashan.routenetlkserverapllication.module.trip.model.dto.TripTypeDto;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -38,6 +38,7 @@ public class VehicleService {
     private final VehicleMapper vehicleMapper;
     private final VehicleValidator vehicleValidator;
 
+
     @Transactional(readOnly = true)
     public List<VehicleDetailResponseDto> getVehicles(){
        return vehicleMapper.toDtoList(vehicleRepository.findAll());
@@ -147,7 +148,8 @@ public class VehicleService {
             existingVehicle.setModel(targetModel);
         }
 
-        return vehicleMapper.toDto(existingVehicle);
+        Vehicle updated = vehicleRepository.save(existingVehicle);
+        return vehicleMapper.toDto(updated);
     }
 
     @Transactional

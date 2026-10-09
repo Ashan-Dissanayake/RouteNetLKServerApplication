@@ -21,7 +21,7 @@ public class ModelService {
 
     @Transactional(readOnly = true)
     public List<ModelDto> getModels(){
-       return modelMapper.toDtoList(modelRepository.findAll());
+        return modelMapper.toDtoList(modelRepository.findAll());
     }
 
     @Transactional(readOnly = true)

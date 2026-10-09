@@ -44,6 +44,7 @@ public class EmployeeService {
     private final NumberGeneratorService numberGeneratorService;
     private final EmployeeValidator employeeValidator;
 
+
     /**
      * Retrieves all employees.
      *
@@ -256,7 +257,9 @@ public class EmployeeService {
             entity.setDepartment(targetDepartment);
         }
 
-        return employeeMapper.toDto(entity);
+        Employee updated = employeeRepository.save(entity);
+
+        return employeeMapper.toDto(updated);
     }
 
     /**
