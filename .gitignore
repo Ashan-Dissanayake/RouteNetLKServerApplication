@@ -1,4 +1,4 @@
-# ---- General ----
+    # ---- General ----
 # Operating system files
 .DS_Store
 Thumbs.db
@@ -50,8 +50,6 @@ logs/
 node_modules/
 
 # Environment files
-.env
-.env.*
-!.env.example
 
+src/main/resources/application-dev.properties
 
