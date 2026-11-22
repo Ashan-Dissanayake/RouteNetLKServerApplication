@@ -6,8 +6,8 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.VehicleS
 import lk.ashan.routenetlkserverapllication.module.vehicle.service.VehicleStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +17,7 @@ public class VehiclePermitEventListener {
     private final VehicleStatusService vehicleStatusService;
    // private final VehicleStateTransitionHandler vehicleStateTransitionHandler;
 
-    @EventListener
+    @TransactionalEventListener
     public void handlePermitTransferred(PermitTransferredEvent event) {
         if (event.vehicle() == null) {
             log.warn("PermitTransferredEvent received for permit ID {}, but vehicle is null", event.permit().getId());

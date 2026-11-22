@@ -33,7 +33,10 @@ public class VehicleValidator {
         validateVehicleNumber(request.getNumber());
     }
 
-    public void validateUpdate(Vehicle existingVehicle, VehicleUpdateRequestDto request) {
+    public void validateUpdate(
+            Vehicle existingVehicle,
+            VehicleUpdateRequestDto request
+    ) {
         validateMileage(existingVehicle.getMileage(), request.getMileage());
 
         if (request.getConditionrate() != null && request.getConditionrate().getName() != null) {
@@ -59,7 +62,10 @@ public class VehicleValidator {
         }
     }
 
-    public void validateStatusTransition(VehicleStatus currentStatus, VehicleStatus targetStatus) {
+    public void validateStatusTransition(
+            VehicleStatus currentStatus,
+            VehicleStatus targetStatus
+    ) {
         String current = normalize(currentStatus.getName());
 
         String target = normalize(targetStatus.getName());

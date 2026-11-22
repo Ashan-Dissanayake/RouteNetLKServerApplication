@@ -10,9 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class APISuccessResponse<T> {
-
     private T data;
     private Map<String, Object> meta;
     private Map<String, String> links;
-
 }

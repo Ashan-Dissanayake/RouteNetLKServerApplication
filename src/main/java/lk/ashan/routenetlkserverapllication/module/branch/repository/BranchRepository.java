@@ -16,7 +16,8 @@ import java.util.List;
  * Extends JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface BranchRepository extends JpaRepository<Branch, Integer> , JpaSpecificationExecutor<Branch> {
+public interface BranchRepository extends
+        JpaRepository<Branch, Integer> , JpaSpecificationExecutor<Branch> {
 
     /**
      * Checks if a branch exists with the given code (case-insensitive).

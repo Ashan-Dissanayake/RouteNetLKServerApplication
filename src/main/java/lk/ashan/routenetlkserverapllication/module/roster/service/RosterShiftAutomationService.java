@@ -30,26 +30,27 @@ public class RosterShiftAutomationService {
 
     @Transactional
     public void generateWeeklyRosterSlots(Roster roster) {
-        List<Shift> activeShifts = shiftRepository.findByShiftstatus_Name("Active");
-        List<Designation> targetRoles = designationRepository.findByNameIn(List.of("Driver", "Conductor"));
+
+        List<Shift> activeShifts = shiftRepository
+                .findByShiftstatus_Name("Active");
+        List<Designation> targetRoles = designationRepository
+                .findByNameIn(List.of("Driver", "Conductor"));
 
         LocalDate currentDay = roster.getDostartofweek();
         LocalDate endDate = roster.getDoendofweek();
 
-        if (roster.getRostershifts() == null) {
+        if (roster.getRostershifts() == null)
             roster.setRostershifts(new ArrayList<>());
-        } else {
-            roster.getRostershifts().clear();
-        }
+        else roster.getRostershifts().clear();
 
         while (!currentDay.isAfter(endDate)) {
+
             for (Shift shift : activeShifts) {
 
                 int demandCount = (int) tripRepository.countDistinctPermitsForShift(
                         roster.getBranch().getId(),
                         shift.getId()
                 );
-
 
                 int requiredCount = (demandCount > 0) ? demandCount + 1 : 0;
 

@@ -14,6 +14,7 @@ import java.util.Map;
 @RequestMapping(value = "/number-generator")
 @RequiredArgsConstructor
 public class NumberGeneratorController {
+
     private final NumberGeneratorService numberGeneratorService;
 
     @GetMapping(value = "/branch/{branchName}", produces = "application/json")

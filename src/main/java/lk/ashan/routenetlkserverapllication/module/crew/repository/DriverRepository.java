@@ -19,7 +19,8 @@ import java.util.Optional;
  * Extends JpaRepository to provide CRUD operations and custom queries.
  */
 @Repository
-public interface DriverRepository extends JpaRepository<Driver, Integer>, JpaSpecificationExecutor<Driver> {
+public interface DriverRepository extends
+        JpaRepository<Driver, Integer>, JpaSpecificationExecutor<Driver> {
 
     /**
      * Checks if a driver exists with the given license number.

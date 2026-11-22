@@ -370,7 +370,7 @@ public class TripValidator {
             // but for performance, we already have the tree.
             // Let's find the overlapping interval from the tree to report it.
             IntervalTree.Interval overlap = tree.findOverlapInterval(newStart, newEnd);
-            Trip overlappingTrip = (overlap != null) ? intervalMap.get(overlap.low + "-" + overlap.high) : null;
+            Trip overlappingTrip = (overlap != null) ? intervalMap.get(overlap.low() + "-" + overlap.high()) : null;
 
             if (overlappingTrip != null) {
                 throw new BusinessRuleViolationException(

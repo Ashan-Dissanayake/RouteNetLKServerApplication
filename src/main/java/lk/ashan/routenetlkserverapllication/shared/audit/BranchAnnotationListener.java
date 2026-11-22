@@ -4,14 +4,17 @@ import jakarta.persistence.PrePersist;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
 import lk.ashan.routenetlkserverapllication.security.CustomUserPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.lang.reflect.Field;
 
+@Slf4j
 public class BranchAnnotationListener {
 
     @PrePersist
     public void assignBranch(Object entity) {
+
         Class<?> clazz = entity.getClass();
 
         while (clazz != null) {
@@ -27,7 +30,7 @@ public class BranchAnnotationListener {
                             }
                         }
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                       log.info(e.getMessage());
                     }
                 }
             }
@@ -36,9 +39,13 @@ public class BranchAnnotationListener {
     }
 
     private Branch getLoggedInUserBranch() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() &&
-                authentication.getPrincipal() instanceof CustomUserPrincipal principal) {
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+
+        if (authentication != null
+            && authentication.isAuthenticated()
+            && authentication.getPrincipal() instanceof CustomUserPrincipal principal)
+        {
             User loggedUser = principal.getUserEntity();
             if (loggedUser != null) {
                 return loggedUser.getEmployee().getBranch();

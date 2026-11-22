@@ -40,7 +40,10 @@ public class ConductorValidator {
         validateMedical(dto.getDomedicalissued(), dto.getDomedicalexpired());
     }
 
-    public void validateUpdate(Conductor existing, ConductorUpdateRequestDto dto) {
+    public void validateUpdate(
+            Conductor existing,
+            ConductorUpdateRequestDto dto
+    ) {
 
         if (!existing.getEmployee().getId().equals(
                 dto.getEmployee().getId())) {
@@ -57,7 +60,10 @@ public class ConductorValidator {
         validateMedical(dto.getDomedicalissued(), dto.getDomedicalexpired());
     }
 
-    private void validateMedical(LocalDate issued, LocalDate expiry) {
+    private void validateMedical(
+            LocalDate issued,
+            LocalDate expiry
+    ) {
 
         if (!expiry.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException(

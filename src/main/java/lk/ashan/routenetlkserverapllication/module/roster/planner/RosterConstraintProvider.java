@@ -2,7 +2,7 @@ package lk.ashan.routenetlkserverapllication.module.roster.planner;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.*;
-import lk.ashan.routenetlkserverapllication.module.roster.model.entity.RosterShiftAssignment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -19,14 +19,14 @@ public class RosterConstraintProvider implements ConstraintProvider {
      * @return an array of {@link Constraint} objects representing the defined constraints.
      */
     @Override
-    public Constraint[] defineConstraints(ConstraintFactory factory) {
+    public Constraint[] defineConstraints(@NotNull ConstraintFactory factory) {
         return new Constraint[] {
                 // Hard Constraints (Must be met)
                 requiredDesignation(factory),
                 noOverlappingShifts(factory),
                 designationMatch(factory),
                 oneDriverOneConductorPerShift(factory),
-                //routeFamiliarityMatchConstraint(factory),
+                routeFamiliarityMatchConstraint(factory),
 
                 // Soft Constraints (Preferences)
                 fairWorkloadDistribution(factory)
