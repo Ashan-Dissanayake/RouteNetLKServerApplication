@@ -15,6 +15,8 @@ RouteNetLK focuses on modular backend design, secure role-based access, branch-l
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
+- [Engineering Decisions (ADRs)](#engineering-decisions-adrs)
+- [Design Documentation](#design-documentation)
 - [Domain Modules](#domain-modules)
 - [Constraint-Based Optimization](#constraint-based-optimization)
 - [Security and Data Isolation](#security-and-data-isolation)
@@ -25,7 +27,6 @@ RouteNetLK focuses on modular backend design, secure role-based access, branch-l
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
 - [Docker and CI/CD](#docker-and-cicd)
-- [Engineering Decisions](#engineering-decisions)
 - [Limitations and Future Improvements](#limitations-and-future-improvements)
 - [Related Repositories](#related-repositories)
 - [Author](#author)
@@ -56,10 +57,7 @@ The application is designed to demonstrate practical backend engineering concept
 
 RouteNetLK uses a modular, layered backend architecture. Domain modules organize related business capabilities, while layers separate request handling, business logic, persistence, and data representation.
 
-<p align="center">
-  <img width="300" alt="Screenshot 2026-09-30 132954" src="https://github.com/user-attachments/assets/392fb010-301d-487d-8543-23680af113d7" />
-
-</p>
+Detailed architecture diagrams are available in the [Design Documentation](#design-documentation) section.
 
 The application is organized as a modular backend rather than a collection of independently deployed microservices.
 
@@ -453,35 +451,36 @@ Docker provides a containerized packaging option, while GitHub Actions can autom
 
 The exact build, test, image-publishing, deployment, and environment-configuration steps should be described according to the actual workflow implementation. Deployment provider, public URL, required secrets, and pipeline status should be documented only after they have been verified.
 
-## Engineering Decisions
+## Engineering Decisions (ADRs)
 
-The following decisions reflect important backend engineering concerns addressed by the project.
+The project maintains a collection of **Architecture Decision Records (ADR)** to document key architectural choices, their context, and consequences.
 
-### Modular Layered Architecture
+You can find the full list in the [docs/adr](./docs/adr) directory:
 
-Organizing functionality into domain modules and separating controllers, services, repositories, and data models helps keep responsibilities distinct as business workflows grow.
+1.  **[ADR 0001: Technologies and Frameworks](./docs/adr/0001-technologies-and-frameworks.md)** - Choice of Java 17, Spring Boot 3.5, MySQL, etc.
+2.  **[ADR 0002: Overall Architecture and Organization](./docs/adr/0002-overall-architecture-organization.md)** - Layered architecture and module-based structure.
+3.  **[ADR 0003: Development Standards and Code Quality](./docs/adr/0003-development-standards-and-code-quality.md)** - Coding standards, Lombok, MapStruct, and DTO usage.
+4.  **[ADR 0004: Data Management and Persistence](./docs/adr/0004-data-management-and-persistence.md)** - Soft delete, branch isolation, and auditing strategies.
+5.  **[ADR 0005: Security and Identity](./docs/adr/0005-security-and-identity.md)** - Stateless JWT, brute-force protection, and granular authorization.
+6.  **[ADR 0006: Integration and Communication](./docs/adr/0006-integration-and-communication.md)** - REST API standards, error handling, and email integration.
+7.  **[ADR 0007: Performance and Scalability](./docs/adr/0007-performance-and-scalability.md)** - Interval trees, Timefold solver optimization, and JVM tuning.
+8.  **[ADR 0008: Reliability and Resilience](./docs/adr/0008-reliability-and-resilience.md)** - Transactional integrity and error management.
+9.  **[ADR 0009: Observability and Monitoring](./docs/adr/0009-observability-and-monitoring.md)** - Logging standards and Actuator integration.
+10. **[ADR 0010: Infrastructure and Deployment](./docs/adr/0010-infrastructure-and-deployment.md)** - Docker multi-stage builds and environment configuration.
+11. **[ADR 0011: Test Implementation Strategy](./docs/adr/0011-test-implementation-strategy.md)** - Testing levels, tools (Testcontainers), and security testing.
 
-### Relational Persistence
+## Design Documentation
 
-MySQL and JPA provide relational data management for interconnected operational entities. Transaction boundaries are important when workflows modify multiple related records.
+Comprehensive design diagrams using the **C4 Model** and **Low-Level Design (LLD)** are available to help understand the system structure.
 
-### Constraint-Based Scheduling
-
-Timefold provides a dedicated model for evaluating candidate assignments against scheduling constraints, instead of embedding every combination of rules in ad hoc assignment logic.
-
-### Role- and Privilege-Based Authorization
-
-Separating roles from privileges allows access rules to be expressed at different levels of granularity. Authentication identifies the user; authorization determines which operations the user can perform.
-
-### Branch-Scoped Data Access
-
-Branch-level filtering supports operational separation between depots. It requires careful testing because incorrect filter activation or privileged query paths could expose records beyond the intended scope.
-
-### Integration Testing Against MySQL
-
-Testcontainers makes it possible to test database-dependent behavior against a real MySQL instance rather than relying exclusively on mocks or an in-memory database.
-
-These decisions involve trade-offs. Their effectiveness should be evaluated against actual requirements, implementation complexity, operational constraints, and test evidence rather than treating any technology as universally optimal.
+- **[System Architecture (C4 Model)](./docs/diagrams/c4-model.md)**
+    - **Level 1: System Context Diagram** - External users and systems.
+    - **Level 2: Container Diagram** - Technical containers (SPA, API, DB).
+    - **Level 3: Component Diagram** - Internal API components and module responsibilities.
+- **[Roster Module - Low-Level Design (LLD)](./docs/diagrams/roster-lld.md)**
+    - Detailed class diagrams for rostering entities.
+    - Sequence diagrams for shift automation and optimization.
+    - Business rules, validation, and database interaction details.
 
 ## Limitations and Future Improvements
 

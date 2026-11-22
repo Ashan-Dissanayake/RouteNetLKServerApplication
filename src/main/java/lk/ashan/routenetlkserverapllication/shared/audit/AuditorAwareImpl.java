@@ -1,9 +1,7 @@
 package lk.ashan.routenetlkserverapllication.shared.audit;
 
 import lk.ashan.routenetlkserverapllication.module.user.model.entity.User;
-import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepository;
 import lk.ashan.routenetlkserverapllication.security.CustomUserPrincipal;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
@@ -16,11 +14,15 @@ import java.util.Optional;
 public class AuditorAwareImpl implements AuditorAware<User> {
 
     @Override
-    public Optional<User> getCurrentAuditor() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public @NotNull Optional<User> getCurrentAuditor() {
 
-        if (authentication != null && authentication.isAuthenticated() &&
-                authentication.getPrincipal() instanceof CustomUserPrincipal principal) {
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+
+        if (authentication != null
+            && authentication.isAuthenticated()
+            && authentication.getPrincipal() instanceof CustomUserPrincipal principal)
+        {
             return Optional.ofNullable(principal.getUserEntity());
         }
 

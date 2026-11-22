@@ -60,9 +60,15 @@ public class ConductorService {
      * @return a list of {@link ConductorDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<ConductorDetailResponseDto> searchConductor(@NotNull HashMap<String, String> params) {
+    public List<ConductorDetailResponseDto> searchConductor(
+            @NotNull HashMap<String, String> params
+    ) {
 
-        Specification<Conductor> specification = (root, query, criteriaBuilder) -> {
+        Specification<Conductor> specification = (
+                root,
+                query,
+                criteriaBuilder
+        ) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
@@ -119,7 +125,9 @@ public class ConductorService {
      */
     @Transactional
     @DisableBranchFilter
-    public ConductorDetailResponseDto createConductor(@Valid @NotNull ConductorCreateRequestDto dto) {
+    public ConductorDetailResponseDto createConductor(
+            @Valid @NotNull ConductorCreateRequestDto dto
+    ) {
 
         conductorValidator.validateCreate(dto);
 
@@ -140,7 +148,9 @@ public class ConductorService {
      */
     @Transactional
     @DisableBranchFilter
-    public ConductorDetailResponseDto updateConductor(@Valid @NotNull ConductorUpdateRequestDto dto) {
+    public ConductorDetailResponseDto updateConductor(
+            @Valid @NotNull ConductorUpdateRequestDto dto
+    ) {
 
         Conductor existing = conductorRepository.findById(dto.getId())
                 .orElseThrow(() ->
@@ -185,8 +195,5 @@ public class ConductorService {
 
         conductor.setCrewstatus(status);
     }
-
-
-
 
 }

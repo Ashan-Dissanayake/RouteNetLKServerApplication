@@ -51,9 +51,15 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleDetailResponseDto> searchVehicle(@NotNull HashMap<String, String> params) {
+    public List<VehicleDetailResponseDto> searchVehicle(
+            @NotNull HashMap<String, String> params
+    ) {
 
-        Specification<Vehicle> specification = (root, query, criteriaBuilder) -> {
+        Specification<Vehicle> specification = (
+                root,
+                query,
+                criteriaBuilder
+        ) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
@@ -91,19 +97,24 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public Vehicle getById(Integer id){
         return vehicleRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Vehicle not found"));
+                .orElseThrow(()
+                        -> new ResourceNotFoundException("Vehicle not found"));
     }
 
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
-    public VehicleDetailResponseDto createVehicle(@Valid @NotNull VehicleCreateRequestDto request) {
+    public VehicleDetailResponseDto createVehicle(
+            @Valid @NotNull VehicleCreateRequestDto request
+    ) {
 
         vehicleValidator.validateCreate(request);
 
         Vehicle entity = vehicleMapper.toEntity(request);
 
-        VehicleStatus initialStatus = vehicleStatusService.getByName(request.getVehiclestatus().getName());
+        VehicleStatus initialStatus = vehicleStatusService
+                .getByName(request.getVehiclestatus().getName());
+
         vehicleValidator.validateInitialStatus(initialStatus);
         entity.setVehiclestatus(initialStatus);
 
@@ -115,7 +126,9 @@ public class VehicleService {
     @Transactional
     @DisableSoftDeleteFilter
     @DisableBranchFilter
-    public VehicleDetailResponseDto updateVehicle(@Valid @NotNull VehicleUpdateRequestDto request) {
+    public VehicleDetailResponseDto updateVehicle(
+            @Valid @NotNull VehicleUpdateRequestDto request
+    ) {
 
         Vehicle existingVehicle = vehicleRepository.findByMyId(request.getId());
 
@@ -124,27 +137,33 @@ public class VehicleService {
         vehicleMapper.updateEntityFromDto(request, existingVehicle);
 
         if (request.getVehiclestatus() != null && request.getVehiclestatus().getId() != null) {
-            VehicleStatus targetStatus = vehicleStatusService.getById(request.getVehiclestatus().getId());
+            VehicleStatus targetStatus = vehicleStatusService.
+                    getById(request.getVehiclestatus().getId());
+
             changeStatus(existingVehicle, targetStatus);
         }
 
         if (request.getBustype().getId() != null) {
-            BusType targetBusType = busTypeService.getById(request.getBustype().getId());
+            BusType targetBusType = busTypeService.
+                    getById(request.getBustype().getId());
             existingVehicle.setBustype(targetBusType);
         }
 
         if (request.getConditionrate().getId() != null) {
-            ConditionRate targetConditionRate = conditionRateService.getById(request.getConditionrate().getId());
+            ConditionRate targetConditionRate = conditionRateService
+                    .getById(request.getConditionrate().getId());
             existingVehicle.setConditionrate(targetConditionRate);
         }
 
         if (request.getFueltype().getId() != null) {
-            FuelType targetFuelType = fuelTypeService.getById(request.getFueltype().getId());
+            FuelType targetFuelType = fuelTypeService
+                    .getById(request.getFueltype().getId());
             existingVehicle.setFueltype(targetFuelType);
         }
 
         if (request.getModel().getId() != null) {
-            Model targetModel = modelService.getById(request.getModel().getId());
+            Model targetModel = modelService
+                    .getById(request.getModel().getId());
             existingVehicle.setModel(targetModel);
         }
 

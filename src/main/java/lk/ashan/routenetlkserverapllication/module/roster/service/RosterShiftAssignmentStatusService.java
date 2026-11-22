@@ -13,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RosterShiftAssignmentStatusService {
 
-    private final RosterShiftAssignmentStatusRepository rosterShiftAssignmentStatusRepository;
+    private final RosterShiftAssignmentStatusRepository
+            rosterShiftAssignmentStatusRepository;
 
     @Transactional(readOnly = true)
     public RosterShiftAssignmentStatus getById(Integer id) {

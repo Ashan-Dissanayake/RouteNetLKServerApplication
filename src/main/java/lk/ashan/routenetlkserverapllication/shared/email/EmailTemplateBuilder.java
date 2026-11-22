@@ -38,24 +38,20 @@ public class EmailTemplateBuilder {
      * @return the constructed email content as a string.
      */
     public String buildMailContent(MailBody mailBody){
-        StringBuilder emailContent = new StringBuilder();
 
-        // Add greeting with proper formatting
-        emailContent.append(formatGreeting(mailBody.getGreetings()))
-                .append("\n\n");
+        return formatGreeting(mailBody.getGreetings()) +
+                "\n\n" +
 
-        // Add main content
-        emailContent.append(mailBody.getContent())
-                .append("\n\n");
+                // Add main content
+                mailBody.getContent() +
+                "\n\n" +
 
-        // Add closing
-        emailContent.append(mailBody.getClosing())
-                .append("\n\n");
+                // Add closing
+                mailBody.getClosing() +
+                "\n\n" +
 
-        // Add signature with company details
-        emailContent.append(formatSignature(mailBody.getSignature()));
-
-        return emailContent.toString();
+                // Add signature with company details
+                formatSignature(mailBody.getSignature());
 
     }
 
@@ -78,13 +74,11 @@ public class EmailTemplateBuilder {
      * @return the formatted signature including the company name and separator line
      */
     private String formatSignature(String signature) {
-        StringBuilder formattedSignature = new StringBuilder();
-        formattedSignature.append(signature)
-                .append("\n")
-                .append(companyName)
-                .append("\n")
-                .append("-------------------");
-        return formattedSignature.toString();
+        return signature +
+                "\n" +
+                companyName +
+                "\n" +
+                "-------------------";
     }
 
 }

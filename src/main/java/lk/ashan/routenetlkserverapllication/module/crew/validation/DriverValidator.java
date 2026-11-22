@@ -18,7 +18,8 @@ public class DriverValidator {
 
     private final DriverRepository driverRepository;
 
-    public void validateCreate(DriverCreateRequestDto dto) {validateCreateBusinessRules(dto);
+    public void validateCreate(DriverCreateRequestDto dto) {
+        validateCreateBusinessRules(dto);
         validateLicenseDates(dto.getDolicenseissued(), dto.getDolicenseexpired());
         validateMedicalDates(dto.getDomedicalissued(), dto.getDomedicalexpired());
         validateUniqueness(dto);
@@ -48,7 +49,10 @@ public class DriverValidator {
         }
     }
 
-    private void validateImmutableFields(Driver existing, DriverUpdateRequestDto dto) {
+    private void validateImmutableFields(
+            Driver existing,
+            DriverUpdateRequestDto dto
+    ) {
 
         if (!existing.getLicensenumber()
                 .equalsIgnoreCase(dto.getLicensenumber())) {
@@ -108,7 +112,10 @@ public class DriverValidator {
         }
     }
 
-    private void validateLicenseDates(LocalDate issued, LocalDate expiry) {
+    private void validateLicenseDates(
+            LocalDate issued,
+            LocalDate expiry
+    ) {
 
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException(
@@ -128,7 +135,10 @@ public class DriverValidator {
         }
     }
 
-    private void validateMedicalDates(LocalDate issued, LocalDate expiry) {
+    private void validateMedicalDates(
+            LocalDate issued,
+            LocalDate expiry
+    ) {
 
         if (issued.isAfter(LocalDate.now())) {
             throw new BusinessRuleViolationException(

@@ -19,10 +19,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
@@ -155,54 +153,47 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/**").permitAll()
+                        .requestMatchers(
+                                "/", "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/actuator/**")
+                        .permitAll()
                         .requestMatchers("/email/welcome").permitAll() // Allow test email service
                         .anyRequest().authenticated() // Allow only for authenticated users (remain only this at the time delivered)
                 )
                 .logout(LogoutConfigurer::permitAll)
-                .addFilterBefore(new AuthenticationFilter(authenticationManager, jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)  // JWT Filter
-                .addFilterAfter(new AuthorizationFilter(jwtTokenUtil, userDetailsService), AuthenticationFilter.class)  // Authorization Filter for JWT
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(
+                        new AuthenticationFilter(authenticationManager, jwtTokenUtil),
+                        UsernamePasswordAuthenticationFilter.class
+                )// JWT Filter
+                .addFilterAfter(
+                        new AuthorizationFilter(jwtTokenUtil, userDetailsService),
+                        AuthenticationFilter.class
+                )  // Authorization Filter for JWT
+                .sessionManagement(sess ->
+                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers
-                        .addHeaderWriter(new StaticHeadersWriter("X-XSS-Protection", "1; mode=block")) // optional for legacy browsers
-                                .contentSecurityPolicy(csp -> csp.policyDirectives(
-                                        "default-src 'self'; " +
-                                                "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
-                                                "style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; " +
-                                                "font-src 'self' https://fonts.gstatic.com; " +
-                                                "img-src 'self' data: https:; " +
-                                                "connect-src 'self' http://localhost:4200; " +
-                                                "frame-ancestors 'self';"
-                                ))
-                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .addHeaderWriter(new StaticHeadersWriter(
+                                "X-XSS-Protection",
+                                "1; mode=block")
+                        ) // optional for legacy browsers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                        "script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval'; " +
+                                        "style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; " +
+                                        "font-src 'self' https://fonts.gstatic.com; " +
+                                        "img-src 'self' data: https:; " +
+                                        "connect-src 'self' http://localhost:4200; " +
+                                        "frame-ancestors 'self';"
+                        ))
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
-
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
 
-
-    /**
-     * Provides a bean of {@link InMemoryUserDetailsManager} configured with a hardcoded user.
-     * The user details, such as username, password (encoded using the configured password encoder),
-     * and granted authorities, are specified here.
-     *
-     * @return an instance of {@link InMemoryUserDetailsManager} containing a single user with
-     *         defined credentials and authorities.
-     */
-
-//    @Bean
-//    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-//        User.UserBuilder userBuilder = User.builder();
-//        return new InMemoryUserDetailsManager(
-//                userBuilder
-//                        .username(inMemoryUserName)
-//                        .password(passwordEncoder.encode(inMemoryUserPassword))
-//                        .authorities(userDetailsService.getAdminAuthorities())
-//                        .build()
-//        );
-//    }
 
     /**
      * Configures and provides a customized {@code AuthenticationManager} bean.
@@ -218,27 +209,10 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-                //.authenticationProvider(inMemoryAuthenticationProvider())  // Try in-memory provider first
                 .authenticationProvider(authenticationProvider)  // Then try custom provider
                 .authenticationProvider(daoAuthenticationProvider())  // Finally, try database provider
                 .build();
     }
-
-    /**
-     * Creates and configures an in-memory implementation of the {@link AuthenticationProvider}.
-     * This provider uses a local {@link InMemoryUserDetailsManager} to authenticate users and a custom
-     * password encoder for matching provided credentials with the stored values.
-     *
-     * @return an instance of {@link AuthenticationProvider} configured for in-memory user authentication
-     */
-//    @Bean
-//    public AuthenticationProvider inMemoryAuthenticationProvider() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(inMemoryUserDetailsManager());
-//        provider.setPasswordEncoder(passwordEncoder);
-//        provider.setHideUserNotFoundExceptions(false);
-//        return provider;
-//    }
 
     /**
      * Configures and returns a DaoAuthenticationProvider bean.

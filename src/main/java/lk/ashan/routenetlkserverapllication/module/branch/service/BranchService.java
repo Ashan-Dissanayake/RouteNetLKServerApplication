@@ -84,9 +84,15 @@ public class BranchService {
      * @return a list of {@link BranchDetailResponseDto} matching the search criteria.
      */
     @Transactional(readOnly = true)
-    public List<BranchDetailResponseDto> searchBranch(@NotNull HashMap<String, String> params) {
+    public List<BranchDetailResponseDto> searchBranch(
+            @NotNull HashMap<String, String> params
+    ) {
 
-        Specification<Branch> specification = (root, query, criteriaBuilder) -> {
+        Specification<Branch> specification = (
+                root,
+                query,
+                criteriaBuilder
+        ) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
@@ -141,7 +147,8 @@ public class BranchService {
     @DisableSoftDeleteFilter
     @DisableBranchFilter
     public BranchDetailResponseDto createBranch(
-            @NotNull BranchCreateRequestDto request) {
+            @NotNull BranchCreateRequestDto request
+    ) {
 
         branchValidator.validateCreate(request);
 
@@ -173,7 +180,8 @@ public class BranchService {
     @DisableSoftDeleteFilter
     @DisableBranchFilter
     public BranchDetailResponseDto updateBranch(
-            @NotNull BranchUpdateRequestDto request) {
+            @NotNull BranchUpdateRequestDto request
+    ) {
 
         Branch existing = branchRepository.findById(request.getId())
                 .orElseThrow(() ->

@@ -14,6 +14,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +51,7 @@ import java.util.List;
  * - doFilterInternal: Core method to process the filter logic, including token validation and user authentication.
  */
 @RequiredArgsConstructor
+@Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
@@ -100,7 +102,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
 
                     // Log successful token validation
-                    System.out.println("JWT token validated successfully for user: " + username);
+                    log.info("JWT token validated successfully for user: {}", username);
 
                     // Create authentication object
                     UsernamePasswordAuthenticationToken authentication =

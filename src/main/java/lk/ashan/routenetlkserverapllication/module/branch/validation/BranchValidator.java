@@ -68,7 +68,10 @@ public class BranchValidator {
     }
 
 
-    public void validateStatusTransition(BranchStatus currentStatus, BranchStatus targetStatus) {
+    public void validateStatusTransition(
+            BranchStatus currentStatus,
+            BranchStatus targetStatus
+    ) {
 
         String current = currentStatus.getName().toUpperCase();
         String target = targetStatus.getName().toUpperCase();

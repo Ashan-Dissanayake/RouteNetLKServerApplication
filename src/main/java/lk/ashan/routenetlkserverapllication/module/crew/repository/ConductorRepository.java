@@ -17,7 +17,8 @@ import java.util.Optional;
  * Extends the JpaRepository to provide CRUD operations and custom query methods.
  */
 @Repository
-public interface ConductorRepository extends JpaRepository<Conductor, Integer>, JpaSpecificationExecutor<Conductor> {
+public interface ConductorRepository extends
+        JpaRepository<Conductor, Integer>, JpaSpecificationExecutor<Conductor> {
 
     /**
      * Finds a list of Conductors by the branch ID of their associated employee.

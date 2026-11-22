@@ -11,6 +11,7 @@ import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -37,7 +39,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(
             HttpServletRequest request,
-            HttpServletResponse response) throws AuthenticationException {
+            HttpServletResponse response
+    ) throws AuthenticationException {
 
         // Set the login URL
         setFilterProcessesUrl("/login");
@@ -48,7 +51,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                     .readValue(request.getInputStream(), LoginRequest.class);
 
             // Log the attempt
-            System.out.println("Login attempt for username: " + loginRequest.getUsername());
+            log.info("Login attempt for username: {}", loginRequest.getUsername());
 
             // Create authentication token
             UsernamePasswordAuthenticationToken authRequest =
@@ -70,7 +73,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain chain,
-            Authentication authResult) throws IOException, ServletException {
+            Authentication authResult
+    ) throws IOException, ServletException {
 
         // Get authenticated user
         UserDetails userDetails = (UserDetails) authResult.getPrincipal();
@@ -79,7 +83,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token = jwtTokenUtil.generateToken(userDetails);
 
         // Log success
-        System.out.println("Login successful for: " + userDetails.getUsername());
+        log.info("Login successful for: {}", userDetails.getUsername());
 
         // Prepare response data
         Map<String, Object> responseData = Map.of(
@@ -114,10 +118,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException failed) throws IOException, ServletException {
+            AuthenticationException failed
+    ) throws IOException, ServletException {
 
         // Log the failure
-        System.out.println("Authentication failed: " + failed.getMessage());
+        log.info("Authentication failed: {}", failed.getMessage());
 
         // Determine the appropriate ErrorCode based on exception type
         ErrorCode errorCode;

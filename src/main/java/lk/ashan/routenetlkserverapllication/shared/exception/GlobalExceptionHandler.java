@@ -1,9 +1,9 @@
 package lk.ashan.routenetlkserverapllication.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
-import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
+import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
+import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<APIErrorResponse> handleBusinessException(
             BusinessException e,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
 
         log.warn("Business exception: {} - {}", e.getErrorCode(), e.getMessage());
 
@@ -35,7 +36,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<APIErrorResponse> handleValidationException(
             MethodArgumentNotValidException e,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
 
         List<String> details = e.getBindingResult()
                 .getFieldErrors()
@@ -55,11 +57,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<APIErrorResponse> handleAccessDeniedException(
             AccessDeniedException e,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
 
         return APIResponseBuilder.error(
                 ErrorCode.ACCESS_DENIED,
-                List.of("You do not have permission to perform this operation."),
+                List.of("You do not have permission to perform this operation."+e.getMessage()),
                 request
         );
     }
@@ -67,7 +70,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIErrorResponse> handleGenericException(
             Exception e,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
 
         log.error("Unexpected error occurred", e);
 

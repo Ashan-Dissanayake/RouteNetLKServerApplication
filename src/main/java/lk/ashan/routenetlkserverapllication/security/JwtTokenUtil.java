@@ -36,7 +36,8 @@ public class JwtTokenUtil {
      */
     public JwtTokenUtil(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration}") long expirationMs) {
+            @Value("${jwt.expiration}") long expirationMs
+    ) {
         this.secret = secret;
         this.expirationMs = expirationMs;
     }
@@ -58,19 +59,6 @@ public class JwtTokenUtil {
                 .collect(Collectors.toList()));
 
         return createToken(claims, userDetails.getUsername());
-    }
-
-    /**
-     * Generates a JSON Web Token (JWT) for a given username (for OAuth2 scenarios).
-     * The token is built using the provided username and includes claims,
-     * an issue time, and an expiration time.
-     *
-     * @param username the username for which the token is to be generated
-     * @return a JWT as a string
-     */
-    public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
     }
 
     /**

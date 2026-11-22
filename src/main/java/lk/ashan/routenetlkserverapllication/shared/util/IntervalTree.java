@@ -5,17 +5,9 @@ package lk.ashan.routenetlkserverapllication.shared.util;
  * Optimized for Time-Intervals (expressed as long values).
  */
 public class IntervalTree {
+
     private Node root;
-
-    public static class Interval {
-        public final long low;
-        public final long high;
-
-        public Interval(long low, long high) {
-            this.low = low;
-            this.high = high;
-        }
-    }
+    public record Interval(long low, long high) { }
 
     private static class Node {
         long low, high, max;
