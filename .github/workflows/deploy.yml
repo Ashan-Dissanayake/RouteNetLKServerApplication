@@ -43,6 +43,9 @@ jobs:
       - name: Grant Execute Permission for mvnw
         run: chmod +x mvnw
 
+      - name: Pre-pull MySQL Image for Testcontainers
+        run: docker pull mysql:8.0.36
+
       - name: Run Tests (Unit & Integration Tests)
         run: ./mvnw test
         env:

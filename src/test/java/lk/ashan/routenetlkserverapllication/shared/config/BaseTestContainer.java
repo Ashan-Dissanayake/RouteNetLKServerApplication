@@ -5,19 +5,22 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 
+import java.time.Duration;
+
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public abstract class BaseTestContainer {
 
     protected static final MySQLContainer<?> MYSQL_CONTAINER;
 
     static {
-        MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.3.0")
+        MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.0.36")
                 .withDatabaseName("routenetlk")
                 .withUsername("test")
                 .withPassword("test")
                 .withUrlParam("serverTimezone", "UTC")
                 .withUrlParam("useSSL", "false")
-                .withUrlParam("allowPublicKeyRetrieval", "true");
+                .withUrlParam("allowPublicKeyRetrieval", "true")
+                .withStartupTimeout(Duration.ofMinutes(3));
         MYSQL_CONTAINER.start();
     }
 
