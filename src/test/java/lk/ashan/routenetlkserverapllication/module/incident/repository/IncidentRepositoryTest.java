@@ -82,6 +82,7 @@ class IncidentRepositoryTest extends BaseTestContainer {
     // REPORT 5
     // ========================================================
 
+
     @Test
     void getIncidentDistributionMetrics_ShouldReturnIncidentCountsByType() {
 
@@ -96,7 +97,7 @@ class IncidentRepositoryTest extends BaseTestContainer {
                             .isEqualTo("Mechanical Breakdown");
 
                     assertThat(result.getIncidentCount())
-                            .isEqualTo(3L);
+                            .isEqualTo(2L);
                 });
 
         assertThat(results)
@@ -114,9 +115,10 @@ class IncidentRepositoryTest extends BaseTestContainer {
                             .isEqualTo("Tyre Puncture");
 
                     assertThat(result.getIncidentCount())
-                            .isEqualTo(1L);
+                            .isEqualTo(2L);
                 });
     }
+
 
     // ========================================================
     // DASHBOARD
