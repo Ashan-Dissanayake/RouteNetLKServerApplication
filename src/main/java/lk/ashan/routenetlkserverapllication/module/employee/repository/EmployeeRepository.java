@@ -72,7 +72,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> , J
      *
      * @param ids the list of employee IDs to mark as deleted
      */
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Employee e SET e.deleted=true WHERE e.id in :ids")
     void removeAll(@Param("ids") List<Integer> ids);
@@ -82,7 +82,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> , J
      *
      * @param ids the list of employee IDs to restore
      */
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Employee e SET e.deleted=false WHERE e.id in :ids")
     void restoreAll(@Param("ids") List<Integer> ids);

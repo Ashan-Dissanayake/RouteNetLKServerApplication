@@ -30,7 +30,7 @@ class VehicleRepositoryTest extends BaseTestContainer {
     void existsByNumber_shouldReturnTrue_whenVehicleNumberExists() {
 
         boolean result =
-                vehicleRepository.existsByNumber("PRT9001");
+                vehicleRepository.existsByNumber("VRT9001");
 
         assertThat(result).isTrue();
     }
@@ -52,7 +52,7 @@ class VehicleRepositoryTest extends BaseTestContainer {
 
         assertThat(vehicle).isNotNull();
         assertThat(vehicle.getId()).isEqualTo(9001);
-        assertThat(vehicle.getNumber()).isEqualTo("PRT9001");
+        assertThat(vehicle.getNumber()).isEqualTo("VRT9001");
     }
 
     @Test

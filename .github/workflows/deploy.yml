@@ -21,13 +21,13 @@ on:
 
 jobs:
   # ==========================================================
-  # STAGE 1: Unit Tests Only (No Docker/Testcontainers required)
+  # STAGE 1: Run All Tests (Unit & Integration Tests via Testcontainers)
   # Repository Integration Tests should be run locally with Docker Desktop
   # ==========================================================
   run-tests:
-    name: Run Unit Tests
+    name: Run All Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Code
@@ -43,8 +43,8 @@ jobs:
       - name: Grant Execute Permission for mvnw
         run: chmod +x mvnw
 
-      - name: Run Unit Tests (CI profile - excludes Testcontainer tests)
-        run: ./mvnw test -Pci
+      - name: Run Tests (Unit & Integration Tests)
+        run: ./mvnw test
         env:
           SPRING_PROFILES_ACTIVE: test
 
