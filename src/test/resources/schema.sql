@@ -951,3 +951,20 @@ CREATE TABLE `vehicleservicepart` (
                                       CONSTRAINT `fk_vehicleservice_has_part_part1` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`),
                                       CONSTRAINT `fk_vehicleservice_has_part_vehicleservice1` FOREIGN KEY (`vehicleservice_id`) REFERENCES `vehicleservice` (`id`)
 );
+
+CREATE TABLE `auditlog` (
+                            `id` int NOT NULL AUTO_INCREMENT,
+                            `username` varchar(45) DEFAULT NULL,
+                            `action` varchar(45) DEFAULT NULL,
+                            `resourcetype` varchar(45) DEFAULT NULL,
+                            `resourceid` varchar(45) DEFAULT NULL,
+                            `description` varchar(45) DEFAULT NULL,
+                            `httpmethod` varchar(45) DEFAULT NULL,
+                            `ipaddress` varchar(45) DEFAULT NULL,
+                            `requesturi` varchar(45) DEFAULT NULL,
+                            `success` bit(1) DEFAULT NULL,
+                            `created_at` datetime DEFAULT NULL,
+                            PRIMARY KEY (`id`)
+);
+
+

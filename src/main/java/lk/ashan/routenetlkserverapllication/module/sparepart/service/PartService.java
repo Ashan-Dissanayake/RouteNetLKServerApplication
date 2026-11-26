@@ -18,6 +18,10 @@ import lk.ashan.routenetlkserverapllication.module.sparepart.repository.PartStat
 import lk.ashan.routenetlkserverapllication.module.sparepart.validation.PartValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,8 @@ public class PartService {
     private final BranchService branchService;
     private final PartMapper partMapper;
     private final PartValidator partValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
     private final PartStatusRepository partStatusRepository;
 
 
@@ -119,6 +125,16 @@ public class PartService {
 
         Part saved = partRepository.save(part);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Part",
+                saved.getId().toString(),
+                "Created new part: " + saved.getPartmaster().getName() + " in branch: " + saved.getBranch().getName(),
+                this.request,
+                true
+        );
+
         return partMapper.toDto(saved);
     }
 
@@ -167,6 +183,17 @@ public class PartService {
         }
 
         Part saved = partRepository.save(existingPart);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Part",
+                saved.getId().toString(),
+                "Updated part: " + saved.getPartmaster().getName() + " in branch: " + saved.getBranch().getName(),
+                this.request,
+                true
+        );
+
         return partMapper.toDto(saved);
     }
 
@@ -210,6 +237,19 @@ public class PartService {
         parts.forEach(part -> part.setDeleted(true));
 
         partRepository.saveAll(parts);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        for (Part part : parts) {
+            auditLogService.logDataEvent(
+                    username,
+                    AuditAction.DELETE,
+                    "Part",
+                    part.getId().toString(),
+                    "Deactivated part: " + part.getPartmaster().getName() + " in branch: " + part.getBranch().getName(),
+                    this.request,
+                    true
+            );
+        }
 
         return parts.stream()
                 .map(Part::getId)

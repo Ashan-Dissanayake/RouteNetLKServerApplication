@@ -17,6 +17,10 @@ import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -43,6 +47,8 @@ public class EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final NumberGeneratorService numberGeneratorService;
     private final EmployeeValidator employeeValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
 
     /**
@@ -189,6 +195,16 @@ public class EmployeeService {
 
         Employee saved = employeeRepository.save(employee);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Employee",
+                saved.getId().toString(),
+                "Created new employee: " + saved.getNumber() + " - " + saved.getCallingname(),
+                this.request,
+                true
+        );
+
         return employeeMapper.toDto(saved);
     }
 
@@ -259,6 +275,16 @@ public class EmployeeService {
 
         Employee updated = employeeRepository.save(entity);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Employee",
+                updated.getId().toString(),
+                "Updated employee: " + updated.getNumber() + " - " + updated.getCallingname(),
+                this.request,
+                true
+        );
+
         return employeeMapper.toDto(updated);
     }
 
@@ -283,6 +309,19 @@ public class EmployeeService {
             driver.setCrewstatus(new CrewStatus(4, "Inactive"));
         }
         driverRepository.saveAll(drivers);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        for (Employee employee : employees) {
+            auditLogService.logDataEvent(
+                    username,
+                    AuditAction.DELETE,
+                    "Employee",
+                    employee.getId().toString(),
+                    "Deactivated employee: " + employee.getNumber() + " - " + employee.getCallingname(),
+                    this.request,
+                    true
+            );
+        }
 
         return employees.stream().map(Employee::getId).collect(Collectors.toList());
     }

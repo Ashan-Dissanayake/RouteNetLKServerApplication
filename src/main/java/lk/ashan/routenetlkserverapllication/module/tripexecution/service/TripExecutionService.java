@@ -24,6 +24,10 @@ import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +60,8 @@ public class TripExecutionService {
     private final TripExecutionMapper tripExecutionMapper;
 
     private final TripExecutionValidator tripExecutionValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     @Qualifier("tripExecutionSolver")
     private final SolverManager<TripExecutionSolution, Integer> tripExecutionSolverManager;
@@ -169,6 +175,20 @@ public class TripExecutionService {
         // 7. Batch save for performance
         if (!newExecutions.isEmpty()) {
            List<TripExecution> savedTripExecutions = tripExecutionRepository.saveAll(newExecutions);
+
+           String username = SecurityContextHolder.getContext().getAuthentication().getName();
+           for (TripExecution te : savedTripExecutions) {
+               auditLogService.logDataEvent(
+                       username,
+                       AuditAction.CREATE,
+                       "TripExecution",
+                       te.getId().toString(),
+                       "Initialized trip execution for trip: " + te.getTrip().getId() + " on date: " + te.getDoservice(),
+                       httpServletRequest,
+                       true
+               );
+           }
+
            return tripExecutionMapper.toDtoList(savedTripExecutions);
         }
 
@@ -272,6 +292,16 @@ public class TripExecutionService {
             }
 
             tripExecutionRepository.save(entity);
+
+            auditLogService.logDataEvent(
+                    "system-planner",
+                    AuditAction.UPDATE,
+                    "TripExecution",
+                    entity.getId().toString(),
+                    "Auto-assigned resources to trip execution",
+                    null,
+                    true
+            );
         }
         log.info("Successfully saved solver assignments for {} trips.", finalSolution.getTripExecutionList().size());
     }
@@ -433,12 +463,24 @@ public class TripExecutionService {
     }
 
     private void changeStatus(TripExecution tripExecution, TripExecutionStatus targetStatus) {
+        TripExecutionStatus currentStatus = tripExecution.getTripexecutionstatus();
+
         tripExecutionValidator.validateStatusTransition(
-                tripExecution.getTripexecutionstatus(),
+                currentStatus,
                 targetStatus
         );
 
         tripExecution.setTripexecutionstatus(targetStatus);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "TripExecution",
+                tripExecution.getId().toString(),
+                "Changed trip execution status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
+        );
     }
 
 }

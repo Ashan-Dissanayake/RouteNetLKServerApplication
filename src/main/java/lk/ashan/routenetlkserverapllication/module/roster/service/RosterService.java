@@ -7,6 +7,10 @@ import lk.ashan.routenetlkserverapllication.module.roster.model.entity.Roster;
 import lk.ashan.routenetlkserverapllication.module.roster.repository.RosterRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,8 @@ public class RosterService{
     private final TripRepository tripRepository;
     private final RosterMapper rosterMapper;
     private final RosterShiftAutomationService rosterShiftAutomationService;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
 
     /**
@@ -80,6 +86,16 @@ public class RosterService{
 
         // 4. Populate and Save everything at once
         rosterShiftAutomationService.generateWeeklyRosterSlots(roster);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Roster",
+                roster.getId() != null ? roster.getId().toString() : "N/A",
+                "Created weekly roster for branch ID: " + roster.getBranch().getId() + " from " + roster.getDostartofweek() + " to " + roster.getDoendofweek(),
+                httpServletRequest,
+                true
+        );
 
         // 5. Return the DTO
         return rosterMapper.toSummaryDto(roster);

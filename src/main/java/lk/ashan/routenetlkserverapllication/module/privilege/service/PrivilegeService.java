@@ -17,6 +17,10 @@ import lk.ashan.routenetlkserverapllication.module.user.repository.RoleRepositor
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,8 @@ public class PrivilegeService {
     private final RoleRepository roleRepository;
     private final PrivilegeValidator privilegeValidator;
     private final PrivilegeMapper privilegeMapper;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     @Transactional(readOnly = true)
     public List<PrivilegeResponseDto> getPrivileges() {
@@ -120,6 +126,19 @@ public class PrivilegeService {
         }
 
         privilegeRepository.saveAll(privileges);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        for (Privilege p : privileges) {
+            auditLogService.logDataEvent(
+                    username,
+                    AuditAction.CREATE,
+                    "Privilege",
+                    p.getId() != null ? p.getId().toString() : "N/A",
+                    "Assigned privilege: " + p.getAuthority() + " to role ID: " + roleId,
+                    httpServletRequest,
+                    true
+            );
+        }
     }
 
     private String generateAuthority(Module module, Operation operation) {
@@ -154,5 +173,15 @@ public class PrivilegeService {
 
         // Remove privilege mapping
         privilegeRepository.deleteByRoleIdAndId(roleId, privilegeId);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.DELETE,
+                "Privilege",
+                privilegeId.toString(),
+                "Removed privilege ID: " + privilegeId + " from role ID: " + roleId,
+                httpServletRequest,
+                true
+        );
     }
 }

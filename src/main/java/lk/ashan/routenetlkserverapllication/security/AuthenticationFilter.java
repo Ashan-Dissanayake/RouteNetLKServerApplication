@@ -10,6 +10,8 @@ import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APISuccessResponse;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AuditLogService auditLogService;
 
     @Override
     public Authentication attemptAuthentication(
@@ -85,6 +88,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         // Log success
         log.info("Login successful for: {}", userDetails.getUsername());
 
+        // Record audit event (async — does not block the response)
+        auditLogService.logSecurityEvent(
+                userDetails.getUsername(),
+                AuditAction.LOGIN_SUCCESS,
+                "User logged in successfully",
+                request,
+                true
+        );
+
         // Prepare response data
         Map<String, Object> responseData = Map.of(
                 "username", userDetails.getUsername(),
@@ -122,11 +134,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     ) throws IOException, ServletException {
 
         // Log the failure
-        log.info("Authentication failed: {}", failed.getMessage());
+        log.warn("Authentication failed: {}", failed.getMessage());
 
         // Determine the appropriate ErrorCode based on exception type
         ErrorCode errorCode;
         List<String> details = new ArrayList<>();
+        String auditAction = AuditAction.LOGIN_FAILURE;
 
         if (failed instanceof BadCredentialsException) {
             errorCode = ErrorCode.VALIDATION_FAILED;
@@ -136,6 +149,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             errorCode = ErrorCode.BUSINESS_RULE_VIOLATION;
             details.add("Account is locked");
             details.add(failed.getMessage());
+            auditAction = AuditAction.ACCOUNT_LOCKED;
         } else if (failed instanceof UsernameNotFoundException) {
             errorCode = ErrorCode.RESOURCE_NOT_FOUND;
             details.add("User not found");
@@ -144,11 +158,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             errorCode = ErrorCode.BUSINESS_RULE_VIOLATION;
             details.add("Account is disabled");
             details.add(failed.getMessage());
+            auditAction = AuditAction.ACCOUNT_DISABLED;
         } else {
             errorCode = ErrorCode.INTERNAL_ERROR;
             details.add("Authentication failed");
             details.add(failed.getMessage());
         }
+
+        // Record audit event (async — does not block the response)
+        auditLogService.logSecurityEvent(
+                "anonymous",
+                auditAction,
+                "Authentication failed: " + failed.getMessage(),
+                request,
+                false
+        );
 
         // Build error response using your APIResponseBuilder
         ResponseEntity<APIErrorResponse> errorResponse =

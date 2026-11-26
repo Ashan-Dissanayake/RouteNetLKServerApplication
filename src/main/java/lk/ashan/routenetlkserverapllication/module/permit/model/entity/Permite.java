@@ -34,7 +34,7 @@ public class Permite extends BaseEntity {
     @Column(name = "id")
     private Integer id;
     @Basic
-    @Column(name = "number")
+    @Column(name = "number",columnDefinition = "CHAR(16)")
     private String number;
     @Basic
     @Column(name = "doissued")

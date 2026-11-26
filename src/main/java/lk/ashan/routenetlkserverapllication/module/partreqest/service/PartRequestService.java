@@ -20,6 +20,10 @@ import lk.ashan.routenetlkserverapllication.module.partreqest.validation.PartReq
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -49,6 +53,8 @@ public class PartRequestService {
     private final PartRequestItemMapper partRequestItemMapper;
     private final GrnPartRequestItemRepository grnPartRequestItemRepository;
     private final PartRequestValidator partRequestValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
 
     @Transactional(readOnly = true)
@@ -141,14 +147,17 @@ public class PartRequestService {
                 )
         );
 
-        if (request.getPartrequestitems() != null) {
-            request.getPartrequestitems()
-                    .forEach(item ->
-                            item.setPartrequest(request)
-                    );
-        }
-
         PartRequest saved = partRequestRepository.save(request);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "PartRequest",
+                saved.getId().toString(),
+                "Created new part request: " + saved.getNumber(),
+                httpServletRequest,
+                true
+        );
 
         return partRequestMapper.toDto(saved);
     }
@@ -183,6 +192,16 @@ public class PartRequestService {
                 });
 
         PartRequest saved = partRequestRepository.save(request);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "PartRequest",
+                saved.getId().toString(),
+                "Updated part request: " + saved.getNumber(),
+                httpServletRequest,
+                true
+        );
 
         return partRequestMapper.toDto(saved);
     }
@@ -282,6 +301,16 @@ public class PartRequestService {
         partRequestValidator.validateStatusTransition(currentStatus, targetStatus);
 
         request.setPartrequeststatus(targetStatus);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "PartRequest",
+                request.getId().toString(),
+                "Changed part request status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
+        );
     }
 
 }

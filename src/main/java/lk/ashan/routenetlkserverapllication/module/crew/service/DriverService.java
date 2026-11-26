@@ -14,6 +14,10 @@ import lk.ashan.routenetlkserverapllication.module.crew.repository.DriverReposit
 import lk.ashan.routenetlkserverapllication.module.crew.validation.DriverValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,8 @@ public class DriverService {
     private final LicenseCategoryService licenseCategoryService;
     private final DriverMapper driverMapper;
     private final DriverValidator driverValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
     /**
      * Retrieves all drivers.
@@ -123,8 +129,19 @@ public class DriverService {
         Driver driver = driverMapper.toEntity(dto);
         driver.setNumber(numberGeneratorService.nextDriverNumber());
 
-        return driverMapper.toDto(
-                driverRepository.save(driver));
+        Driver saved = driverRepository.save(driver);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Driver",
+                saved.getId().toString(),
+                "Created new driver: " + saved.getNumber(),
+                this.request,
+                true
+        );
+
+        return driverMapper.toDto(saved);
     }
 
     /**
@@ -170,7 +187,19 @@ public class DriverService {
             entity.setCrewstatus(status);
         }
 
-        return driverMapper.toDto(entity);
+        DriverDetailResponseDto updated = driverMapper.toDto(entity);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Driver",
+                entity.getId().toString(),
+                "Updated driver: " + entity.getNumber(),
+                this.request,
+                true
+        );
+
+        return updated;
     }
 
     @Transactional

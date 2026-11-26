@@ -10,6 +10,10 @@ import lk.ashan.routenetlkserverapllication.module.trip.model.entity.Tripstatus;
 import lk.ashan.routenetlkserverapllication.module.trip.repository.TripRepository;
 import lk.ashan.routenetlkserverapllication.module.trip.validation.TripValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +37,8 @@ public class TripService {
     private final TripStatusService tripStatusService;
     private final TripMapper tripMapper;
     private final TripValidator tripValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     /**
      * Retrieves all trips.
@@ -121,6 +127,16 @@ public class TripService {
         Trip savedTrip =
                 tripRepository.save(trip);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Trip",
+                savedTrip.getId().toString(),
+                "Created new trip in status: " + savedTrip.getTripstatus().getName(),
+                httpServletRequest,
+                true
+        );
+
         return tripMapper.toDto(savedTrip);
     }
 
@@ -187,11 +203,23 @@ public class TripService {
     }
 
     private void changeStatus(Trip trip, Tripstatus targetStatus) {
+        Tripstatus currentStatus = trip.getTripstatus();
+
         tripValidator.validateStatusTransition(
-                trip.getTripstatus(),
+                currentStatus,
                 targetStatus
         );
 
         trip.setTripstatus(targetStatus);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Trip",
+                trip.getId().toString(),
+                "Changed trip status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
+        );
     }
 }
