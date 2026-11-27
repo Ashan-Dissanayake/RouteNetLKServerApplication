@@ -15,6 +15,10 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.module.branch.mapper.BranchMapper;
 import lk.ashan.routenetlkserverapllication.module.branch.model.entity.Branch;
 import lk.ashan.routenetlkserverapllication.module.branch.repository.BranchRepository;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +44,8 @@ public class BranchService {
     private final RegionalOfficeService regionalOfficeService;
     private final BranchValidator branchValidator;
     private final BranchMapper branchMapper;
-
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
     /**
      * Retrieves all branches as detailed response DTOs.
@@ -164,6 +169,16 @@ public class BranchService {
 
         Branch saved = branchRepository.save(branch);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Branch",
+                saved.getId().toString(),
+                "Created new branch: " + saved.getName(),
+                this.request,
+                true
+        );
+
         return branchMapper.toDto(saved);
     }
 
@@ -229,6 +244,17 @@ public class BranchService {
         }
 
         BranchDetailResponseDto updated = branchMapper.toDto(existing);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Branch",
+                existing.getId().toString(),
+                "Updated branch: " + existing.getName(),
+                this.request,
+                true
+        );
+
         return updated;
     }
 
@@ -247,6 +273,19 @@ public class BranchService {
             throw new ResourceNotFoundException("No branches found for the given IDs");
 
         branchRepository.removeAll(branchIds);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        for (Branch branch : branches) {
+            auditLogService.logDataEvent(
+                    username,
+                    AuditAction.DELETE,
+                    "Branch",
+                    branch.getId().toString(),
+                    "Deactivated branch: " + branch.getName(),
+                    request,
+                    true
+            );
+        }
 
         return branches.stream().map(Branch::getId).collect(Collectors.toList());
     }

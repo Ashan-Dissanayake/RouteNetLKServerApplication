@@ -15,6 +15,10 @@ import lk.ashan.routenetlkserverapllication.module.incidentvehicleallocation.val
 import lk.ashan.routenetlkserverapllication.module.vehicle.model.entity.Vehicle;
 import lk.ashan.routenetlkserverapllication.module.vehicle.repository.VehicleRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -48,6 +52,8 @@ public class IncidentVehicleAllocationService {
 
     private final IncidentVehicleAllocationValidator
             incidentVehicleAllocationValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     @Transactional(readOnly = true)
     public List<IncidentVehicleAllocationDetailsResponseDto>
@@ -170,6 +176,16 @@ public class IncidentVehicleAllocationService {
                         allocation
                 );
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "IncidentVehicleAllocation",
+                saved.getId().toString(),
+                "Created incident vehicle allocation for Incident: " + saved.getIncident().getId() + " and Vehicle: " + saved.getVehicle().getNumber(),
+                httpServletRequest,
+                true
+        );
+
         return incidentVehicleAllocationMapper.toDto(
                 saved
         );
@@ -263,6 +279,16 @@ public class IncidentVehicleAllocationService {
 
         allocation.setIncidentvehicleallocationstatus(
                 targetStatus
+        );
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "IncidentVehicleAllocation",
+                allocation.getId().toString(),
+                "Changed incident vehicle allocation status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
         );
     }
 

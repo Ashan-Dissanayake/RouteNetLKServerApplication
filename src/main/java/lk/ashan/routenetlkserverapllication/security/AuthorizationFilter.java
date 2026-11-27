@@ -13,6 +13,8 @@ import jakarta.validation.constraints.NotNull;
 import lk.ashan.routenetlkserverapllication.shared.api.APIResponseBuilder;
 import lk.ashan.routenetlkserverapllication.shared.api.ErrorCode;
 import lk.ashan.routenetlkserverapllication.shared.api.dto.APIErrorResponse;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -56,17 +58,18 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userService;
+    private final AuditLogService auditLogService;
 
     /**
      * Filters incoming HTTP requests to validate JWT-based authorization.
-     * Extracts and validates the JWT from the `Authorization` header.
+     * Extracts and validates the JWT from the {@code Authorization} header.
      * If the JWT token is valid, it establishes the user's authentication in the security context.
      * If no valid token is found, it simply continues the filter chain without altering authentication.
      *
-     * @param request the HTTP request object containing client request information
+     * @param request  the HTTP request object containing client request information
      * @param response the HTTP response object for sending responses to the client
-     * @param chain the filter chain for processing the request
-     * @throws IOException in case of I/O errors during request processing
+     * @param chain    the filter chain for processing the request
+     * @throws IOException      in case of I/O errors during request processing
      * @throws ServletException in case of any servlet-related errors during request processing
      */
     @Override
@@ -102,7 +105,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
 
                     // Log successful token validation
-                    log.info("JWT token validated successfully for user: {}", username);
+                    log.debug("JWT token validated successfully for user: {}", username);
 
                     // Create authentication object
                     UsernamePasswordAuthenticationToken authentication =
@@ -126,55 +129,39 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
-            // JWT token has expired
-            handleAuthorizationError(
-                    request,
-                    response,
-                    ErrorCode.VALIDATION_FAILED,
-                    "JWT token has expired",
-                    e.getMessage()
-            );
+            log.warn("JWT token expired for request: {} {}", request.getMethod(), request.getRequestURI());
+            auditLogService.logSecurityEvent(
+                    "anonymous", AuditAction.TOKEN_EXPIRED,
+                    "JWT token expired: " + request.getRequestURI(), request, false);
+            handleAuthorizationError(request, response, ErrorCode.VALIDATION_FAILED,
+                    "JWT token has expired", e.getMessage());
 
         } catch (MalformedJwtException e) {
-            // JWT token is malformed
-            handleAuthorizationError(
-                    request,
-                    response,
-                    ErrorCode.VALIDATION_FAILED,
-                    "Invalid JWT token format",
-                    e.getMessage()
-            );
+            log.warn("Malformed JWT token for request: {} {}", request.getMethod(), request.getRequestURI());
+            auditLogService.logSecurityEvent(
+                    "anonymous", AuditAction.TOKEN_INVALID,
+                    "Malformed JWT token: " + request.getRequestURI(), request, false);
+            handleAuthorizationError(request, response, ErrorCode.VALIDATION_FAILED,
+                    "Invalid JWT token format", e.getMessage());
 
         } catch (SignatureException e) {
-            // JWT signature validation failed
-            handleAuthorizationError(
-                    request,
-                    response,
-                    ErrorCode.VALIDATION_FAILED,
-                    "JWT signature validation failed",
-                    e.getMessage()
-            );
+            log.warn("JWT signature validation failed for request: {} {}", request.getMethod(), request.getRequestURI());
+            auditLogService.logSecurityEvent(
+                    "anonymous", AuditAction.TOKEN_INVALID,
+                    "JWT signature invalid: " + request.getRequestURI(), request, false);
+            handleAuthorizationError(request, response, ErrorCode.VALIDATION_FAILED,
+                    "JWT signature validation failed", e.getMessage());
 
         } catch (UsernameNotFoundException e) {
-            // User not found in database
-            handleAuthorizationError(
-                    request,
-                    response,
-                    ErrorCode.RESOURCE_NOT_FOUND,
-                    "User not found",
-                    e.getMessage()
-            );
+            log.warn("User not found during JWT validation: {}", e.getMessage());
+            handleAuthorizationError(request, response, ErrorCode.RESOURCE_NOT_FOUND,
+                    "User not found", e.getMessage());
 
         } catch (Exception e) {
-            // Any other error
-            System.err.println("JWT validation error: " + e.getMessage());
-            handleAuthorizationError(
-                    request,
-                    response,
-                    ErrorCode.INTERNAL_ERROR,
-                    "Error processing JWT token",
-                    e.getMessage()
-            );
+            log.error("Unexpected error during JWT validation for request: {} {} | error: {}",
+                    request.getMethod(), request.getRequestURI(), e.getMessage(), e);
+            handleAuthorizationError(request, response, ErrorCode.INTERNAL_ERROR,
+                    "Error processing JWT token", e.getMessage());
         }
     }
 
@@ -182,11 +169,11 @@ public class AuthorizationFilter extends OncePerRequestFilter {
      * Handles authorization errors by sending a properly formatted error response
      * using the APIResponseBuilder.
      *
-     * @param request the HTTP request
-     * @param response the HTTP response
-     * @param errorCode the error code to use
+     * @param request        the HTTP request
+     * @param response       the HTTP response
+     * @param errorCode      the error code to use
      * @param primaryMessage the primary error message
-     * @param detailMessage additional detail message
+     * @param detailMessage  additional detail message
      * @throws IOException if writing response fails
      */
     private void handleAuthorizationError(

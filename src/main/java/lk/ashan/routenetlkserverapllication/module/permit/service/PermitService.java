@@ -21,6 +21,10 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceExistsExcep
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,8 @@ public class PermitService {
     private final PermitStatusRepository permitStatusRepository;
     private final PermitMapper permitMapper;
     private final PermitValidator permitValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     @Transactional(readOnly = true)
     public List<PermitDetailResponseDto> getPermits() {
@@ -190,6 +196,16 @@ public class PermitService {
         Permite saved =
                 permitRepository.save(permite);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Permit",
+                saved.getId().toString(),
+                "Created new permit: " + saved.getNumber(),
+                httpServletRequest,
+                true
+        );
+
         return permitMapper.toDto(saved);
     }
 
@@ -232,13 +248,25 @@ public class PermitService {
             PermiteStatus targetStatus
     ) {
 
+        PermiteStatus currentStatus = permite.getPermitestatus();
+
         permitValidator.validateStatusTransition(
-                permite.getPermitestatus(),
+                currentStatus,
                 targetStatus
         );
 
         permite.setPermitestatus(
                 targetStatus
+        );
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Permit",
+                permite.getId().toString(),
+                "Changed permit status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
         );
     }
 }

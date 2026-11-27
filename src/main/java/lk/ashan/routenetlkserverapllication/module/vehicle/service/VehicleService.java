@@ -15,6 +15,10 @@ import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundExc
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableUserFilter;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableSoftDeleteFilter;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,8 @@ public class VehicleService {
     private final ModelService modelService;
     private final VehicleMapper vehicleMapper;
     private final VehicleValidator vehicleValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
 
     @Transactional(readOnly = true)
@@ -120,6 +126,16 @@ public class VehicleService {
 
         Vehicle savedVehicle = vehicleRepository.save(entity);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Vehicle",
+                savedVehicle.getId().toString(),
+                "Created new vehicle: " + savedVehicle.getNumber(),
+                httpServletRequest,
+                true
+        );
+
         return vehicleMapper.toDto(savedVehicle);
     }
 
@@ -168,6 +184,17 @@ public class VehicleService {
         }
 
         Vehicle updated = vehicleRepository.save(existingVehicle);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Vehicle",
+                updated.getId().toString(),
+                "Updated vehicle: " + updated.getNumber(),
+                httpServletRequest,
+                true
+        );
+
         return vehicleMapper.toDto(updated);
     }
 
@@ -180,16 +207,41 @@ public class VehicleService {
 
         vehicleRepository.removeAll(vehicleIds);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        for (Vehicle vehicle : vehicles) {
+            auditLogService.logDataEvent(
+                    username,
+                    AuditAction.DELETE,
+                    "Vehicle",
+                    vehicle.getId().toString(),
+                    "Deactivated vehicle: " + vehicle.getNumber(),
+                    httpServletRequest,
+                    true
+            );
+        }
+
         return vehicles.stream() .map(Vehicle::getId) .collect(Collectors.toList());
     }
 
     private void changeStatus(Vehicle vehicle, VehicleStatus targetStatus) {
+        VehicleStatus currentStatus = vehicle.getVehiclestatus();
+
         vehicleValidator.validateStatusTransition(
-                vehicle.getVehiclestatus(),
+                currentStatus,
                 targetStatus
         );
 
         vehicle.setVehiclestatus(targetStatus);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Vehicle",
+                vehicle.getId().toString(),
+                "Changed vehicle status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
+        );
     }
 
 }

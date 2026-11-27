@@ -15,6 +15,10 @@ import lk.ashan.routenetlkserverapllication.module.tripexecution.model.entity.Tr
 import lk.ashan.routenetlkserverapllication.module.tripexecution.repository.TripExecutionRepository;
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,8 @@ public class IncidentService {
     private final IncidentStatusService incidentStatusService;
     private final IncidentMapper incidentMapper;
     private final IncidentValidator incidentValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
     /**
      * Retrieves all incidents.
@@ -197,6 +203,16 @@ public class IncidentService {
 
         Incident saved =
                 incidentRepository.save(incident);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Incident",
+                saved.getId().toString(),
+                "Created new incident: " + saved.getIncidenttype().getName() + " for Trip: " + saved.getTripexecution().getId(),
+                this.request,
+                true
+        );
 
         return incidentMapper.toDto(saved);
     }
@@ -383,6 +399,16 @@ public class IncidentService {
 
         incident.setIncidentstatus(
                 targetStatus
+        );
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Incident",
+                incident.getId().toString(),
+                "Changed incident status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                this.request,
+                true
         );
     }
 

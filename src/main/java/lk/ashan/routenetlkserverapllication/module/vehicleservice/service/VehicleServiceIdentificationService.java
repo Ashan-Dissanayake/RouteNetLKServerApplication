@@ -20,6 +20,10 @@ import lk.ashan.routenetlkserverapllication.module.vehicleservice.validation.Veh
 import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolationException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -44,6 +48,8 @@ public class VehicleServiceIdentificationService {
     private final EmployeeService employeeService;
     private final VehicleServiceExecutionRepository vehicleServiceExecutionRepository;
     private final VehicleServiceValidator vehicleServiceValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
     @Transactional(readOnly = true)
     public List<VehicleServiceDetailResponseDto> getVehicleServices() {
@@ -126,6 +132,16 @@ public class VehicleServiceIdentificationService {
 
         VehicleService savedService = vehicleServiceRepository.save(service);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "VehicleService",
+                savedService.getId().toString(),
+                "Created new vehicle service: " + savedService.getNumber(),
+                httpServletRequest,
+                true
+        );
+
         return vehicleServiceMapper.toDto(savedService);
     }
 
@@ -195,8 +211,24 @@ public class VehicleServiceIdentificationService {
     }
 
     private void changeStatus(VehicleService service, VehicleServiceStatus targetStatus) {
-        vehicleServiceValidator.validateStatusTransition(service.getVehicleservicestatus(), targetStatus);
+        VehicleServiceStatus currentStatus = service.getVehicleservicestatus();
+
+        vehicleServiceValidator.validateStatusTransition(
+                currentStatus,
+                targetStatus
+        );
+
         service.setVehicleservicestatus(targetStatus);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "VehicleService",
+                service.getId().toString(),
+                "Changed vehicle service status from " + currentStatus.getName() + " to " + targetStatus.getName(),
+                httpServletRequest,
+                true
+        );
     }
 
     private VehicleService getById(Integer id) {

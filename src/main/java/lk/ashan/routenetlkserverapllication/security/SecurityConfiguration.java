@@ -1,6 +1,7 @@
 package lk.ashan.routenetlkserverapllication.security;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +59,6 @@ public class SecurityConfiguration {
 
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-
     /**
      * Provides user details service for authentication and authorization purposes within the security configuration.
      * It interacts with the user details system to load user-specific data.
@@ -70,7 +70,7 @@ public class SecurityConfiguration {
     private final MyUserDetailsService userDetailsService;
     /**
      * A utility instance of the {@code JwtTokenUtil} class that handles the generation,
-     * validation, and extraction of information from JSON Web Tokens (JWT).
+     * validation, and extraction of information from JSON Web Tokens (JWT).\
      * This is used to manage authentication tokens within the application and
      * encapsulates the logic for token operations.
      */
@@ -94,6 +94,12 @@ public class SecurityConfiguration {
      * after it has been initialized.
      */
     private final PasswordEncoder passwordEncoder;
+
+    /**
+     * Service for recording security and business audit events.
+     * Injected into authentication/authorization filters.
+     */
+    private final AuditLogService auditLogService;
 
     /**
      * Configuration property that specifies the allowed origins for Cross-Origin Resource Sharing (CORS).
@@ -135,9 +141,9 @@ public class SecurityConfiguration {
      * This method defines various security settings such as CORS, CSRF, request authorization,
      * session management, and custom authentication and authorization filters.
      *
-     * @param http the {@link HttpSecurity} object used to configure web-based security
+     * @param http                  the {@link HttpSecurity} object used to configure web-based security
      * @param authenticationManager the {@link AuthenticationManager} responsible for processing
-     *                               authentication requests
+     *                              authentication requests
      * @return a {@link SecurityFilterChain} instance representing the configured security filter chain
      * @throws Exception if an error occurs while building the security filter chain
      */
@@ -164,11 +170,11 @@ public class SecurityConfiguration {
                 )
                 .logout(LogoutConfigurer::permitAll)
                 .addFilterBefore(
-                        new AuthenticationFilter(authenticationManager, jwtTokenUtil),
+                        new AuthenticationFilter(authenticationManager, jwtTokenUtil, auditLogService),
                         UsernamePasswordAuthenticationFilter.class
                 )// JWT Filter
                 .addFilterAfter(
-                        new AuthorizationFilter(jwtTokenUtil, userDetailsService),
+                        new AuthorizationFilter(jwtTokenUtil, userDetailsService, auditLogService),
                         AuthenticationFilter.class
                 )  // Authorization Filter for JWT
                 .sessionManagement(sess ->

@@ -10,6 +10,10 @@ import lk.ashan.routenetlkserverapllication.module.user.repository.UserRepositor
 import lk.ashan.routenetlkserverapllication.module.user.repository.UserStatusRepository;
 import lk.ashan.routenetlkserverapllication.module.user.validation.UserValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +36,8 @@ public class UserService {
     private final UserStatusRepository userStatusRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest httpServletRequest;
 
 
     @Transactional(readOnly = true)
@@ -114,6 +120,16 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "User",
+                savedUser.getId().toString(),
+                "Created new user: " + savedUser.getUsername(),
+                httpServletRequest,
+                true
+        );
+
         return userMapper.toDto(savedUser);
     }
 
@@ -140,7 +156,19 @@ public class UserService {
                 "userstatus"
         );
 
-        return userMapper.toDto(userRepository.save(existingUser));
+        User saved = userRepository.save(existingUser);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "User",
+                saved.getId().toString(),
+                "Updated user details: " + saved.getUsername(),
+                httpServletRequest,
+                true
+        );
+
+        return userMapper.toDto(saved);
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
@@ -165,6 +193,16 @@ public class UserService {
         user.setAccountlocked(lockAccount);
 
         userRepository.save(user);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "User",
+                user.getId().toString(),
+                (lockAccount ? "Locked" : "Unlocked") + " user account: " + user.getUsername(),
+                httpServletRequest,
+                true
+        );
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
@@ -178,6 +216,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "User",
+                user.getId().toString(),
+                "Changed password for user: " + user.getUsername(),
+                httpServletRequest,
+                true
+        );
     }
 
     @Transactional(rollbackFor = TransactionRolledbackException.class)
@@ -195,6 +243,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         userRepository.save(user);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "User",
+                user.getId().toString(),
+                "Reset password for user: " + user.getUsername(),
+                httpServletRequest,
+                true
+        );
     }
 
 }

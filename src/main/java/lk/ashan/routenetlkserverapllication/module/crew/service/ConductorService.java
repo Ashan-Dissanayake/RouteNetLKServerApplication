@@ -14,6 +14,10 @@ import lk.ashan.routenetlkserverapllication.module.crew.repository.ConductorRepo
 import lk.ashan.routenetlkserverapllication.module.crew.validation.ConductorValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.*;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lk.ashan.routenetlkserverapllication.shared.specification.CommonPredicates;
 import lk.ashan.routenetlkserverapllication.shared.transaction.DisableBranchFilter;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +44,8 @@ public class ConductorService {
     private final CrewStatusService crewStatusService;
     private final RouteFamiliarityLevelService routeFamiliarityLevelService;
     private final ConductorValidator conductorValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
 
     /**
@@ -136,6 +142,16 @@ public class ConductorService {
 
         Conductor saved = conductorRepository.save(entity);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "Conductor",
+                saved.getId().toString(),
+                "Created new conductor: " + saved.getNumber(),
+                this.request,
+                true
+        );
+
         return conductorMapper.toDto(saved);
     }
 
@@ -177,7 +193,19 @@ public class ConductorService {
             entity.setCrewstatus(status);
         }
 
-        return conductorMapper.toDto(entity);
+        ConductorDetailResponseDto updated = conductorMapper.toDto(entity);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "Conductor",
+                entity.getId().toString(),
+                "Updated conductor: " + entity.getNumber(),
+                this.request,
+                true
+        );
+
+        return updated;
     }
 
     @Transactional

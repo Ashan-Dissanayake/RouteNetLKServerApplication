@@ -1,514 +1,438 @@
-# RouteNetLK — Backend Application
+# RouteNetLK — Enterprise Transport Operations Backend
 
-A Spring Boot backend for public transport depot operations, covering fleet management, trip scheduling, crew rostering, vehicle servicing, inventory workflows, and operational reporting.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.3-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot 3.5.3" />
+  <img src="https://img.shields.io/badge/Spring%20Security-6-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Spring Security 6" />
+  <img src="https://img.shields.io/badge/Timefold%20Solver%20Optimization-007ACC?style=for-the-badge" alt="Timefold Solver" />
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL 8" />
+  <img src="https://img.shields.io/badge/Testcontainers-Integration%20Tests-1F88C0?style=for-the-badge&logo=testcontainers&logoColor=white" alt="Testcontainers" />
+  <img src="https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI/CD" />
+</p>
 
-RouteNetLK focuses on modular backend design, secure role-based access, branch-level data isolation, automated testing, and constraint-based optimization for transport operations.
+<p align="center">
+  A production-grade, modular backend application engineered for public transport depot management, automated crew rostering, fleet lifecycle tracking, and inventory operations. Built with <strong>Spring Boot 3.5</strong>, <strong>Timefold Solver (AI constraint satisfaction)</strong>, and <strong>MySQL 8</strong>.
+</p>
 
-**Backend:** Java 17 · Spring Boot 3.5.3 · MySQL 8
-
-**Related repositories:** [System Overview](https://github.com/Ashan-Dissanayake/RouteNetLK) · [Angular Client](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication)
+<p align="center">
+  <strong>System Ecosystem:</strong>
+  <a href="https://github.com/Ashan-Dissanayake/RouteNetLK">System Overview</a> •
+  <a href="https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication">Angular Frontend Client</a> •
+  <a href="#system-architecture--design">C4 Diagrams</a> •
+  <a href="#architectural-decision-records-adrs">Engineering ADRs</a>
+</p>
 
 ---
 
-## Table of Contents
+## 📌 Executive Summary
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Architecture](#architecture)
-- [Engineering Decisions (ADRs)](#engineering-decisions-adrs)
-- [Design Documentation](#design-documentation)
-- [Domain Modules](#domain-modules)
-- [Constraint-Based Optimization](#constraint-based-optimization)
-- [Security and Data Isolation](#security-and-data-isolation)
-- [API Design and Error Handling](#api-design-and-error-handling)
-- [Persistence and Event-Driven Workflows](#persistence-and-event-driven-workflows)
-- [Testing Strategy](#testing-strategy)
-- [Technology Stack](#technology-stack)
-- [Getting Started](#getting-started)
-- [Configuration](#configuration)
-- [Docker and CI/CD](#docker-and-cicd)
-- [Limitations and Future Improvements](#limitations-and-future-improvements)
-- [Related Repositories](#related-repositories)
-- [Author](#author)
+> **Why RouteNetLK stands out:** It addresses real-world industrial complexities in transportation logistics—handling multi-tenant data isolation, non-deterministic NP-hard resource allocation, high-security authentication filters, and robust domain event coordination.
 
-## Overview
-
-Public transport depot operations involve interconnected workflows such as vehicle allocation, crew scheduling, trip execution, maintenance, inventory management, and incident handling.
-
-RouteNetLK provides a backend foundation for managing these workflows through a modular application architecture. It combines conventional business processing with constraint-based optimization, role-based authorization, and branch-scoped data access.
-
-The application is designed to demonstrate practical backend engineering concepts, including domain separation, transaction management, validation, persistence, testing, and deployment automation.
-
-## Key Features
-
-- **Fleet Management:** Manage vehicles, servicing records, incidents, and vehicle allocations.
-- **Trip Management:** Support trip scheduling and execution workflows.
-- **Crew Rostering:** Model crew assignments while considering scheduling constraints.
-- **Constraint-Based Optimization:** Use Timefold Solver to represent and evaluate operational scheduling constraints.
-- **Inventory Management:** Support spare-part requisitions, goods receiving, and related workflows.
-- **Secure Authentication:** Stateless JWT-based authentication with role- and privilege-based authorization.
-- **Branch-Level Data Isolation:** Scope data access according to the user's branch and permissions.
-- **Consistent API Responses:** Standardized success and error response structures.
-- **Event-Driven Business Workflows:** Use Spring application events to coordinate selected operational updates.
-- **Automated Testing:** Combine unit, web-layer, database integration, and optimization constraint tests.
-- **Containerization and CI/CD:** Include Docker support and a GitHub Actions workflow.
-
-## Architecture
-
-RouteNetLK uses a modular, layered backend architecture. Domain modules organize related business capabilities, while layers separate request handling, business logic, persistence, and data representation.
-
-Detailed architecture diagrams are available in the [Design Documentation](#design-documentation) section.
-
-The application is organized as a modular backend rather than a collection of independently deployed microservices.
-
-
-### Layer Responsibilities
-
-| Layer | Responsibility |
+| Core Engineering Capability | Technical Implementation Highlights |
 |---|---|
-| Controller | Handle HTTP requests, request parameters, and API responses |
-| Service | Implement business rules, workflow coordination, and transaction boundaries |
-| Repository | Provide persistence operations using Spring Data JPA and Hibernate |
-| Entity | Represent persisted domain data |
-| DTO | Define request and response data structures |
-| Mapper | Convert between entities and DTOs using MapStruct |
-| Security | Authenticate requests and enforce authorization rules |
-| Shared Infrastructure | Provide reusable functionality such as validation, exceptions, auditing, and common utilities |
+| **Operations Research & Optimization** | Integrates **Timefold Solver 1.32.0** with **Interval Trees** to solve crew shift scheduling and conflict detection with **$\mathcal{O}(\log N)$** query complexity instead of $\mathcal{O}(N)$. |
+| **Multi-Tenant Branch Data Isolation** | Transparent branch scoping via dynamic **Hibernate Filters**, **Spring AOP aspects**, and custom **JPA Entity Listeners** (`@CurrentBranch`), preventing cross-depot data leakage without polluting business queries. |
+| **Enterprise Security & Brute-Force Defense** | Stateless **Spring Security 6 with JWT**, combined with Google Guava `LoadingCache` providing **dual-tier rate limiting** (username account locking + IP-based ban protection). |
+| **Architectural Rigor & Documentation** | Governed by **11 formal Architecture Decision Records (ADRs)** and comprehensive **C4 Model architecture diagrams** (Context, Container, Component, Low-Level Design). |
+| **Decoupled Event-Driven Domain Workflows** | Leverages in-process **Spring Application Events** for domain state propagation (permits, spare part requisitions, fare reconciliations, and audit logging). |
+| **Exhaustive Testing Pyramid** | Comprehensive coverage with **JUnit 5 / Mockito** (Unit), **MockMvc** (Web Layer), **Testcontainers** (MySQL Integration), and **Timefold ConstraintVerifier** (Constraint rules). |
 
-### Module Structure
+---
 
-Domain modules generally follow a consistent structure:
+## 📑 Table of Contents
 
-```text
-module/
-├── controller/
-├── mapper/
-├── model/
-│   ├── dto/
-│   └── entity/
-├── repository/
-└── service/
+- [Recruiter Executive Summary](#-recruiter--hiring-manager-executive-summary)
+- [System Architecture & Design](#-system-architecture--design)
+- [Architectural Decision Records (ADRs)](#-architectural-decision-records-adrs)
+- [Key Business Modules](#-key-business-modules)
+- [Deep Dive: Core Engineering Innovations](#-deep-dive-core-engineering-innovations)
+  - [1. Constraint-Based Crew Rostering (Timefold Solver)](#1-constraint-based-crew-rostering-timefold-solver)
+  - [2. Multi-Tenant Branch Isolation & Soft Deletes (AOP + Hibernate Filters)](#2-multi-tenant-branch-isolation--soft-deletes-aop--hibernate-filters)
+  - [3. Enterprise Security & Abuse Prevention](#3-enterprise-security--abuse-prevention)
+  - [4. Event-Driven Workflow Orchestration](#4-event-driven-workflow-orchestration)
+  - [5. API Design & Centralized Error Handling](#5-api-design--centralized-error-handling)
+- [Testing Strategy](#-testing-strategy)
+- [Technology Stack Matrix](#-technology-stack-matrix)
+- [Project Directory Structure](#-project-directory-structure)
+- [Getting Started & Local Setup](#-getting-started--local-setup)
+- [Docker & CI/CD Pipeline](#-docker--cicd-pipeline)
+- [Engineering Roadmap](#-engineering-roadmap)
+- [Author & Contact](#-author--contact)
+
+---
+
+## 🏛️ System Architecture & Design
+
+RouteNetLK is structured as a **clean, modular monolithic backend**, achieving strong domain boundary separation while eliminating the distributed system overhead of microservices for single-depot transactional integrity.
+
+### Container & Boundary Overview (C4 Level 2)
+
+```mermaid
+C4Container
+    title Container Architecture Diagram — RouteNetLK
+
+    Person(user, "Depot Manager / Operator / Admin", "Manages fleet, crew rosters, trips, and inventory")
+
+    System_Boundary(c1, "RouteNetLK Platform") {
+        Container(spa, "Single Page Application", "Angular 18, TypeScript, Tailwind CSS", "Provides administrative interface for depot dispatchers and managers")
+        Container(api, "Backend REST API", "Java 17, Spring Boot 3.5, Spring Security 6", "Implements business domains, Timefold scheduling engine, and branch isolation")
+        ContainerDb(db, "Relational Database", "MySQL 8", "Persists relational records, sequences, and transactional operational state")
+    }
+
+    System_Ext(smtp, "Notification Service", "External SMTP Server", "Dispatches operational notifications and user alerts")
+
+    Rel(user, spa, "Interacts with", "HTTPS")
+    Rel(spa, api, "Dispatches REST API Requests (Stateless JWT)", "JSON / HTTPS")
+    Rel(api, db, "Reads / Writes Entities & Sequences", "JDBC / JPA / Hibernate")
+    Rel(api, smtp, "Sends Automated Notifications", "SMTP / JavaMail")
 ```
 
-The exact structure may vary according to each module's requirements.
+### Detailed Design Documents
 
-This organization helps keep business logic separated from HTTP handling and persistence concerns while allowing related functionality to remain grouped by domain.
+For detailed diagrams and architectural specifications, explore the design documentation:
+- 📘 **[C4 Model Architecture Specifications (docs/diagrams/c4-model.md)](docs/diagrams/c4-model.md)**: Full breakdown of System Context (Level 1), Containers (Level 2), Component Architecture (Level 3), and Code Organization (Level 4).
+- 📗 **[Roster Module Low-Level Design (docs/diagrams/roster-lld.md)](docs/diagrams/roster-lld.md)**: Detailed entity-relationship class diagrams, sequence flows for automated shift generation, and Timefold score rule evaluation.
 
-## Domain Modules
+---
 
-The backend includes modules covering the following operational areas.
+## 📑 Architectural Decision Records (ADRs)
 
-| Module | Responsibility |
-|---|---|
-| Branch | Depot and branch management |
-| Crew | Crew-related operations |
-| Employee | Employee information and management |
-| Fare Collection | Fare collection and reconciliation workflows |
-| GRN | Goods receiving |
-| Incident | Incident management |
-| Incident Vehicle Allocation | Vehicle allocation for incidents |
-| Part Request | Spare-part requisition workflows |
-| Permit | Permit processing and management |
-| Privilege | Permission management |
-| Roster | Crew rostering |
-| Spare Part | Spare-part management |
-| Trip | Trip management and scheduling |
-| Trip Execution | Operational trip execution |
-| User | User account management |
-| Vehicle | Fleet and vehicle management |
-| Vehicle Service | Vehicle servicing records |
+Every major architectural trade-off and framework choice is formally documented following the ADR pattern. Review each decision below:
 
-Additional components cover dashboards, reports, security, and shared infrastructure.
+| ADR ID | Decision Title | Focus Area | Architectural Rationale & Link |
+|---|---|---|---|
+| **0001** | **[Technologies and Frameworks](docs/adr/0001-technologies-and-frameworks.md)** | Core Stack | Selection of Java 17 LTS, Spring Boot 3.5, MySQL 8, and Timefold Solver for long-term support and type safety. |
+| **0002** | **[Overall Architecture & Organization](docs/adr/0002-overall-architecture-organization.md)** | System Design | Adoption of a modular layered architecture to preserve high cohesion and clean domain boundaries. |
+| **0003** | **[Development Standards & Code Quality](docs/adr/0003-development-standards-and-code-quality.md)** | Code Quality | Separation of concerns using DTOs, MapStruct compile-time mappers, and Lombok boilerplate reduction. |
+| **0004** | **[Data Management & Persistence](docs/adr/0004-data-management-and-persistence.md)** | Persistence | Hibernate filters, soft delete aspects, JPA Auditing, and automated `@CurrentBranch` context injection. |
+| **0005** | **[Security and Identity](docs/adr/0005-security-and-identity.md)** | Auth & Security | Stateless JWT authentication, granular `module-operation` privileges, and dual-layer Guava cache brute-force defense. |
+| **0006** | **[Integration & Communication](docs/adr/0006-integration-and-communication.md)** | API & Events | Unified response wrapper format, RFC-compliant error mapping, and asynchronous email notification services. |
+| **0007** | **[Performance and Scalability](docs/adr/0007-performance-and-scalability.md)** | Optimization | Interval Tree $\mathcal{O}(\log N)$ conflict detection, Timefold meta-heuristics, and JVM memory tuning. |
+| **0008** | **[Reliability & Resilience](docs/adr/0008-reliability-and-resilience.md)** | Transactions | Declarative Spring `@Transactional` boundaries, optimistic locking, and strict state machine transitions. |
+| **0009** | **[Observability and Monitoring](docs/adr/0009-observability-and-monitoring.md)** | Observability | Structured SLF4J logging, correlation IDs, and Spring Boot Actuator health and metric endpoints. |
+| **0010** | **[Infrastructure and Deployment](docs/adr/0010-infrastructure-and-deployment.md)** | DevOps | Multi-stage Docker containerization and automated GitHub Actions build/deployment pipelines. |
+| **0011** | **[Test Implementation Strategy](docs/adr/0011-test-implementation-strategy.md)** | Testing | Isolated Testcontainers MySQL suite, `@WebMvcTest` controller validation, and constraint verifiers. |
+| **0012** | **[Vulnerability Management & Security Hardening](docs/adr/0012-vulnerability-management-and-security-hardening.md)** | DevSecOps & SCA | OWASP Dependency-Check SCA scanning, VEX triage suppressions, and MVC binding/JPA sort compensating controls. |
 
-### Business Workflows
+---
 
-The application supports workflows including:
+## 📦 Key Business Modules
 
-- Vehicle lifecycle and servicing management.
-- Route permit processing.
-- Trip scheduling and execution.
-- Crew assignment and rostering.
-- Incident handling and emergency vehicle allocation.
-- Spare-part requisition and issuance.
-- Goods receiving.
-- Fare reconciliation.
+The backend contains 16 decoupled domain modules encapsulating end-to-end transport depot workflows:
 
-Business rules and state transitions are handled through the service layer rather than being left entirely to controllers.
+```
+src/main/java/lk/ashan/routenetlkserverapllication/module/
+ ├── branch/                    # Depot & regional branch operations
+ ├── crew/                      # Crew assignments & qualification records
+ ├── employee/                  # HR records, employee designations, and licensing
+ ├── farecollection/            # Daily fare revenue logging and cash reconciliation
+ ├── grn/                       # Goods Received Notes for inventory stock updates
+ ├── incident/                  # Road accidents, breakdowns, and vehicle defect reports
+ ├── incidentvehicleallocation/ # Rapid emergency vehicle dispatch for disrupted trips
+ ├── partrequest/               # Spare-part requisition & departmental approvals
+ ├── permit/                    # Route permits, validity checking, and inter-branch transfers
+ ├── privilege/                 # Granular RBAC permissions management
+ ├── roster/                    # Timefold-powered automated shift assignment & validation
+ ├── sparepart/                 # Warehouse inventory, reorder levels, and part catalog
+ ├── trip/                      # Timetables, scheduled journeys, and route definitions
+ ├── tripexecution/             # Real-time trip status tracking (Departed, En Route, Completed)
+ ├── user/                      # User authentication, credential policies, and status
+ └── vehicle/                   # Bus fleet registry, technical specs, and odometer records
+```
 
-## Constraint-Based Optimization
+---
 
-RouteNetLK integrates **Timefold Solver** to model scheduling and resource-allocation problems involving operational constraints.
+## 🔍 Deep Dive: Core Engineering Innovations
 
-Scheduling problems are not simply CRUD operations: a proposed assignment must satisfy compatibility requirements while balancing competing operational needs.
+### 1. Constraint-Based Crew Rostering (Timefold Solver)
+Managing public transport shifts involves balancing hard regulatory requirements with soft crew preferences—an NP-hard combinatorial problem.
 
-### Constraint Areas
+* **Hard Constraints (Must Satisfy):**
+  * Designation compatibility (Drivers assigned only to driving shifts; Conductors to ticketing).
+  * No overlapping shifts for the same crew member.
+  * Required staffing counts per route/shift strictly respected.
+* **Soft Constraints (Optimization Penalties):**
+  * Uniform workload and shift distribution across available personnel.
+  * Fair rest period distribution between consecutive working days.
+* **Conflict Detection Optimization:**
+  * Uses a custom **Interval Tree** algorithm reducing schedule collision checks from $\mathcal{O}(N)$ to **$\mathcal{O}(\log N)$**.
+* *Architecture Ref:* See [ADR 0007 (docs/adr/0007-performance-and-scalability.md)](docs/adr/0007-performance-and-scalability.md) and [Roster LLD (docs/diagrams/roster-lld.md)](docs/diagrams/roster-lld.md).
 
-The optimization logic considers requirements such as:
+---
 
-- Designation compatibility for crew assignments.
-- Prevention of overlapping shifts.
-- Driver and conductor requirements.
-- Workload distribution across crew members.
+### 2. Multi-Tenant Branch Isolation & Soft Deletes (AOP + Hibernate Filters)
+Public transport systems operate across distributed regional depots. A depot manager in Colombo must not view or mutate data belonging to Kandy, while Super Admins need complete cross-depot visibility.
 
-### Why Constraint-Based Optimization?
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as HTTP Client (JWT)
+    participant Sec as Security Context
+    participant AOP as BranchAndUserFilterAspect
+    participant Hib as Hibernate Session
+    participant DB as MySQL Database
 
-A conventional implementation based on fixed assignment rules can become difficult to maintain when multiple constraints interact. A constraint solver provides a structured way to evaluate candidate solutions against defined rules.
+    Client->>Sec: Request with Bearer JWT
+    Sec-->>AOP: Extract CustomUserPrincipal (branchId: 3, Roles)
+    AOP->>Hib: Enable "branchFilter" (branch_id = 3)
+    AOP->>Hib: Enable "softDeleteFilter" (deleted = false)
+    Note over Hib,DB: All queries automatically append branch & active flags
+    AOP->>DB: Execute SELECT / UPDATE query
+    DB-->>Client: Return isolated dataset
+```
 
-The intended optimization workflow is to represent the scheduling problem, evaluate candidate assignments against the constraints, and select a solution according to the implemented scoring rules.
+* **Zero Query Pollution:** Developers write clean JPA queries without manual `WHERE branch_id = :id` clauses.
+* **Dynamic AOP Bypass:** Special administrative routines use `@DisableBranchFilter` and `@DisableSoftDeleteFilter` for system-wide auditing and recovery.
+* *Architecture Ref:* See [ADR 0004 (docs/adr/0004-data-management-and-persistence.md)](docs/adr/0004-data-management-and-persistence.md).
 
-The actual planning entities, planning variables, hard and soft constraints, and score calculation should be documented alongside the corresponding solver implementation. No specific optimization improvement or performance figure is claimed here without benchmark evidence.
+---
 
-## Security and Data Isolation
+### 3. Enterprise Security & Abuse Prevention
+* **Stateless Token Pipeline:** Spring Security 6 filter chain with stateless JWT authentication (`io.jsonwebtoken`).
+* **Brute-Force & Denial-of-Service Defense:**
+  * **Account Protection:** Google Guava `LoadingCache` locks accounts for 5 seconds after 3 consecutive failed login attempts.
+  * **IP Quarantine:** Tracks failed requests per IP address, blocking offender IPs for 15 minutes after 5 failures.
+* **Granular Method Authorization:** Uses `@PreAuthorize("hasAuthority('...')")` enforcing explicit `module-operation` privileges (e.g., `vehicle-update`, `roster-generate`).
+* *Architecture Ref:* See [ADR 0005 (docs/adr/0005-security-and-identity.md)](docs/adr/0005-security-and-identity.md).
 
-Security is implemented using Spring Security and JWT-based authentication.
+---
 
-### Authentication
+### 4. Event-Driven Workflow Orchestration
+Critical operational updates trigger in-process Spring Application Events to decouple secondary actions (notifications, inventory balance adjustment, and audit logging):
 
-- Stateless JWT authentication.
-- Password hashing using BCrypt.
-- Custom authentication provider.
-- JWT request filter.
-- Custom authenticated principal.
-- Failed-login tracking and temporary account/IP lockout using a cache-based mechanism.
-- CORS and HTTP security-header configuration.
+* `PermitTransferredEvent`: Dispatches notification emails and updates depot route quotas.
+* `FareReconciledEvent`: Finalizes cash auditing and marks trip execution records as reconciled.
+* `PartRequestApprovedEvent`: Alerts warehouse officers and reserves parts in stock.
+* `PartReceivedEvent`: Automatically updates stock counts and generates Goods Received Notes (GRN).
+* *Architecture Ref:* See [ADR 0006 (docs/adr/0006-integration-and-communication.md)](docs/adr/0006-integration-and-communication.md).
 
-### Authorization
+---
 
-The application supports role- and privilege-based authorization.
+### 5. API Design & Centralized Error Handling
 
-Example roles:
+All REST endpoints return standardized JSON envelopes:
 
-- `ROLE_DEPOT_MANAGER`
-- `ROLE_INVENTORY_OFFICER`
-- `ROLE_SYSTEM_ADMIN`
-
-Example privileges:
-
-- `READ_VEHICLE`
-- `CREATE_TRIP`
-
-Authorization rules are used to control access to protected operations according to the authenticated user's permissions.
-
-### Branch-Level Data Isolation
-
-The application uses Hibernate filtering to support branch-scoped data access. Users with the required system-level privileges may access data beyond a single branch where the authorization rules permit it.
-
-Branch isolation must be enforced consistently across relevant data-access paths. Hibernate filters should not be treated as the sole security boundary; filter activation, query behavior, privileged access, and cross-branch access rules must be verified through testing.
-
-The application also supports soft deletion where applicable.
-
-## API Design and Error Handling
-
-The backend uses standardized success and error response structures to make API behavior more consistent for client applications.
-
-### Success Response
-
+#### Success Envelope
 ```json
 {
   "status": 200,
-  "message": "Request completed successfully",
-  "data": {},
-  "timestamp": "2026-01-01T10:00:00"
+  "message": "Trip created successfully",
+  "data": {
+    "id": 142,
+    "tripCode": "TRP-2026-0042",
+    "status": "SCHEDULED"
+  },
+  "timestamp": "2026-11-23T11:00:00"
 }
 ```
 
-The example illustrates the response structure; the actual timestamp format and field values depend on the implementation.
-
-### Error Response
-
-```json
-{
-  "status": 404,
-  "errorCode": "RESOURCE_NOT_FOUND",
-  "message": "The requested resource was not found",
-  "timestamp": "2026-01-01T10:00:00"
-}
-```
-
-### Exception Mapping
-
-The global exception-handling layer maps application and framework exceptions to consistent API error responses.
-
-| Exception | HTTP Status | Error Code |
-|---|---:|---|
-| `ResourceNotFoundException` | 404 | `RESOURCE_NOT_FOUND` |
-| `ResourceExistsException` | 409 | `RESOURCE_EXISTS` |
-| `BusinessRuleViolationException` | 422 | `RULE_VIOLATION` |
-| `InvalidStateTransitionException` | 400 | `INVALID_STATE_TRANSITION` |
-| `MethodArgumentNotValidException` | 400 | `VALIDATION_FAILED` |
-| `BadCredentialsException` | 401 | `AUTHENTICATION_FAILED` |
-| `LockedException` | 423 | `ACCOUNT_LOCKED` |
-
-Validation errors and business-rule failures are handled centrally to reduce duplicated error-handling logic across controllers.
-
-## Persistence and Event-Driven Workflows
-
-### Persistence
-
-The application uses Spring Data JPA, Hibernate, and MySQL for relational persistence.
-
-Persistence-related capabilities include:
-
-- Repository-based data access.
-- Transaction management for business operations.
-- Custom queries where required by domain workflows.
-- Branch-scoped data access.
-- Soft deletion.
-- JPA auditing.
-- Database-backed sequence records for generating reference numbers.
-
-Examples of business reference formats include:
-
-```text
-PRM-CLM-0001
-TRP-2026-0042
-```
-
-These examples illustrate the intended format; actual generation rules depend on the relevant sequence configuration and implementation.
-
-### Spring Application Events
-
-Selected workflows publish application events to coordinate related business operations.
-
-Examples include:
-
-- `PermitTransferredEvent`
-- `FareReconciledEvent`
-- `PartRequestApprovedEvent`
-- `PartReceivedEvent`
-
-These events can help separate the initiating business operation from related processing, such as notifications and operational updates.
-
-Spring application events are in-process events. They should not be assumed to provide durable delivery or automatic asynchronous execution unless additional mechanisms are configured.
-
-### Shared Infrastructure
-
-Reusable infrastructure includes:
-
-- JavaMailSender and Thymeleaf for email generation.
-- MapStruct for entity-to-DTO mapping.
-- Shared validation utilities for Sri Lankan telephone numbers, NICs, and vehicle registration numbers.
-- Database-backed reference-number generation.
-- Common exception-handling and validation components.
-
-## Testing Strategy
-
-The testing strategy combines isolated unit tests with web-layer, persistence, security, and optimization tests.
-
-| Testing Area | Tools | Purpose |
-|---|---|---|
-| Unit Testing | JUnit 5, Mockito | Verify service logic and business rules |
-| Web Layer | `@WebMvcTest`, MockMvc | Test HTTP responses, request validation, and controller behavior |
-| Security | Spring Security Test | Verify authentication and authorization behavior |
-| Database Integration | Testcontainers, MySQL | Validate persistence behavior and database-dependent queries |
-| Optimization | Timefold `ConstraintVerifier` | Test scheduling constraints independently |
-
-### Important Verification Areas
-
-For a backend with this feature set, the most valuable tests include:
-
-- Invalid requests return the expected validation response.
-- Authentication failures and unauthorized requests are handled correctly.
-- Users cannot access records outside their authorized branch scope.
-- Service-level state transitions reject invalid operations.
-- Database-dependent queries behave correctly against MySQL.
-- Timefold constraints produce the expected outcomes for representative scheduling scenarios.
-- Transactions preserve data consistency when a business operation fails.
-
-The tools listed above describe the testing approach. Actual test counts, coverage percentages, and CI results should be added only when measured from the project.
-
-### Run Tests
-
-```bash
-./mvnw test
-```
-
-On Windows PowerShell:
-
-```powershell
-.\mvnw.cmd test
-```
-
-If the Maven Wrapper is not included in the repository, use the installed Maven command instead:
-
-```bash
-mvn test
-```
-
-Testcontainers-based tests may require Docker to be installed and running.
-
-## Technology Stack
-
-| Category | Technologies |
-|---|---|
-| Language | Java 17 |
-| Backend Framework | Spring Boot 3.5.3 |
-| Security | Spring Security 6, JWT, BCrypt |
-| Database | MySQL 8 |
-| ORM and Persistence | Spring Data JPA, Hibernate |
-| Optimization | Timefold Solver 1.32.0 |
-| Object Mapping | MapStruct |
-| Utilities | Lombok, Guava |
-| Email and Templates | Spring Boot Mail, Thymeleaf |
-| Unit Testing | JUnit 5, Mockito |
-| Web Testing | MockMvc, Spring Security Test |
-| Integration Testing | Testcontainers |
-| Containerization | Docker |
-| CI/CD | GitHub Actions |
-
-## Getting Started
-
-### Prerequisites
-
-Install the following:
-
-- JDK 17 or later compatible with the project.
-- MySQL 8.
-- Docker, if running Testcontainers-based tests.
-- Maven, if the repository does not include the Maven Wrapper.
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Ashan-Dissanayake/RouteNetLK.git
-cd RouteNetLK
-```
-
-> If this repository is the overall system repository rather than the backend repository, navigate to the backend application directory before running the commands below.
-
-### 2. Create the Database
-
-Create a MySQL database:
-
-```sql
-CREATE DATABASE routenetlk
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-```
-
-### 3. Configure the Application
-
-Configure the database connection and other required settings through the application's configuration files and environment variables.
-
-Example environment variable names:
-
-```text
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
-```
-
-These names are illustrative. Use the exact property names referenced by the current application configuration.
-
-Do not commit production credentials, JWT secrets, or other sensitive configuration values to the repository.
-
-### 4. Build the Application
-
-Using the Maven Wrapper on Linux or macOS:
-
-```bash
-./mvnw clean package
-```
-
-Using the Maven Wrapper on Windows:
-
-```powershell
-.\mvnw.cmd clean package
-```
-
-Or, if Maven is installed:
-
-```bash
-mvn clean package
-```
-
-### 5. Run the Application
-
-Linux or macOS:
-
-```bash
-./mvnw spring-boot:run
-```
-
-Windows PowerShell:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-The default Spring Boot port is `8080`, unless changed in the application configuration.
-
-## Docker and CI/CD
-
-The repository includes a Dockerfile and a GitHub Actions workflow at:
-
-```text
-.github/workflows/deploy.yml
-```
-
-Docker provides a containerized packaging option, while GitHub Actions can automate the steps defined in the workflow.
-
-The exact build, test, image-publishing, deployment, and environment-configuration steps should be described according to the actual workflow implementation. Deployment provider, public URL, required secrets, and pipeline status should be documented only after they have been verified.
-
-## Engineering Decisions (ADRs)
-
-The project maintains a collection of **Architecture Decision Records (ADR)** to document key architectural choices, their context, and consequences.
-
-You can find the full list in the [docs/adr](./docs/adr) directory:
-
-1.  **[ADR 0001: Technologies and Frameworks](./docs/adr/0001-technologies-and-frameworks.md)** - Choice of Java 17, Spring Boot 3.5, MySQL, etc.
-2.  **[ADR 0002: Overall Architecture and Organization](./docs/adr/0002-overall-architecture-organization.md)** - Layered architecture and module-based structure.
-3.  **[ADR 0003: Development Standards and Code Quality](./docs/adr/0003-development-standards-and-code-quality.md)** - Coding standards, Lombok, MapStruct, and DTO usage.
-4.  **[ADR 0004: Data Management and Persistence](./docs/adr/0004-data-management-and-persistence.md)** - Soft delete, branch isolation, and auditing strategies.
-5.  **[ADR 0005: Security and Identity](./docs/adr/0005-security-and-identity.md)** - Stateless JWT, brute-force protection, and granular authorization.
-6.  **[ADR 0006: Integration and Communication](./docs/adr/0006-integration-and-communication.md)** - REST API standards, error handling, and email integration.
-7.  **[ADR 0007: Performance and Scalability](./docs/adr/0007-performance-and-scalability.md)** - Interval trees, Timefold solver optimization, and JVM tuning.
-8.  **[ADR 0008: Reliability and Resilience](./docs/adr/0008-reliability-and-resilience.md)** - Transactional integrity and error management.
-9.  **[ADR 0009: Observability and Monitoring](./docs/adr/0009-observability-and-monitoring.md)** - Logging standards and Actuator integration.
-10. **[ADR 0010: Infrastructure and Deployment](./docs/adr/0010-infrastructure-and-deployment.md)** - Docker multi-stage builds and environment configuration.
-11. **[ADR 0011: Test Implementation Strategy](./docs/adr/0011-test-implementation-strategy.md)** - Testing levels, tools (Testcontainers), and security testing.
-
-## Design Documentation
-
-Comprehensive design diagrams using the **C4 Model** and **Low-Level Design (LLD)** are available to help understand the system structure.
-
-- **[System Architecture (C4 Model)](./docs/diagrams/c4-model.md)**
-    - **Level 1: System Context Diagram** - External users and systems.
-    - **Level 2: Container Diagram** - Technical containers (SPA, API, DB).
-    - **Level 3: Component Diagram** - Internal API components and module responsibilities.
-- **[Roster Module - Low-Level Design (LLD)](./docs/diagrams/roster-lld.md)**
-    - Detailed class diagrams for rostering entities.
-    - Sequence diagrams for shift automation and optimization.
-    - Business rules, validation, and database interaction details.
-
-## Limitations and Future Improvements
-
-Potential improvements include:
-
-- Publish interactive API documentation using OpenAPI/Swagger.
-- Document Timefold planning entities, variables, score rules, and optimization results.
-- Add reproducible scheduling benchmarks using representative datasets.
-- Expand negative security tests for branch isolation and privileged access.
-- Document the deployment environment and CI/CD pipeline with verified evidence.
-- Add architecture diagrams, screenshots, and a short end-to-end demonstration.
-- Evaluate durable event delivery if operational requirements demand guaranteed processing across application restarts.
-
-These items are improvement opportunities, not claims that the corresponding functionality is already implemented.
-
-## Related Repositories
-
-- **System Overview:** [RouteNetLK](https://github.com/Ashan-Dissanayake/RouteNetLK)
-- **Angular Client Application:** [RouteNetLK Client Application](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication)
-
-## Author
-
-**Ashan Dissanayake** — Full-Stack Software Engineer
-
-- LinkedIn: [Ashan Dissanayake](https://www.linkedin.com/in/Ashan-PDissanayake)
-- GitHub: [Ashan-Dissanayake](https://github.com/Ashan-Dissanayake)
-- Email: [ashanpathum899@gmail.com](mailto:ashanpathum899@gmail.com)
+#### Standardized Exception Hierarchy
+Handled via centralized `@RestControllerAdvice`:
+
+| Exception Class | HTTP Status | Error Code | Description |
+|---|:---:|---|---|
+| `ResourceNotFoundException` | `404 Not Found` | `RESOURCE_NOT_FOUND` | Queried entity does not exist or was soft-deleted |
+| `ResourceExistsException` | `409 Conflict` | `RESOURCE_EXISTS` | Unique constraint conflict (e.g. registration #) |
+| `BusinessRuleViolationException` | `422 Unprocessable` | `RULE_VIOLATION` | Domain state validation failure |
+| `InvalidStateTransitionException` | `400 Bad Request` | `INVALID_STATE_TRANSITION` | Illegal entity lifecycle progression |
+| `MethodArgumentNotValidException` | `400 Bad Request` | `VALIDATION_FAILED` | Bean Validation (`@Valid`) constraint failure |
+| `BadCredentialsException` | `401 Unauthorized` | `AUTHENTICATION_FAILED` | Invalid credentials provided |
+| `LockedException` | `423 Locked` | `ACCOUNT_LOCKED` | Account temporarily locked due to failed logins |
 
 ---
 
-*RouteNetLK is a software engineering project demonstrating backend application design, transport operations workflows, security, persistence, testing, and constraint-based optimization.*
+## 🛡️ Application Security & Vulnerability Management
+
+This project follows DevSecOps best practices to identify, triage, and remediate security vulnerabilities across the software development lifecycle:
+
+### 1. Software Composition Analysis (SCA)
+- **Tool:** OWASP Dependency-Check (`13.0.0`) integrated into the Maven build lifecycle (`mvn verify`).
+- **Dependency Remediation:** Upgraded core dependencies (`Spring Boot 3.5.16`, `MySQL Connector/J 9.6.0`, `Jackson 2.21.5`, `Commons Lang3 3.18.0`, `Log4j2 2.25.5`) to eliminate known CVEs.
+- **Vulnerability Triage (VEX):** Maintained `owasp-suppressions.xml` with documented technical justifications for non-exploitable framework CVEs.
+
+### 2. Defense-in-Depth Code Hardening
+- **Data Binding Protection (`CVE-2026-59282`):** Implemented global `@ControllerAdvice` with `@InitBinder` (`GlobalBindingSecurityConfig`) to block dangerous reflection property paths (`class.*`) and enforce collection auto-grow limits (`256`).
+- **JPA Sort Injection Mitigation (`CVE-2026-47834`):** Configured a custom `SortHandlerMethodArgumentResolver` enforcing a strict allow-list and regex sanitization on incoming `Pageable` / `Sort` parameters.
+
+---
+
+## 🧪 Testing Strategy
+
+The repository follows rigorous testing standards across all architectural layers:
+
+```
+src/test/java/lk/ashan/routenetlkserverapllication/
+ ├── module/
+ │   ├── [module]/controller/   # @WebMvcTest & MockMvc controller layer tests
+ │   ├── [module]/repository/   # Testcontainers MySQL real integration tests
+ │   ├── [module]/validation/   # Domain validator and state machine tests
+ │   └── roster/planner/        # Timefold ConstraintVerifier score rule tests
+```
+
+### Test Execution Matrix
+
+| Test Scope | Technology | Purpose |
+|---|---|---|
+| **Unit Testing** | JUnit 5, Mockito | Validates isolated business logic, DTO mapping, and edge conditions |
+| **Web Layer Testing** | MockMvc, `@WebMvcTest` | Tests JSON serialization, input validation, and HTTP status codes |
+| **Security Testing** | Spring Security Test | Verifies method-level authorization and JWT filter enforcement |
+| **Database Integration** | **Testcontainers (MySQL 8)** | Validates native database queries, foreign keys, and Hibernate filters |
+| **Optimization Rules** | Timefold `ConstraintVerifier` | Validates hard/soft constraint penalties against sample datasets |
+
+### Running the Test Suite
+```bash
+# On Linux / macOS
+./mvnw clean test
+
+# On Windows (PowerShell)
+.\mvnw.cmd clean test
+```
+
+---
+
+## 💻 Technology Stack Matrix
+
+```
+Framework & Core : Java 17 (OpenJDK) · Spring Boot 3.5.3 · Spring Data JPA · Spring Validation
+Security         : Spring Security 6 · Stateless JWT (JJWT 0.11) · BCrypt Password Hashing
+Optimization     : Timefold Solver 1.32.0 (AI Metaheuristics & Constraint Streams)
+Persistence      : MySQL 8 · Hibernate 6 · Dynamic Filters · JPA Auditing
+Object Mapping   : MapStruct 1.5.5 · Project Lombok
+Utilities        : Google Guava (LoadingCache) · Apache Commons
+Mail & Templates : Spring Boot Mail · Thymeleaf Email Templates
+Testing Suite    : JUnit 5 · Mockito · MockMvc · Testcontainers MySQL · Timefold Verifier
+DevOps & Cloud   : Docker (Multi-stage build) · GitHub Actions CI/CD
+```
+
+---
+
+## 📂 Project Directory Structure
+
+```text
+RouteNetLKServerApllication/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml                  # GitHub Actions CI/CD automation pipeline
+├── docs/
+│   ├── adr/                            # 11 Architecture Decision Records (ADRs)
+│   │   ├── 0001-technologies-and-frameworks.md
+│   │   ├── ...
+│   │   └── 0011-test-implementation-strategy.md
+│   └── diagrams/                       # High-level & Low-level system design
+│       ├── c4-model.md                 # System Context, Container & Component specs
+│       └── roster-lld.md               # Roster Low-Level Design & Sequence diagrams
+├── src/
+│   ├── main/
+│   │   ├── java/lk/ashan/routenetlkserverapllication/
+│   │   │   ├── config/                 # Security, CORS, JPA Auditing, Cache configs
+│   │   │   ├── module/                 # 16 High-cohesion domain modules
+│   │   │   └── shared/                 # AOP aspects, exception handlers, utilities
+│   │   └── resources/
+│   │       ├── application.properties  # App configuration & profile settings
+│   │       ├── templates/              # Thymeleaf email notification templates
+│   │       └── data.sql / schema.sql   # Database initialization scripts
+│   └── test/                           # Unit, WebMvc, Integration & Solver tests
+├── Dockerfile                          # Multi-stage production container build
+├── pom.xml                             # Maven project dependencies & build plugins
+└── README.md                           # Master technical project documentation
+```
+
+---
+
+## 🚀 Getting Started & Local Setup
+
+### Prerequisites
+- **JDK 17** or higher installed and configured in `PATH`.
+- **MySQL 8.0+** running locally or in Docker.
+- **Docker Desktop** (required for running Testcontainers integration tests).
+- **Maven 3.8+** (or use the included `./mvnw` wrapper).
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Ashan-Dissanayake/RouteNetLK.git
+cd RouteNetLK/RouteNetLKServerApllication
+```
+
+### 2. Configure the MySQL Database
+Log into your MySQL CLI or GUI client and run:
+```sql
+CREATE DATABASE routenetlk
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+```
+
+### 3. Configure Environment Variables
+You can customize settings in `src/main/resources/application.properties` or provide environment variables:
+
+| Variable | Description | Example |
+|---|---|---|
+| `DB_URL` | JDBC connection string | `jdbc:mysql://localhost:3306/routenetlk?useSSL=false&serverTimezone=UTC` |
+| `DB_USERNAME` | Database username | `root` |
+| `DB_PASSWORD` | Database password | `your_secure_password` |
+| `JWT_SECRET` | Base64-encoded HMAC-SHA256 secret key | `404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970` |
+
+### 4. Build & Run Application
+```bash
+# Clean, compile, and run tests
+.\mvnw.cmd clean package
+
+# Start the Spring Boot application
+.\mvnw.cmd spring-boot:run
+```
+
+The application starts on **`http://localhost:8080`**.
+
+---
+
+## 🐳 Docker & CI/CD Pipeline
+
+### Multi-Stage Container Build
+The `Dockerfile` employs multi-stage caching to optimize image layer sizes and separate build tools from the minimal runtime JRE:
+
+```bash
+# Build the Docker image
+docker build -t routenetlk-server:latest .
+
+# Run container with environment configuration
+docker run -d -p 8080:8080 \
+  -e DB_URL="jdbc:mysql://host.docker.internal:3306/routenetlk" \
+  -e DB_USERNAME="root" \
+  -e DB_PASSWORD="secret" \
+  --name routenetlk-server routenetlk-server:latest
+```
+
+### GitHub Actions CI/CD (`.github/workflows/deploy.yml`)
+The automated CI pipeline performs:
+1. Automated checkout and JDK 17 environment provisioning.
+2. Maven compilation and execution of unit & integration tests.
+3. Multi-stage Docker image packaging.
+4. Deployment readiness verification.
+
+---
+
+## 🔮 Engineering Roadmap
+
+- [ ] **OpenAPI 3 / Swagger Documentation**: Integration of `springdoc-openapi` for live interactive API playground.
+- [ ] **Distributed Cache Layer**: Migration of in-memory Guava brute-force rate limiter to **Redis** for clustered multi-instance deployment.
+- [ ] **Asynchronous Message Broker**: Transitioning in-process Spring Events to **Apache Kafka** or **RabbitMQ** for guaranteed event delivery across service restarts.
+- [ ] **Prometheus & Grafana Dashboard**: Exposing custom Micrometer metrics for Timefold solver score calculation times and database query latency.
+
+---
+
+## 👤 Author & Contact
+
+**Ashan Dissanayake**  
+*Full-Stack Software Engineer — Specializing in Enterprise Java, Spring Boot, and Modern Web Systems*
+
+- **LinkedIn:** [linkedin.com/in/Ashan-PDissanayake](https://www.linkedin.com/in/Ashan-PDissanayake)
+- **GitHub:** [@Ashan-Dissanayake](https://github.com/Ashan-Dissanayake)
+- **Email:** [ashanpathum899@gmail.com](mailto:ashanpathum899@gmail.com)
+- **Primary Repository:** [RouteNetLK System](https://github.com/Ashan-Dissanayake/RouteNetLK)
+- **Frontend Client:** [RouteNetLK Client Application](https://github.com/Ashan-Dissanayake/RouteNetLKClientApplication)
+
+---
+
+<p align="center">
+  <sub>RouteNetLK is designed and maintained as a showcase of enterprise-grade software architecture, domain-driven backend design, and constraint optimization.</sub>
+</p>

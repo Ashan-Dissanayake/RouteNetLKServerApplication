@@ -20,6 +20,10 @@ import lk.ashan.routenetlkserverapllication.shared.exception.BusinessRuleViolati
 import lk.ashan.routenetlkserverapllication.shared.exception.InvalidStateTransitionException;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
 import lk.ashan.routenetlkserverapllication.shared.numbergenerator.NumberGeneratorService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,6 +54,8 @@ public class GrnService {
     private final NumberGeneratorService numberGeneratorService;
     private final GrnMapper grnMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
     private final List<GrnProcessingStrategy> strategies;
 
@@ -198,7 +204,19 @@ public class GrnService {
                 .process(context);
 
         // Final save (Strategy might have changed the status)
-        return grnMapper.toDto(grnRepository.save(existing));
+        Grn saved = grnRepository.save(existing);
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "GRN",
+                saved.getId().toString(),
+                "Updated GRN: " + saved.getNumber() + " (Status: " + saved.getGrnstatus().getName() + ")",
+                this.request,
+                true
+        );
+
+        return grnMapper.toDto(saved);
     }
 
     /**
@@ -231,6 +249,17 @@ public class GrnService {
         grn.setGrnpartrequestitems(grnPartRequestItems);
 
         Grn saved = grnRepository.save(grn);
+
+        auditLogService.logDataEvent(
+                "system",
+                AuditAction.CREATE,
+                "GRN",
+                saved.getId().toString(),
+                "Automatically created draft GRN: " + saved.getNumber() + " for part request: " + partRequest.getNumber(),
+                null,
+                true
+        );
+
         grnMapper.toDto(saved);
     }
 }

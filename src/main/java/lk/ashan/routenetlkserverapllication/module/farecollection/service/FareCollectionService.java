@@ -11,6 +11,10 @@ import lk.ashan.routenetlkserverapllication.module.farecollection.model.entity.F
 import lk.ashan.routenetlkserverapllication.module.farecollection.repository.FareCollectionRepository;
 import lk.ashan.routenetlkserverapllication.module.farecollection.validation.FareCollectionValidator;
 import lk.ashan.routenetlkserverapllication.shared.exception.ResourceNotFoundException;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditLogService;
+import lk.ashan.routenetlkserverapllication.shared.logging.AuditAction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,6 +40,8 @@ public class FareCollectionService {
     private final FareCollectionMapper fareCollectionMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final FareCollectionValidator fareCollectionValidator;
+    private final AuditLogService auditLogService;
+    private final HttpServletRequest request;
 
     /**
      * Retrieves all fare collections.
@@ -129,6 +135,16 @@ public class FareCollectionService {
         FareCollection saved =
                 fareCollectionRepository.save(fareCollection);
 
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.CREATE,
+                "FareCollection",
+                saved.getId().toString(),
+                "Created new fare collection for trip execution: " + saved.getTripexecution().getId(),
+                this.request,
+                true
+        );
+
         return fareCollectionMapper.toDto(saved);
     }
 
@@ -147,5 +163,15 @@ public class FareCollectionService {
 
         execution.setIsreconciled(true);
         eventPublisher.publishEvent(new FareReconciledEvent(fareCollectionId, execution.getBranch()));
+
+        auditLogService.logDataEvent(
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                AuditAction.UPDATE,
+                "FareCollection",
+                fareCollectionId.toString(),
+                "Reconciled fare collection for trip execution: " + execution.getTripexecution().getId(),
+                this.request,
+                true
+        );
     }
 }
