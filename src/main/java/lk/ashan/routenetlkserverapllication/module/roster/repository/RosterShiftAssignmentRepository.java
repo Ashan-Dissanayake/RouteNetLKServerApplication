@@ -29,7 +29,8 @@ public interface RosterShiftAssignmentRepository extends JpaRepository<RosterShi
             "JOIN FETCH ra.rostershift rs " +
             "JOIN FETCH rs.shift s " +
             "WHERE rs.roster.id = :rosterId " +
-            "AND ra.employee IS NULL")
+            "AND ra.employee IS NULL " +
+            "ORDER BY ra.id ASC")
     List<RosterShiftAssignment> findUnassignedByRosterId(@Param("rosterId") Integer rosterId);
 
     /**
@@ -41,7 +42,7 @@ public interface RosterShiftAssignmentRepository extends JpaRepository<RosterShi
     @Query("SELECT ra FROM RosterShiftAssignment ra " +
             "JOIN ra.rostershift rs " +
             "WHERE rs.roster.id = :rosterId " +
-            "ORDER BY rs.doshift ASC, rs.shift.tostart ASC")
+            "ORDER BY rs.doshift ASC, rs.shift.tostart ASC, ra.id ASC")
     List<RosterShiftAssignment> findByRosterId(@Param("rosterId") Integer rosterId);
 
     /**
