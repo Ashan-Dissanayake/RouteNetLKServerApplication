@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suppressions
+        xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd
+                        https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
+
+        <!-- ===================================================================== -->
+        <!-- Apache Tomcat (tomcat-embed-* 10.1.55) - Triage & VEX Suppressions    -->
+        <!-- ===================================================================== -->
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Single-host Spring Boot deployment using default HTTP/1.1 without multi-host TLS strict SNI or HTTP/2.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.*@.*$</packageUrl>
+            <cve>CVE-2026-65637</cve>
+            <cve>CVE-2026-68763</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Application uses stateless Spring Security JWT authentication; Tomcat DIGEST, FORM, and DataSourceRealm authenticators are not used.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.*@.*$</packageUrl>
+            <cve>CVE-2026-65905</cve>
+            <cve>CVE-2026-68525</cve>
+            <cve>CVE-2026-68569</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Default NIO connector is used; FFM connector CRL, Unix domain sockets, and Tomcat Clustering (EncryptInterceptor) are not configured.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.*@.*$</packageUrl>
+            <cve>CVE-2026-53434</cve>
+            <cve>CVE-2026-59084</cve>
+            <cve>CVE-2026-65183</cve>
+            <cve>CVE-2026-55955</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Authorization is handled via Spring Security; web.xml security constraints, Tomcat Realms, RewriteValve, effective web.xml logging, and example apps are not used.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat-embed-.*@.*$</packageUrl>
+            <cve>CVE-2026-55276</cve>
+            <cve>CVE-2026-59083</cve>
+            <cve>CVE-2026-65182</cve>
+            <cve>CVE-2026-66422</cve>
+            <cve>CVE-2026-65927</cve>
+            <cve>CVE-2026-53404</cve>
+            <cve>CVE-2026-55956</cve>
+            <cve>CVE-2026-73180</cve>
+            <cve>CVE-2026-50229</cve>
+            <cve>CVE-2026-66299</cve>
+        </suppress>
+
+        <!-- ===================================================================== -->
+        <!-- Spring Security (spring-security-* 6.5.11) - Triage & VEX             -->
+        <!-- ===================================================================== -->
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Application uses stateless JWT authentication; embedded UnboundID LDAP server, OAuth2 DPoP, and WebAuthn/distributed sessions are not used.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-.*@.*$</packageUrl>
+            <cve>CVE-2026-59270</cve>
+            <cve>CVE-2026-41707</cve>
+            <cve>CVE-2026-47841</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. AesBytesEncryptor is not used; password hashing uses BCryptPasswordEncoder and JWT validation uses standard cryptographic signature verification.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-.*@.*$</packageUrl>
+            <cve>CVE-2026-47842</cve>
+            <cve>CVE-2026-59276</cve>
+        </suppress>
+
+        <!-- ===================================================================== -->
+        <!-- Spring Framework (spring-* 6.2.19) - Triage & VEX Suppressions        -->
+        <!-- ===================================================================== -->
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. Application uses standard Spring MVC (Servlet) with Thymeleaf; WebFlux, RSocket, XsltView, FreeMarker, and Jetty reactive adapters are not used.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+            <cve>CVE-2026-47884</cve>
+            <cve>CVE-2026-47890</cve>
+            <cve>CVE-2026-47891</cve>
+            <cve>CVE-2026-47892</cve>
+            <cve>CVE-2026-59313</cve>
+            <cve>CVE-2026-47885</cve>
+            <cve>CVE-2026-47888</cve>
+            <cve>CVE-2026-47889</cve>
+            <cve>CVE-2026-47893</cve>
+            <cve>CVE-2026-59280</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Triage: Not Affected. User-supplied SpEL evaluation, UrlHandlerFilter, UrlFileNameViewController, and unescaped Errors HTML rendering are not used.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+            <cve>CVE-2026-59283</cve>
+            <cve>CVE-2026-47886</cve>
+            <cve>CVE-2026-47883</cve>
+            <cve>CVE-2026-47887</cve>
+            <cve>CVE-2026-59281</cve>
+            <cve>CVE-2026-59314</cve>
+        </suppress>
+
+        <!-- ===================================================================== -->
+        <!-- Mitigated via Code-Level Compensating Controls                        -->
+        <!-- ===================================================================== -->
+
+        <suppress>
+            <notes><![CDATA[
+        Mitigated (Compensating Control): Global @InitBinder configured in GlobalBindingSecurityConfig to block dangerous property paths and restrict autoGrowCollectionLimit against CVE-2026-59282.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+            <cve>CVE-2026-59282</cve>
+        </suppress>
+
+        <suppress>
+            <notes><![CDATA[
+        Mitigated (Compensating Control): Custom SortHandlerMethodArgumentResolver configured in GlobalBindingSecurityConfig to enforce strict allow-list validation on Sort parameters against CVE-2026-47834.
+        ]]></notes>
+            <packageUrl regex="true">^pkg:maven/org\.springframework\.data/spring-data-jpa@.*$</packageUrl>
+            <cve>CVE-2026-47834</cve>
+        </suppress>
+
+    </suppressions>
