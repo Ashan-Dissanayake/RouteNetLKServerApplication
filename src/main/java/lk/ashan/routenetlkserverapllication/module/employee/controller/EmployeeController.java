@@ -26,7 +26,6 @@ import java.util.Map;
  * Controller for managing employee-related operations.
  * Provides endpoints for viewing, adding, updating, and deactivating employees.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/employees")
 @RequiredArgsConstructor

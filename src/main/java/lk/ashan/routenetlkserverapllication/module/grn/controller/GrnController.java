@@ -18,7 +18,6 @@ import java.util.List;
  * Controller for handling GRN (Goods Received Note) related operations.
  * Provides endpoints for viewing and updating GRNs.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/grns")
 @RequiredArgsConstructor

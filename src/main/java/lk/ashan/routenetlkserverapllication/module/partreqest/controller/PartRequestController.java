@@ -21,7 +21,6 @@ import java.util.List;
  * Controller for managing part requests.
  * Provides endpoints for viewing, creating, updating, approving, and rejecting part requests.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/part-requests")
 @RequiredArgsConstructor

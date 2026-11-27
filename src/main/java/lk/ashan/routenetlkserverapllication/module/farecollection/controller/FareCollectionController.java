@@ -19,7 +19,6 @@ import java.util.Map;
  * Controller for managing fare collections.
  * Provides endpoints for viewing, adding, and reconciling fare collections.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/fare-collections")
 @RequiredArgsConstructor

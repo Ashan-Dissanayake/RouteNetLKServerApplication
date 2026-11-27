@@ -22,7 +22,6 @@ import java.util.List;
  * Controller for managing vehicle-related operations.
  * Provides endpoints for viewing, adding, updating, and deleting vehicles.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/vehicles")
 @RequiredArgsConstructor

@@ -19,7 +19,6 @@ import java.util.List;
  * Controller for managing privileges. Provides endpoints for viewing, assigning,
  * and revoking privileges.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/privileges")
 @RequiredArgsConstructor

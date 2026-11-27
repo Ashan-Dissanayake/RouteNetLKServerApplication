@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.YearMonth;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/number-generator")
 @RequiredArgsConstructor

@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {

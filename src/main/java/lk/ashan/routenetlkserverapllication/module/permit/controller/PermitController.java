@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * Controller for managing permits. Provides endpoints for viewing, adding, and transferring permits.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/permits")
 @RequiredArgsConstructor

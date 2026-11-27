@@ -18,7 +18,6 @@ import java.util.List;
  * Controller for managing Incident Vehicle Allocations.
  * Provides endpoints for viewing, creating, and updating the status of incident vehicle allocations.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/incident-vehicle-allocations")
 @RequiredArgsConstructor

@@ -24,7 +24,6 @@ import java.util.Map;
  * Controller for managing trip-related operations.
  * Provides endpoints for creating, retrieving, activating, suspending, and discontinuing trips.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/trips")
 @RequiredArgsConstructor

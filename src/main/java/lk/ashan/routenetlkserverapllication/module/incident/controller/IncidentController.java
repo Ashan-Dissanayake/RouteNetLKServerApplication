@@ -19,7 +19,6 @@ import java.util.List;
 /**
  * Controller for managing incidents. Provides endpoints for creating, updating, and retrieving incidents.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/incidents")
 @RequiredArgsConstructor

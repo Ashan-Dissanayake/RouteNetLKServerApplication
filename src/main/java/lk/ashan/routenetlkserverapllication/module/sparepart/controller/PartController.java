@@ -27,7 +27,6 @@ import java.util.Map;
  * Controller for managing spare parts.
  * Provides endpoints for viewing, adding, updating, and deactivating parts.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/parts")
 @RequiredArgsConstructor

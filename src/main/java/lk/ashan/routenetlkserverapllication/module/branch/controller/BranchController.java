@@ -26,7 +26,7 @@ import java.util.Map;
  * Controller for managing branch-related operations.
  * Provides endpoints for retrieving, creating, updating, and deactivating branches.
  */
-@CrossOrigin
+
 @RestController
 @RequestMapping(value = "/branches")
 @RequiredArgsConstructor

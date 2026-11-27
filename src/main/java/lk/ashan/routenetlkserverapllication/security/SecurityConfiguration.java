@@ -147,6 +147,8 @@ public class SecurityConfiguration {
      * @return a {@link SecurityFilterChain} instance representing the configured security filter chain
      * @throws Exception if an error occurs while building the security filter chain
      */
+    // Safe: Stateless REST API using JWT in Authorization header (no session cookies)
+    @SuppressWarnings("java:S4502")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http
