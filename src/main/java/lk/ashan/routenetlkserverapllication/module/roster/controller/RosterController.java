@@ -17,7 +17,6 @@ import java.util.List;
  * Controller for managing roster-related operations.
  * Provides endpoints for retrieving roster summaries and creating new rosters.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/rosters")
 @RequiredArgsConstructor

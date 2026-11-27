@@ -17,7 +17,6 @@ import java.util.List;
  * Controller for managing user roles.
  * Provides endpoints for viewing, assigning, revoking, and replacing user roles.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/user-roles")
 @RequiredArgsConstructor

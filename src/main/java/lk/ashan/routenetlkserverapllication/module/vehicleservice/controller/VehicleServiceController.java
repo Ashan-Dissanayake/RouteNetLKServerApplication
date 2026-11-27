@@ -20,7 +20,6 @@ import java.util.List;
  * Controller for managing vehicle services.
  * Provides endpoints for viewing, adding, starting, holding, and completing vehicle services.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/vehicle-services")
 @RequiredArgsConstructor

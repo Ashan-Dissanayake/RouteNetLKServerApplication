@@ -16,7 +16,6 @@ import java.util.List;
  * Controller for managing roster shifts.
  * Provides endpoints to retrieve roster shift details.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/roster-shifts")
 @RequiredArgsConstructor

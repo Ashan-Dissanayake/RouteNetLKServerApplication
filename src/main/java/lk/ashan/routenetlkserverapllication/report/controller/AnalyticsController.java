@@ -16,7 +16,6 @@ import java.util.Date;
  * Controller for handling analytics-related endpoints.
  * Provides various reports such as dispatch summary, depot revenue, maintenance trends, fleet performance, and incident distribution.
  */
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/analytics")

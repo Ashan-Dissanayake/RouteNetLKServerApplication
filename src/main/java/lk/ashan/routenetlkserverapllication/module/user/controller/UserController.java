@@ -23,7 +23,6 @@ import java.util.List;
  * Provides endpoints for user management such as viewing, adding, updating,
  * activating/deactivating, and managing passwords.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/users")
 @RequiredArgsConstructor

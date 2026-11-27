@@ -20,7 +20,6 @@ import java.util.Map;
  * Controller for managing Trip Execution operations.
  * Provides endpoints for viewing, initializing, and updating trip executions.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/trip-execution")
 @RequiredArgsConstructor

@@ -33,6 +33,8 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <jackson-bom.version>2.21.5</jackson-bom.version>
         <log4j2.version>2.25.5</log4j2.version>
+        <sonar.projectKey>Ashan-Dissanayake_RouteNetLKServerApplication</sonar.projectKey>
+        <sonar.organization>ashan-dissanayake</sonar.organization>
     </properties>
     <dependencies>
         <dependency>

@@ -18,7 +18,6 @@ import java.util.List;
 /**
  * Controller for managing conductors. Provides endpoints for retrieving, adding, and updating conductors.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/conductors")
 @RequiredArgsConstructor

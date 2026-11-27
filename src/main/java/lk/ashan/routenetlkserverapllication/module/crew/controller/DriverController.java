@@ -20,7 +20,6 @@ import java.util.List;
  * Controller for managing driver-related operations.
  * Provides endpoints for retrieving, adding, and updating driver information.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/drivers")
 @RequiredArgsConstructor

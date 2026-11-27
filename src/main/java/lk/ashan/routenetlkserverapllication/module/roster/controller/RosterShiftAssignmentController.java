@@ -17,7 +17,6 @@ import java.util.List;
  * Controller for managing roster shift assignments.
  * Provides endpoints for viewing, generating, approving, and cancelling roster shift assignments.
  */
-@CrossOrigin
 @RestController
 @RequestMapping(value = "/roster-shift-assignment")
 @RequiredArgsConstructor
