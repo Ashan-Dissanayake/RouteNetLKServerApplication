@@ -113,6 +113,7 @@ Every major architectural trade-off and framework choice is formally documented 
 | **0009** | **[Observability and Monitoring](docs/adr/0009-observability-and-monitoring.md)** | Observability | Structured SLF4J logging, correlation IDs, and Spring Boot Actuator health and metric endpoints. |
 | **0010** | **[Infrastructure and Deployment](docs/adr/0010-infrastructure-and-deployment.md)** | DevOps | Multi-stage Docker containerization and automated GitHub Actions build/deployment pipelines. |
 | **0011** | **[Test Implementation Strategy](docs/adr/0011-test-implementation-strategy.md)** | Testing | Isolated Testcontainers MySQL suite, `@WebMvcTest` controller validation, and constraint verifiers. |
+| **0012** | **[Vulnerability Management & Security Hardening](docs/adr/0012-vulnerability-management-and-security-hardening.md)** | DevSecOps & SCA | OWASP Dependency-Check SCA scanning, VEX triage suppressions, and MVC binding/JPA sort compensating controls. |
 
 ---
 
@@ -238,6 +239,21 @@ Handled via centralized `@RestControllerAdvice`:
 | `MethodArgumentNotValidException` | `400 Bad Request` | `VALIDATION_FAILED` | Bean Validation (`@Valid`) constraint failure |
 | `BadCredentialsException` | `401 Unauthorized` | `AUTHENTICATION_FAILED` | Invalid credentials provided |
 | `LockedException` | `423 Locked` | `ACCOUNT_LOCKED` | Account temporarily locked due to failed logins |
+
+---
+
+## 🛡️ Application Security & Vulnerability Management
+
+This project follows DevSecOps best practices to identify, triage, and remediate security vulnerabilities across the software development lifecycle:
+
+### 1. Software Composition Analysis (SCA)
+- **Tool:** OWASP Dependency-Check (`13.0.0`) integrated into the Maven build lifecycle (`mvn verify`).
+- **Dependency Remediation:** Upgraded core dependencies (`Spring Boot 3.5.16`, `MySQL Connector/J 9.6.0`, `Jackson 2.21.5`, `Commons Lang3 3.18.0`, `Log4j2 2.25.5`) to eliminate known CVEs.
+- **Vulnerability Triage (VEX):** Maintained `owasp-suppressions.xml` with documented technical justifications for non-exploitable framework CVEs.
+
+### 2. Defense-in-Depth Code Hardening
+- **Data Binding Protection (`CVE-2026-59282`):** Implemented global `@ControllerAdvice` with `@InitBinder` (`GlobalBindingSecurityConfig`) to block dangerous reflection property paths (`class.*`) and enforce collection auto-grow limits (`256`).
+- **JPA Sort Injection Mitigation (`CVE-2026-47834`):** Configured a custom `SortHandlerMethodArgumentResolver` enforcing a strict allow-list and regex sanitization on incoming `Pageable` / `Sort` parameters.
 
 ---
 
